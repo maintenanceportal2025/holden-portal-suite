@@ -1863,7 +1863,9 @@ function updateProblemsList() {
  */
 function createProblemCard(problem, index) {
     const card = document.createElement('div');
-    card.className = `problem-card ${problem.priority.toLowerCase()}`;
+    
+    card.className = `problem-card ${(problem.priority || 'medium').toLowerCase()}`;
+    
     card.dataset.internalId = problem.internalId;
     card.dataset.index = index;
     
