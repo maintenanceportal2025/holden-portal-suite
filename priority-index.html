@@ -1779,8 +1779,9 @@ function applyFilters() {
         };
         
         if (filterMap[activeFilter]) {
-            filtered = filtered.filter(problem => 
-                problem.status === filterMap[activeFilter]
+            filtered = filtered.filter(problem =>   
+             problem.problemStatus === filterMap[activeFilter]
+                                       
             );
         }
     }
