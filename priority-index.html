@@ -1598,16 +1598,25 @@ async function loadDynamicDropdowns() {
     
     try {
         const dropdownData = await loadDropdownData();
-        if (dropdownData && dropdownData.success) {
-            dynamicDropdownData = {
-                categories: dropdownData.categories || [],
-                subCategories: dropdownData.subCategories || [],
-                assignedTo: dropdownData.assignedTo || []
-            };
-            console.log('✅ Dynamic dropdowns loaded from API');
-        } else {
-            throw new Error('Failed to load dropdown data from API');
-        }
+        
+        if (dropdownData && dropdownData.success && 
+    dropdownData.categories && dropdownData.categories.length > 0) {
+    dynamicDropdownData = {
+        categories: dropdownData.categories || [],
+        subCategories: dropdownData.subCategories || [],
+        assignedTo: dropdownData.assignedTo || []
+    };
+    console.log('✅ Dynamic dropdowns loaded from API');
+} else {
+    // API succeeded but returned empty data OR failed - use fallbacks
+    console.warn('API returned empty dropdown data, using fallbacks');
+    dynamicDropdownData = {
+        categories: ['Aircon', 'Doors', 'Electrical', 'Plumbing', 'Irrigation', 'General'],
+        subCategories: ['General', 'Faucet/Tap', 'Lighting', 'Repair', 'Maintenance'],
+        assignedTo: ['Ben', 'Jade', 'David', 'Gardening Club', 'External Contractor']
+    };
+}
+        
     } catch (error) {
         console.warn('Dropdown loading failed, using fallbacks:', error);
         
