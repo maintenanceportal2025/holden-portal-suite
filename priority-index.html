@@ -1879,7 +1879,7 @@ function createProblemCard(problem, index) {
                 <div class="problem-unit">📍 ${problem.unitNumber} • ${problem.zone}</div>
             </div>
             <div class="problem-badges">
-                <span class="badge ${problem.priority.toLowerCase()}">${problem.priority}</span>
+               <span class="badge ${(problem.priority || 'medium').toLowerCase()}">${problem.priority || 'Medium'}</span>
                 <span class="badge ${problem.status.toLowerCase().replace(' ', '-')}">${problem.status}</span>
             </div>
         </div>
