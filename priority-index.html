@@ -2077,11 +2077,22 @@ async function saveProblem() {
         saveBtn.disabled = true;
         
         const formData = collectFormData();
-        console.log('Saving problem:', getFriendlyPID(formData.internalId));
+        console.log('🔍 DEBUG: Full form data collected:', formData);
+        console.log('🔍 DEBUG: Internal Comments value:', formData.internalComments);
+        
+        // Check if internalComments field exists and has value
+        const internalCommentsField = document.getElementById('internalComments');
+        console.log('🔍 DEBUG: Internal Comments field element:', internalCommentsField);
+        console.log('🔍 DEBUG: Internal Comments field value:', internalCommentsField ? internalCommentsField.value : 'FIELD NOT FOUND');
+        
+        console.log('🔍 DEBUG: Saving problem:', getFriendlyPID(formData.internalId));
         
         // Try to save to live system
         if (dataConnectionStatus === 'live') {
+            console.log('🔍 DEBUG: Attempting to save to live system...');
             const result = await saveProblemToAPI(formData);
+            console.log('🔍 DEBUG: API result:', result);
+            
             if (result && result.success) {
                 console.log('✅ Problem saved successfully');
                 
@@ -2096,12 +2107,13 @@ async function saveProblem() {
                 }, 2000);
                 
             } else {
+                console.error('🔍 DEBUG: Save failed with result:', result);
                 throw new Error(result?.message || 'Save failed');
             }
         } else {
+            console.log('🔍 DEBUG: No live connection - updating sample data only');
             // Update sample data only
             updateLocalProblemData(formData);
-            console.log('📝 Sample data updated (no live connection)');
             
             saveBtn.innerHTML = '✅ Updated!';
             setTimeout(() => {
@@ -2111,7 +2123,7 @@ async function saveProblem() {
         }
         
     } catch (error) {
-        console.error('Save error:', error);
+        console.error('🔍 DEBUG: Save error:', error);
         
         saveBtn.innerHTML = '❌ Error';
         setTimeout(() => {
@@ -2133,6 +2145,9 @@ async function saveProblem() {
 
 function saveProblemToAPI(formData) {
     return new Promise((resolve, reject) => {
+        console.log('🔍 DEBUG: saveProblemToAPI called with:', formData);
+        console.log('🔍 DEBUG: Internal Comments being sent:', formData.internalComments);
+        
         const timeout = setTimeout(() => {
             reject(new Error('Save request timeout'));
         }, 10000);
@@ -2140,12 +2155,13 @@ function saveProblemToAPI(formData) {
         const callbackName = 'save_callback_' + Date.now();
         
         window[callbackName] = function(data) {
+            console.log('🔍 DEBUG: API callback received:', data);
             clearTimeout(timeout);
             delete window[callbackName];
             resolve(data);
         };
         
-        // 🔧 CRITICAL FIX: Explicit parameter mapping for backend API
+        // Build parameters with debug logging
         const params = new URLSearchParams({
             action: 'updateProblem',
             callback: callbackName,
@@ -2168,13 +2184,20 @@ function saveProblemToAPI(formData) {
             assignedTo: formData.assignedTo,
             completionDate: formData.completionDate,
             
-            // 🔧 CRITICAL FIX: Map internalComments to comments for backend
-            comments: formData.internalComments  // <-- This is the key fix
+            // Critical fix: Map internalComments to comments
+            comments: formData.internalComments
         });
         
+        console.log('🔍 DEBUG: API URL parameters:', params.toString());
+        console.log('🔍 DEBUG: Comments parameter value:', params.get('comments'));
+        
         const script = document.createElement('script');
-        script.src = `${WEB_APP_URL}?${params.toString()}`;
+        const url = `${WEB_APP_URL}?${params.toString()}`;
+        console.log('🔍 DEBUG: Full API URL:', url);
+        
+        script.src = url;
         script.onerror = () => {
+            console.error('🔍 DEBUG: Script loading failed');
             clearTimeout(timeout);
             delete window[callbackName];
             reject(new Error('Save script loading failed'));
