@@ -1880,7 +1880,7 @@ function createProblemCard(problem, index) {
             </div>
             <div class="problem-badges">
                <span class="badge ${(problem.priority || 'medium').toLowerCase()}">${problem.priority || 'Medium'}</span>
-                <span class="badge ${problem.status.toLowerCase().replace(' ', '-')}">${problem.status}</span>
+               <span class="badge ${(problem.status || 'reported').toLowerCase().replace(' ', '-')}">${problem.status || 'Reported'}</span>
             </div>
         </div>
         
