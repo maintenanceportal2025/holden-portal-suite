@@ -1257,12 +1257,25 @@ function sortByPriority(problems) {
  * Calculate hash for change detection
  */
 function calculateDataHash(data) {
-    return btoa(JSON.stringify(data.map(p => ({
-        id: p.internalId,
-        priority: p.priority,
-        status: p.status,
-        comments: p.internalComments
-    })))).substring(0, 16);
+    try {
+        const jsonString = JSON.stringify(data.map(p => ({
+            id: p.internalId,
+            priority: p.priority,
+            status: p.status,
+            comments: p.internalComments || ''
+        })));
+        // Use a simple hash instead of btoa to avoid character encoding issues
+        let hash = 0;
+        for (let i = 0; i < jsonString.length; i++) {
+            const char = jsonString.charCodeAt(i);
+            hash = ((hash << 5) - hash) + char;
+            hash = hash & hash; // Convert to 32-bit integer
+        }
+        return Math.abs(hash).toString(16).substring(0, 16);
+    } catch (error) {
+        console.warn('Hash calculation failed:', error);
+        return 'fallback-hash';
+    }
 }
 
 /**
