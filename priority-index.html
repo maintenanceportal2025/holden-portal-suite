@@ -1769,22 +1769,28 @@ function applyFilters() {
     }
     
     // Apply status filter
-    if (activeFilter !== 'all') {
-        const filterMap = {
-            'reported': 'Reported',
-            'in-progress': 'In Progress', 
-            'on-hold': 'On Hold',
-            'completed': 'Completed',
-            'cancelled': 'Cancelled'
-        };
-        
-        if (filterMap[activeFilter]) {
-            filtered = filtered.filter(problem =>   
-             problem.problemStatus === filterMap[activeFilter]
-                                       
-            );
-        }
+    // Apply status filter
+if (activeFilter !== 'all') {
+    const filterMap = {
+        'reported': 'Reported',
+        'in-progress': 'In Progress', 
+        'on-hold': 'On Hold',
+        'completed': 'Completed',
+        'cancelled': 'Cancelled'
+    };
+    
+    if (filterMap[activeFilter]) {
+        filtered = filtered.filter(problem => 
+            problem.problemStatus === filterMap[activeFilter]
+        );
     }
+} else {
+    // For "All Problems", exclude completed and cancelled
+    filtered = filtered.filter(problem => 
+        problem.problemStatus !== 'Completed' && 
+        problem.problemStatus !== 'Cancelled'
+    );
+}
     
     // Sort by priority (this is the key difference from original)
     filteredProblems = sortByPriority(filtered);
