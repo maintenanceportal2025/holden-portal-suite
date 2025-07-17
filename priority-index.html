@@ -1600,12 +1600,13 @@ async function loadDynamicDropdowns() {
         const dropdownData = await loadDropdownData();
         
         if (dropdownData && dropdownData.success && 
-    dropdownData.categories && dropdownData.categories.length > 0) {
+    dropdownData.data && dropdownData.data.categories && dropdownData.data.categories.length > 0) {
     dynamicDropdownData = {
-        categories: dropdownData.categories || [],
-        subCategories: dropdownData.subCategories || [],
-        assignedTo: dropdownData.assignedTo || []
+        categories: dropdownData.data.categories || [],
+        subCategories: dropdownData.data.subCategories || [],
+        assignedTo: dropdownData.data.assignedTo || []
     };
+            
     console.log('✅ Dynamic dropdowns loaded from API');
 } else {
     // API succeeded but returned empty data OR failed - use fallbacks
