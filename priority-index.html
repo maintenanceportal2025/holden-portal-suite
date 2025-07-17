@@ -2143,6 +2143,15 @@ async function saveProblem() {
  * params section with this explicit mapping:
  */
 
+/**
+ * PRIORITY PORTAL - BACKEND FIELD MAPPING FIX
+ * 
+ * The issue: Your backend expects "problemStatus" but you're sending "status"
+ * The backend expects "problemPriority" but you're sending "priority"
+ * 
+ * Replace your saveProblemToAPI function with this corrected version:
+ */
+
 function saveProblemToAPI(formData) {
     return new Promise((resolve, reject) => {
         console.log('🔍 DEBUG: saveProblemToAPI called with:', formData);
@@ -2161,7 +2170,7 @@ function saveProblemToAPI(formData) {
             resolve(data);
         };
         
-        // Build parameters with debug logging
+        // 🔧 CRITICAL FIX: Use the exact parameter names the backend expects
         const params = new URLSearchParams({
             action: 'updateProblem',
             callback: callbackName,
@@ -2176,20 +2185,22 @@ function saveProblemToAPI(formData) {
             residentMobile: formData.residentMobile,
             problemDescription: formData.problemDescription,
             
-            // Management details
+            // Management details - USE BACKEND EXPECTED NAMES
             category: formData.category,
             subCategory: formData.subCategory,
-            priority: formData.priority,
-            status: formData.status,
             assignedTo: formData.assignedTo,
             completionDate: formData.completionDate,
             
-            // Critical fix: Map internalComments to comments
-            comments: formData.internalComments
+            // 🔧 CRITICAL FIXES: Use exact parameter names from backend API
+            problemPriority: formData.priority,     // Backend expects "problemPriority"
+            problemStatus: formData.status,         // Backend expects "problemStatus"
+            internalComments: formData.internalComments  // Backend expects "internalComments"
         });
         
         console.log('🔍 DEBUG: API URL parameters:', params.toString());
-        console.log('🔍 DEBUG: Comments parameter value:', params.get('comments'));
+        console.log('🔍 DEBUG: problemPriority parameter:', params.get('problemPriority'));
+        console.log('🔍 DEBUG: problemStatus parameter:', params.get('problemStatus'));
+        console.log('🔍 DEBUG: internalComments parameter:', params.get('internalComments'));
         
         const script = document.createElement('script');
         const url = `${WEB_APP_URL}?${params.toString()}`;
@@ -2213,18 +2224,27 @@ function saveProblemToAPI(formData) {
 }
 
 /**
- * EXPLANATION:
+ * EXPLANATION OF THE FIX:
  * 
- * The issue was that your frontend collects "internalComments" but your 
- * backend API expects "comments". This explicit mapping ensures:
+ * Looking at your backend API code, it expects these specific parameter names:
+ * - problemPriority (not "priority")
+ * - problemStatus (not "status") 
+ * - internalComments (not "comments")
  * 
- * Frontend field: internalComments
- * API parameter: comments  
- * Backend column: Comments (in Google Sheets)
+ * Your frontend was sending:
+ * - priority: "High"
+ * - status: "Reported"
+ * - comments: "your text"
  * 
- * Now the Internal Comments field will save properly to FaultLog!
+ * But the backend expects:
+ * - problemPriority: "High"
+ * - problemStatus: "Reported"
+ * - internalComments: "your text"
+ * 
+ * This mismatch caused the backend to return empty {} because it couldn't 
+ * find the expected parameter names.
  */
-
+    
 /**
  * Update local problem data
  */
