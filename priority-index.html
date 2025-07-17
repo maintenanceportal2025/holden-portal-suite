@@ -977,15 +977,15 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
                                 </select>
                             </div>
                             <div class="form-field">
-                                <label class="form-label">Status</label>
-                                <select id="status" class="form-input">
-                                    <option value="Reported">Reported</option>
-                                    <option value="In Progress">In Progress</option>
-                                    <option value="On Hold">On Hold</option>
-                                    <option value="Completed">Completed</option>
-                                    <option value="Cancelled">Cancelled</option>
-                                </select>
-                            </div>
+    <label class="form-label">Status</label>
+    <select id="problemStatus" class="form-input">
+        <option value="Reported">Reported</option>
+        <option value="In Progress">In Progress</option>
+        <option value="On Hold">On Hold</option>
+        <option value="Completed">Completed</option>
+        <option value="Cancelled">Cancelled</option>
+    </select>
+</div>
                             <div class="form-field">
                                 <label class="form-label">Assigned To</label>
                                 <select id="assignedTo" class="form-input">
@@ -1964,7 +1964,9 @@ function populateEditor(problem) {
     document.getElementById('category').value = problem.category || '';
     document.getElementById('subCategory').value = problem.subCategory || '';
     document.getElementById('priority').value = problem.priority || 'Medium';
-    document.getElementById('status').value = problem.status || 'Reported';
+    
+    document.getElementById('problemStatus').value = problem.problemStatus || 'Reported';
+  
     document.getElementById('assignedTo').value = problem.assignedTo || '';
     document.getElementById('completionDate').value = problem.completionDate || '';
     document.getElementById('internalComments').value = problem.internalComments || '';
@@ -2405,7 +2407,9 @@ async function copyReportToClipboard() {
  * Handle status change - auto-populate completion date when status = "Completed"
  */
 function handleStatusChange() {
-    const statusField = document.getElementById('status');
+    
+    const statusField = document.getElementById('problemStatus');
+    
     const completionDateField = document.getElementById('completionDate');
     
     if (statusField && completionDateField) {
@@ -2460,7 +2464,9 @@ function setupEventListeners() {
     });
 
     // Status change event - Auto-fill completion date when "Completed"
-const statusSelect = document.getElementById('status');
+    
+const statusSelect = document.getElementById('problemStatus');
+    
 if (statusSelect) {
     statusSelect.addEventListener('change', handleStatusChange);
     console.log('✅ Status change event listener attached');
