@@ -2394,6 +2394,44 @@ async function copyReportToClipboard() {
     }
 }
 
+/**
+ * PRIORITY PORTAL - AUTO-COMPLETION DATE FIX
+ * 
+ * Your Priority Portal is missing the handleStatusChange function.
+ * Add this function to your Priority Portal:
+ */
+
+/**
+ * Handle status change - auto-populate completion date when status = "Completed"
+ */
+function handleStatusChange() {
+    const statusField = document.getElementById('status');
+    const completionDateField = document.getElementById('completionDate');
+    
+    if (statusField && completionDateField) {
+        if (statusField.value === 'Completed') {
+            // Auto-populate with today's date if empty
+            if (!completionDateField.value) {
+                const today = new Date();
+                const day = String(today.getDate()).padStart(2, '0');
+                const month = String(today.getMonth() + 1).padStart(2, '0');
+                const year = today.getFullYear();
+                
+                // HTML date input needs YYYY-MM-DD format
+                completionDateField.value = `${year}-${month}-${day}`;
+                
+                console.log('✅ Auto-populated completion date:', completionDateField.value);
+            }
+        } else {
+            // Clear completion date if status is not "Completed"
+            completionDateField.value = '';
+            console.log('✅ Cleared completion date (status not Completed)');
+        }
+    }
+}
+
+    
+
 /* ===================================================================
                         EVENT LISTENERS
 =================================================================== */
@@ -2420,6 +2458,13 @@ function setupEventListeners() {
     document.querySelectorAll('#logoutBtn, #logoutBtnEditor').forEach(btn => {
         btn.addEventListener('click', handleLogout);
     });
+
+    // Status change event - Auto-fill completion date when "Completed"
+const statusSelect = document.getElementById('status');
+if (statusSelect) {
+    statusSelect.addEventListener('change', handleStatusChange);
+    console.log('✅ Status change event listener attached');
+}
     
     // Navigation
     const backBtn = document.getElementById('backBtn');
