@@ -2018,6 +2018,12 @@ function populateDropdowns() {
 /**
  * Collect form data from editor
  */
+/**
+ * EXACT FIX FOR PRIORITY PORTAL - collectFormData() function
+ * 
+ * REPLACE your existing collectFormData() function (around line 1004) with this:
+ */
+
 function collectFormData() {
     return {
         internalId: currentProblem.internalId,
@@ -2038,9 +2044,20 @@ function collectFormData() {
         status: document.getElementById('status').value,
         assignedTo: document.getElementById('assignedTo').value,
         completionDate: document.getElementById('completionDate').value,
+        
+        // 🔧 CRITICAL FIX: Add the missing internalComments field
         internalComments: document.getElementById('internalComments').value
     };
 }
+
+/* 
+ * TESTING INSTRUCTIONS:
+ * 1. Replace the function in your priority-index.html file
+ * 2. Open Priority Portal in browser
+ * 3. Edit a problem and add text to Internal Comments
+ * 4. Save changes
+ * 5. Check Google Sheets to verify Internal Comments now saves
+ */
 
 /**
  * Save problem changes
