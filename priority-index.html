@@ -2124,6 +2124,13 @@ async function saveProblem() {
 /**
  * Save problem data to API
  */
+/**
+ * PRIORITY PORTAL - API PARAMETER MAPPING FIX
+ * 
+ * Find your saveProblemToAPI function (around line 1080) and replace the 
+ * params section with this explicit mapping:
+ */
+
 function saveProblemToAPI(formData) {
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
@@ -2138,11 +2145,31 @@ function saveProblemToAPI(formData) {
             resolve(data);
         };
         
-        // Build query parameters
+        // 🔧 CRITICAL FIX: Explicit parameter mapping for backend API
         const params = new URLSearchParams({
             action: 'updateProblem',
             callback: callbackName,
-            ...formData
+            internalId: formData.internalId,
+            
+            // Problem details
+            reportedDate: formData.reportedDate,
+            unitNumber: formData.unitNumber,
+            reportedBy: formData.reportedBy,
+            zone: formData.zone,
+            residentName: formData.residentName,
+            residentMobile: formData.residentMobile,
+            problemDescription: formData.problemDescription,
+            
+            // Management details
+            category: formData.category,
+            subCategory: formData.subCategory,
+            priority: formData.priority,
+            status: formData.status,
+            assignedTo: formData.assignedTo,
+            completionDate: formData.completionDate,
+            
+            // 🔧 CRITICAL FIX: Map internalComments to comments for backend
+            comments: formData.internalComments  // <-- This is the key fix
         });
         
         const script = document.createElement('script');
@@ -2161,6 +2188,19 @@ function saveProblemToAPI(formData) {
         }, 11000);
     });
 }
+
+/**
+ * EXPLANATION:
+ * 
+ * The issue was that your frontend collects "internalComments" but your 
+ * backend API expects "comments". This explicit mapping ensures:
+ * 
+ * Frontend field: internalComments
+ * API parameter: comments  
+ * Backend column: Comments (in Google Sheets)
+ * 
+ * Now the Internal Comments field will save properly to FaultLog!
+ */
 
 /**
  * Update local problem data
