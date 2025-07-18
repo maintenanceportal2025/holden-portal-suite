@@ -3201,9 +3201,11 @@ function initializePriorityPortalComplete() {
     // Enhanced auto-sync
     window.checkForDataChanges = enhancedCheckForDataChanges;
     
-    // Update initial data status
-    updateDataStatus('loading');
-    loadProblemsData();
+   // Update initial data status and test connection
+updateDataStatus('loading');
+
+// Test connection without loading full data
+testDataConnection();
     
     // Add keyboard shortcuts
     document.addEventListener('keydown', (e) => {
@@ -3292,15 +3294,23 @@ function handleSaveResponse(response) {
     }
 }
 
-/**
- * NOTES:
- * 1. This removes the broken Promise-based saveProblemToAPI approach
- * 2. Uses direct JSONP like the working Maintenance Portal  
- * 3. Sends correct parameter names: priority, status, comments
- * 4. Includes the missing handleSaveResponse callback function
- * 5. Should fix Status, Priority, and Comments not updating
+    /**
+ * Test data connection on login screen (lightweight check)
  */
-    
+async function testDataConnection() {
+    try {
+        const data = await loadLiveData();
+        if (data && data.length > 0) {
+            updateDataStatus('live', `${data.length} problems available`);
+        } else {
+            updateDataStatus('sample', 'Using sample data');
+        }
+    } catch (error) {
+        updateDataStatus('error', 'Connection failed');
+    }
+}
+
+
 // Final initialization - this replaces all previous DOMContentLoaded listeners
 document.addEventListener('DOMContentLoaded', initializePriorityPortalComplete);
 
