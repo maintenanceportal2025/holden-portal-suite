@@ -1910,11 +1910,7 @@ function createProblemCard(problem, index) {
         <div class="problem-header">
             <div>
                 <div class="problem-id">${friendlyPID}</div>
-                <div class="problem-unit">📍 ${problem.unitNumber} • ${problem.zone}</div>
-            </div>
-            <div class="problem-badges">
-               <span class="badge ${(problem.priority || 'medium').toLowerCase()}">${problem.priority || 'Medium'}</span>
-               <span class="badge ${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}">${problem.problemStatus || 'Reported'}</span>
+                <div class="problem-unit">${problem.unitNumber} • ${problem.zone}</div>
             </div>
         </div>
         
@@ -1923,12 +1919,11 @@ function createProblemCard(problem, index) {
         </div>
         
         <div class="problem-footer">
-            <div class="problem-reporter">
-                <span>👤</span>
-                <span>${problem.reportedBy}</span>
+            <div class="problem-badges">
+                <span class="badge ${(problem.priority || 'medium').toLowerCase()}">${problem.priority || 'Medium'}</span>
+                <span class="badge ${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}">${problem.problemStatus || 'Reported'}</span>
             </div>
             <div class="problem-date">
-                <span>📅</span>
                 <span>${formattedDate}</span>
             </div>
         </div>
