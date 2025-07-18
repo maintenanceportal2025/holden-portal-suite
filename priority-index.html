@@ -1908,10 +1908,7 @@ function createProblemCard(problem, index) {
     
     card.innerHTML = `
         <div class="problem-header">
-            <div>
-                <div class="problem-id">${friendlyPID}</div>
-                <div class="problem-unit">${problem.unitNumber} • ${problem.zone}</div>
-            </div>
+            <div class="problem-id">${friendlyPID} ${problem.unitNumber} • ${problem.zone}</div>
         </div>
         
         <div class="problem-description">
