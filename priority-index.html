@@ -2097,7 +2097,7 @@ function autoLogChanges(oldData, newData) {
 }
 
 /**
- * Save problem changes - COMPLETE FUNCTION WITH DUPLICATE PREVENTION
+ * Save problem changes - COMPLETE FUNCTION WITH MAINTENANCE PORTAL ERROR HANDLING
  */
 async function saveProblem() {
     if (!currentProblem) {
@@ -2114,10 +2114,7 @@ async function saveProblem() {
         saveBtn.disabled = true;
         
         // Collect form data
-        let formData = collectFormData();
-        
-        // 🆕 AUTO-LOG CHANGES: Compare with current problem and add change logs
-        formData = autoLogChanges(currentProblem, formData);
+        const formData = collectFormData();
         
         console.log('🔍 DEBUG: Saving problem:', getFriendlyPID(formData.internalId));
         
@@ -2133,7 +2130,7 @@ async function saveProblem() {
                 // Update local data
                 updateLocalProblemData(formData);
                 
-                // 🔧 CRITICAL FIX: Update currentProblem so next save doesn't see stale data
+                // Update currentProblem to prevent duplicate logging
                 currentProblem = { ...formData };
                 
                 // Show success
@@ -2144,15 +2141,30 @@ async function saveProblem() {
                 }, 2000);
                 
             } else {
-                console.error('🔍 DEBUG: Save failed with result:', result);
-                throw new Error(result?.message || 'Save failed');
+                // Handle like Maintenance Portal - show "Saved Locally" instead of error
+                console.warn('🔍 DEBUG: API returned empty result, treating as local save:', result);
+                
+                // Update local data anyway
+                updateLocalProblemData(formData);
+                
+                // Update currentProblem to prevent duplicate logging
+                currentProblem = { ...formData };
+                
+                // Show "Saved Locally" like Maintenance Portal
+                saveBtn.innerHTML = '⚠️ Saved Locally';
+                saveBtn.style.backgroundColor = '#f59e0b';  // Yellow color
+                setTimeout(() => {
+                    saveBtn.innerHTML = originalText;
+                    saveBtn.style.backgroundColor = '';
+                    saveBtn.disabled = false;
+                }, 3000);
             }
         } else {
             console.log('🔍 DEBUG: No live connection - updating sample data only');
             // Update sample data only
             updateLocalProblemData(formData);
             
-            // 🔧 CRITICAL FIX: Update currentProblem for sample data too
+            // Update currentProblem for sample data too
             currentProblem = { ...formData };
             
             saveBtn.innerHTML = '✅ Updated!';
@@ -2165,31 +2177,17 @@ async function saveProblem() {
     } catch (error) {
         console.error('🔍 DEBUG: Save error:', error);
         
+        // Only show red error for actual JavaScript errors, not API issues
         saveBtn.innerHTML = '❌ Error';
+        saveBtn.style.backgroundColor = '#dc2626';
         setTimeout(() => {
             saveBtn.innerHTML = originalText;
+            saveBtn.style.backgroundColor = '';
             saveBtn.disabled = false;
         }, 3000);
     }
 }
-/**
- * Save problem data to API
- */
-/**
- * PRIORITY PORTAL - API PARAMETER MAPPING FIX
- * 
- * Find your saveProblemToAPI function (around line 1080) and replace the 
- * params section with this explicit mapping:
- */
-
-/**
- * PRIORITY PORTAL - BACKEND FIELD MAPPING FIX
- * 
- * The issue: Your backend expects "problemStatus" but you're sending "status"
- * The backend expects "problemPriority" but you're sending "priority"
- * 
- * Replace your saveProblemToAPI function with this corrected version:
- */
+    
 
 /**
  * ORIGINAL saveProblemToAPI function - RESTORE THIS TOO
