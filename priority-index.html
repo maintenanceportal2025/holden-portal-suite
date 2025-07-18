@@ -2052,11 +2052,52 @@ function collectFormData() {
         // 🔧 CRITICAL FIX: Add the missing internalComments field
         internalComments: document.getElementById('internalComments').value
     };
-}    
+} 
+
 /**
- * ORIGINAL Priority Portal saveProblem function - RESTORE THIS
- * This is your original function that was working for some fields
+ * Auto-log status and priority changes with timestamp
  */
+function autoLogChanges(oldData, newData) {
+    const changes = [];
+    const timestamp = new Date().toLocaleString('en-AU', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+    });
+    
+    // Check for status change
+    if (oldData.problemStatus !== newData.status) {
+        changes.push(`⚡ Status changed: ${oldData.problemStatus} → ${newData.status} [${timestamp}]`);
+    }
+    
+    // Check for priority change  
+    if (oldData.priority !== newData.priority) {
+        changes.push(`🔥 Priority changed: ${oldData.priority} → ${newData.priority} [${timestamp}]`);
+    }
+    
+    // If there are changes, add them to comments
+    if (changes.length > 0) {
+        const existingComments = newData.internalComments || '';
+        const newComments = changes.join('\n');
+        
+        // Combine existing + new comments
+        newData.internalComments = existingComments ? 
+            `${existingComments}\n${newComments}` : 
+            newComments;
+            
+        console.log('🔄 Auto-logged changes:', changes);
+        
+        // Update the UI field to show the new comments
+        document.getElementById('internalComments').value = newData.internalComments;
+    }
+    
+    return newData;
+}
+
+
 async function saveProblem() {
     if (!currentProblem) {
         console.error('No current problem to save');
@@ -2071,15 +2112,11 @@ async function saveProblem() {
         saveBtn.innerHTML = '⏳ Saving...';
         saveBtn.disabled = true;
         
-        const formData = collectFormData();
-        console.log('🔍 DEBUG: Full form data collected:', formData);
-        console.log('🔍 DEBUG: Internal Comments value:', formData.internalComments);
+        // Collect form data
+        let formData = collectFormData();
         
-        // Check if internalComments field exists and has value
-        const internalCommentsField = document.getElementById('internalComments');
-        console.log('🔍 DEBUG: Internal Comments field element:', internalCommentsField);
-        console.log('🔍 DEBUG: Internal Comments field value:', internalCommentsField ? 
-            internalCommentsField.value : 'FIELD NOT FOUND');
+        // 🆕 AUTO-LOG CHANGES: Compare with current problem and add change logs
+        formData = autoLogChanges(currentProblem, formData);
         
         console.log('🔍 DEBUG: Saving problem:', getFriendlyPID(formData.internalId));
         
@@ -2128,7 +2165,6 @@ async function saveProblem() {
         }, 3000);
     }
 }
-
 /**
  * Save problem data to API
  */
