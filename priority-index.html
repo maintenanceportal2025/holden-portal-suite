@@ -2055,9 +2055,12 @@ function collectFormData() {
 } 
 
 /**
- * Auto-log status and priority changes with timestamp
+ * Auto-log status and priority changes with timestamp - DEBUG VERSION
  */
 function autoLogChanges(oldData, newData) {
+    console.log('🔍 DEBUG autoLogChanges - oldData:', oldData);
+    console.log('🔍 DEBUG autoLogChanges - newData:', newData);
+    
     const changes = [];
     const timestamp = new Date().toLocaleString('en-AU', {
         day: '2-digit',
@@ -2068,35 +2071,49 @@ function autoLogChanges(oldData, newData) {
         hour12: true
     });
     
+    // Debug the field names and values
+    console.log('🔍 OLD Status:', oldData.problemStatus, 'vs NEW Status:', newData.status);
+    console.log('🔍 OLD Priority:', oldData.priority, 'vs NEW Priority:', newData.priority);
+    
     // Check for status change
     if (oldData.problemStatus !== newData.status) {
+        console.log('🔍 STATUS CHANGE DETECTED!');
         changes.push(`⚡ Status changed: ${oldData.problemStatus} → ${newData.status} [${timestamp}]`);
     }
     
     // Check for priority change  
     if (oldData.priority !== newData.priority) {
+        console.log('🔍 PRIORITY CHANGE DETECTED!');
         changes.push(`🔥 Priority changed: ${oldData.priority} → ${newData.priority} [${timestamp}]`);
     }
+    
+    console.log('🔍 Changes detected:', changes);
     
     // If there are changes, add them to comments
     if (changes.length > 0) {
         const existingComments = newData.internalComments || '';
         const newComments = changes.join('\n');
         
+        console.log('🔍 Existing comments:', existingComments);
+        console.log('🔍 New comments to add:', newComments);
+        
         // Combine existing + new comments
         newData.internalComments = existingComments ? 
             `${existingComments}\n${newComments}` : 
             newComments;
             
-        console.log('🔄 Auto-logged changes:', changes);
+        console.log('🔍 Final comments:', newData.internalComments);
         
         // Update the UI field to show the new comments
         document.getElementById('internalComments').value = newData.internalComments;
+        
+        console.log('🔄 Auto-logged changes:', changes);
+    } else {
+        console.log('🔍 No changes detected');
     }
     
     return newData;
 }
-
 
 async function saveProblem() {
     if (!currentProblem) {
