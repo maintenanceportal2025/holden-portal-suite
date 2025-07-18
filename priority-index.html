@@ -521,42 +521,31 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             margin-bottom: 35px; 
         }
         
-/* Section styling with background gradients */
-.section {
-    margin-bottom: 35px;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-/* Problem Details section - Blue background gradient */
-.section:first-child {
-    background: linear-gradient(to right, transparent 0%, transparent 30%, #e0f2fe 100%);
-}
-
-/* Management Details section - Green background gradient */
-.section:nth-child(2) {
-    background: linear-gradient(to right, transparent 0%, transparent 30%, #f0fdf4 100%);
-}
-
-/* Section titles - base styles */
+/* Section titles with gradient backgrounds */
 .section-title {
     font-size: 20px; 
     font-weight: bold; 
     margin-bottom: 20px; 
-    padding-bottom: 10px; 
-    border-bottom: 2px solid #e5e7eb;
+    padding: 10px 15px; 
+    border-radius: 5px;
+    color: white;
 }
 
-/* Problem Details title - Blue */
-.section:first-child .section-title {
-    color: #2563eb;
-    border-bottom-color: #2563eb;
+/* Problem Details title - Blue gradient background */
+.section:first-of-type .section-title {
+    background: linear-gradient(to right, transparent 0%, transparent 30%, #2563eb 100%);
+    color: white;
 }
 
-/* Management Details title - Green */
-.section:nth-child(2) .section-title {
-    color: #16a34a;
-    border-bottom-color: #16a34a;
+/* Management Details title - Green gradient background */
+.section:last-of-type .section-title {
+    background: linear-gradient(to right, transparent 0%, transparent 30%, #16a34a 100%);
+    color: white;
+}
+
+/* Remove section background gradients */
+.section {
+    margin-bottom: 35px;
 }
         
         
