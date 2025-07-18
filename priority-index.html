@@ -2242,9 +2242,9 @@ function saveProblemToAPI(formData) {
         });
         
         console.log('🔍 DEBUG: API URL parameters:', params.toString());
-        console.log('🔍 DEBUG: problemPriority parameter:', params.get('problemPriority'));
-        console.log('🔍 DEBUG: problemStatus parameter:', params.get('problemStatus'));
-        console.log('🔍 DEBUG: internalComments parameter:', params.get('internalComments'));
+console.log('🔍 DEBUG: priority parameter:', params.get('priority'));           // FIXED
+console.log('🔍 DEBUG: status parameter:', params.get('status'));               // FIXED  
+console.log('🔍 DEBUG: comments parameter:', params.get('comments'));           // FIXED
         
         const script = document.createElement('script');
         const url = `${WEB_APP_URL}?${params.toString()}`;
