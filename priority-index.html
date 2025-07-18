@@ -1233,6 +1233,9 @@ function getFriendlyPID(internalId) {
 /**
  * Priority-based sorting function
  */
+/**
+ * Priority-based sorting function with date as secondary sort (oldest to newest)
+ */
 function sortByPriority(problems) {
     return [...problems].sort((a, b) => {
         // First sort by priority
@@ -1243,18 +1246,19 @@ function sortByPriority(problems) {
             return priorityA - priorityB;
         }
         
-        // Then by status (active statuses first)
+        // If priority is the same, sort by date (OLDEST TO NEWEST)
+        const dateA = new Date(a.reportedDate.split('/').reverse().join('-'));
+        const dateB = new Date(b.reportedDate.split('/').reverse().join('-'));
+        
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB; // Oldest first
+        }
+        
+        // Finally by status (active statuses first) - as fallback
         const statusA = STATUS_ORDER.indexOf(a.status) !== -1 ? STATUS_ORDER.indexOf(a.status) : 999;
         const statusB = STATUS_ORDER.indexOf(b.status) !== -1 ? STATUS_ORDER.indexOf(b.status) : 999;
         
-        if (statusA !== statusB) {
-            return statusA - statusB;
-        }
-        
-        // Finally by date (newest first)
-        const dateA = new Date(a.reportedDate.split('/').reverse().join('-'));
-        const dateB = new Date(b.reportedDate.split('/').reverse().join('-'));
-        return dateB - dateA;
+        return statusA - statusB;
     });
 }
 
