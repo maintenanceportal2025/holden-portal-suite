@@ -529,12 +529,12 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
 }
 
 /* Problem Details section - Blue background gradient */
-.section:first-of-type {
+.section:first-child {
     background: linear-gradient(to right, transparent 0%, transparent 30%, #e0f2fe 100%);
 }
 
 /* Management Details section - Green background gradient */
-.section:last-of-type {
+.section:nth-child(2) {
     background: linear-gradient(to right, transparent 0%, transparent 30%, #f0fdf4 100%);
 }
 
@@ -548,13 +548,13 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
 }
 
 /* Problem Details title - Blue */
-.section:first-of-type .section-title {
+.section:first-child .section-title {
     color: #2563eb;
     border-bottom-color: #2563eb;
 }
 
 /* Management Details title - Green */
-.section:last-of-type .section-title {
+.section:nth-child(2) .section-title {
     color: #16a34a;
     border-bottom-color: #16a34a;
 }
