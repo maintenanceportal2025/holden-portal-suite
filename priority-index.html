@@ -521,33 +521,6 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             margin-bottom: 35px; 
         }
         
-/* Section titles with gradient backgrounds */
-.section-title {
-    font-size: 20px; 
-    font-weight: bold; 
-    margin-bottom: 20px; 
-    padding: 10px 15px; 
-    border-radius: 5px;
-    color: white;
-}
-
-/* Problem Details title - Blue gradient background */
-.editor .section:first-child .section-title {
-    background: linear-gradient(to right, transparent 0%, transparent 30%, #2563eb 100%);
-    color: white;
-}
-
-/* Management Details title - Green gradient background */
-.editor .section:last-child .section-title {
-    background: linear-gradient(to right, transparent 0%, transparent 30%, #16a34a 100%);
-    color: white;
-}
-
-/* Remove section background gradients */
-.section {
-    margin-bottom: 35px;
-}
-        
         
         .form-grid { 
             display: grid; 
@@ -941,7 +914,7 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             <div class="container">
                 <div class="editor">
                     <div class="section">
-                        <div class="section-title">📋 Problem Details</div>
+                       <div class="section-title" style="background: #eff6ff; color: #1d4ed8; margin: -30px -30px 20px -30px; padding: 15px 30px;">📋 Problem Details</div>
                         <div class="form-grid">
                             <div class="form-field read-only">
                                 <label class="form-label">Reported Date</label>
@@ -975,7 +948,7 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
                     </div>
 
                     <div class="section">
-    <div class="section-title">🔧 Management Details</div>
+   <div class="section-title" style="background: #f0fdf4; color: #166534; margin: -30px -30px 20px -30px; padding: 15px 30px;">🔧 Management Details</div>
     <div class="form-grid">
         <div class="form-field">
             <label class="form-label">Status</label>
