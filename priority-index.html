@@ -2194,9 +2194,11 @@ function saveProblemToAPI(formData) {
             completionDate: formData.completionDate,
             
             // 🔧 CRITICAL FIXES: Use exact parameter names from backend API
-            problemPriority: formData.priority,     // Backend expects "problemPriority"
-            problemStatus: formData.status,         // Backend expects "problemStatus"
-            internalComments: formData.internalComments  // Backend expects "internalComments"
+            
+            priority: formData.priority,           // ✅ What backend actually expects
+            status: formData.status,               // ✅ What backend actually expects
+            comments: formData.internalComments    // ✅ What backend actually expects
+            
         });
         
         console.log('🔍 DEBUG: API URL parameters:', params.toString());
