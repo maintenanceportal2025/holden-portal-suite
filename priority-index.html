@@ -521,34 +521,44 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             margin-bottom: 35px; 
         }
         
-        /* Section header colors with gradients */
+/* Section styling with background gradients */
+.section {
+    margin-bottom: 35px;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+/* Problem Details section - Blue background gradient */
+.section:first-of-type {
+    background: linear-gradient(to right, transparent 0%, transparent 30%, #e0f2fe 100%);
+}
+
+/* Management Details section - Green background gradient */
+.section:last-of-type {
+    background: linear-gradient(to right, transparent 0%, transparent 30%, #f0fdf4 100%);
+}
+
+/* Section titles - solid colors */
 .section-title {
     font-size: 20px; 
     font-weight: bold; 
     margin-bottom: 20px; 
     padding-bottom: 10px; 
-    border-bottom: 2px solid #e5e7eb; 
-    color: #1f2937;
+    border-bottom: 2px solid #e5e7eb;
 }
 
-/* Problem Details section - Blue gradient (light to dark) */
+/* Problem Details title - Blue */
 .section:first-of-type .section-title {
-    background: linear-gradient(to right, transparent, #93c5fd, #3b82f6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    border-bottom-color: #3b82f6;
+    color: #2563eb;
+    border-bottom-color: #2563eb;
 }
 
-/* Management Details section - Green gradient (light to dark) */
+/* Management Details title - Green */
 .section:last-of-type .section-title {
-    background: linear-gradient(to right, transparent, #86efac, #22c55e);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    border-bottom-color: #22c55e;
+    color: #16a34a;
+    border-bottom-color: #16a34a;
 }
-        }
+        
         
         .form-grid { 
             display: grid; 
