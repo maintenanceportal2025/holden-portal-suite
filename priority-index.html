@@ -833,9 +833,12 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             </div>
             
             <div class="form-group">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" class="form-input" placeholder="Enter maintenance password">
-            </div>
+    <label for="password" class="form-label">Password</label>
+    <div style="position: relative;">
+        <input type="password" id="password" class="form-input" placeholder="Enter maintenance password" style="padding-right: 45px;">
+        <button type="button" id="togglePassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 18px; color: #6b7280;">👁️</button>
+    </div>
+</div>
             
             <div id="errorMessage" class="error-message hidden"></div>
             
@@ -2499,6 +2502,17 @@ function setupEventListeners() {
         });
         
         loginBtn.addEventListener('click', handleLogin);
+    }
+    // 🆕 PASSWORD TOGGLE FUNCTIONALITY
+    const togglePassword = document.getElementById('togglePassword');
+    if (togglePassword && passwordInput) {
+        togglePassword.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            // Toggle eye icon
+            this.textContent = type === 'password' ? '👁️' : '🙈';
+        });
     }
     
     // Logout buttons
