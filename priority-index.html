@@ -2470,6 +2470,48 @@ function handleStatusChange() {
 /**
  * Setup all event listeners
  */
+/**
+ * Handle search input and toggle search/clear button
+ */
+function handleSearchToggle() {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    
+    if (!searchInput || !searchBtn) return;
+    
+    searchInput.addEventListener('input', function() {
+        const hasText = this.value.trim().length > 0;
+        
+        if (hasText) {
+            // Change to Clear Search button (red)
+            searchBtn.textContent = 'Clear Search';
+            searchBtn.style.backgroundColor = '#dc2626';
+            searchBtn.style.borderColor = '#dc2626';
+            searchBtn.onclick = function() {
+                searchInput.value = '';
+                searchInput.dispatchEvent(new Event('input')); // Trigger search
+                searchBtn.focus(); // Keep focus for better UX
+            };
+        } else {
+            // Change back to Search button (blue)
+            searchBtn.textContent = 'Search';
+            searchBtn.style.backgroundColor = '#2563eb';
+            searchBtn.style.borderColor = '#2563eb';
+            searchBtn.onclick = function() {
+                searchInput.focus(); // Focus search input
+            };
+        }
+    });
+}
+
+/**
+ * Setup all event listeners
+ */
+function setupEventListeners() {
+    // ... your existing code with the added line above ...
+}
+
+    
 function setupEventListeners() {
     // Login screen
     const passwordInput = document.getElementById('password');
@@ -2541,6 +2583,8 @@ if (statusSelect) {
             }
         });
     }
+
+    handleSearchToggle();
     
     // Filter tabs
     document.querySelectorAll('.filter-tab').forEach(tab => {
