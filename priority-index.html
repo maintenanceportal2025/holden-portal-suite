@@ -2042,20 +2042,16 @@ function collectFormData() {
         residentMobile: document.getElementById('residentMobile').value,
         problemDescription: document.getElementById('problemDescription').value,
         
-        // Management details (editable)
+        // Management details (editable) - FIXED FIELD NAMES
         category: document.getElementById('category').value,
         subCategory: document.getElementById('subCategory').value,
         priority: document.getElementById('priority').value,
-        
-        status: document.getElementById('problemStatus').value,
-
+        status: document.getElementById('problemStatus').value,    // FIXED: Use problemStatus ID
         assignedTo: document.getElementById('assignedTo').value,
         completionDate: document.getElementById('completionDate').value,
-        
-        // 🔧 CRITICAL FIX: Add the missing internalComments field
         internalComments: document.getElementById('internalComments').value
     };
-} 
+}
 
 /**
  * Auto-log status and priority changes with timestamp - FIXED VERSION
