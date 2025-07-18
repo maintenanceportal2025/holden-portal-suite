@@ -2028,6 +2028,9 @@ function populateDropdowns() {
 
 function collectFormData() {
     return {
+
+        console.log('🔍 COLLECTED FORM DATA:', JSON.stringify(formData, null, 2));
+    
         internalId: currentProblem.internalId,
         
         // Problem details (read-only, but include for completeness)
