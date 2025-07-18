@@ -521,13 +521,33 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
             margin-bottom: 35px; 
         }
         
-        .section-title { 
-            font-size: 20px; 
-            font-weight: bold; 
-            margin-bottom: 20px; 
-            padding-bottom: 10px; 
-            border-bottom: 2px solid #e5e7eb; 
-            color: #1f2937;
+        /* Section header colors with gradients */
+.section-title {
+    font-size: 20px; 
+    font-weight: bold; 
+    margin-bottom: 20px; 
+    padding-bottom: 10px; 
+    border-bottom: 2px solid #e5e7eb; 
+    color: #1f2937;
+}
+
+/* Problem Details section - Blue gradient (light to dark) */
+.section:first-of-type .section-title {
+    background: linear-gradient(to right, transparent, #93c5fd, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-bottom-color: #3b82f6;
+}
+
+/* Management Details section - Green gradient (light to dark) */
+.section:last-of-type .section-title {
+    background: linear-gradient(to right, transparent, #86efac, #22c55e);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-bottom-color: #22c55e;
+}
         }
         
         .form-grid { 
