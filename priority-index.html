@@ -975,56 +975,55 @@ PRIORITY PORTAL v1.0 - PHASE 1: HTML STRUCTURE & CSS
                     </div>
 
                     <div class="section">
-                        <div class="section-title">🔧 Management Details</div>
-                        <div class="form-grid">
-                            <div class="form-field">
-                                <label class="form-label">Category</label>
-                                <select id="category" class="form-input">
-                                    <option value="">Select Category</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label class="form-label">Sub-Category</label>
-                                <select id="subCategory" class="form-input">
-                                    <option value="">Select Sub-Category</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label class="form-label">Priority</label>
-                                <select id="priority" class="form-input">
-                                    <option value="Low">Low</option>
-                                    <option value="Medium">Medium</option>
-                                    <option value="High">High</option>
-                                    <option value="Urgent">Urgent</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-    <label class="form-label">Status</label>
-    <select id="problemStatus" class="form-input">
-        <option value="Reported">Reported</option>
-        <option value="In Progress">In Progress</option>
-        <option value="On Hold">On Hold</option>
-        <option value="Completed">Completed</option>
-        <option value="Cancelled">Cancelled</option>
-    </select>
+    <div class="section-title">🔧 Management Details</div>
+    <div class="form-grid">
+        <div class="form-field">
+            <label class="form-label">Status</label>
+            <select id="problemStatus" class="form-input">
+                <option value="Reported">Reported</option>
+                <option value="In Progress">In Progress</option>
+                <option value="On Hold">On Hold</option>
+                <option value="Completed">Completed</option>
+                <option value="Cancelled">Cancelled</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Priority</label>
+            <select id="priority" class="form-input">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+                <option value="Urgent">Urgent</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Category</label>
+            <select id="category" class="form-input">
+                <option value="">Select Category</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Sub-Category</label>
+            <select id="subCategory" class="form-input">
+                <option value="">Select Sub-Category</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Assigned To</label>
+            <select id="assignedTo" class="form-input">
+                <option value="">Select Assignee</option>
+            </select>
+        </div>
+        <div class="form-field">
+            <label class="form-label">Completion Date</label>
+            <input type="date" id="completionDate" class="form-input">
+        </div>
+        <div class="form-field full-width">
+            <label class="form-label">Internal Comments</label>
+            <textarea id="internalComments" class="form-input textarea" placeholder="Add internal notes..."></textarea>
+        </div>
+    </div>
 </div>
-                            <div class="form-field">
-                                <label class="form-label">Assigned To</label>
-                                <select id="assignedTo" class="form-input">
-                                    <option value="">Select Assignee</option>
-                                </select>
-                            </div>
-                            <div class="form-field">
-                                <label class="form-label">Completion Date</label>
-                                <input type="date" id="completionDate" class="form-input">
-                            </div>
-                            <div class="form-field full-width">
-                                <label class="form-label">Internal Comments</label>
-                                <textarea id="internalComments" class="form-input textarea" placeholder="Add internal notes..."></textarea>
-                            </div>
-                        </div>
-                    </div>
-
                     <button id="saveBtn" class="save-btn">💾 Save Changes</button>
                     <div style="clear: both;"></div>
                 </div>
