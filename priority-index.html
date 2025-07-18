@@ -2096,6 +2096,10 @@ function autoLogChanges(oldData, newData) {
     
     return newData;
 }
+
+/**
+ * Save problem changes - COMPLETE FUNCTION WITH DUPLICATE PREVENTION
+ */
 async function saveProblem() {
     if (!currentProblem) {
         console.error('No current problem to save');
@@ -2129,9 +2133,9 @@ async function saveProblem() {
                 
                 // Update local data
                 updateLocalProblemData(formData);
-
-                // 🆕 ADD THIS LINE: Update currentProblem to prevent duplicate logging
-    currentProblem = { ...currentProblem, ...formData };
+                
+                // 🔧 CRITICAL FIX: Update currentProblem so next save doesn't see stale data
+                currentProblem = { ...formData };
                 
                 // Show success
                 saveBtn.innerHTML = '✅ Saved!';
@@ -2148,6 +2152,9 @@ async function saveProblem() {
             console.log('🔍 DEBUG: No live connection - updating sample data only');
             // Update sample data only
             updateLocalProblemData(formData);
+            
+            // 🔧 CRITICAL FIX: Update currentProblem for sample data too
+            currentProblem = { ...formData };
             
             saveBtn.innerHTML = '✅ Updated!';
             setTimeout(() => {
