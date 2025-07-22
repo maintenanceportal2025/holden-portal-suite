@@ -13,92 +13,89 @@
 
         body {
             font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
             min-height: 100vh;
             padding: 20px;
             line-height: 1.6;
         }
 
         .container {
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
-        }
-
-        /* Individual Card Sections */
-        .section-card {
             background: white;
-            border-radius: 16px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
             overflow: hidden;
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
-        /* Logo Card - Larger logo with minimal padding */
-        .logo-card {
-            padding: 16px;
+        .header {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            color: #1e293b;
+            padding: 40px 32px;
             text-align: center;
-            background: #f2f1eb;
+            position: relative;
+            border-bottom: 3px solid #0891b2;
         }
 
         .logo-container {
             width: 100%;
+            margin-bottom: 24px;
+            text-align: center;
         }
 
         .logo-image {
             max-width: 100%;
             height: auto;
-            max-height: 180px;
+            max-height: 100px;
         }
 
-        /* Header Card */
-        .header-card {
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-top: 4px solid #0891b2;
+        .header-text {
+            text-align: center;
         }
 
-        .header-content {
-            padding: 32px;
-        }
-
-        .header-content h1 {
-            font-size: 28px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
+        .header h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 4px;
             letter-spacing: -0.025em;
+            color: #1e293b;
         }
 
-        .header-content p {
+        .header p {
             color: #64748b;
             font-size: 16px;
             font-weight: 400;
-            margin-bottom: 24px;
         }
 
-        /* Info Box within Header Card */
+        .form-container {
+            padding: 40px 32px;
+            background: white;
+        }
+
         .info-box {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
-            border: 2px solid #0891b2;
-            border-radius: 12px;
-            padding: 20px;
+            border: 1px solid #0891b2;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
             color: #0c4a6e;
             position: relative;
             overflow: hidden;
         }
 
         .info-box::before {
-            display: none;
+            content: '🏢';
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 24px;
+            opacity: 0.6;
         }
 
         .info-box strong {
             color: #0369a1;
             font-weight: 600;
-        }
-
-        /* Form Card */
-        .form-card {
-            padding: 40px;
         }
 
         .form-group {
@@ -108,9 +105,9 @@
         .form-label {
             display: block;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             color: #1e293b;
-            font-size: 16px;
+            font-size: 15px;
             letter-spacing: -0.025em;
         }
 
@@ -118,7 +115,7 @@
             width: 100%;
             padding: 18px 20px;
             border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 16px;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             background: white;
@@ -147,7 +144,7 @@
         }
 
         textarea.form-input {
-            min-height: 140px;
+            min-height: 130px;
             resize: vertical;
             line-height: 1.6;
         }
@@ -160,7 +157,7 @@
             padding: 20px;
             font-size: 16px;
             font-weight: 600;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
@@ -202,11 +199,10 @@
             box-shadow: none;
         }
 
-        /* Results and Loading in separate cards */
         .loading {
             display: none;
             text-align: center;
-            padding: 32px;
+            margin-top: 28px;
             color: #64748b;
             font-weight: 500;
         }
@@ -241,21 +237,25 @@
 
         .result {
             display: none;
-            padding: 32px;
+            margin-top: 28px;
+            padding: 24px;
+            border-radius: 16px;
             text-align: center;
             font-weight: 500;
+            border-width: 1px;
+            border-style: solid;
         }
 
         .result.success {
             background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
             color: #166534;
-            border-top: 4px solid #22c55e;
+            border-color: #22c55e;
         }
 
         .result.error {
             background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
             color: #dc2626;
-            border-top: 4px solid #ef4444;
+            border-color: #fecaca;
         }
 
         .required {
@@ -264,34 +264,29 @@
         }
 
         /* Enhanced mobile optimizations */
-        @media (max-width: 640px) {
+        @media (max-width: 580px) {
             body {
-                padding: 16px;
-            }
-            
-            .section-card {
-                margin-bottom: 16px;
-                border-radius: 12px;
-            }
-            
-            .logo-card {
                 padding: 12px;
             }
             
+            .container {
+                border-radius: 16px;
+                margin: 0;
+            }
+            
+            .header {
+                padding: 32px 24px;
+            }
+            
             .logo-image {
-                max-width: 100%;
-                max-height: 140px;
+                max-height: 80px;
             }
             
-            .header-content {
-                padding: 24px;
-            }
-            
-            .header-content h1 {
+            .header h1 {
                 font-size: 24px;
             }
             
-            .form-card {
+            .form-container {
                 padding: 32px 24px;
             }
 
@@ -306,12 +301,8 @@
             }
 
             .info-box {
-                padding: 18px;
+                padding: 20px;
                 font-size: 14px;
-            }
-
-            .loading, .result {
-                padding: 24px;
             }
         }
 
@@ -335,28 +326,22 @@
 </head>
 <body>
     <div class="container">
-        <!-- Logo Card - Larger logo, less padding -->
-        <div class="section-card logo-card">
+        <div class="header">
             <div class="logo-container">
                 <img src="logo.png" class="logo-image" alt="Illawong Residential Club">
             </div>
-        </div>
-        
-        <!-- Header Card -->
-        <div class="section-card header-card">
-            <div class="header-content">
-                <h1>Resident Form</h1>
-                <p>Report maintenance issues for your unit or common areas</p>
-                
-                <div class="info-box">
-                    <strong>For non-unit issues, select:</strong><br>
-                    Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
-                </div>
+            <div class="header-text">
+                <h1>Problem Reporting</h1>
+                <p>Lake Illawong Residential Club</p>
             </div>
         </div>
         
-        <!-- Form Card -->
-        <div class="section-card form-card">
+        <div class="form-container">
+            <div class="info-box">
+                <strong>For non-unit issues, select:</strong><br>
+                Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
+            </div>
+
             <form id="faultForm">
                 <div class="form-group">
                     <label class="form-label" for="unitNumber">
@@ -389,26 +374,24 @@
                     Submit Request
                 </button>
             </form>
-        </div>
 
-        <!-- Loading Card -->
-        <div class="section-card loading" id="loading">
-            <div class="loading-dots">
-                <div></div><div></div><div></div>
+            <div class="loading" id="loading">
+                <div class="loading-dots">
+                    <div></div><div></div><div></div>
+                </div>
+                Processing your request...
             </div>
-            Processing your request...
-        </div>
 
-        <!-- Result Card -->
-        <div class="section-card result" id="result">
-            <div id="resultMessage"></div>
+            <div class="result" id="result">
+                <div id="resultMessage"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwbXAKuE3sH9xnRFVpuCWsW97W_USNcjgSVmgPcWmTFrwU9TA0QEK8V32NH9gNwCAat/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
 
-        // Load dropdown options on page load
+        // Load dropdowns on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadDropdownOptions();
         });
@@ -417,64 +400,41 @@
             try {
                 console.log('Loading dropdown options...');
                 
-                // Use the correct API function that exists in the backend
-                const response = await makeRequest({ action: 'getDropdownOptions' });
+                const response = await callScript({ action: 'getDropdownOptions' });
                 
                 if (response.success && response.data) {
-                    // Populate unit numbers
-                    const unitSelect = document.getElementById('unitNumber');
-                    unitSelect.innerHTML = '<option value="">Select Unit Number</option>';
-                    
-                    if (response.data.unitNumbers) {
-                        response.data.unitNumbers.forEach(unit => {
-                            const option = document.createElement('option');
-                            option.value = unit;
-                            option.textContent = unit;
-                            unitSelect.appendChild(option);
-                        });
-                    }
-
-                    // Populate reporters
-                    const reporterSelect = document.getElementById('reportedBy');
-                    reporterSelect.innerHTML = '<option value="">Select Reporter</option>';
-                    
-                    if (response.data.reportedBy) {
-                        response.data.reportedBy.forEach(reporter => {
-                            const option = document.createElement('option');
-                            option.value = reporter;
-                            option.textContent = reporter;
-                            reporterSelect.appendChild(option);
-                        });
-                    }
-                    
+                    populateDropdown('unitNumber', response.data.unitNumbers);
+                    populateDropdown('reportedBy', response.data.reportedBy);
                     console.log('Dropdowns loaded successfully');
                 } else {
-                    console.error('Failed to load dropdowns:', response);
-                    document.getElementById('unitNumber').innerHTML = '<option value="">Error loading units</option>';
-                    document.getElementById('reportedBy').innerHTML = '<option value="">Error loading reporters</option>';
+                    console.log('Failed to load dropdowns, using defaults');
                 }
-
             } catch (error) {
-                console.error('Error loading dropdown options:', error);
-                document.getElementById('unitNumber').innerHTML = '<option value="">Error loading units</option>';
-                document.getElementById('reportedBy').innerHTML = '<option value="">Error loading reporters</option>';
+                console.error('Error loading dropdowns:', error);
             }
         }
 
-        async function submitFault(formData) {
-            return makeRequest(formData);
+        function populateDropdown(elementId, options) {
+            const select = document.getElementById(elementId);
+            select.innerHTML = '<option value="">Select...</option>';
+            
+            options.forEach(option => {
+                const optionElement = document.createElement('option');
+                optionElement.value = option;
+                optionElement.textContent = option;
+                select.appendChild(optionElement);
+            });
         }
 
-        async function makeRequest(data) {
+        async function callScript(data) {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-                
-                // Create script element for JSONP
                 const script = document.createElement('script');
-                const params = new URLSearchParams(data).toString();
-                script.src = `${WEB_APP_URL}?${params}&callback=${callbackName}`;
+                const params = new URLSearchParams(data);
+                params.append('callback', callbackName);
                 
-                // Set up callback
+                script.src = `${WEB_APP_URL}?${params.toString()}`;
+                
                 window[callbackName] = function(response) {
                     document.head.removeChild(script);
                     delete window[callbackName];
@@ -546,24 +506,54 @@
                 }
                 
                 result.style.display = 'block';
-                submitBtn.disabled = false;
                 
             } catch (error) {
-                // Hide loading
+                // Network error
                 loading.style.display = 'none';
-                
-                // Error message
                 result.className = 'result error';
-                resultMessage.innerHTML = `
-                    <strong>❌ Submission Failed</strong><br><br>
-                    Network error. Please check your connection and try again.
-                `;
                 result.style.display = 'block';
-                submitBtn.disabled = false;
-                
-                console.error('Submission error:', error);
+                resultMessage.innerHTML = `
+                    <strong>❌ Network Error</strong><br><br>
+                    Please check your internet connection and try again.
+                `;
             }
+            
+            // Re-enable submit button
+            submitBtn.disabled = false;
         });
+
+        async function submitFault(formData) {
+            return new Promise((resolve, reject) => {
+                // Create callback function name
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                
+                // Create script element for JSONP
+                const script = document.createElement('script');
+                const params = new URLSearchParams(formData);
+                params.append('callback', callbackName);
+                
+                script.src = `${WEB_APP_URL}?${params.toString()}`;
+                
+                // Set up callback function
+                window[callbackName] = function(response) {
+                    // Clean up
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                // Handle errors
+                script.onerror = function() {
+                    // Clean up
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                // Add script to document
+                document.head.appendChild(script);
+            });
+        }
     </script>
 </body>
 </html>
