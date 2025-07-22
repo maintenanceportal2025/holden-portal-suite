@@ -46,10 +46,9 @@
         }
 
         .logo-image {
-            width: 90%;
+            max-width: 100%;
             height: auto;
-            max-height: 160px;
-            min-height: 100px;
+            max-height: 180px;
         }
 
         /* Header Card */
@@ -89,12 +88,7 @@
         }
 
         .info-box::before {
-            content: '🏢';
-            position: absolute;
-            top: 12px;
-            right: 16px;
-            font-size: 20px;
-            opacity: 0.6;
+            display: none;
         }
 
         .info-box strong {
@@ -285,9 +279,8 @@
             }
             
             .logo-image {
-                width: 85%;
-                max-height: 120px;
-                min-height: 80px;
+                max-width: 100%;
+                max-height: 140px;
             }
             
             .header-content {
@@ -413,7 +406,7 @@
     </div>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwRNcmXdm7v-VdqAbLLzxYQlwQMsR-8S7v-v_iZwrUZLSlB7G2zMJGFKTnOYiP4ZOhL/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwbXAKuE3sH9xnRFVpuCWsW97W_USNcjgSVmgPcWmTFrwU9TA0QEK8V32NH9gNwCAat/exec';
 
         // Load dropdown options on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -424,36 +417,41 @@
             try {
                 console.log('Loading dropdown options...');
                 
-                // Load units
-                const unitsResponse = await makeRequest({ action: 'getUnits' });
-                const unitSelect = document.getElementById('unitNumber');
+                // Use the correct API function that exists in the backend
+                const response = await makeRequest({ action: 'getDropdownOptions' });
                 
-                if (unitsResponse.success && Array.isArray(unitsResponse.data)) {
+                if (response.success && response.data) {
+                    // Populate unit numbers
+                    const unitSelect = document.getElementById('unitNumber');
                     unitSelect.innerHTML = '<option value="">Select Unit Number</option>';
-                    unitsResponse.data.forEach(unit => {
-                        const option = document.createElement('option');
-                        option.value = unit.unitNumber;
-                        option.textContent = `${unit.unitNumber} - ${unit.displayName}`;
-                        unitSelect.appendChild(option);
-                    });
-                } else {
-                    unitSelect.innerHTML = '<option value="">Error loading units</option>';
-                }
+                    
+                    if (response.data.unitNumbers) {
+                        response.data.unitNumbers.forEach(unit => {
+                            const option = document.createElement('option');
+                            option.value = unit;
+                            option.textContent = unit;
+                            unitSelect.appendChild(option);
+                        });
+                    }
 
-                // Load reporters
-                const reportersResponse = await makeRequest({ action: 'getReporters' });
-                const reporterSelect = document.getElementById('reportedBy');
-                
-                if (reportersResponse.success && Array.isArray(reportersResponse.data)) {
+                    // Populate reporters
+                    const reporterSelect = document.getElementById('reportedBy');
                     reporterSelect.innerHTML = '<option value="">Select Reporter</option>';
-                    reportersResponse.data.forEach(reporter => {
-                        const option = document.createElement('option');
-                        option.value = reporter.name;
-                        option.textContent = reporter.name;
-                        reporterSelect.appendChild(option);
-                    });
+                    
+                    if (response.data.reportedBy) {
+                        response.data.reportedBy.forEach(reporter => {
+                            const option = document.createElement('option');
+                            option.value = reporter;
+                            option.textContent = reporter;
+                            reporterSelect.appendChild(option);
+                        });
+                    }
+                    
+                    console.log('Dropdowns loaded successfully');
                 } else {
-                    reporterSelect.innerHTML = '<option value="">Error loading reporters</option>';
+                    console.error('Failed to load dropdowns:', response);
+                    document.getElementById('unitNumber').innerHTML = '<option value="">Error loading units</option>';
+                    document.getElementById('reportedBy').innerHTML = '<option value="">Error loading reporters</option>';
                 }
 
             } catch (error) {
