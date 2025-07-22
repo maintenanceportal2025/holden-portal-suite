@@ -22,6 +22,24 @@
         .container {
             max-width: 500px;
             margin: 0 auto;
+        }
+
+        /* NEW: Separate logo section */
+        .logo-section {
+            background: #eeeeee;
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 180px;
+        }
+
+        /* Modified: Main card container */
+        .main-card {
             background: white;
             border-radius: 20px;
             box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
@@ -36,18 +54,6 @@
             text-align: center;
             position: relative;
             border-bottom: 3px solid #0891b2;
-        }
-
-        .logo-container {
-            width: 100%;
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .logo-image {
-            max-width: 100%;
-            height: auto;
-            max-height: 180px;
         }
 
         .header-text {
@@ -269,7 +275,12 @@
                 padding: 12px;
             }
             
-            .container {
+            .logo-section {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .main-card {
                 border-radius: 16px;
                 margin: 0;
             }
@@ -326,63 +337,68 @@
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="logo-container">
-                <img src="logo.png" class="logo-image" alt="Illawong Residential Club">
-            </div>
-            <div class="header-text">
-                <h1>Problem Reporting System</h1>
-            </div>
+        <!-- NEW: Separate logo section -->
+        <div class="logo-section">
+            <img src="logo.png" class="logo-image" alt="Illawong Residential Club">
         </div>
-        
-        <div class="form-container">
-            <div class="info-box">
-                <strong>For non-unit issues, select:</strong><br>
-                Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
+
+        <!-- Modified: Main card with header and form -->
+        <div class="main-card">
+            <div class="header">
+                <div class="header-text">
+                    <h1>Problem Reporting System</h1>
+                </div>
             </div>
-
-            <form id="faultForm">
-                <div class="form-group">
-                    <label class="form-label" for="unitNumber">
-                        Unit Number <span class="required">*</span>
-                    </label>
-                    <select id="unitNumber" name="unitNumber" class="form-input" required>
-                        <option value="">Loading units...</option>
-                    </select>
+            
+            <div class="form-container">
+                <div class="info-box">
+                    <strong>For non-unit issues, select:</strong><br>
+                    Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="reportedBy">
-                        Reported By <span class="required">*</span>
-                    </label>
-                    <select id="reportedBy" name="reportedBy" class="form-input" required>
-                        <option value="">Loading names...</option>
-                    </select>
+                <form id="faultForm">
+                    <div class="form-group">
+                        <label class="form-label" for="unitNumber">
+                            Unit Number <span class="required">*</span>
+                        </label>
+                        <select id="unitNumber" name="unitNumber" class="form-input" required>
+                            <option value="">Loading units...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reportedBy">
+                            Reported By <span class="required">*</span>
+                        </label>
+                        <select id="reportedBy" name="reportedBy" class="form-input" required>
+                            <option value="">Loading names...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="problemDescription">
+                            Problem Description <span class="required">*</span>
+                        </label>
+                        <textarea id="problemDescription" name="problemDescription" class="form-input" 
+                                  placeholder="Please provide a detailed description of the maintenance problem..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn" id="submitBtn">
+                        <span>📤</span>
+                        Submit Request
+                    </button>
+                </form>
+
+                <div class="loading" id="loading">
+                    <div class="loading-dots">
+                        <div></div><div></div><div></div>
+                    </div>
+                    Processing your request...
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label" for="problemDescription">
-                        Problem Description <span class="required">*</span>
-                    </label>
-                    <textarea id="problemDescription" name="problemDescription" class="form-input" 
-                              placeholder="Please provide a detailed description of the maintenance problem..." required></textarea>
+                <div class="result" id="result">
+                    <div id="resultMessage"></div>
                 </div>
-
-                <button type="submit" class="submit-btn" id="submitBtn">
-                    <span>📤</span>
-                    Submit Request
-                </button>
-            </form>
-
-            <div class="loading" id="loading">
-                <div class="loading-dots">
-                    <div></div><div></div><div></div>
-                </div>
-                Processing your request...
-            </div>
-
-            <div class="result" id="result">
-                <div id="resultMessage"></div>
             </div>
         </div>
     </div>
