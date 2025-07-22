@@ -24,7 +24,7 @@
             margin: 0 auto;
         }
 
-        /* Logo section */
+        /* NEW: Separate logo section */
         .logo-section {
             background: #eeeeee;
             text-align: center;
@@ -38,7 +38,7 @@
             max-height: 180px;
         }
 
-        /* Title card section */
+        /* NEW: Title card section */
         .title-card {
             background: white;
             border-radius: 20px;
@@ -68,7 +68,7 @@
             font-weight: 400;
         }
 
-        /* Form card section */
+        /* Modified: Form card section */
         .form-card {
             background: white;
             border-radius: 20px;
@@ -76,6 +76,8 @@
             overflow: hidden;
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
+
+        /* Remove old styles */
 
         .form-container {
             padding: 40px 32px;
@@ -288,8 +290,16 @@
                 margin: 0;
             }
             
+            .header {
+                padding: 32px 24px;
+            }
+            
             .logo-image {
                 max-height: 140px;
+            }
+            
+            .header h1 {
+                font-size: 24px;
             }
             
             .form-container {
@@ -332,18 +342,18 @@
 </head>
 <body>
     <div class="container">
-        <!-- Logo section -->
+        <!-- NEW: Separate logo section -->
         <div class="logo-section">
             <img src="logo.png" class="logo-image" alt="Illawong Residential Club">
         </div>
 
-        <!-- Resident Form title section -->
+        <!-- NEW: Resident Form title section -->
         <div class="title-card">
             <h1>Resident Form</h1>
             <p>Report maintenance issues for your unit or common areas</p>
         </div>
 
-        <!-- Form section -->
+        <!-- Modified: Form section -->
         <div class="form-card">
             <div class="form-container">
                 <div class="info-box">
