@@ -46,9 +46,10 @@
         }
 
         .logo-image {
-            max-width: 100%;
+            width: 90%;
             height: auto;
-            max-height: 180px;
+            max-height: 160px;
+            min-height: 100px;
         }
 
         /* Header Card */
@@ -88,7 +89,12 @@
         }
 
         .info-box::before {
-            display: none;
+            content: '🏢';
+            position: absolute;
+            top: 12px;
+            right: 16px;
+            font-size: 20px;
+            opacity: 0.6;
         }
 
         .info-box strong {
@@ -279,8 +285,9 @@
             }
             
             .logo-image {
-                max-width: 100%;
-                max-height: 140px;
+                width: 85%;
+                max-height: 120px;
+                min-height: 80px;
             }
             
             .header-content {
