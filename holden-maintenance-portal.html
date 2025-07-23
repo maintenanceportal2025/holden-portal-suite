@@ -252,10 +252,27 @@
             font-size: 16px;
         }
         
+        .problem-unit-zone {
+            color: #6b7280;
+            font-size: 14px;
+        }
+        
+        .problem-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+        
         .problem-badges {
             display: flex;
             gap: 8px;
             align-items: center;
+        }
+        
+        .problem-date {
+            color: #6b7280;
+            font-size: 14px;
         }
         
         .badge {
@@ -278,20 +295,13 @@
         .badge-cancelled { background: #f3f4f6; color: #6b7280; }
         
         .problem-details {
-            margin-bottom: 12px;
+            margin-bottom: 0;
         }
         
         .problem-description {
             color: #4b5563;
             margin-bottom: 8px;
             line-height: 1.5;
-        }
-        
-        .problem-meta {
-            display: flex;
-            gap: 20px;
-            color: #6b7280;
-            font-size: 14px;
         }
         
         /* ===================================================================
@@ -490,17 +500,18 @@
             .problem-header {
                 flex-direction: column;
                 align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .problem-footer {
+                flex-direction: column;
+                align-items: flex-start;
                 gap: 10px;
             }
             
             .problem-badges {
                 align-self: stretch;
                 justify-content: flex-start;
-            }
-            
-            .problem-meta {
-                flex-direction: column;
-                gap: 5px;
             }
             
             .modal-content {
@@ -819,17 +830,16 @@
                 <div class="problem-item" data-problem-id="${problem.internalId}">
                     <div class="problem-header">
                         <div class="problem-id">${friendlyPID}</div>
-                        <div class="problem-badges">
-                            <span class="badge ${priorityClass}">${problem.priority || 'Medium'}</span>
-                            <span class="badge ${statusClass}">${problem.status || 'Reported'}</span>
-                        </div>
+                        <div class="problem-unit-zone">Unit ${problem.unitNumber || 'Unknown'} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-details">
                         <div class="problem-description">${problem.problemDescription || 'No description'}</div>
-                        <div class="problem-meta">
-                            <span>📍 Unit: ${problem.unitNumber || 'Unknown'}</span>
-                            <span>👤 Reporter: ${problem.reportedBy || 'Unknown'}</span>
-                            <span>📅 Date: ${formatDate(problem.timestamp)}</span>
+                        <div class="problem-footer">
+                            <div class="problem-badges">
+                                <span class="badge ${priorityClass}">${problem.priority || 'Medium'}</span>
+                                <span class="badge ${statusClass}">${problem.status || 'Reported'}</span>
+                            </div>
+                            <div class="problem-date">${formatDate(problem.timestamp)}</div>
                         </div>
                     </div>
                 </div>
