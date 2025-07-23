@@ -77,6 +77,21 @@
             backdrop-filter: blur(10px);
         }
         
+        .data-indicator.loading {
+            background: rgba(255,255,255,0.2);
+            color: #fff;
+        }
+        
+        .data-indicator.success {
+            background: rgba(34, 197, 94, 0.2);
+            color: #dcfce7;
+        }
+        
+        .data-indicator.error {
+            background: rgba(239, 68, 68, 0.2);
+            color: #fecaca;
+        }
+        
         /* ===================================================================
                                 SEARCH & FILTER STYLES
         =================================================================== */
@@ -125,6 +140,7 @@
             font-size: 16px;
             font-weight: 500;
             transition: background-color 0.3s ease;
+            min-width: 140px;
         }
         
         .search-btn:hover { 
@@ -503,7 +519,7 @@
                     <p>Simple Problem Management System</p>
                 </div>
                 <div class="header-right">
-                    <span id="dataStatus" class="data-indicator">Loading...</span>
+                    <span id="dataStatus" class="data-indicator loading">Loading...</span>
                 </div>
             </div>
         </div>
@@ -515,7 +531,7 @@
             <h2>🔍 Search & Filter Problems</h2>
             <div class="search-box">
                 <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit number, description, or reporter...">
-                <button id="searchBtn" class="search-btn">Search</button>
+                <button id="searchBtn" class="search-btn">🔍 Search</button>
             </div>
             
             <div class="filter-tabs">
@@ -597,10 +613,10 @@
 
     <script>
         // ===================================================================
-        // HOLDEN MAINTENANCE PORTAL - SIMPLIFIED VERSION
+        // HOLDEN MAINTENANCE PORTAL - COMPLETE VERSION
         // ===================================================================
         
-        // Configuration - UPDATE THIS URL TO YOUR NEW BACKEND
+        // Configuration - Your actual backend URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
         
         // Global state
@@ -622,70 +638,70 @@
         // ===================================================================
         
         function setupEventListeners() {
-    // Auto-search functionality with dynamic button
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
+            // Auto-search functionality with dynamic button
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
 
-    // Real-time search as user types
-    searchInput.addEventListener('input', function() {
-        const value = this.value.trim();
-        
-        if (value.length > 0) {
-            // Auto-search as user types
-            searchTerm = value;
-            applyFilters();
+            // Real-time search as user types
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                
+                if (value.length > 0) {
+                    // Auto-search as user types
+                    searchTerm = value;
+                    applyFilters();
+                    
+                    // Change to red clear button
+                    searchBtn.textContent = '❌ Clear Search';
+                    searchBtn.className = 'search-btn search-btn-clear';
+                    searchBtn.dataset.action = 'clear';
+                } else {
+                    // Reset to search state
+                    searchTerm = '';
+                    applyFilters();
+                    
+                    searchBtn.textContent = '🔍 Search';
+                    searchBtn.className = 'search-btn';
+                    searchBtn.dataset.action = 'search';
+                }
+            });
+
+            // Clear search when button clicked
+            searchBtn.addEventListener('click', function() {
+                if (this.dataset.action === 'clear') {
+                    searchInput.value = '';
+                    searchTerm = '';
+                    applyFilters();
+                    
+                    // Reset button
+                    this.textContent = '🔍 Search';
+                    this.className = 'search-btn';
+                    this.dataset.action = 'search';
+                    searchInput.focus();
+                }
+            });
+
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    setActiveFilter(this.dataset.filter);
+                });
+            });
             
-            // Change to red clear button
-            searchBtn.textContent = '❌ Clear Search';
-            searchBtn.className = 'search-btn search-btn-clear';
-            searchBtn.dataset.action = 'clear';
-        } else {
-            // Reset to search state
-            searchTerm = '';
-            applyFilters();
+            // Modal controls
+            document.getElementById('closeModal').addEventListener('click', closeModal);
+            document.getElementById('problemModal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
             
-            searchBtn.textContent = '🔍 Search';
-            searchBtn.className = 'search-btn';
-            searchBtn.dataset.action = 'search';
+            // Form submission
+            document.getElementById('problemForm').addEventListener('submit', saveProblem);
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeModal();
+            });
         }
-    });
-
-    // Clear search when button clicked
-    searchBtn.addEventListener('click', function() {
-        if (this.dataset.action === 'clear') {
-            searchInput.value = '';
-            searchTerm = '';
-            applyFilters();
-            
-            // Reset button
-            this.textContent = '🔍 Search';
-            this.className = 'search-btn';
-            this.dataset.action = 'search';
-            searchInput.focus();
-        }
-    });
-
-    // Filter tabs
-    document.querySelectorAll('.filter-tab').forEach(tab => {
-        tab.addEventListener('click', function() {
-            setActiveFilter(this.dataset.filter);
-        });
-    });
-    
-    // Modal controls
-    document.getElementById('closeModal').addEventListener('click', closeModal);
-    document.getElementById('problemModal').addEventListener('click', function(e) {
-        if (e.target === this) closeModal();
-    });
-    
-    // Form submission
-    document.getElementById('problemForm').addEventListener('submit', saveProblem);
-    
-    // Keyboard shortcuts
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeModal();
-    });
-}
         
         // ===================================================================
         // DATA LOADING
@@ -709,7 +725,7 @@
             } catch (error) {
                 console.error('❌ Error loading problems:', error);
                 updateDataStatus('Error loading problems', 'error');
-                showEmptyState('Failed to load problems. Please try again.');
+                showEmptyState('Failed to load problems. Please check backend configuration.');
             }
         }
         
@@ -732,28 +748,32 @@
         function applyFilters() {
             let filtered = [...problems];
             
-            // Apply status filter
+            // Apply status filter - backend uses 'status' field
             if (activeFilter !== 'all') {
-                filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+                filtered = filtered.filter(problem => problem.status === activeFilter);
             }
             
-            // Apply search filter
+            // Apply search filter with safe string conversion
             if (searchTerm) {
                 const searchLower = searchTerm.toLowerCase();
                 filtered = filtered.filter(problem => {
                     const friendlyPID = getFriendlyPID(problem.internalId);
+                    const unitNumber = String(problem.unitNumber || '');
+                    const description = String(problem.problemDescription || '');
+                    const reporter = String(problem.reportedBy || '');
+                    
                     return friendlyPID.toLowerCase().includes(searchLower) ||
-                           (problem.unitNumber || '').toLowerCase().includes(searchLower) ||
-                           (problem.problemDescription || '').toLowerCase().includes(searchLower) ||
-                           (problem.reportedBy || '').toLowerCase().includes(searchLower);
+                           unitNumber.toLowerCase().includes(searchLower) ||
+                           description.toLowerCase().includes(searchLower) ||
+                           reporter.toLowerCase().includes(searchLower);
                 });
             }
             
-            // Sort by priority (Urgent first)
+            // Sort by priority (Urgent first) - backend uses 'priority' field
             const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
             filtered.sort((a, b) => {
-                const aPriority = priorityOrder[a.problemPriority] || 3;
-                const bPriority = priorityOrder[b.problemPriority] || 3;
+                const aPriority = priorityOrder[a.priority] || 3;
+                const bPriority = priorityOrder[b.priority] || 3;
                 return aPriority - bPriority;
             });
             
@@ -792,16 +812,16 @@
         
         function createProblemCard(problem) {
             const friendlyPID = getFriendlyPID(problem.internalId);
-            const priorityClass = `badge-${(problem.problemPriority || 'medium').toLowerCase()}`;
-            const statusClass = `badge-${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}`;
+            const priorityClass = `badge-${(problem.priority || 'medium').toLowerCase()}`;
+            const statusClass = `badge-${(problem.status || 'reported').toLowerCase().replace(' ', '-')}`;
             
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
                     <div class="problem-header">
                         <div class="problem-id">${friendlyPID}</div>
                         <div class="problem-badges">
-                            <span class="badge ${priorityClass}">${problem.problemPriority || 'Medium'}</span>
-                            <span class="badge ${statusClass}">${problem.problemStatus || 'Reported'}</span>
+                            <span class="badge ${priorityClass}">${problem.priority || 'Medium'}</span>
+                            <span class="badge ${statusClass}">${problem.status || 'Reported'}</span>
                         </div>
                     </div>
                     <div class="problem-details">
@@ -838,8 +858,8 @@
             // Populate form
             document.getElementById('editProblemId').value = friendlyPID;
             document.getElementById('editUnitNumber').value = problem.unitNumber || '';
-            document.getElementById('editStatus').value = problem.problemStatus || 'Reported';
-            document.getElementById('editPriority').value = problem.problemPriority || 'Medium';
+            document.getElementById('editStatus').value = problem.status || 'Reported';
+            document.getElementById('editPriority').value = problem.priority || 'Medium';
             document.getElementById('editDescription').value = problem.problemDescription || '';
             document.getElementById('editComments').value = problem.comments || '';
             
@@ -882,7 +902,12 @@
                     // Update local data
                     const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
                     if (problemIndex !== -1) {
-                        problems[problemIndex] = { ...problems[problemIndex], ...updateData };
+                        problems[problemIndex] = { 
+                            ...problems[problemIndex], 
+                            status: updateData.problemStatus,
+                            priority: updateData.problemPriority,
+                            comments: updateData.comments
+                        };
                     }
                     
                     applyFilters();
