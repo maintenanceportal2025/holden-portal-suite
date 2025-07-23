@@ -622,70 +622,70 @@
         // ===================================================================
         
         function setupEventListeners() {
-            // Auto-search functionality with dynamic button
-            const searchInput = document.getElementById('searchInput');
-            const searchBtn = document.getElementById('searchBtn');
+    // Auto-search functionality with dynamic button
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
 
-            // Real-time search as user types
-            searchInput.addEventListener('input', function() {
-                const value = this.value.trim();
-                
-                if (value.length > 0) {
-                    // Auto-search as user types
-                    searchTerm = value;
-                    applyFilters();
-                    
-                    // Change to red clear button
-                    searchBtn.textContent = '❌ Clear Search';
-                    searchBtn.className = 'search-btn search-btn-clear';
-                    searchBtn.dataset.action = 'clear';
-                } else {
-                    // Reset to search state
-                    searchTerm = '';
-                    applyFilters();
-                    
-                    searchBtn.textContent = '🔍 Search';
-                    searchBtn.className = 'search-btn';
-                    searchBtn.dataset.action = 'search';
-                }
-            });
-
-            // Clear search when button clicked
-            searchBtn.addEventListener('click', function() {
-                if (this.dataset.action === 'clear') {
-                    searchInput.value = '';
-                    searchTerm = '';
-                    applyFilters();
-                    
-                    // Reset button
-                    this.textContent = '🔍 Search';
-                    this.className = 'search-btn';
-                    this.dataset.action = 'search';
-                    searchInput.focus(); // Return focus to input
-                }
-            });
+    // Real-time search as user types
+    searchInput.addEventListener('input', function() {
+        const value = this.value.trim();
+        
+        if (value.length > 0) {
+            // Auto-search as user types
+            searchTerm = value;
+            applyFilters();
             
-            // Filter tabs
-            document.querySelectorAll('.filter-tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    setActiveFilter(this.dataset.filter);
-                });
-            });
+            // Change to red clear button
+            searchBtn.textContent = '❌ Clear Search';
+            searchBtn.className = 'search-btn search-btn-clear';
+            searchBtn.dataset.action = 'clear';
+        } else {
+            // Reset to search state
+            searchTerm = '';
+            applyFilters();
             
-            // Modal controls
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            document.getElementById('problemModal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-            
-            // Form submission
-            document.getElementById('problemForm').addEventListener('submit', saveProblem);
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
-            });
+            searchBtn.textContent = '🔍 Search';
+            searchBtn.className = 'search-btn';
+            searchBtn.dataset.action = 'search';
         }
+    });
+
+    // Clear search when button clicked
+    searchBtn.addEventListener('click', function() {
+        if (this.dataset.action === 'clear') {
+            searchInput.value = '';
+            searchTerm = '';
+            applyFilters();
+            
+            // Reset button
+            this.textContent = '🔍 Search';
+            this.className = 'search-btn';
+            this.dataset.action = 'search';
+            searchInput.focus();
+        }
+    });
+
+    // Filter tabs
+    document.querySelectorAll('.filter-tab').forEach(tab => {
+        tab.addEventListener('click', function() {
+            setActiveFilter(this.dataset.filter);
+        });
+    });
+    
+    // Modal controls
+    document.getElementById('closeModal').addEventListener('click', closeModal);
+    document.getElementById('problemModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    
+    // Form submission
+    document.getElementById('problemForm').addEventListener('submit', saveProblem);
+    
+    // Keyboard shortcuts
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeModal();
+    });
+}
         
         // ===================================================================
         // DATA LOADING
