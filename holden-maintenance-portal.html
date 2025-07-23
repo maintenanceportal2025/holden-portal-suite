@@ -648,6 +648,9 @@
                 updateDataStatus('Loading problems...', 'loading');
                 
                 const response = await makeRequest('getFaultLogData');
+                // ADD THESE DEBUG LINES:
+        console.log('Raw backend response:', response);
+        console.log('First problem from backend:', response.data?.[0]);
                 
                 if (response.success) {
                     problems = response.data || [];
