@@ -131,6 +131,15 @@
             background: #1d4ed8; 
         }
         
+        .search-btn-clear {
+            background: #dc2626 !important;
+            color: white !important;
+        }
+
+        .search-btn-clear:hover {
+            background: #b91c1c !important;
+        }
+        
         .filter-tabs {
             display: flex;
             gap: 8px;
@@ -592,7 +601,7 @@
         // ===================================================================
         
         // Configuration - UPDATE THIS URL TO YOUR NEW BACKEND
-       const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
+        const WEB_APP_URL = 'YOUR_NEW_BACKEND_URL_HERE';
         
         // Global state
         let problems = [];
@@ -613,9 +622,48 @@
         // ===================================================================
         
         function setupEventListeners() {
-            // Search functionality
-            document.getElementById('searchInput').addEventListener('input', handleSearch);
-            document.getElementById('searchBtn').addEventListener('click', handleSearch);
+            // Auto-search functionality with dynamic button
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            // Real-time search as user types
+            searchInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                
+                if (value.length > 0) {
+                    // Auto-search as user types
+                    searchTerm = value;
+                    applyFilters();
+                    
+                    // Change to red clear button
+                    searchBtn.textContent = '❌ Clear Search';
+                    searchBtn.className = 'search-btn search-btn-clear';
+                    searchBtn.dataset.action = 'clear';
+                } else {
+                    // Reset to search state
+                    searchTerm = '';
+                    applyFilters();
+                    
+                    searchBtn.textContent = '🔍 Search';
+                    searchBtn.className = 'search-btn';
+                    searchBtn.dataset.action = 'search';
+                }
+            });
+
+            // Clear search when button clicked
+            searchBtn.addEventListener('click', function() {
+                if (this.dataset.action === 'clear') {
+                    searchInput.value = '';
+                    searchTerm = '';
+                    applyFilters();
+                    
+                    // Reset button
+                    this.textContent = '🔍 Search';
+                    this.className = 'search-btn';
+                    this.dataset.action = 'search';
+                    searchInput.focus(); // Return focus to input
+                }
+            });
             
             // Filter tabs
             document.querySelectorAll('.filter-tab').forEach(tab => {
@@ -648,9 +696,6 @@
                 updateDataStatus('Loading problems...', 'loading');
                 
                 const response = await makeRequest('getFaultLogData');
-                // ADD THESE DEBUG LINES:
-        console.log('Raw backend response:', response);
-        console.log('First problem from backend:', response.data?.[0]);
                 
                 if (response.success) {
                     problems = response.data || [];
@@ -671,11 +716,6 @@
         // ===================================================================
         // SEARCH & FILTERING
         // ===================================================================
-        
-        function handleSearch() {
-            searchTerm = document.getElementById('searchInput').value.trim();
-            applyFilters();
-        }
         
         function setActiveFilter(filter) {
             activeFilter = filter;
@@ -699,22 +739,14 @@
             
             // Apply search filter
             if (searchTerm) {
-
-                
                 const searchLower = searchTerm.toLowerCase();
-filtered = filtered.filter(problem => {
-    const friendlyPID = getFriendlyPID(problem.internalId);
-    const unitNumber = String(problem.unitNumber || '');
-    const description = String(problem.problemDescription || '');
-    const reportedBy = String(problem.reportedBy || '');
-    
-    return friendlyPID.toLowerCase().includes(searchLower) ||
-           unitNumber.toLowerCase().includes(searchLower) ||
-           description.toLowerCase().includes(searchLower) ||
-           reportedBy.toLowerCase().includes(searchLower);
-});
-
-                
+                filtered = filtered.filter(problem => {
+                    const friendlyPID = getFriendlyPID(problem.internalId);
+                    return friendlyPID.toLowerCase().includes(searchLower) ||
+                           (problem.unitNumber || '').toLowerCase().includes(searchLower) ||
+                           (problem.problemDescription || '').toLowerCase().includes(searchLower) ||
+                           (problem.reportedBy || '').toLowerCase().includes(searchLower);
+                });
             }
             
             // Sort by priority (Urgent first)
