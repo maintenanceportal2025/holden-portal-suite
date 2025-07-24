@@ -801,10 +801,17 @@
                     return aPriority - bPriority;
                 }
                 
-                // Secondary sort: Date (oldest first)
-                const aDate = new Date(a.timestamp || a.lastUpdated || 0);
-                const bDate = new Date(b.timestamp || b.lastUpdated || 0);
-                return aDate - bDate;
+                // Secondary sort: Date (oldest first) - try multiple timestamp fields
+                const getTimestamp = (problem) => {
+                    const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+                    if (!timestamp) return new Date(0); // Very old date if no timestamp
+                    return new Date(timestamp);
+                };
+                
+                const aDate = getTimestamp(a);
+                const bDate = getTimestamp(b);
+                
+                return aDate - bDate; // Oldest first
             });
             
             filteredProblems = filtered;
