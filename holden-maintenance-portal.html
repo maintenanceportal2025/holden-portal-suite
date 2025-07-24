@@ -210,6 +210,41 @@
             color: #1f2937;
         }
         
+        .report-section {
+            display: flex;
+            gap: 10px;
+            margin: 15px 0;
+            justify-content: flex-start;
+        }
+        
+        .report-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .report-btn {
+            background: #2563eb;
+            color: white;
+        }
+        
+        .report-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .report-btn.green {
+            background: #059669;
+            color: white;
+        }
+        
         .results-count {
             background: #e5e7eb;
             color: #6b7280;
@@ -541,7 +576,7 @@
         <div class="search-section">
             <h2>🔍 Search & Filter Problems</h2>
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit (eg unit 9), zone (eg zone 1) or description...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit, zone, description, or reporter...">
                 <button id="searchBtn" class="search-btn">🔍 Search</button>
             </div>
             
@@ -557,8 +592,14 @@
         <!-- PROBLEMS SECTION -->
         <div class="problems-section">
             <div class="section-header">
-                <h3 class="section-title">Problems List</h3>
-                <span id="resultsCount" class="results-count">Loading...</span>
+                <h3 id="resultsCount" class="section-title">Problems List</h3>
+                <span class="results-count">Loading...</span>
+                
+                <!-- REPORT BUTTONS -->
+                <div class="report-section">
+                    <button id="viewListReport" class="report-btn">📄 View Report</button>
+                    <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
+                </div>
             </div>
             
             <div id="problemsList" class="problems-list">
@@ -622,6 +663,19 @@
         </div>
     </div>
 
+    <!-- REPORT MODAL -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Report Preview</h3>
+                <button id="closeReportModal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <pre id="reportText" style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; background: #f8f9fa; padding: 20px; border-radius: 6px; max-height: 600px; overflow-y: auto;"></pre>
+            </div>
+        </div>
+    </div>
+
     <script>
         // ===================================================================
         // HOLDEN MAINTENANCE PORTAL - COMPLETE VERSION
@@ -675,7 +729,124 @@
                     searchBtn.className = 'search-btn';
                     searchBtn.dataset.action = 'search';
                 }
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    document.getElementById('reportModal').classList.add('hidden');
+                }
             });
+        }
+        
+        // ===================================================================
+        // REPORTING FUNCTIONS
+        // ===================================================================
+        
+        function generateListReport() {
+            // Use filtered data for report
+            const reportData = filteredProblems.map(problem => ({
+                pid: getFriendlyPID(problem.internalId),
+                unit: problem.unitNumber || 'Unknown',
+                zone: problem.zone || 'Unknown',
+                priority: problem.problemPriority || 'Medium',
+                status: problem.problemStatus || 'Reported',
+                description: problem.problemDescription || 'No description',
+                reporter: problem.reportedBy || 'Unknown',
+                date: formatDate(problem.timestamp),
+                assignedTo: problem.assignedTo || 'Unassigned'
+            }));
+            
+            let report = 'HOLDEN MAINTENANCE PORTAL - PROBLEMS REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Total Problems: ${reportData.length}\n`;
+            report += `Filter: ${activeFilter === 'all' ? 'All Problems' : activeFilter}\n`;
+            report += `Search: ${searchTerm || 'None'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Priority breakdown
+            const priorityCount = {
+                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
+                'High': reportData.filter(p => p.priority === 'High').length,
+                'Medium': reportData.filter(p => p.priority === 'Medium').length,
+                'Low': reportData.filter(p => p.priority === 'Low').length
+            };
+            
+            report += 'PRIORITY BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(priorityCount).forEach(([priority, count]) => {
+                if (count > 0) {
+                    report += `${priority}: ${count}\n`;
+                }
+            });
+            report += '\n';
+            
+            // Status breakdown
+            const statusCount = {};
+            reportData.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+            
+            report += 'STATUS BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(statusCount).forEach(([status, count]) => {
+                report += `${status}: ${count}\n`;
+            });
+            report += '\n';
+            
+            // Detailed list
+            report += 'DETAILED PROBLEM LIST:\n';
+            report += '-'.repeat(60) + '\n';
+            
+            reportData.forEach((problem, index) => {
+                report += `${index + 1}. ${problem.pid}\n`;
+                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
+                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
+                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
+                report += `   Assigned: ${problem.assignedTo}\n`;
+                report += `   Description: ${problem.description}\n`;
+                report += '\n';
+            });
+            
+            report += '='.repeat(60) + '\n';
+            report += 'End of Report\n';
+            
+            return report;
+        }
+        
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateListReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        async function copyReportToClipboard() {
+            const report = generateListReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                // Show success feedback
+                const copyBtn = document.getElementById('copyListReport');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '#059669';
+                }, 2000);
+                
+                updateDataStatus('Report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy report:', error);
+                updateDataStatus('Failed to copy report', 'error');
+            }
+        }
 
             // Clear search when button clicked
             searchBtn.addEventListener('click', function() {
@@ -708,10 +879,24 @@
             // Form submission
             document.getElementById('problemForm').addEventListener('submit', saveProblem);
             
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
-            });
+            // Report buttons
+            const viewReportBtn = document.getElementById('viewListReport');
+            const copyReportBtn = document.getElementById('copyListReport');
+            const closeReportModal = document.getElementById('closeReportModal');
+            
+            if (viewReportBtn) {
+                viewReportBtn.addEventListener('click', showReportModal);
+            }
+            
+            if (copyReportBtn) {
+                copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (closeReportModal) {
+                closeReportModal.addEventListener('click', () => {
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
+            }
         }
         
         // ===================================================================
