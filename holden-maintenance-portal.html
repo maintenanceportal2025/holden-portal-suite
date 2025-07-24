@@ -629,6 +629,8 @@
                     <p>Dynamic Dropdown Management System</p>
                 </div>
                 <div class="header-right">
+                    <button id="refreshDataBtn" class="back-btn" style="background: #059669; margin-right: 10px;">🔄 Refresh</button>
+                    <button id="logoutBtn" class="back-btn" style="background: #dc2626;">🚪 Logout</button>
                     <span id="dataStatus" class="data-indicator loading">Loading...</span>
                 </div>
             </div>
@@ -678,6 +680,10 @@
         <div class="page-header">
             <button id="backToList" class="back-btn">← Back to List</button>
             <h2 id="problemPageTitle">Problem Details</h2>
+            <div style="display: flex; gap: 10px; margin-left: auto;">
+                <button id="refreshDataBtn2" class="back-btn" style="background: #059669;">🔄 Refresh</button>
+                <button id="logoutBtn2" class="back-btn" style="background: #dc2626;">🚪 Logout</button>
+            </div>
         </div>
         
         <!-- Report Buttons Section -->
@@ -1181,6 +1187,28 @@
             
             if (copyModalReport) {
                 copyModalReport.addEventListener('click', copyReportToClipboard);
+            }
+            
+            // NEW: Logout and Refresh button listeners
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutBtn2 = document.getElementById('logoutBtn2');
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+            
+            if (logoutBtn2) {
+                logoutBtn2.addEventListener('click', logout);
+            }
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+            
+            if (refreshBtn2) {
+                refreshBtn2.addEventListener('click', refreshData);
             }
             
             if (closeReportModal) {
@@ -1823,6 +1851,89 @@
             } catch (error) {
                 console.error('Failed to copy report:', error);
                 updateDataStatus('Failed to copy report', 'error');
+            }
+        }
+        
+        /**
+         * =====================================================================
+         * NEW: LOGOUT AND REFRESH FUNCTIONS
+         * =====================================================================
+         */
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout? You will need to re-authenticate to access the portal.')) {
+                // Clear any cached data
+                problems = [];
+                filteredProblems = [];
+                currentProblem = null;
+                dynamicDropdownData = {
+                    categories: [],
+                    subCategories: [],
+                    priorities: [],
+                    statuses: [],
+                    assignedTo: []
+                };
+                
+                // Redirect to login or reload page
+                updateDataStatus('Logged out', 'error');
+                
+                // Simple logout - reload the page (you can enhance this if you have authentication)
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            }
+        }
+        
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            // Update button states
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '⏳ Refreshing...';
+            }
+            if (refreshBtn2) {
+                refreshBtn2.disabled = true;
+                refreshBtn2.innerHTML = '⏳ Refreshing...';
+            }
+            
+            try {
+                updateDataStatus('Refreshing data...', 'loading');
+                
+                // Reload dropdown options
+                console.log('🔄 Refreshing dropdown options...');
+                await loadDropdownOptions();
+                
+                // Reload problems
+                console.log('🔄 Refreshing problems...');
+                await loadProblems();
+                
+                // If on Page 2, refresh the current problem
+                if (currentProblem && !document.getElementById('problemDetailsView').classList.contains('hidden')) {
+                    console.log('🔄 Refreshing current problem details...');
+                    const updatedProblem = problems.find(p => p.internalId === currentProblem.internalId);
+                    if (updatedProblem) {
+                        currentProblem = updatedProblem;
+                        openProblemDetailsPage(updatedProblem);
+                    }
+                }
+                
+                updateDataStatus('Data refreshed successfully', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error refreshing data:', error);
+                updateDataStatus('Error refreshing data', 'error');
+            } finally {
+                // Restore button states
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '🔄 Refresh';
+                }
+                if (refreshBtn2) {
+                    refreshBtn2.disabled = false;
+                    refreshBtn2.innerHTML = '🔄 Refresh';
+                }
             }
         }
         
