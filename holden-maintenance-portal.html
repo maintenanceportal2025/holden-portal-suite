@@ -621,7 +621,73 @@
     </style>
 </head>
 <body>
-    <div class="header-section">
+    <!-- LOGIN SCREEN -->
+    <div id="loginView" class="hidden">
+        <div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h1 style="color: #667eea; font-size: 36px; margin-bottom: 10px; font-weight: bold;">Holden Portal</h1>
+                    <div style="background: #e0e7ff; color: #3730a3; padding: 6px 16px; border-radius: 20px; display: inline-block; font-size: 14px; font-weight: 600; margin-bottom: 20px;">v2.2</div>
+                    <p style="color: #6b7280; font-size: 18px; margin: 0;">Maintenance Management System</p>
+                </div>
+                
+                <!-- Features -->
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #667eea;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #667eea; font-size: 20px; margin-right: 10px;">🎯</span>
+                        <strong style="color: #1f2937;">Smart Maintenance Workflow</strong>
+                    </div>
+                    <p style="color: #6b7280; margin: 0; font-size: 14px;">Dynamic dropdowns • Auto-completion • Email notifications • Mobile-optimized</p>
+                </div>
+                
+                <!-- Status Indicator -->
+                <div id="loginDataStatus" style="background: #d1fae5; color: #065f46; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;">
+                    🟢 System Ready - Portal Operational
+                </div>
+                
+                <!-- Security Notice -->
+                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="color: #92400e; font-size: 16px; margin-right: 8px;">⚠️</span>
+                        <strong style="color: #92400e;">Authorized Personnel Only</strong>
+                    </div>
+                    <p style="color: #92400e; margin: 0; font-size: 14px;">This system contains sensitive maintenance data. Unauthorized access is prohibited.</p>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; color: #374151; font-size: 16px; margin-bottom: 8px;">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="passwordInput" 
+                                   style="width: 100%; padding: 14px 50px 14px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; transition: border-color 0.3s ease;"
+                                   placeholder="Enter maintenance password"
+                                   required>
+                            <button type="button" id="togglePassword" 
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; font-size: 18px;">
+                                👁️
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" 
+                            style="width: 100%; background: #667eea; color: white; border: none; padding: 16px 20px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        🔐 Access Holden Portal
+                    </button>
+                </form>
+                
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">Lake Illawong Maintenance Team</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="header-section" id="mainHeader" class="hidden">
         <div class="container">
             <div class="header-content">
                 <div class="header">
@@ -862,11 +928,56 @@
             assignedTo: []
         };
         
+        // =====================================================================
+        // NEW V2.2: AUTHENTICATION SYSTEM
+        // =====================================================================
+        const MAINTENANCE_PASSWORD = 'maint2025'; // Change this as needed
+        let isAuthenticated = false;
+        
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Holden Maintenance Portal V2.1 - Initializing...');
+            console.log('🔧 Holden Maintenance Portal V2.2 - Initializing...');
             setupEventListeners();
-            initializeSystem();
+            
+            // Check if already authenticated (you can enhance this with session storage if needed)
+            if (isAuthenticated) {
+                showMainPortal();
+                initializeSystem();
+            } else {
+                showLoginScreen();
+            }
         });
+        
+        function showLoginScreen() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
+            
+            // Focus on password input
+            setTimeout(() => {
+                const passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) passwordInput.focus();
+            }, 100);
+        }
+        
+        function showMainPortal() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('mainHeader').classList.remove('hidden');
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
+        }
+        
+        async function authenticateUser(password) {
+            // Simple password check (you can enhance this with server-side authentication)
+            if (password === MAINTENANCE_PASSWORD) {
+                isAuthenticated = true;
+                showMainPortal();
+                await initializeSystem();
+                return true;
+            } else {
+                return false;
+            }
+        }
         
         // =====================================================================
         // NEW V2.1: SYSTEM INITIALIZATION WITH DYNAMIC DROPDOWNS
@@ -1108,6 +1219,24 @@
         }
         
         function setupEventListeners() {
+            // Login form listeners
+            const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                });
+            }
+            
+            // Existing event listeners
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
 
@@ -1860,6 +1989,66 @@
          * =====================================================================
          */
         
+        /**
+         * =====================================================================
+         * NEW V2.2: LOGIN AND AUTHENTICATION FUNCTIONS
+         * =====================================================================
+         */
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const password = passwordInput.value.trim();
+            
+            if (!password) {
+                showLoginError('Please enter a password');
+                return;
+            }
+            
+            // Update button state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '⏳ Authenticating...';
+            
+            try {
+                const success = await authenticateUser(password);
+                
+                if (success) {
+                    console.log('✅ Authentication successful');
+                    // Success is handled in authenticateUser function
+                } else {
+                    showLoginError('Invalid password. Please try again.');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+                
+            } catch (error) {
+                console.error('❌ Authentication error:', error);
+                showLoginError('Authentication failed. Please try again.');
+            } finally {
+                // Restore button state
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '🔐 Access Holden Portal';
+            }
+        }
+        
+        function showLoginError(message) {
+            const statusDiv = document.getElementById('loginDataStatus');
+            if (statusDiv) {
+                statusDiv.style.background = '#fecaca';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.innerHTML = `❌ ${message}`;
+                
+                // Reset to normal after 3 seconds
+                setTimeout(() => {
+                    statusDiv.style.background = '#d1fae5';
+                    statusDiv.style.color = '#065f46';
+                    statusDiv.innerHTML = '🟢 System Ready - Portal Operational';
+                }, 3000);
+            }
+        }
+        
         function logout() {
             if (confirm('Are you sure you want to logout? You will need to re-authenticate to access the portal.')) {
                 // Clear any cached data
@@ -1874,13 +2063,20 @@
                     assignedTo: []
                 };
                 
-                // Redirect to login or reload page
+                // Clear authentication
+                isAuthenticated = false;
+                
+                // Show login screen
+                showLoginScreen();
                 updateDataStatus('Logged out', 'error');
                 
-                // Simple logout - reload the page (you can enhance this if you have authentication)
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1000);
+                // Clear password field
+                const passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) {
+                    passwordInput.value = '';
+                }
+                
+                console.log('🚪 User logged out');
             }
         }
         
