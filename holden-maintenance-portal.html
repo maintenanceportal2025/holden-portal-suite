@@ -541,7 +541,7 @@
         <div class="search-section">
             <h2>🔍 Search & Filter Problems</h2>
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit number (eg Unit 9)or description...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit (eg unit 9), zone (eg zone 1) or description...">
                 <button id="searchBtn" class="search-btn">🔍 Search</button>
             </div>
             
@@ -772,11 +772,13 @@
                     const unitNumber = String(problem.unitNumber || '');
                     const description = String(problem.problemDescription || '');
                     const reporter = String(problem.reportedBy || '');
+                    const zone = String(problem.zone || '');
                     
                     return friendlyPID.toLowerCase().includes(searchLower) ||
                            unitNumber.toLowerCase().includes(searchLower) ||
                            description.toLowerCase().includes(searchLower) ||
-                           reporter.toLowerCase().includes(searchLower);
+                           reporter.toLowerCase().includes(searchLower) ||
+                           zone.toLowerCase().includes(searchLower);
                 });
             }
             
