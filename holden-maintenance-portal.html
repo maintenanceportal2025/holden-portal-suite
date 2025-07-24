@@ -759,9 +759,9 @@
         function applyFilters() {
             let filtered = [...problems];
             
-            // Apply status filter - backend uses 'status' field
+            // Apply status filter - use problemStatus (as returned by backend)
             if (activeFilter !== 'all') {
-                filtered = filtered.filter(problem => problem.status === activeFilter);
+                filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
             }
             
             // Apply search filter with safe string conversion
@@ -780,11 +780,11 @@
                 });
             }
             
-            // Sort by priority (Urgent first) - backend uses 'priority' field
+            // Sort by priority (Urgent first) - use problemPriority (as returned by backend)
             const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
             filtered.sort((a, b) => {
-                const aPriority = priorityOrder[a.priority] || 3;
-                const bPriority = priorityOrder[b.priority] || 3;
+                const aPriority = priorityOrder[a.problemPriority] || 3;
+                const bPriority = priorityOrder[b.problemPriority] || 3;
                 return aPriority - bPriority;
             });
             
@@ -823,18 +823,12 @@
         
         function createProblemCard(problem) {
             const friendlyPID = getFriendlyPID(problem.internalId);
-            const priorityClass = `badge-${(problem.priority || 'medium').toLowerCase()}`;
-            const statusClass = `badge-${(problem.status || 'reported').toLowerCase().replace(' ', '-')}`;
+            const priorityClass = `badge-${(problem.problemPriority || 'medium').toLowerCase()}`;
+            const statusClass = `badge-${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}`;
             
-            // Debug: Log all problem fields to see what's available
-            console.log('Problem data fields:', Object.keys(problem));
-            console.log('Problem data:', problem);
-            
-            // Try multiple possible timestamp field names from your backend
-            const timestamp = problem.timestamp || problem.Timestamp || problem.reportedDate || problem['Timestamp'] || problem.date;
+            // Use lastUpdated since timestamp is empty in your backend
+            const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
             const formattedDate = formatDate(timestamp);
-            
-            console.log('Timestamp found:', timestamp, 'Formatted:', formattedDate);
             
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
@@ -845,8 +839,8 @@
                         <div class="problem-description">${problem.problemDescription || 'No description'}</div>
                         <div class="problem-footer">
                             <div class="problem-badges">
-                                <span class="badge ${priorityClass}">${problem.priority || 'Medium'}</span>
-                                <span class="badge ${statusClass}">${problem.status || 'Reported'}</span>
+                                <span class="badge ${priorityClass}">${problem.problemPriority || 'Medium'}</span>
+                                <span class="badge ${statusClass}">${problem.problemStatus || 'Reported'}</span>
                             </div>
                             <div class="problem-date">${formattedDate}</div>
                         </div>
@@ -874,11 +868,11 @@
             const friendlyPID = getFriendlyPID(problem.internalId);
             document.getElementById('modalTitle').textContent = `Edit ${friendlyPID} - ${problem.unitNumber}`;
             
-            // Populate form
+            // Populate form - use problemStatus and problemPriority
             document.getElementById('editProblemId').value = friendlyPID;
             document.getElementById('editUnitNumber').value = problem.unitNumber || '';
-            document.getElementById('editStatus').value = problem.status || 'Reported';
-            document.getElementById('editPriority').value = problem.priority || 'Medium';
+            document.getElementById('editStatus').value = problem.problemStatus || 'Reported';
+            document.getElementById('editPriority').value = problem.problemPriority || 'Medium';
             document.getElementById('editDescription').value = problem.problemDescription || '';
             document.getElementById('editComments').value = problem.comments || '';
             
@@ -918,13 +912,13 @@
                 const response = await makeRequest('updateProblem', updateData);
                 
                 if (response.success) {
-                    // Update local data
+                    // Update local data - use problemStatus and problemPriority
                     const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
                     if (problemIndex !== -1) {
                         problems[problemIndex] = { 
                             ...problems[problemIndex], 
-                            status: updateData.problemStatus,
-                            priority: updateData.problemPriority,
+                            problemStatus: updateData.problemStatus,
+                            problemPriority: updateData.problemPriority,
                             comments: updateData.comments
                         };
                     }
