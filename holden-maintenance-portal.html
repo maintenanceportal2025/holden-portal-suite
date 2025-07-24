@@ -811,6 +811,9 @@
                 const aDate = getTimestamp(a);
                 const bDate = getTimestamp(b);
                 
+                // Debug logging for date sorting
+                console.log(`Sorting: ${getFriendlyPID(a.internalId)} (${a.problemPriority}) ${aDate.toISOString()} vs ${getFriendlyPID(b.internalId)} (${b.problemPriority}) ${bDate.toISOString()}`);
+                
                 return aDate - bDate; // Oldest first
             });
             
