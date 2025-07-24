@@ -5,10 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holden Maintenance Portal - Problem Management</title>
     <style>
-        /* ===================================================================
-                                BASE STYLES & LAYOUT
-        =================================================================== */
-        
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -30,10 +26,6 @@
             margin: 0 auto; 
             padding: 20px; 
         }
-        
-        /* ===================================================================
-                                HEADER STYLES
-        =================================================================== */
         
         .header-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -91,10 +83,6 @@
             background: rgba(239, 68, 68, 0.2);
             color: #fecaca;
         }
-        
-        /* ===================================================================
-                                SEARCH & FILTER STYLES
-        =================================================================== */
         
         .search-section { 
             background: white; 
@@ -184,10 +172,6 @@
             border-color: #2563eb;
         }
         
-        /* ===================================================================
-                                PROBLEMS LIST STYLES
-        =================================================================== */
-        
         .problems-section {
             background: white;
             border-radius: 12px;
@@ -210,6 +194,15 @@
             color: #1f2937;
         }
         
+        .results-count {
+            background: #e5e7eb;
+            color: #6b7280;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
         .report-section {
             display: flex;
             gap: 10px;
@@ -228,9 +221,6 @@
             display: flex;
             align-items: center;
             gap: 8px;
-        }
-        
-        .report-btn {
             background: #2563eb;
             color: white;
         }
@@ -245,13 +235,8 @@
             color: white;
         }
         
-        .results-count {
-            background: #e5e7eb;
-            color: #6b7280;
-            padding: 4px 12px;
-            border-radius: 12px;
-            font-size: 14px;
-            font-weight: 500;
+        .report-btn.green:hover {
+            background: #047857;
         }
         
         .problems-list {
@@ -285,11 +270,6 @@
             margin-bottom: 4px;
         }
         
-        .problem-unit-zone {
-            color: #6b7280;
-            font-size: 14px;
-        }
-        
         .problem-footer {
             display: flex;
             justify-content: space-between;
@@ -307,6 +287,16 @@
         .problem-date {
             color: #6b7280;
             font-size: 14px;
+        }
+        
+        .problem-details {
+            margin-bottom: 0;
+        }
+        
+        .problem-description {
+            color: #4b5563;
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
         
         .badge {
@@ -327,20 +317,6 @@
         .badge-on-hold { background: #f3e8ff; color: #7c3aed; }
         .badge-completed { background: #d1fae5; color: #065f46; }
         .badge-cancelled { background: #f3f4f6; color: #6b7280; }
-        
-        .problem-details {
-            margin-bottom: 0;
-        }
-        
-        .problem-description {
-            color: #4b5563;
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-        
-        /* ===================================================================
-                                MODAL STYLES
-        =================================================================== */
         
         .modal {
             position: fixed;
@@ -472,10 +448,6 @@
             cursor: not-allowed;
         }
         
-        /* ===================================================================
-                                LOADING & EMPTY STATES
-        =================================================================== */
-        
         .loading-state {
             text-align: center;
             padding: 60px 20px;
@@ -507,10 +479,6 @@
             margin-bottom: 8px;
             color: #374151;
         }
-        
-        /* ===================================================================
-                                RESPONSIVE DESIGN
-        =================================================================== */
         
         @media (max-width: 768px) {
             .container {
@@ -556,7 +524,6 @@
     </style>
 </head>
 <body>
-    <!-- HEADER SECTION -->
     <div class="header-section">
         <div class="container">
             <div class="header-content">
@@ -572,7 +539,6 @@
     </div>
 
     <div class="container">
-        <!-- SEARCH SECTION -->
         <div class="search-section">
             <h2>🔍 Search & Filter Problems</h2>
             <div class="search-box">
@@ -589,14 +555,12 @@
             </div>
         </div>
 
-        <!-- PROBLEMS SECTION -->
         <div class="problems-section">
             <div class="section-header">
                 <h3 class="section-title">Problems List</h3>
                 <span id="resultsCount" class="results-count">Loading...</span>
             </div>
             
-            <!-- REPORT BUTTONS -->
             <div class="report-section">
                 <button id="viewListReport" class="report-btn">📄 View Report</button>
                 <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
@@ -611,7 +575,6 @@
         </div>
     </div>
 
-    <!-- EDIT PROBLEM MODAL -->
     <div id="problemModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -663,7 +626,6 @@
         </div>
     </div>
 
-    <!-- REPORT MODAL -->
     <div id="reportModal" class="modal hidden">
         <div class="modal-content" style="max-width: 800px;">
             <div class="modal-header">
@@ -680,185 +642,47 @@
     </div>
 
     <script>
-        // ===================================================================
-        // HOLDEN MAINTENANCE PORTAL - COMPLETE VERSION
-        // ===================================================================
-        
-        // Configuration - Your actual backend URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
         
-        // Global state
         let problems = [];
         let filteredProblems = [];
         let activeFilter = 'all';
         let searchTerm = '';
         let currentProblem = null;
         
-        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔧 Holden Maintenance Portal - Initializing...');
             setupEventListeners();
             loadProblems();
         });
         
-        // ===================================================================
-        // EVENT LISTENERS
-        // ===================================================================
-        
         function setupEventListeners() {
-            // Auto-search functionality with dynamic button
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
 
-            // Real-time search as user types
             searchInput.addEventListener('input', function() {
                 const value = this.value.trim();
                 
                 if (value.length > 0) {
-                    // Auto-search as user types
                     searchTerm = value;
                     applyFilters();
-                    
-                    // Change to red clear button
                     searchBtn.textContent = '❌ Clear Search';
                     searchBtn.className = 'search-btn search-btn-clear';
                     searchBtn.dataset.action = 'clear';
                 } else {
-                    // Reset to search state
                     searchTerm = '';
                     applyFilters();
-                    
                     searchBtn.textContent = '🔍 Search';
                     searchBtn.className = 'search-btn';
                     searchBtn.dataset.action = 'search';
                 }
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    closeModal();
-                    document.getElementById('reportModal').classList.add('hidden');
-                }
             });
-        }
-        
-        // ===================================================================
-        // REPORTING FUNCTIONS
-        // ===================================================================
-        
-        function generateListReport() {
-            // Use filtered data for report
-            const reportData = filteredProblems.map(problem => ({
-                pid: getFriendlyPID(problem.internalId),
-                unit: problem.unitNumber || 'Unknown',
-                zone: problem.zone || 'Unknown',
-                priority: problem.problemPriority || 'Medium',
-                status: problem.problemStatus || 'Reported',
-                description: problem.problemDescription || 'No description',
-                reporter: problem.reportedBy || 'Unknown',
-                date: formatDate(problem.timestamp),
-                assignedTo: problem.assignedTo || 'Unassigned'
-            }));
-            
-            let report = 'HOLDEN MAINTENANCE PORTAL - PROBLEMS REPORT\n';
-            report += '='.repeat(60) + '\n';
-            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
-            report += `Total Problems: ${reportData.length}\n`;
-            report += `Filter: ${activeFilter === 'all' ? 'All Problems' : activeFilter}\n`;
-            report += `Search: ${searchTerm || 'None'}\n`;
-            report += '='.repeat(60) + '\n\n';
-            
-            // Priority breakdown
-            const priorityCount = {
-                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
-                'High': reportData.filter(p => p.priority === 'High').length,
-                'Medium': reportData.filter(p => p.priority === 'Medium').length,
-                'Low': reportData.filter(p => p.priority === 'Low').length
-            };
-            
-            report += 'PRIORITY BREAKDOWN:\n';
-            report += '-'.repeat(30) + '\n';
-            Object.entries(priorityCount).forEach(([priority, count]) => {
-                if (count > 0) {
-                    report += `${priority}: ${count}\n`;
-                }
-            });
-            report += '\n';
-            
-            // Status breakdown
-            const statusCount = {};
-            reportData.forEach(p => {
-                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
-            });
-            
-            report += 'STATUS BREAKDOWN:\n';
-            report += '-'.repeat(30) + '\n';
-            Object.entries(statusCount).forEach(([status, count]) => {
-                report += `${status}: ${count}\n`;
-            });
-            report += '\n';
-            
-            // Detailed list
-            report += 'DETAILED PROBLEM LIST:\n';
-            report += '-'.repeat(60) + '\n';
-            
-            reportData.forEach((problem, index) => {
-                report += `${index + 1}. ${problem.pid}\n`;
-                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
-                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
-                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
-                report += `   Assigned: ${problem.assignedTo}\n`;
-                report += `   Description: ${problem.description}\n`;
-                report += '\n';
-            });
-            
-            report += '='.repeat(60) + '\n';
-            report += 'End of Report\n';
-            
-            return report;
-        }
-        
-        function showReportModal() {
-            const modal = document.getElementById('reportModal');
-            const reportText = document.getElementById('reportText');
-            
-            const report = generateListReport();
-            reportText.textContent = report;
-            
-            modal.classList.remove('hidden');
-        }
-        
-        async function copyReportToClipboard() {
-            const report = generateListReport();
-            
-            try {
-                await navigator.clipboard.writeText(report);
-                
-                // Show success feedback
-                const copyBtn = document.getElementById('copyListReport');
-                const originalText = copyBtn.innerHTML;
-                copyBtn.innerHTML = '✅ Copied!';
-                copyBtn.style.background = '#059669';
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = '#059669';
-                }, 2000);
-                
-                updateDataStatus('Report copied to clipboard', 'success');
-            } catch (error) {
-                console.error('Failed to copy report:', error);
-                updateDataStatus('Failed to copy report', 'error');
-            }
-        }
 
-            // Clear search when button clicked
             searchBtn.addEventListener('click', function() {
                 if (this.dataset.action === 'clear') {
                     searchInput.value = '';
                     searchTerm = '';
                     applyFilters();
-                    
-                    // Reset button
                     this.textContent = '🔍 Search';
                     this.className = 'search-btn';
                     this.dataset.action = 'search';
@@ -866,23 +690,19 @@
                 }
             });
 
-            // Filter tabs
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     setActiveFilter(this.dataset.filter);
                 });
             });
             
-            // Modal controls
             document.getElementById('closeModal').addEventListener('click', closeModal);
             document.getElementById('problemModal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
             
-            // Form submission
             document.getElementById('problemForm').addEventListener('submit', saveProblem);
             
-            // Report buttons
             const viewReportBtn = document.getElementById('viewListReport');
             const copyReportBtn = document.getElementById('copyListReport');
             const closeReportModal = document.getElementById('closeReportModal');
@@ -905,11 +725,14 @@
                     document.getElementById('reportModal').classList.add('hidden');
                 });
             }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModal();
+                    document.getElementById('reportModal').classList.add('hidden');
+                }
+            });
         }
-        
-        // ===================================================================
-        // DATA LOADING
-        // ===================================================================
         
         async function loadProblems() {
             try {
@@ -933,14 +756,9 @@
             }
         }
         
-        // ===================================================================
-        // SEARCH & FILTERING
-        // ===================================================================
-        
         function setActiveFilter(filter) {
             activeFilter = filter;
             
-            // Update active tab
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -952,12 +770,10 @@
         function applyFilters() {
             let filtered = [...problems];
             
-            // Apply status filter - use problemStatus (as returned by backend)
             if (activeFilter !== 'all') {
                 filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
             }
             
-            // Apply search filter with safe string conversion
             if (searchTerm) {
                 const searchLower = searchTerm.toLowerCase();
                 filtered = filtered.filter(problem => {
@@ -975,7 +791,6 @@
                 });
             }
             
-            // Sort by priority (Urgent first) - use problemPriority (as returned by backend)
             const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
             filtered.sort((a, b) => {
                 const aPriority = priorityOrder[a.problemPriority] || 3;
@@ -987,15 +802,10 @@
             renderProblemsList();
         }
         
-        // ===================================================================
-        // RENDERING
-        // ===================================================================
-        
         function renderProblemsList() {
             const container = document.getElementById('problemsList');
             const countElement = document.getElementById('resultsCount');
             
-            // Update count
             const filterText = activeFilter === 'all' ? 'All Problems' : activeFilter;
             countElement.textContent = `${filteredProblems.length} ${filterText}`;
             
@@ -1006,7 +816,6 @@
             
             container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
             
-            // Add click listeners
             container.querySelectorAll('.problem-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const problemId = this.dataset.problemId;
@@ -1021,7 +830,6 @@
             const priorityClass = `badge-${(problem.problemPriority || 'medium').toLowerCase()}`;
             const statusClass = `badge-${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}`;
             
-            // Use lastUpdated since timestamp is empty in your backend
             const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
             const formattedDate = formatDate(timestamp);
             
@@ -1053,17 +861,12 @@
             `;
         }
         
-        // ===================================================================
-        // MODAL MANAGEMENT
-        // ===================================================================
-        
         function openEditModal(problem) {
             currentProblem = problem;
             
             const friendlyPID = getFriendlyPID(problem.internalId);
             document.getElementById('modalTitle').textContent = `Edit ${friendlyPID} - ${problem.unitNumber}`;
             
-            // Populate form - use problemStatus and problemPriority
             document.getElementById('editProblemId').value = friendlyPID;
             document.getElementById('editUnitNumber').value = problem.unitNumber || '';
             document.getElementById('editStatus').value = problem.problemStatus || 'Reported';
@@ -1071,7 +874,6 @@
             document.getElementById('editDescription').value = problem.problemDescription || '';
             document.getElementById('editComments').value = problem.comments || '';
             
-            // Show modal
             document.getElementById('problemModal').classList.remove('hidden');
         }
         
@@ -1079,10 +881,6 @@
             document.getElementById('problemModal').classList.add('hidden');
             currentProblem = null;
         }
-        
-        // ===================================================================
-        // PROBLEM SAVING
-        // ===================================================================
         
         async function saveProblem(e) {
             e.preventDefault();
@@ -1107,7 +905,6 @@
                 const response = await makeRequest('updateProblem', updateData);
                 
                 if (response.success) {
-                    // Update local data - use problemStatus and problemPriority
                     const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
                     if (problemIndex !== -1) {
                         problems[problemIndex] = { 
@@ -1133,10 +930,6 @@
                 saveBtn.textContent = originalText;
             }
         }
-        
-        // ===================================================================
-        // UTILITY FUNCTIONS
-        // ===================================================================
         
         async function makeRequest(action, additionalData = {}) {
             return new Promise((resolve, reject) => {
@@ -1195,14 +988,108 @@
             }
         }
         
-        // ===================================================================
-        // INITIALIZATION
-        // ===================================================================
+        function generateListReport() {
+            const reportData = filteredProblems.map(problem => ({
+                pid: getFriendlyPID(problem.internalId),
+                unit: problem.unitNumber || 'Unknown',
+                zone: problem.zone || 'Unknown',
+                priority: problem.problemPriority || 'Medium',
+                status: problem.problemStatus || 'Reported',
+                description: problem.problemDescription || 'No description',
+                reporter: problem.reportedBy || 'Unknown',
+                date: formatDate(problem.timestamp),
+                assignedTo: problem.assignedTo || 'Unassigned'
+            }));
+            
+            let report = 'HOLDEN MAINTENANCE PORTAL - PROBLEMS REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Total Problems: ${reportData.length}\n`;
+            report += `Filter: ${activeFilter === 'all' ? 'All Problems' : activeFilter}\n`;
+            report += `Search: ${searchTerm || 'None'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            const priorityCount = {
+                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
+                'High': reportData.filter(p => p.priority === 'High').length,
+                'Medium': reportData.filter(p => p.priority === 'Medium').length,
+                'Low': reportData.filter(p => p.priority === 'Low').length
+            };
+            
+            report += 'PRIORITY BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(priorityCount).forEach(([priority, count]) => {
+                if (count > 0) {
+                    report += `${priority}: ${count}\n`;
+                }
+            });
+            report += '\n';
+            
+            const statusCount = {};
+            reportData.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+            
+            report += 'STATUS BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(statusCount).forEach(([status, count]) => {
+                report += `${status}: ${count}\n`;
+            });
+            report += '\n';
+            
+            report += 'DETAILED PROBLEM LIST:\n';
+            report += '-'.repeat(60) + '\n';
+            
+            reportData.forEach((problem, index) => {
+                report += `${index + 1}. ${problem.pid}\n`;
+                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
+                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
+                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
+                report += `   Assigned: ${problem.assignedTo}\n`;
+                report += `   Description: ${problem.description}\n`;
+                report += '\n';
+            });
+            
+            report += '='.repeat(60) + '\n';
+            report += 'End of Report\n';
+            
+            return report;
+        }
+        
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateListReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        async function copyReportToClipboard() {
+            const report = generateListReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyListReport');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '#059669';
+                }, 2000);
+                
+                updateDataStatus('Report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy report:', error);
+                updateDataStatus('Failed to copy report', 'error');
+            }
+        }
         
         console.log('🔧 Holden Maintenance Portal - Ready');
-    </script>
-</body>
-</html>
     </script>
 </body>
 </html>
