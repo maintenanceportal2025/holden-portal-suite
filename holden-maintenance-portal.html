@@ -804,17 +804,20 @@
                 // Secondary sort: Date (oldest first) - try multiple timestamp fields
                 const getTimestamp = (problem) => {
                     const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
-                    if (!timestamp) return new Date(0); // Very old date if no timestamp
-                    return new Date(timestamp);
+                    if (!timestamp) return 0; // Return 0 for missing timestamps
+                    const date = new Date(timestamp);
+                    return isNaN(date.getTime()) ? 0 : date.getTime(); // Return milliseconds for comparison
                 };
                 
-                const aDate = getTimestamp(a);
-                const bDate = getTimestamp(b);
+                const aTime = getTimestamp(a);
+                const bTime = getTimestamp(b);
                 
-                // Debug logging for date sorting
-                console.log(`Sorting: ${getFriendlyPID(a.internalId)} (${a.problemPriority}) ${aDate.toISOString()} vs ${getFriendlyPID(b.internalId)} (${b.problemPriority}) ${bDate.toISOString()}`);
+                // If times are equal, use internal ID as tiebreaker for stable sort
+                if (aTime === bTime) {
+                    return (a.internalId || '').localeCompare(b.internalId || '');
+                }
                 
-                return aDate - bDate; // Oldest first
+                return aTime - bTime; // Oldest first
             });
             
             filteredProblems = filtered;
