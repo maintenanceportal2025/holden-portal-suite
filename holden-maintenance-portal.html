@@ -213,7 +213,7 @@
         .report-section {
             display: flex;
             gap: 10px;
-            margin: 15px 0;
+            margin: 15px 25px;
             justify-content: flex-start;
         }
         
@@ -592,14 +592,14 @@
         <!-- PROBLEMS SECTION -->
         <div class="problems-section">
             <div class="section-header">
-                <h3 id="resultsCount" class="section-title">Problems List</h3>
-                <span class="results-count">Loading...</span>
-                
-                <!-- REPORT BUTTONS -->
-                <div class="report-section">
-                    <button id="viewListReport" class="report-btn">📄 View Report</button>
-                    <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
-                </div>
+                <h3 class="section-title">Problems List</h3>
+                <span id="resultsCount" class="results-count">Loading...</span>
+            </div>
+            
+            <!-- REPORT BUTTONS -->
+            <div class="report-section">
+                <button id="viewListReport" class="report-btn">📄 View Report</button>
+                <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
             </div>
             
             <div id="problemsList" class="problems-list">
