@@ -260,6 +260,7 @@
             justify-content: space-between;
             align-items: center;
             margin-top: 12px;
+            flex-wrap: nowrap;
         }
         
         .problem-badges {
@@ -502,9 +503,10 @@
             }
             
             .problem-footer {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
+                flex-direction: row;
+                align-items: center;
+                gap: 15px;
+                flex-wrap: wrap;
             }
             
             .problem-badges {
@@ -824,9 +826,15 @@
             const priorityClass = `badge-${(problem.priority || 'medium').toLowerCase()}`;
             const statusClass = `badge-${(problem.status || 'reported').toLowerCase().replace(' ', '-')}`;
             
+            // Debug: Log all problem fields to see what's available
+            console.log('Problem data fields:', Object.keys(problem));
+            console.log('Problem data:', problem);
+            
             // Try multiple possible timestamp field names from your backend
-            const timestamp = problem.timestamp || problem.Timestamp || problem.reportedDate || problem['Timestamp'];
+            const timestamp = problem.timestamp || problem.Timestamp || problem.reportedDate || problem['Timestamp'] || problem.date;
             const formattedDate = formatDate(timestamp);
+            
+            console.log('Timestamp found:', timestamp, 'Formatted:', formattedDate);
             
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
