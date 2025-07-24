@@ -240,9 +240,6 @@
         }
         
         .problem-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
             margin-bottom: 12px;
         }
         
@@ -250,6 +247,7 @@
             font-weight: 600;
             color: #2563eb;
             font-size: 16px;
+            margin-bottom: 4px;
         }
         
         .problem-unit-zone {
@@ -826,11 +824,14 @@
             const priorityClass = `badge-${(problem.priority || 'medium').toLowerCase()}`;
             const statusClass = `badge-${(problem.status || 'reported').toLowerCase().replace(' ', '-')}`;
             
+            // Try multiple possible timestamp field names from your backend
+            const timestamp = problem.timestamp || problem.Timestamp || problem.reportedDate || problem['Timestamp'];
+            const formattedDate = formatDate(timestamp);
+            
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
                     <div class="problem-header">
-                        <div class="problem-id">${friendlyPID}</div>
-                        <div class="problem-unit-zone">Unit ${problem.unitNumber || 'Unknown'} • ${problem.zone || 'Zone Unknown'}</div>
+                        <div class="problem-id">${friendlyPID} Unit ${problem.unitNumber || 'Unknown'} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-details">
                         <div class="problem-description">${problem.problemDescription || 'No description'}</div>
@@ -839,7 +840,7 @@
                                 <span class="badge ${priorityClass}">${problem.priority || 'Medium'}</span>
                                 <span class="badge ${statusClass}">${problem.status || 'Reported'}</span>
                             </div>
-                            <div class="problem-date">${formatDate(problem.timestamp)}</div>
+                            <div class="problem-date">${formattedDate}</div>
                         </div>
                     </div>
                 </div>
@@ -982,12 +983,18 @@
         }
         
         function formatDate(dateString) {
-            if (!dateString) return 'Unknown';
+            if (!dateString) return 'No Date';
             try {
                 const date = new Date(dateString);
-                return date.toLocaleDateString('en-AU');
+                if (isNaN(date.getTime())) return 'Invalid Date';
+                return date.toLocaleDateString('en-AU', {
+                    day: '2-digit',
+                    month: '2-digit', 
+                    year: 'numeric'
+                });
             } catch (error) {
-                return 'Unknown';
+                console.error('Date formatting error:', error);
+                return 'Date Error';
             }
         }
         
