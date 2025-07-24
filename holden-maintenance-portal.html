@@ -672,6 +672,9 @@
             </div>
             <div class="modal-body">
                 <pre id="reportText" style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; background: #f8f9fa; padding: 20px; border-radius: 6px; max-height: 600px; overflow-y: auto;"></pre>
+                <div style="margin-top: 20px;">
+                    <button id="copyModalReport" class="report-btn">📋 Copy Report</button>
+                </div>
             </div>
         </div>
     </div>
@@ -883,6 +886,7 @@
             const viewReportBtn = document.getElementById('viewListReport');
             const copyReportBtn = document.getElementById('copyListReport');
             const closeReportModal = document.getElementById('closeReportModal');
+            const copyModalReport = document.getElementById('copyModalReport');
             
             if (viewReportBtn) {
                 viewReportBtn.addEventListener('click', showReportModal);
@@ -890,6 +894,10 @@
             
             if (copyReportBtn) {
                 copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (copyModalReport) {
+                copyModalReport.addEventListener('click', copyReportToClipboard);
             }
             
             if (closeReportModal) {
