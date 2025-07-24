@@ -679,6 +679,12 @@
             <button id="backToList" class="back-btn">← Back to List</button>
             <h2 id="problemPageTitle">Problem Details</h2>
         </div>
+        
+        <!-- Report Buttons Section -->
+        <div class="report-section" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 25px;">
+            <button id="viewProblemReport" class="report-btn">📄 View Report</button>
+            <button id="copyProblemReport" class="report-btn green">📋 Copy Report</button>
+        </div>
 
         <!-- Section 1: Problem Details -->
         <div class="detail-section">
@@ -880,37 +886,32 @@
         // NEW V2.1: LOAD DROPDOWN OPTIONS FROM MAINTENANCE TAB
         // =====================================================================
         async function loadDropdownOptions() {
-    try {
-        console.log('🎛️ Loading dropdown options from Maintenance TAB...');
-        
-        console.log('🔍 Step 1: About to make request...');
-        const response = await makeRequest('getDropdownOptions');
-        console.log('🔍 Step 2: Got response:', response);
-        
-        if (response.success) {
-            console.log('🔍 Step 3: Setting dynamicDropdownData...');
-            dynamicDropdownData = response.data;
-            console.log('✅ Dropdown data loaded:', dynamicDropdownData);
-            
-            console.log('🔍 Step 4: About to call updateAllDropdowns...');
-            // Update all dropdowns that exist on the page
-            updateAllDropdowns();
-            console.log('🔍 Step 5: updateAllDropdowns completed');
-            
-            return response.data;
-        } else {
-            console.error('❌ Failed to load dropdown data:', response.error);
-            throw new Error(response.error || 'Failed to load dropdown options');
+            try {
+                console.log('🎛️ Loading dropdown options from Maintenance TAB...');
+                
+                const response = await makeRequest('getDropdownOptions');
+                
+                if (response.success) {
+                    dynamicDropdownData = response.data;
+                    console.log('✅ Dropdown data loaded:', dynamicDropdownData);
+                    
+                    // Update all dropdowns that exist on the page
+                    updateAllDropdowns();
+                    
+                    return response.data;
+                } else {
+                    console.error('❌ Failed to load dropdown data:', response.error);
+                    throw new Error(response.error || 'Failed to load dropdown options');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdown options:', error);
+                console.log('⚠️ Using fallback dropdown values');
+                // Use fallback values but still try to update dropdowns
+                updateAllDropdowns();
+                throw error;
+            }
         }
-        
-    } catch (error) {
-        console.error('❌ Error loading dropdown options:', error);
-        console.log('⚠️ Using fallback dropdown values');
-        // Use fallback values but still try to update dropdowns
-        updateAllDropdowns();
-        throw error;
-    }
-}
         
         // =====================================================================
         // NEW V2.1: UPDATE ALL DROPDOWN FUNCTIONS
@@ -1151,10 +1152,15 @@
             document.getElementById('backToList').addEventListener('click', showListView);
             document.getElementById('managementForm').addEventListener('submit', saveDetailsFromPage);
             
+            // Page 1 Report buttons
             const viewReportBtn = document.getElementById('viewListReport');
             const copyReportBtn = document.getElementById('copyListReport');
             const closeReportModal = document.getElementById('closeReportModal');
             const copyModalReport = document.getElementById('copyModalReport');
+            
+            // Page 2 Report buttons (NEW)
+            const viewProblemReportBtn = document.getElementById('viewProblemReport');
+            const copyProblemReportBtn = document.getElementById('copyProblemReport');
             
             if (viewReportBtn) {
                 viewReportBtn.addEventListener('click', showReportModal);
@@ -1162,6 +1168,15 @@
             
             if (copyReportBtn) {
                 copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            // NEW: Page 2 report button listeners
+            if (viewProblemReportBtn) {
+                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
+            }
+            
+            if (copyProblemReportBtn) {
+                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
             }
             
             if (copyModalReport) {
@@ -1431,177 +1446,62 @@
         }
         
         async function saveDetailsFromPage(e) {
-    e.preventDefault();
-    
-    if (!currentProblem) return;
-    
-    const saveBtn = document.getElementById('saveDetailsBtn');
-    const originalText = saveBtn.textContent;
-    
-    try {
-        saveBtn.disabled = true;
-        saveBtn.textContent = '💾 Saving...';
-        
-        const updateData = {
-            internalId: currentProblem.internalId,
-            problemStatus: document.getElementById('detailStatus').value,
-            problemPriority: document.getElementById('detailPriority').value,
-            category: document.getElementById('detailCategory').value,
-            subCategory: document.getElementById('detailSubCategory').value,
-            assignedTo: document.getElementById('detailAssignedTo').value,
-            completionDate: document.getElementById('detailCompletionDate').value,
-            comments: document.getElementById('detailComments').value
-        };
-        
-        console.log('💾 Saving problem updates:', updateData);
-        
-        const response = await makeRequest('updateProblem', updateData);
-        
-        if (response.success) {
-            console.log('✅ Save successful, updates:', response.updates);
+            e.preventDefault();
             
-            // Update local problems array
-            const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
-            if (problemIndex !== -1) {
-                problems[problemIndex] = { 
-                    ...problems[problemIndex], 
-                    problemStatus: updateData.problemStatus,
-                    problemPriority: updateData.problemPriority,
-                    category: updateData.category,
-                    subCategory: updateData.subCategory,
-                    assignedTo: updateData.assignedTo,
-                    completionDate: updateData.completionDate,
-                    comments: updateData.comments
-                };
-            }
+            if (!currentProblem) return;
             
-            // NEW: Check if status was changed to "Completed" - if so, reload fresh data
-            const statusChangedToCompleted = updateData.problemStatus === 'Completed' && 
-                                           currentProblem.problemStatus !== 'Completed';
+            const saveBtn = document.getElementById('saveDetailsBtn');
+            const originalText = saveBtn.textContent;
             
-            if (statusChangedToCompleted) {
-                console.log('🔄 Status changed to Completed - Reloading fresh data...');
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = '💾 Saving...';
                 
-                try {
-                    // Reload all problems to get the auto-filled completion date
-                    saveBtn.textContent = '🔄 Refreshing...';
-                    
-                    const freshResponse = await makeRequest('getFaultLogData');
-                    
-                    if (freshResponse.success) {
-                        // Update the problems array with fresh data
-                        problems = freshResponse.data || [];
-                        
-                        // Find the updated problem with auto-filled completion date
-                        const updatedProblem = problems.find(p => p.internalId === currentProblem.internalId);
-                        
-                        if (updatedProblem) {
-                            console.log('✅ Fresh data loaded, completion date:', updatedProblem.completionDate);
-                            
-                            // Update current problem reference
-                            currentProblem = updatedProblem;
-                            
-                            // Refresh the form fields with the fresh data (including auto-filled completion date)
-                            populateFormWithFreshData(updatedProblem);
-                            
-                            console.log('🎯 Form refreshed with auto-filled completion date');
-                        }
-                    } else {
-                        console.warn('⚠️ Failed to reload fresh data, but save was successful');
+                const updateData = {
+                    internalId: currentProblem.internalId,
+                    problemStatus: document.getElementById('detailStatus').value,
+                    problemPriority: document.getElementById('detailPriority').value,
+                    category: document.getElementById('detailCategory').value,
+                    subCategory: document.getElementById('detailSubCategory').value,
+                    assignedTo: document.getElementById('detailAssignedTo').value,
+                    completionDate: document.getElementById('detailCompletionDate').value,
+                    comments: document.getElementById('detailComments').value
+                };
+                
+                const response = await makeRequest('updateProblem', updateData);
+                
+                if (response.success) {
+                    const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
+                    if (problemIndex !== -1) {
+                        problems[problemIndex] = { 
+                            ...problems[problemIndex], 
+                            problemStatus: updateData.problemStatus,
+                            problemPriority: updateData.problemPriority,
+                            category: updateData.category,
+                            subCategory: updateData.subCategory,
+                            assignedTo: updateData.assignedTo,
+                            completionDate: updateData.completionDate,
+                            comments: updateData.comments
+                        };
                     }
                     
-                } catch (refreshError) {
-                    console.error('❌ Error refreshing data:', refreshError);
-                    // Don't fail the save - just warn that refresh failed
+                    applyFilters();
+                    updateDataStatus('Problem updated successfully', 'success');
+                    
+                    // Update current problem reference
+                    currentProblem = problems[problemIndex];
+                } else {
+                    throw new Error(response.message || 'Failed to update problem');
                 }
-            }
-            
-            // Update filters/display
-            applyFilters();
-            updateDataStatus('Problem updated successfully', 'success');
-            
-        } else {
-            throw new Error(response.message || 'Failed to update problem');
-        }
-        
-    } catch (error) {
-        console.error('❌ Error saving problem:', error);
-        updateDataStatus('Error saving problem', 'error');
-    } finally {
-        saveBtn.disabled = false;
-        saveBtn.textContent = originalText;
-    }
-}
-
-/**
- * NEW FUNCTION: Populate form fields with fresh data from backend
- */
-function populateFormWithFreshData(problem) {
-    console.log('🔄 Populating form with fresh data:', problem);
-    
-    // Update all form fields with fresh data
-    document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
-    document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
-    document.getElementById('detailCategory').value = problem.category || '';
-    document.getElementById('detailSubCategory').value = problem.subCategory || '';
-    document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
-    document.getElementById('detailComments').value = problem.comments || '';
-    
-    // IMPORTANT: Update completion date field with fresh data (including auto-filled date)
-    const completionDateField = document.getElementById('detailCompletionDate');
-    if (problem.completionDate) {
-        // Convert completion date to YYYY-MM-DD format for HTML date input
-        const formattedDate = formatDateForInput(problem.completionDate);
-        completionDateField.value = formattedDate;
-        console.log('✅ Updated completion date field:', formattedDate);
-    } else {
-        completionDateField.value = '';
-    }
-}
-
-/**
- * NEW FUNCTION: Convert date to HTML input format (YYYY-MM-DD)
- */
-function formatDateForInput(dateValue) {
-    if (!dateValue) return '';
-    
-    try {
-        let date;
-        
-        // Handle different date formats that might come from the backend
-        if (dateValue instanceof Date) {
-            date = dateValue;
-        } else if (typeof dateValue === 'string') {
-            // Try parsing different date formats
-            if (dateValue.includes('/')) {
-                // DD/MM/YYYY format
-                const parts = dateValue.split('/');
-                if (parts.length === 3) {
-                    date = new Date(parts[2], parts[1] - 1, parts[0]); // Month is 0-indexed
-                }
-            } else {
-                // Try standard date parsing
-                date = new Date(dateValue);
+                
+            } catch (error) {
+                console.error('❌ Error saving problem:', error);
+                updateDataStatus('Error saving problem', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
             }
         }
-        
-        if (date && !isNaN(date.getTime())) {
-            // Format as YYYY-MM-DD for HTML date input
-            const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            
-            return `${year}-${month}-${day}`;
-        }
-        
-        console.warn('⚠️ Could not parse date:', dateValue);
-        return '';
-        
-    } catch (error) {
-        console.error('❌ Error formatting date:', error);
-        return '';
-    }
-}
         
         function closeModal() {
             document.getElementById('problemModal').classList.add('hidden');
@@ -1792,6 +1692,111 @@ function formatDateForInput(dateValue) {
             reportText.textContent = report;
             
             modal.classList.remove('hidden');
+        }
+        
+        function showProblemReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateProblemReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function generateProblemReport() {
+            if (!currentProblem) {
+                return 'No problem selected for report generation.';
+            }
+            
+            const friendlyPID = getFriendlyPID(currentProblem.internalId);
+            const reportedDate = formatDate(currentProblem.timestamp);
+            const completionDate = currentProblem.completionDate ? formatDate(currentProblem.completionDate) : 'Not completed';
+            
+            let report = 'HOLDEN MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${currentProblem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Reported By: ${currentProblem.reportedBy || 'Unknown'}\n`;
+            report += `Description: ${currentProblem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${currentProblem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${currentProblem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${currentProblem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${currentProblem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${currentProblem.assignedTo || 'Unassigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            
+            if (currentProblem.comments && currentProblem.comments.trim()) {
+                report += `Internal Comments: ${currentProblem.comments}\n`;
+            }
+            report += '\n';
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            
+            // Unit Primary Contact
+            report += 'Unit Primary Contact:\n';
+            report += `  Name: ${currentProblem.unitPrimaryName || 'Not available'}\n`;
+            report += `  Email: ${currentProblem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `  Phone: ${currentProblem.unitPrimaryPhone || 'Not available'}\n`;
+            
+            // Reporter Contact (if different)
+            const reportedBy = currentProblem.reportedBy || '';
+            const unitPrimaryName = currentProblem.unitPrimaryName || '';
+            
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                report += '\nReporter Contact:\n';
+                report += `  Name: ${currentProblem.reportedBy || 'Not available'}\n`;
+                report += `  Email: ${currentProblem.reporterEmail || 'Not available'}\n`;
+                report += `  Phone: ${currentProblem.reporterPhone || 'Not available'}\n`;
+            }
+            
+            report += '\n' + '='.repeat(60) + '\n';
+            report += 'End of Problem Report\n';
+            
+            return report;
+        }
+        
+        async function copyProblemReportToClipboard() {
+            const report = generateProblemReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyProblemReport');
+                const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                // Show success feedback
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                // Reset after 2 seconds
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = originalBackground;
+                }, 2000);
+                
+                updateDataStatus('Problem report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy problem report:', error);
+                updateDataStatus('Failed to copy problem report', 'error');
+            }
         }
         
         async function copyReportToClipboard() {
