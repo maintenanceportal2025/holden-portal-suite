@@ -552,6 +552,7 @@
                 <button class="filter-tab" data-filter="In Progress">In Progress</button>
                 <button class="filter-tab" data-filter="On Hold">On Hold</button>
                 <button class="filter-tab" data-filter="Completed">Completed</button>
+                <button class="filter-tab" data-filter="Cancelled">Cancelled</button>
             </div>
         </div>
 
@@ -1096,12 +1097,16 @@
                 
                 const copyBtn = document.getElementById('copyListReport');
                 const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                // Show success feedback
                 copyBtn.innerHTML = '✅ Copied!';
                 copyBtn.style.background = '#059669';
                 
+                // Reset after 2 seconds
                 setTimeout(() => {
                     copyBtn.innerHTML = originalText;
-                    copyBtn.style.background = '#059669';
+                    copyBtn.style.background = originalBackground;
                 }, 2000);
                 
                 updateDataStatus('Report copied to clipboard', 'success');
