@@ -793,9 +793,18 @@
             
             const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
             filtered.sort((a, b) => {
+                // Primary sort: Priority (Urgent first)
                 const aPriority = priorityOrder[a.problemPriority] || 3;
                 const bPriority = priorityOrder[b.problemPriority] || 3;
-                return aPriority - bPriority;
+                
+                if (aPriority !== bPriority) {
+                    return aPriority - bPriority;
+                }
+                
+                // Secondary sort: Date (oldest first)
+                const aDate = new Date(a.timestamp || a.lastUpdated || 0);
+                const bDate = new Date(b.timestamp || b.lastUpdated || 0);
+                return aDate - bDate;
             });
             
             filteredProblems = filtered;
