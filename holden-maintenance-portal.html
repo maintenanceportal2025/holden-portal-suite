@@ -731,6 +731,43 @@
                             <option value="Urgent">Urgent</option>
                         </select>
                     </div>
+                    <div class="detail-field">
+                        <label>Category</label>
+                        <select id="detailCategory" class="form-input">
+                            <option value="">Select Category</option>
+                            <option value="Plumbing">Plumbing</option>
+                            <option value="HVAC">HVAC</option>
+                            <option value="Electrical">Electrical</option>
+                            <option value="Security">Security</option>
+                            <option value="Cleaning">Cleaning</option>
+                            <option value="General">General</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Sub-Category</label>
+                        <select id="detailSubCategory" class="form-input">
+                            <option value="">Select Sub-Category</option>
+                            <option value="Faucet/Tap">Faucet/Tap</option>
+                            <option value="Air Conditioning">Air Conditioning</option>
+                            <option value="Lighting">Lighting</option>
+                            <option value="Door Lock">Door Lock</option>
+                            <option value="General Maintenance">General Maintenance</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Assigned To</label>
+                        <select id="detailAssignedTo" class="form-input">
+                            <option value="">Select Assignee</option>
+                            <option value="Ben">Ben</option>
+                            <option value="David">David</option>
+                            <option value="Jade">Jade</option>
+                            <option value="Residents Committee">Residents Committee</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Completion Date</label>
+                        <input type="date" id="detailCompletionDate" class="form-input">
+                    </div>
                     <div class="detail-field full-width">
                         <label>Internal Comments</label>
                         <textarea id="detailComments" class="form-input" placeholder="Add internal comments..."></textarea>
@@ -1079,6 +1116,10 @@
             // Section 2: Management Details (editable)
             document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
             document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
+            document.getElementById('detailCategory').value = problem.category || '';
+            document.getElementById('detailSubCategory').value = problem.subCategory || '';
+            document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
+            document.getElementById('detailCompletionDate').value = problem.completionDate || '';
             document.getElementById('detailComments').value = problem.comments || '';
             
             // Section 3: Contact Details (conditional logic)
@@ -1101,15 +1142,15 @@
                     <h4>Unit Primary Contact</h4>
                     <div class="detail-grid">
                         <div class="detail-field">
-                            <label>Unit Primary Name</label>
+                            <label>Name</label>
                             <span>${problem.unitPrimaryName || 'Not available'}</span>
                         </div>
                         <div class="detail-field">
-                            <label>Unit Primary Email</label>
+                            <label>Email</label>
                             <span>${problem.unitPrimaryEmail || 'Not available'}</span>
                         </div>
                         <div class="detail-field">
-                            <label>Unit Primary Phone</label>
+                            <label>Mobile</label>
                             <span>${problem.unitPrimaryPhone || 'Not available'}</span>
                         </div>
                     </div>
@@ -1123,15 +1164,15 @@
                         <h4>Reporter Contact</h4>
                         <div class="detail-grid">
                             <div class="detail-field">
-                                <label>Reporter Name</label>
+                                <label>Name</label>
                                 <span>${problem.reportedBy || 'Not available'}</span>
                             </div>
                             <div class="detail-field">
-                                <label>Reporter Email</label>
+                                <label>Email</label>
                                 <span>${problem.reporterEmail || 'Not available'}</span>
                             </div>
                             <div class="detail-field">
-                                <label>Reporter Phone</label>
+                                <label>Mobile</label>
                                 <span>${problem.reporterPhone || 'Not available'}</span>
                             </div>
                         </div>
@@ -1170,6 +1211,10 @@
                     internalId: currentProblem.internalId,
                     problemStatus: document.getElementById('detailStatus').value,
                     problemPriority: document.getElementById('detailPriority').value,
+                    category: document.getElementById('detailCategory').value,
+                    subCategory: document.getElementById('detailSubCategory').value,
+                    assignedTo: document.getElementById('detailAssignedTo').value,
+                    completionDate: document.getElementById('detailCompletionDate').value,
                     comments: document.getElementById('detailComments').value
                 };
                 
@@ -1182,6 +1227,10 @@
                             ...problems[problemIndex], 
                             problemStatus: updateData.problemStatus,
                             problemPriority: updateData.problemPriority,
+                            category: updateData.category,
+                            subCategory: updateData.subCategory,
+                            assignedTo: updateData.assignedTo,
+                            completionDate: updateData.completionDate,
                             comments: updateData.comments
                         };
                     }
