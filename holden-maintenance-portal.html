@@ -1426,62 +1426,177 @@
         }
         
         async function saveDetailsFromPage(e) {
-            e.preventDefault();
+    e.preventDefault();
+    
+    if (!currentProblem) return;
+    
+    const saveBtn = document.getElementById('saveDetailsBtn');
+    const originalText = saveBtn.textContent;
+    
+    try {
+        saveBtn.disabled = true;
+        saveBtn.textContent = '💾 Saving...';
+        
+        const updateData = {
+            internalId: currentProblem.internalId,
+            problemStatus: document.getElementById('detailStatus').value,
+            problemPriority: document.getElementById('detailPriority').value,
+            category: document.getElementById('detailCategory').value,
+            subCategory: document.getElementById('detailSubCategory').value,
+            assignedTo: document.getElementById('detailAssignedTo').value,
+            completionDate: document.getElementById('detailCompletionDate').value,
+            comments: document.getElementById('detailComments').value
+        };
+        
+        console.log('💾 Saving problem updates:', updateData);
+        
+        const response = await makeRequest('updateProblem', updateData);
+        
+        if (response.success) {
+            console.log('✅ Save successful, updates:', response.updates);
             
-            if (!currentProblem) return;
-            
-            const saveBtn = document.getElementById('saveDetailsBtn');
-            const originalText = saveBtn.textContent;
-            
-            try {
-                saveBtn.disabled = true;
-                saveBtn.textContent = '💾 Saving...';
-                
-                const updateData = {
-                    internalId: currentProblem.internalId,
-                    problemStatus: document.getElementById('detailStatus').value,
-                    problemPriority: document.getElementById('detailPriority').value,
-                    category: document.getElementById('detailCategory').value,
-                    subCategory: document.getElementById('detailSubCategory').value,
-                    assignedTo: document.getElementById('detailAssignedTo').value,
-                    completionDate: document.getElementById('detailCompletionDate').value,
-                    comments: document.getElementById('detailComments').value
+            // Update local problems array
+            const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
+            if (problemIndex !== -1) {
+                problems[problemIndex] = { 
+                    ...problems[problemIndex], 
+                    problemStatus: updateData.problemStatus,
+                    problemPriority: updateData.problemPriority,
+                    category: updateData.category,
+                    subCategory: updateData.subCategory,
+                    assignedTo: updateData.assignedTo,
+                    completionDate: updateData.completionDate,
+                    comments: updateData.comments
                 };
+            }
+            
+            // NEW: Check if status was changed to "Completed" - if so, reload fresh data
+            const statusChangedToCompleted = updateData.problemStatus === 'Completed' && 
+                                           currentProblem.problemStatus !== 'Completed';
+            
+            if (statusChangedToCompleted) {
+                console.log('🔄 Status changed to Completed - Reloading fresh data...');
                 
-                const response = await makeRequest('updateProblem', updateData);
-                
-                if (response.success) {
-                    const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
-                    if (problemIndex !== -1) {
-                        problems[problemIndex] = { 
-                            ...problems[problemIndex], 
-                            problemStatus: updateData.problemStatus,
-                            problemPriority: updateData.problemPriority,
-                            category: updateData.category,
-                            subCategory: updateData.subCategory,
-                            assignedTo: updateData.assignedTo,
-                            completionDate: updateData.completionDate,
-                            comments: updateData.comments
-                        };
+                try {
+                    // Reload all problems to get the auto-filled completion date
+                    saveBtn.textContent = '🔄 Refreshing...';
+                    
+                    const freshResponse = await makeRequest('getFaultLogData');
+                    
+                    if (freshResponse.success) {
+                        // Update the problems array with fresh data
+                        problems = freshResponse.data || [];
+                        
+                        // Find the updated problem with auto-filled completion date
+                        const updatedProblem = problems.find(p => p.internalId === currentProblem.internalId);
+                        
+                        if (updatedProblem) {
+                            console.log('✅ Fresh data loaded, completion date:', updatedProblem.completionDate);
+                            
+                            // Update current problem reference
+                            currentProblem = updatedProblem;
+                            
+                            // Refresh the form fields with the fresh data (including auto-filled completion date)
+                            populateFormWithFreshData(updatedProblem);
+                            
+                            console.log('🎯 Form refreshed with auto-filled completion date');
+                        }
+                    } else {
+                        console.warn('⚠️ Failed to reload fresh data, but save was successful');
                     }
                     
-                    applyFilters();
-                    updateDataStatus('Problem updated successfully', 'success');
-                    
-                    // Update current problem reference
-                    currentProblem = problems[problemIndex];
-                } else {
-                    throw new Error(response.message || 'Failed to update problem');
+                } catch (refreshError) {
+                    console.error('❌ Error refreshing data:', refreshError);
+                    // Don't fail the save - just warn that refresh failed
                 }
-                
-            } catch (error) {
-                console.error('❌ Error saving problem:', error);
-                updateDataStatus('Error saving problem', 'error');
-            } finally {
-                saveBtn.disabled = false;
-                saveBtn.textContent = originalText;
+            }
+            
+            // Update filters/display
+            applyFilters();
+            updateDataStatus('Problem updated successfully', 'success');
+            
+        } else {
+            throw new Error(response.message || 'Failed to update problem');
+        }
+        
+    } catch (error) {
+        console.error('❌ Error saving problem:', error);
+        updateDataStatus('Error saving problem', 'error');
+    } finally {
+        saveBtn.disabled = false;
+        saveBtn.textContent = originalText;
+    }
+}
+
+/**
+ * NEW FUNCTION: Populate form fields with fresh data from backend
+ */
+function populateFormWithFreshData(problem) {
+    console.log('🔄 Populating form with fresh data:', problem);
+    
+    // Update all form fields with fresh data
+    document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
+    document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
+    document.getElementById('detailCategory').value = problem.category || '';
+    document.getElementById('detailSubCategory').value = problem.subCategory || '';
+    document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
+    document.getElementById('detailComments').value = problem.comments || '';
+    
+    // IMPORTANT: Update completion date field with fresh data (including auto-filled date)
+    const completionDateField = document.getElementById('detailCompletionDate');
+    if (problem.completionDate) {
+        // Convert completion date to YYYY-MM-DD format for HTML date input
+        const formattedDate = formatDateForInput(problem.completionDate);
+        completionDateField.value = formattedDate;
+        console.log('✅ Updated completion date field:', formattedDate);
+    } else {
+        completionDateField.value = '';
+    }
+}
+
+/**
+ * NEW FUNCTION: Convert date to HTML input format (YYYY-MM-DD)
+ */
+function formatDateForInput(dateValue) {
+    if (!dateValue) return '';
+    
+    try {
+        let date;
+        
+        // Handle different date formats that might come from the backend
+        if (dateValue instanceof Date) {
+            date = dateValue;
+        } else if (typeof dateValue === 'string') {
+            // Try parsing different date formats
+            if (dateValue.includes('/')) {
+                // DD/MM/YYYY format
+                const parts = dateValue.split('/');
+                if (parts.length === 3) {
+                    date = new Date(parts[2], parts[1] - 1, parts[0]); // Month is 0-indexed
+                }
+            } else {
+                // Try standard date parsing
+                date = new Date(dateValue);
             }
         }
+        
+        if (date && !isNaN(date.getTime())) {
+            // Format as YYYY-MM-DD for HTML date input
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            
+            return `${year}-${month}-${day}`;
+        }
+        
+        console.warn('⚠️ Could not parse date:', dateValue);
+        return '';
+        
+    } catch (error) {
+        console.error('❌ Error formatting date:', error);
+        return '';
+    }
+}
         
         function closeModal() {
             document.getElementById('problemModal').classList.add('hidden');
