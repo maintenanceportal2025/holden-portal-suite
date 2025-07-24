@@ -880,32 +880,37 @@
         // NEW V2.1: LOAD DROPDOWN OPTIONS FROM MAINTENANCE TAB
         // =====================================================================
         async function loadDropdownOptions() {
-            try {
-                console.log('🎛️ Loading dropdown options from Maintenance TAB...');
-                
-                const response = await makeRequest('getDropdownOptions');
-                
-                if (response.success) {
-                    dynamicDropdownData = response.data;
-                    console.log('✅ Dropdown data loaded:', dynamicDropdownData);
-                    
-                    // Update all dropdowns that exist on the page
-                    updateAllDropdowns();
-                    
-                    return response.data;
-                } else {
-                    console.error('❌ Failed to load dropdown data:', response.error);
-                    throw new Error(response.error || 'Failed to load dropdown options');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading dropdown options:', error);
-                console.log('⚠️ Using fallback dropdown values');
-                // Use fallback values but still try to update dropdowns
-                updateAllDropdowns();
-                throw error;
-            }
+    try {
+        console.log('🎛️ Loading dropdown options from Maintenance TAB...');
+        
+        console.log('🔍 Step 1: About to make request...');
+        const response = await makeRequest('getDropdownOptions');
+        console.log('🔍 Step 2: Got response:', response);
+        
+        if (response.success) {
+            console.log('🔍 Step 3: Setting dynamicDropdownData...');
+            dynamicDropdownData = response.data;
+            console.log('✅ Dropdown data loaded:', dynamicDropdownData);
+            
+            console.log('🔍 Step 4: About to call updateAllDropdowns...');
+            // Update all dropdowns that exist on the page
+            updateAllDropdowns();
+            console.log('🔍 Step 5: updateAllDropdowns completed');
+            
+            return response.data;
+        } else {
+            console.error('❌ Failed to load dropdown data:', response.error);
+            throw new Error(response.error || 'Failed to load dropdown options');
         }
+        
+    } catch (error) {
+        console.error('❌ Error loading dropdown options:', error);
+        console.log('⚠️ Using fallback dropdown values');
+        // Use fallback values but still try to update dropdowns
+        updateAllDropdowns();
+        throw error;
+    }
+}
         
         // =====================================================================
         // NEW V2.1: UPDATE ALL DROPDOWN FUNCTIONS
