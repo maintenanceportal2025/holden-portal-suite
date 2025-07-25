@@ -132,6 +132,11 @@
             border-color: #2563eb;
         }
         
+        .priority-badge.all {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
         .priority-badge.urgent {
             background: #fecaca;
             color: #991b1b;
@@ -840,6 +845,9 @@
                     <span>Priority Overview:</span>
                 </div>
                 <div class="priority-badges">
+                    <div class="priority-badge all" data-priority="all">
+                        📋 All
+                    </div>
                     <div class="priority-badge urgent" data-priority="urgent">
                         🚨 <span id="urgentCount">-</span>
                     </div>
@@ -1591,6 +1599,10 @@
             document.getElementById('lowCount').textContent = priorityCounts.low;
             
             setupDashboardFilters();
+            
+            // Set "All" as active by default
+            document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-priority="all"]').classList.add('active');
         }
         
         function setupDashboardFilters() {
@@ -1607,27 +1619,81 @@
         }
         
         function filterByPriority(priority) {
-            const priorityMap = {
-                'urgent': 'Urgent',
-                'high': 'High', 
-                'medium': 'Medium',
-                'low': 'Low'
-            };
+            // Clear any previous priority badge selections
+            document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
             
+            // Mark the selected badge as active
+            document.querySelector(`[data-priority="${priority}"]`).classList.add('active');
+            
+            // Clear search term to avoid conflicts
             searchTerm = '';
-            document.getElementById('searchInput').value = '';
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = '';
+                // Reset search button
+                const searchBtn = document.getElementById('searchBtn');
+                if (searchBtn) {
+                    searchBtn.textContent = '🔍 Search';
+                    searchBtn.className = 'search-btn';
+                    searchBtn.dataset.action = 'search';
+                }
+            }
             
-            let filtered = problems.filter(problem => {
-                const problemPriority = (problem.problemPriority || 'medium').toLowerCase();
-                return problemPriority === priority;
-            });
-            
-            filteredProblems = filtered;
-            renderProblemsList();
-            
-            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
-            document.querySelector('[data-filter="all"]').classList.add('active');
-            activeFilter = 'all';
+            if (priority === 'all') {
+                // Show all problems - just use the current status filter
+                applyFilters();
+            } else {
+                // Filter by specific priority
+                const priorityMap = {
+                    'urgent': 'Urgent',
+                    'high': 'High', 
+                    'medium': 'Medium',
+                    'low': 'Low'
+                };
+                
+                let filtered = [...problems];
+                
+                // Apply status filter first (if any)
+                if (activeFilter !== 'all') {
+                    filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+                }
+                
+                // Then apply priority filter
+                filtered = filtered.filter(problem => {
+                    const problemPriority = (problem.problemPriority || 'medium').toLowerCase();
+                    return problemPriority === priority;
+                });
+                
+                // Apply same sorting as normal
+                const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+                filtered.sort((a, b) => {
+                    const aPriority = priorityOrder[a.problemPriority] || 3;
+                    const bPriority = priorityOrder[b.problemPriority] || 3;
+                    
+                    if (aPriority !== bPriority) {
+                        return aPriority - bPriority;
+                    }
+                    
+                    const getTimestamp = (problem) => {
+                        const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+                        if (!timestamp) return 0;
+                        const date = new Date(timestamp);
+                        return isNaN(date.getTime()) ? 0 : date.getTime();
+                    };
+                    
+                    const aTime = getTimestamp(a);
+                    const bTime = getTimestamp(b);
+                    
+                    if (aTime === bTime) {
+                        return (a.internalId || '').localeCompare(b.internalId || '');
+                    }
+                    
+                    return aTime - bTime;
+                });
+                
+                filteredProblems = filtered;
+                renderProblemsList();
+            }
         }
         
         function renderProblemsList() {
