@@ -1496,7 +1496,8 @@
                 
                 if (response.success) {
                     problems = response.data || [];
-                    applyFilters();
+console.log('First problem after load:', problems[0]);
+applyFilters();
                     updateDataStatus(`${problems.length} problems loaded`, 'success');
                     console.log('✅ Problems loaded successfully:', problems.length);
                 } else {
