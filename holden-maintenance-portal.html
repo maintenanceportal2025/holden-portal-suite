@@ -1524,26 +1524,15 @@ applyFilters();
         
 function applyFilters() {
     let filtered = [...problems];
-    // DEBUG - Check field names
-    console.log('First problem:', problems[0]);
     
     if (activeFilter !== 'all') {
         filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
-    }
-    
-    // NEW: Hide completed problems from "All Problems" view
-    if (activeFilter === 'all') {
+    } else {
+        // For "All Problems" - exclude completed
         filtered = filtered.filter(problem => 
             problem.problemStatus !== 'Completed'
         );
     }
-
-    // ADD DEBUG HERE - after completed problems are filtered out
-filtered.forEach(problem => {
-    const priority = problem.problemPriority || 'Unknown';
-    const priorityIndex = priorityOrder[priority] || 999;
-    console.log(`Problem ${problem.internalId}: Priority="${priority}", Index=${priorityIndex}, Status=${problem.problemStatus}`);
-});
     
     if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
@@ -1563,13 +1552,6 @@ filtered.forEach(problem => {
     }
     
     const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
-// ADD THIS DEBUG CODE HERE:
-filtered.forEach(problem => {
-    const priority = problem.problemPriority || 'Unknown';
-    const priorityIndex = priorityOrder[priority] || 999;
-    console.log(`Problem ${problem.internalId}: Priority="${priority}", Index=${priorityIndex}, Status=${problem.problemStatus}`);
-});
-    
     filtered.sort((a, b) => {
         const aPriority = priorityOrder[a.problemPriority] || 3;
         const bPriority = priorityOrder[b.problemPriority] || 3;
