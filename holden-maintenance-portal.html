@@ -1551,43 +1551,32 @@ function applyFilters() {
         });
     }
     
-    const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+    // Use Priority Portal proven logic adapted for Holden field names
+    const PRIORITY_ORDER = ['Urgent', 'High', 'Medium', 'Low'];
     filtered.sort((a, b) => {
-        const aPriority = priorityOrder[a.problemPriority] || 3;
-        const bPriority = priorityOrder[b.problemPriority] || 3;
+        const priorityA = PRIORITY_ORDER.indexOf(a.problemPriority) !== -1 ? PRIORITY_ORDER.indexOf(a.problemPriority) : 999;
+        const priorityB = PRIORITY_ORDER.indexOf(b.problemPriority) !== -1 ? PRIORITY_ORDER.indexOf(b.problemPriority) : 999;
         
-        if (aPriority !== bPriority) {
-            return aPriority - bPriority;
+        if (priorityA !== priorityB) {
+            return priorityA - priorityB;
         }
         
-        const getTimestamp = (problem) => {
-            const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
-            if (!timestamp) return 0;
-            const date = new Date(timestamp);
-            return isNaN(date.getTime()) ? 0 : date.getTime();
-        };
+        // Secondary sort by timestamp
+        const dateA = new Date(a.timestamp || a.lastUpdated || a.Timestamp || a.reportedDate);
+        const dateB = new Date(b.timestamp || b.lastUpdated || b.Timestamp || b.reportedDate);
         
-        const aTime = getTimestamp(a);
-        const bTime = getTimestamp(b);
-        
-        if (aTime === bTime) {
-            return (a.internalId || '').localeCompare(b.internalId || '');
+        if (dateA.getTime() !== dateB.getTime()) {
+            return dateA - dateB;
         }
         
-        return aTime - bTime;
+        // Fallback: sort by internal ID
+        return (a.internalId || '').localeCompare(b.internalId || '');
     });
     
     filteredProblems = filtered;
     renderProblemsList();
     updateStatusDashboard();
-
-    // DEBUG: Show final order
-console.log('Final sorted order:');
-filteredProblems.slice(0, 5).forEach((problem, index) => {
-    console.log(`${index + 1}. PID ${problem.internalId} - Priority: ${problem.problemPriority}, Status: ${problem.problemStatus}`);
-});
-}
-        
+}        
         // Status dashboard functionality
         function updateStatusDashboard() {
             const priorityCounts = {
