@@ -157,61 +157,6 @@
             box-shadow: 0 0 0 1px #2563eb;
         }
         
-        /* Enhanced Loading Styles */
-        .loading-sequence {
-            text-align: center;
-            padding: 40px 20px;
-            color: #6b7280;
-        }
-        
-        .loading-sequence .loading-spinner {
-            width: 50px;
-            height: 50px;
-            margin: 0 auto 20px;
-        }
-        
-        .loading-phase {
-            font-size: 16px;
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: #374151;
-        }
-        
-        .loading-progress {
-            width: 100%;
-            max-width: 300px;
-            height: 8px;
-            background: #e5e7eb;
-            border-radius: 4px;
-            margin: 0 auto 10px;
-            overflow: hidden;
-        }
-        
-        .loading-progress-bar {
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 4px;
-            transition: width 0.5s ease;
-            width: 0%;
-        }
-        
-        .loading-detail {
-            font-size: 14px;
-            color: #6b7280;
-        }
-        
-        /* Clickable Contact Styles */
-        .contact-link {
-            color: #2563eb;
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-        
-        .contact-link:hover {
-            color: #1d4ed8;
-            text-decoration: underline;
-        }
-        
         .search-section { 
             background: white; 
             padding: 25px; 
@@ -673,10 +618,59 @@
             cursor: not-allowed;
         }
         
-        .loading-state {
+        /* Enhanced Loading Styles */
+        .loading-sequence {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #6b7280;
+        }
+        
+        .loading-sequence .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-phase {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .loading-progress {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin: 0 auto 10px;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .loading-detail {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* Clickable Contact Styles */
+        .contact-link {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .contact-link:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
         }
         
         .loading-spinner {
@@ -745,12 +739,18 @@
             .modal-content {
                 margin: 20px;
             }
+            
+            .summary-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
     <!-- LOGIN SCREEN -->
-    <div id="loginView" class="hidden">
+    <div id="loginView">
         <div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
             <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
                 
@@ -950,35 +950,30 @@
                         <label>Status</label>
                         <select id="detailStatus" class="form-input">
                             <option value="">Select Status</option>
-                            <!-- Dynamic options loaded from Maintenance TAB -->
                         </select>
                     </div>
                     <div class="detail-field">
                         <label>Priority</label>
                         <select id="detailPriority" class="form-input">
                             <option value="">Select Priority</option>
-                            <!-- Dynamic options loaded from Maintenance TAB -->
                         </select>
                     </div>
                     <div class="detail-field">
                         <label>Category</label>
                         <select id="detailCategory" class="form-input">
                             <option value="">Select Category</option>
-                            <!-- Dynamic options loaded from Maintenance TAB -->
                         </select>
                     </div>
                     <div class="detail-field">
                         <label>Sub-Category</label>
                         <select id="detailSubCategory" class="form-input">
                             <option value="">Select Sub-Category</option>
-                            <!-- Dynamic options loaded from Maintenance TAB -->
                         </select>
                     </div>
                     <div class="detail-field">
                         <label>Assigned To</label>
                         <select id="detailAssignedTo" class="form-input">
                             <option value="">Select Assignee</option>
-                            <!-- Dynamic options loaded from Maintenance TAB -->
                         </select>
                     </div>
                     <div class="detail-field">
@@ -1024,14 +1019,12 @@
                             <label class="form-label">Status</label>
                             <select id="editStatus" class="form-input">
                                 <option value="">Select Status</option>
-                                <!-- Dynamic options loaded from Maintenance TAB -->
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Priority</label>
                             <select id="editPriority" class="form-input">
                                 <option value="">Select Priority</option>
-                                <!-- Dynamic options loaded from Maintenance TAB -->
                             </select>
                         </div>
                         <div class="form-group full-width">
@@ -1073,9 +1066,7 @@
         let searchTerm = '';
         let currentProblem = null;
         
-        // =====================================================================
-        // HOLDEN V2.1: DYNAMIC DROPDOWN DATA STORAGE (Internal reference kept)
-        // =====================================================================
+        // Dynamic dropdown data storage
         let dynamicDropdownData = {
             categories: [],
             subCategories: [],
@@ -1084,17 +1075,14 @@
             assignedTo: []
         };
         
-        // =====================================================================
-        // HOLDEN V2.2: AUTHENTICATION SYSTEM (Internal reference kept)
-        // =====================================================================
-        const MAINTENANCE_PASSWORD = 'maint2025'; // Change this as needed
+        // Authentication system
+        const MAINTENANCE_PASSWORD = 'maint2025';
         let isAuthenticated = false;
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🔧 Maintenance Portal V2.2 - Initializing...');
             setupEventListeners();
             
-            // Check if already authenticated
             if (isAuthenticated) {
                 showMainPortal();
                 initializeSystem();
@@ -1109,7 +1097,6 @@
             document.getElementById('listView').classList.add('hidden');
             document.getElementById('problemDetailsView').classList.add('hidden');
             
-            // Focus on password input
             setTimeout(() => {
                 const passwordInput = document.getElementById('passwordInput');
                 if (passwordInput) passwordInput.focus();
@@ -1124,7 +1111,6 @@
         }
         
         async function authenticateUser(password) {
-            // Simple password check
             if (password === MAINTENANCE_PASSWORD) {
                 isAuthenticated = true;
                 showMainPortal();
@@ -1135,25 +1121,196 @@
             }
         }
         
-        // Continue with rest of JavaScript code (same as original)...
+        // System initialization with enhanced loading
         async function initializeSystem() {
             try {
-                console.log('🎛️ Loading dynamic dropdown options...');
+                updateLoadingPhase('Loading dropdown options...', 20, 'Fetching categories, priorities, and assignments');
                 await loadDropdownOptions();
-                console.log('✅ Dynamic dropdowns initialized');
                 
-                console.log('📊 Loading problems...');
+                updateLoadingPhase('Loading problems data...', 60, 'Retrieving maintenance requests from database');
                 await loadProblems();
+                
+                updateLoadingPhase('Finalizing display...', 90, 'Preparing user interface');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                updateLoadingPhase('Complete!', 100, 'System ready for use');
                 console.log('✅ System initialization complete');
                 
             } catch (error) {
                 console.error('❌ Error initializing system:', error);
+                updateLoadingPhase('Loading with limited features...', 80, 'Some features may be unavailable');
                 await loadProblems();
             }
         }
         
-        // [Rest of the JavaScript functions remain the same as the original file]
-        // I'll include a few key functions to show the pattern:
+        function updateLoadingPhase(phase, progress, detail) {
+            const phaseElement = document.getElementById('loadingPhase');
+            const progressBar = document.getElementById('loadingProgressBar');
+            const detailElement = document.getElementById('loadingDetail');
+            
+            if (phaseElement) phaseElement.textContent = phase;
+            if (progressBar) progressBar.style.width = `${progress}%`;
+            if (detailElement) detailElement.textContent = detail;
+        }
+        
+        function setupEventListeners() {
+            // Login form listeners
+            const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                });
+            }
+            
+            // Search and filter listeners
+            const searchInput = document.getElementById('searchInput');
+            const searchBtn = document.getElementById('searchBtn');
+
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const value = this.value.trim();
+                    
+                    if (value.length > 0) {
+                        searchTerm = value;
+                        applyFilters();
+                        searchBtn.textContent = '❌ Clear Search';
+                        searchBtn.className = 'search-btn search-btn-clear';
+                        searchBtn.dataset.action = 'clear';
+                    } else {
+                        searchTerm = '';
+                        applyFilters();
+                        searchBtn.textContent = '🔍 Search';
+                        searchBtn.className = 'search-btn';
+                        searchBtn.dataset.action = 'search';
+                    }
+                });
+            }
+
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function() {
+                    if (this.dataset.action === 'clear') {
+                        searchInput.value = '';
+                        searchTerm = '';
+                        applyFilters();
+                        this.textContent = '🔍 Search';
+                        this.className = 'search-btn';
+                        this.dataset.action = 'search';
+                        searchInput.focus();
+                    }
+                });
+            }
+
+            // Filter tab listeners
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    setActiveFilter(this.dataset.filter);
+                });
+            });
+            
+            // Modal listeners
+            const closeModal = document.getElementById('closeModal');
+            const problemModal = document.getElementById('problemModal');
+            const problemForm = document.getElementById('problemForm');
+            
+            if (closeModal) {
+                closeModal.addEventListener('click', closeModalFunction);
+            }
+            
+            if (problemModal) {
+                problemModal.addEventListener('click', function(e) {
+                    if (e.target === this) closeModalFunction();
+                });
+            }
+            
+            if (problemForm) {
+                problemForm.addEventListener('submit', saveProblem);
+            }
+            
+            // Navigation listeners
+            const backToList = document.getElementById('backToList');
+            const managementForm = document.getElementById('managementForm');
+            
+            if (backToList) {
+                backToList.addEventListener('click', showListView);
+            }
+            
+            if (managementForm) {
+                managementForm.addEventListener('submit', saveDetailsFromPage);
+            }
+            
+            // Report button listeners
+            const viewReportBtn = document.getElementById('viewListReport');
+            const copyReportBtn = document.getElementById('copyListReport');
+            const closeReportModal = document.getElementById('closeReportModal');
+            const copyModalReport = document.getElementById('copyModalReport');
+            const viewProblemReportBtn = document.getElementById('viewProblemReport');
+            const copyProblemReportBtn = document.getElementById('copyProblemReport');
+            
+            if (viewReportBtn) {
+                viewReportBtn.addEventListener('click', showReportModal);
+            }
+            
+            if (copyReportBtn) {
+                copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (viewProblemReportBtn) {
+                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
+            }
+            
+            if (copyProblemReportBtn) {
+                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
+            }
+            
+            if (copyModalReport) {
+                copyModalReport.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (closeReportModal) {
+                closeReportModal.addEventListener('click', () => {
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
+            }
+            
+            // Logout and refresh listeners
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutBtn2 = document.getElementById('logoutBtn2');
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+            
+            if (logoutBtn2) {
+                logoutBtn2.addEventListener('click', logout);
+            }
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+            
+            if (refreshBtn2) {
+                refreshBtn2.addEventListener('click', refreshData);
+            }
+
+            // Keyboard listeners
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeModalFunction();
+                    document.getElementById('reportModal').classList.add('hidden');
+                }
+            });
+        }
         
         async function loadDropdownOptions() {
             try {
@@ -1179,6 +1336,627 @@
             }
         }
         
+        function updateAllDropdowns() {
+            updateStatusDropdowns();
+            updatePriorityDropdowns();
+            updateCategoryDropdowns();
+            updateSubCategoryDropdowns();
+            updateAssignedToDropdowns();
+        }
+        
+        function updateStatusDropdowns() {
+            const statusSelects = [
+                document.getElementById('detailStatus'),
+                document.getElementById('editStatus')
+            ];
+            
+            statusSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Status</option>';
+                
+                const statuses = dynamicDropdownData.statuses.length > 0 
+                    ? dynamicDropdownData.statuses 
+                    : ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled'];
+                
+                statuses.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    if (status === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updatePriorityDropdowns() {
+            const prioritySelects = [
+                document.getElementById('detailPriority'),
+                document.getElementById('editPriority')
+            ];
+            
+            prioritySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Priority</option>';
+                
+                const priorities = dynamicDropdownData.priorities.length > 0 
+                    ? dynamicDropdownData.priorities 
+                    : ['Low', 'Medium', 'High', 'Urgent'];
+                
+                priorities.forEach(priority => {
+                    const option = document.createElement('option');
+                    option.value = priority;
+                    option.textContent = priority;
+                    if (priority === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateCategoryDropdowns() {
+            const categorySelects = [
+                document.getElementById('detailCategory')
+            ];
+            
+            categorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Category</option>';
+                
+                const categories = dynamicDropdownData.categories.length > 0 
+                    ? dynamicDropdownData.categories 
+                    : ['Plumbing', 'HVAC', 'Electrical', 'Security', 'Cleaning', 'General'];
+                
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    if (category === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateSubCategoryDropdowns() {
+            const subCategorySelects = [
+                document.getElementById('detailSubCategory')
+            ];
+            
+            subCategorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Sub-Category</option>';
+                
+                const subCategories = dynamicDropdownData.subCategories.length > 0 
+                    ? dynamicDropdownData.subCategories 
+                    : ['Faucet/Tap', 'Air Conditioning', 'Lighting', 'Door Lock', 'General Maintenance'];
+                
+                subCategories.forEach(subCategory => {
+                    const option = document.createElement('option');
+                    option.value = subCategory;
+                    option.textContent = subCategory;
+                    if (subCategory === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateAssignedToDropdowns() {
+            const assignedToSelects = [
+                document.getElementById('detailAssignedTo')
+            ];
+            
+            assignedToSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Assignee</option>';
+                
+                const assignedToOptions = dynamicDropdownData.assignedTo.length > 0 
+                    ? dynamicDropdownData.assignedTo 
+                    : ['Ben', 'David', 'Jade', 'Residents Committee'];
+                
+                assignedToOptions.forEach(person => {
+                    const option = document.createElement('option');
+                    option.value = person;
+                    option.textContent = person;
+                    if (person === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        async function loadProblems() {
+            try {
+                updateDataStatus('Loading problems...', 'loading');
+                
+                const response = await makeRequest('getFaultLogData');
+                
+                if (response.success) {
+                    problems = response.data || [];
+                    applyFilters();
+                    updateDataStatus(`${problems.length} problems loaded`, 'success');
+                    console.log('✅ Problems loaded successfully:', problems.length);
+                } else {
+                    throw new Error(response.message || 'Failed to load problems');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading problems:', error);
+                updateDataStatus('Error loading problems', 'error');
+                showEmptyState('Failed to load problems. Please check backend configuration.');
+            }
+        }
+        
+        function setActiveFilter(filter) {
+            activeFilter = filter;
+            
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-filter="${filter}"]`).classList.add('active');
+            
+            applyFilters();
+        }
+        
+        function applyFilters() {
+            let filtered = [...problems];
+            
+            if (activeFilter !== 'all') {
+                filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+            }
+            
+            if (searchTerm) {
+                const searchLower = searchTerm.toLowerCase();
+                filtered = filtered.filter(problem => {
+                    const friendlyPID = getFriendlyPID(problem.internalId);
+                    const unitNumber = String(problem.unitNumber || '');
+                    const description = String(problem.problemDescription || '');
+                    const reporter = String(problem.reportedBy || '');
+                    const zone = String(problem.zone || '');
+                    
+                    return friendlyPID.toLowerCase().includes(searchLower) ||
+                           unitNumber.toLowerCase().includes(searchLower) ||
+                           description.toLowerCase().includes(searchLower) ||
+                           reporter.toLowerCase().includes(searchLower) ||
+                           zone.toLowerCase().includes(searchLower);
+                });
+            }
+            
+            const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+            filtered.sort((a, b) => {
+                const aPriority = priorityOrder[a.problemPriority] || 3;
+                const bPriority = priorityOrder[b.problemPriority] || 3;
+                
+                if (aPriority !== bPriority) {
+                    return aPriority - bPriority;
+                }
+                
+                const getTimestamp = (problem) => {
+                    const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+                    if (!timestamp) return 0;
+                    const date = new Date(timestamp);
+                    return isNaN(date.getTime()) ? 0 : date.getTime();
+                };
+                
+                const aTime = getTimestamp(a);
+                const bTime = getTimestamp(b);
+                
+                if (aTime === bTime) {
+                    return (a.internalId || '').localeCompare(b.internalId || '');
+                }
+                
+                return aTime - bTime;
+            });
+            
+            filteredProblems = filtered;
+            renderProblemsList();
+            updateStatusDashboard();
+        }
+        
+        // Status dashboard functionality
+        function updateStatusDashboard() {
+            const priorityCounts = {
+                urgent: 0,
+                high: 0,
+                medium: 0,
+                low: 0
+            };
+            
+            problems.forEach(problem => {
+                const priority = (problem.problemPriority || 'medium').toLowerCase();
+                if (priorityCounts.hasOwnProperty(priority)) {
+                    priorityCounts[priority]++;
+                }
+            });
+            
+            document.getElementById('urgentCount').textContent = priorityCounts.urgent;
+            document.getElementById('highCount').textContent = priorityCounts.high;
+            document.getElementById('mediumCount').textContent = priorityCounts.medium;
+            document.getElementById('lowCount').textContent = priorityCounts.low;
+            
+            setupDashboardFilters();
+        }
+        
+        function setupDashboardFilters() {
+            document.querySelectorAll('.priority-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const priority = this.dataset.priority;
+                    
+                    document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    filterByPriority(priority);
+                });
+            });
+        }
+        
+        function filterByPriority(priority) {
+            const priorityMap = {
+                'urgent': 'Urgent',
+                'high': 'High', 
+                'medium': 'Medium',
+                'low': 'Low'
+            };
+            
+            searchTerm = '';
+            document.getElementById('searchInput').value = '';
+            
+            let filtered = problems.filter(problem => {
+                const problemPriority = (problem.problemPriority || 'medium').toLowerCase();
+                return problemPriority === priority;
+            });
+            
+            filteredProblems = filtered;
+            renderProblemsList();
+            
+            document.querySelectorAll('.filter-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelector('[data-filter="all"]').classList.add('active');
+            activeFilter = 'all';
+        }
+        
+        function renderProblemsList() {
+            const container = document.getElementById('problemsList');
+            const countElement = document.getElementById('resultsCount');
+            
+            const filterText = activeFilter === 'all' ? 'All Problems' : activeFilter;
+            countElement.textContent = `${filteredProblems.length} ${filterText}`;
+            
+            if (filteredProblems.length === 0) {
+                showEmptyState(searchTerm ? 'No problems match your search criteria.' : 'No problems found.');
+                return;
+            }
+            
+            container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
+            
+            container.querySelectorAll('.problem-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const problemId = this.dataset.problemId;
+                    const problem = problems.find(p => p.internalId === problemId);
+                    if (problem) openProblemDetailsPage(problem);
+                });
+            });
+        }
+        
+        function createProblemCard(problem) {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const priorityClass = `badge-${(problem.problemPriority || 'medium').toLowerCase()}`;
+            const statusClass = `badge-${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}`;
+            
+            const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+            const formattedDate = formatDate(timestamp);
+            
+            return `
+                <div class="problem-item" data-problem-id="${problem.internalId}">
+                    <div class="problem-header">
+                        <div class="problem-id">${friendlyPID} ${problem.unitNumber || 'Unknown Unit'} • ${problem.zone || 'Zone Unknown'}</div>
+                    </div>
+                    <div class="problem-details">
+                        <div class="problem-description">${problem.problemDescription || 'No description'}</div>
+                        <div class="problem-footer">
+                            <div class="problem-badges">
+                                <span class="badge ${priorityClass}">${problem.problemPriority || 'Medium'}</span>
+                                <span class="badge ${statusClass}">${problem.problemStatus || 'Reported'}</span>
+                            </div>
+                            <div class="problem-date">${formattedDate}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function showEmptyState(message) {
+            document.getElementById('problemsList').innerHTML = `
+                <div class="empty-state">
+                    <h3>📭 ${message}</h3>
+                    <p>Try adjusting your search or filter criteria.</p>
+                </div>
+            `;
+        }
+        
+        function openProblemDetailsPage(problem) {
+            currentProblem = problem;
+            
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            
+            document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${problem.unitNumber}`;
+            
+            // Section 1: Problem Details (read-only)
+            document.getElementById('detailProblemId').textContent = friendlyPID;
+            document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
+            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
+            document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
+            document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description';
+            
+            // Update dropdowns before setting values
+            updateAllDropdowns();
+            
+            // Section 2: Management Details (editable)
+            document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
+            document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
+            document.getElementById('detailCategory').value = problem.category || '';
+            document.getElementById('detailSubCategory').value = problem.subCategory || '';
+            document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
+            document.getElementById('detailCompletionDate').value = problem.completionDate || '';
+            document.getElementById('detailComments').value = problem.comments || '';
+            
+            // Section 3: Contact Details
+            populateContactDetails(problem);
+            
+            showDetailsView();
+        }
+        
+        function populateContactDetails(problem) {
+            const container = document.getElementById('contactDetailsContent');
+            const reportedBy = problem.reportedBy || '';
+            const unitPrimaryName = problem.unitPrimaryName || '';
+            
+            let contactHTML = '';
+            
+            // Unit Primary Contact (always shown)
+            contactHTML += `
+                <div class="contact-group">
+                    <h4>Unit Primary Contact</h4>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <label>Name</label>
+                            <span>${problem.unitPrimaryName || 'Not available'}</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Email</label>
+                            <span>${problem.unitPrimaryEmail ? `<a href="mailto:${problem.unitPrimaryEmail}" class="contact-link">${problem.unitPrimaryEmail}</a>` : 'Not available'}</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Mobile</label>
+                            <span>${problem.unitPrimaryPhone ? `<a href="tel:${problem.unitPrimaryPhone.replace(/\s/g, '')}" class="contact-link">${problem.unitPrimaryPhone}</a>` : 'Not available'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Reporter Contact (only if different from unit primary)
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                contactHTML += `
+                    <div class="contact-group">
+                        <h4>Reporter Contact</h4>
+                        <div class="detail-grid">
+                            <div class="detail-field">
+                                <label>Name</label>
+                                <span>${problem.reportedBy || 'Not available'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Email</label>
+                                <span>${problem.reporterEmail ? `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 'Not available'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Mobile</label>
+                                <span>${problem.reporterPhone ? `<a href="tel:${problem.reporterPhone.replace(/\s/g, '')}" class="contact-link">${problem.reporterPhone}</a>` : 'Not available'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = contactHTML;
+        }
+        
+        function showListView() {
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
+            currentProblem = null;
+        }
+        
+        function showDetailsView() {
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('problemDetailsView').classList.remove('hidden');
+        }
+        
+        async function saveDetailsFromPage(e) {
+            e.preventDefault();
+            
+            if (!currentProblem) return;
+            
+            const saveBtn = document.getElementById('saveDetailsBtn');
+            const originalText = saveBtn.textContent;
+            
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = '💾 Saving...';
+                
+                const updateData = {
+                    internalId: currentProblem.internalId,
+                    problemStatus: document.getElementById('detailStatus').value,
+                    problemPriority: document.getElementById('detailPriority').value,
+                    category: document.getElementById('detailCategory').value,
+                    subCategory: document.getElementById('detailSubCategory').value,
+                    assignedTo: document.getElementById('detailAssignedTo').value,
+                    completionDate: document.getElementById('detailCompletionDate').value,
+                    comments: document.getElementById('detailComments').value
+                };
+                
+                const response = await makeRequest('updateProblem', updateData);
+                
+                if (response.success) {
+                    const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
+                    if (problemIndex !== -1) {
+                        problems[problemIndex] = { 
+                            ...problems[problemIndex], 
+                            problemStatus: updateData.problemStatus,
+                            problemPriority: updateData.problemPriority,
+                            category: updateData.category,
+                            subCategory: updateData.subCategory,
+                            assignedTo: updateData.assignedTo,
+                            completionDate: updateData.completionDate,
+                            comments: updateData.comments
+                        };
+                    }
+                    
+                    applyFilters();
+                    updateDataStatus('Problem updated successfully', 'success');
+                    
+                    currentProblem = problems[problemIndex];
+                } else {
+                    throw new Error(response.message || 'Failed to update problem');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error saving problem:', error);
+                updateDataStatus('Error saving problem', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        }
+        
+        function closeModalFunction() {
+            document.getElementById('problemModal').classList.add('hidden');
+            currentProblem = null;
+        }
+        
+        async function saveProblem(e) {
+            e.preventDefault();
+            
+            if (!currentProblem) return;
+            
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
+            
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = '💾 Saving...';
+                
+                updateAllDropdowns();
+                
+                const updateData = {
+                    internalId: currentProblem.internalId,
+                    problemStatus: document.getElementById('editStatus').value,
+                    problemPriority: document.getElementById('editPriority').value,
+                    comments: document.getElementById('editComments').value
+                };
+                
+                const response = await makeRequest('updateProblem', updateData);
+                
+                if (response.success) {
+                    const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
+                    if (problemIndex !== -1) {
+                        problems[problemIndex] = { 
+                            ...problems[problemIndex], 
+                            problemStatus: updateData.problemStatus,
+                            problemPriority: updateData.problemPriority,
+                            comments: updateData.comments
+                        };
+                    }
+                    
+                    applyFilters();
+                    closeModalFunction();
+                    updateDataStatus('Problem updated successfully', 'success');
+                } else {
+                    throw new Error(response.message || 'Failed to update problem');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error saving problem:', error);
+                updateDataStatus('Error saving problem', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        }
+        
+        async function makeRequest(action, additionalData = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                
+                const script = document.createElement('script');
+                const params = new URLSearchParams({
+                    action: action,
+                    callback: callbackName,
+                    ...additionalData
+                });
+                
+                script.src = `${WEB_APP_URL}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                document.head.appendChild(script);
+            });
+        }
+        
+        function updateDataStatus(message, type) {
+            const indicator = document.getElementById('dataStatus');
+            if (indicator) {
+                indicator.textContent = message;
+                indicator.className = `data-indicator ${type}`;
+            }
+        }
+        
+        function getFriendlyPID(internalId) {
+            if (!internalId) return 'PID Unknown';
+            const parts = internalId.split('-');
+            return parts.length === 2 ? `PID ${parts[1]}` : `PID ${internalId}`;
+        }
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'No Date';
+            try {
+                const date = new Date(dateString);
+                if (isNaN(date.getTime())) return 'Invalid Date';
+                return date.toLocaleDateString('en-AU', {
+                    day: '2-digit',
+                    month: '2-digit', 
+                    year: 'numeric'
+                });
+            } catch (error) {
+                console.error('Date formatting error:', error);
+                return 'Date Error';
+            }
+        }
+        
         function generateListReport() {
             const reportData = filteredProblems.map(problem => ({
                 pid: getFriendlyPID(problem.internalId),
@@ -1200,11 +1978,314 @@
             report += `Search: ${searchTerm || 'None'}\n`;
             report += '='.repeat(60) + '\n\n';
             
-            // [Continue with rest of report generation...]
+            const priorityCount = {
+                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
+                'High': reportData.filter(p => p.priority === 'High').length,
+                'Medium': reportData.filter(p => p.priority === 'Medium').length,
+                'Low': reportData.filter(p => p.priority === 'Low').length
+            };
+            
+            report += 'PRIORITY BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(priorityCount).forEach(([priority, count]) => {
+                if (count > 0) {
+                    report += `${priority}: ${count}\n`;
+                }
+            });
+            report += '\n';
+            
+            const statusCount = {};
+            reportData.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+            
+            report += 'STATUS BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(statusCount).forEach(([status, count]) => {
+                report += `${status}: ${count}\n`;
+            });
+            report += '\n';
+            
+            report += 'DETAILED PROBLEM LIST:\n';
+            report += '-'.repeat(60) + '\n';
+            
+            reportData.forEach((problem, index) => {
+                report += `${index + 1}. ${problem.pid}\n`;
+                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
+                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
+                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
+                report += `   Assigned: ${problem.assignedTo}\n`;
+                report += `   Description: ${problem.description}\n`;
+                report += '\n';
+            });
+            
+            report += '='.repeat(60) + '\n';
+            report += 'End of Report\n';
+            
             return report;
         }
         
-        // [Include all other necessary functions following the same pattern]
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateListReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function showProblemReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateProblemReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function generateProblemReport() {
+            if (!currentProblem) {
+                return 'No problem selected for report generation.';
+            }
+            
+            const friendlyPID = getFriendlyPID(currentProblem.internalId);
+            const reportedDate = formatDate(currentProblem.timestamp);
+            const completionDate = currentProblem.completionDate ? formatDate(currentProblem.completionDate) : 'Not completed';
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${currentProblem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Reported By: ${currentProblem.reportedBy || 'Unknown'}\n`;
+            report += `Description: ${currentProblem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${currentProblem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${currentProblem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${currentProblem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${currentProblem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${currentProblem.assignedTo || 'Unassigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            
+            if (currentProblem.comments && currentProblem.comments.trim()) {
+                report += `Internal Comments: ${currentProblem.comments}\n`;
+            }
+            report += '\n';
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            
+            // Unit Primary Contact
+            report += 'Unit Primary Contact:\n';
+            report += `  Name: ${currentProblem.unitPrimaryName || 'Not available'}\n`;
+            report += `  Email: ${currentProblem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `  Phone: ${currentProblem.unitPrimaryPhone || 'Not available'}\n`;
+            
+            // Reporter Contact (if different)
+            const reportedBy = currentProblem.reportedBy || '';
+            const unitPrimaryName = currentProblem.unitPrimaryName || '';
+            
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                report += '\nReporter Contact:\n';
+                report += `  Name: ${currentProblem.reportedBy || 'Not available'}\n`;
+                report += `  Email: ${currentProblem.reporterEmail || 'Not available'}\n`;
+                report += `  Phone: ${currentProblem.reporterPhone || 'Not available'}\n`;
+            }
+            
+            report += '\n' + '='.repeat(60) + '\n';
+            report += 'End of Problem Report\n';
+            
+            return report;
+        }
+        
+        async function copyProblemReportToClipboard() {
+            const report = generateProblemReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyProblemReport');
+                const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = originalBackground;
+                }, 2000);
+                
+                updateDataStatus('Problem report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy problem report:', error);
+                updateDataStatus('Failed to copy problem report', 'error');
+            }
+        }
+        
+        async function copyReportToClipboard() {
+            const report = generateListReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyListReport');
+                const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = originalBackground;
+                }, 2000);
+                
+                updateDataStatus('Report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy report:', error);
+                updateDataStatus('Failed to copy report', 'error');
+            }
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const password = passwordInput.value.trim();
+            
+            if (!password) {
+                showLoginError('Please enter a password');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '⏳ Authenticating...';
+            
+            try {
+                const success = await authenticateUser(password);
+                
+                if (success) {
+                    console.log('✅ Authentication successful');
+                } else {
+                    showLoginError('Invalid password. Please try again.');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+                
+            } catch (error) {
+                console.error('❌ Authentication error:', error);
+                showLoginError('Authentication failed. Please try again.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '🔐 Access Maintenance Portal';
+            }
+        }
+        
+        function showLoginError(message) {
+            const statusDiv = document.getElementById('loginDataStatus');
+            if (statusDiv) {
+                statusDiv.style.background = '#fecaca';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.innerHTML = `❌ ${message}`;
+                
+                setTimeout(() => {
+                    statusDiv.style.background = '#d1fae5';
+                    statusDiv.style.color = '#065f46';
+                    statusDiv.innerHTML = '🟢 System Ready - Portal Operational';
+                }, 3000);
+            }
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout? You will need to re-authenticate to access the portal.')) {
+                problems = [];
+                filteredProblems = [];
+                currentProblem = null;
+                dynamicDropdownData = {
+                    categories: [],
+                    subCategories: [],
+                    priorities: [],
+                    statuses: [],
+                    assignedTo: []
+                };
+                
+                isAuthenticated = false;
+                showLoginScreen();
+                updateDataStatus('Logged out', 'error');
+                
+                const passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) {
+                    passwordInput.value = '';
+                }
+                
+                console.log('🚪 User logged out');
+            }
+        }
+        
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '⏳ Refreshing...';
+            }
+            if (refreshBtn2) {
+                refreshBtn2.disabled = true;
+                refreshBtn2.innerHTML = '⏳ Refreshing...';
+            }
+            
+            try {
+                updateDataStatus('Refreshing data...', 'loading');
+                
+                console.log('🔄 Refreshing dropdown options...');
+                await loadDropdownOptions();
+                
+                console.log('🔄 Refreshing problems...');
+                await loadProblems();
+                
+                if (currentProblem && !document.getElementById('problemDetailsView').classList.contains('hidden')) {
+                    console.log('🔄 Refreshing current problem details...');
+                    const updatedProblem = problems.find(p => p.internalId === currentProblem.internalId);
+                    if (updatedProblem) {
+                        currentProblem = updatedProblem;
+                        openProblemDetailsPage(updatedProblem);
+                    }
+                }
+                
+                updateDataStatus('Data refreshed successfully', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error refreshing data:', error);
+                updateDataStatus('Error refreshing data', 'error');
+            } finally {
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '🔄 Refresh';
+                }
+                if (refreshBtn2) {
+                    refreshBtn2.disabled = false;
+                    refreshBtn2.innerHTML = '🔄 Refresh';
+                }
+            }
+        }
         
         console.log('🔧 Maintenance Portal V2.2 - Ready');
     </script>
