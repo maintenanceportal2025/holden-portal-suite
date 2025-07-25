@@ -1785,8 +1785,21 @@ function applyFilters() {
             document.getElementById('detailCategory').value = problem.category || '';
             document.getElementById('detailSubCategory').value = problem.subCategory || '';
             document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
-            document.getElementById('detailCompletionDate').value = problem.completionDate || '';
+            
+            //document.getElementById('detailCompletionDate').value = problem.completionDate || '';
+            
+            // Format completion date for HTML date input
+const completionDate = problem.completionDate || '';
+if (completionDate) {
+    // Convert to YYYY-MM-DD format for HTML date input
+    const date = new Date(completionDate);
+    const formattedDate = date.toISOString().split('T')[0];
+    document.getElementById('detailCompletionDate').value = formattedDate;
+} else {
+    document.getElementById('detailCompletionDate').value = '';
+}
             document.getElementById('detailComments').value = problem.comments || '';
+
             
             // Section 3: Contact Details
             populateContactDetails(problem);
