@@ -1580,6 +1580,12 @@ function applyFilters() {
     filteredProblems = filtered;
     renderProblemsList();
     updateStatusDashboard();
+
+    // DEBUG: Show final order
+console.log('Final sorted order:');
+filteredProblems.slice(0, 5).forEach((problem, index) => {
+    console.log(`${index + 1}. PID ${problem.internalId} - Priority: ${problem.problemPriority}, Status: ${problem.problemStatus}`);
+});
 }
         
         // Status dashboard functionality
