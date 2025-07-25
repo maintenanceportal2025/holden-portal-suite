@@ -1523,6 +1523,8 @@
         
 function applyFilters() {
     let filtered = [...problems];
+    // DEBUG - Check field names
+    console.log('First problem:', problems[0]);
     
     if (activeFilter !== 'all') {
         filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
