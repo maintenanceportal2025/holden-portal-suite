@@ -3,12 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Holden Maintenance Portal - Problem Management</title>
+    <title>Maintenance Portal - Problem Management</title>
     <style>
-        /* ===================================================================
-                                BASE STYLES & LAYOUT
-        =================================================================== */
-        
         * { 
             box-sizing: border-box; 
             margin: 0; 
@@ -30,10 +26,6 @@
             margin: 0 auto; 
             padding: 20px; 
         }
-        
-        /* ===================================================================
-                                HEADER STYLES
-        =================================================================== */
         
         .header-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -92,9 +84,83 @@
             color: #fecaca;
         }
         
-        /* ===================================================================
-                                SEARCH & FILTER STYLES
-        =================================================================== */
+        /* Compact Status Summary Styles */
+        .status-summary {
+            background: white;
+            border-radius: 8px;
+            padding: 12px 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+            border-left: 4px solid #667eea;
+        }
+        
+        .summary-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .summary-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .priority-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .priority-badge:hover {
+            transform: translateY(-1px);
+            border-color: #2563eb;
+        }
+        
+        .priority-badge.all {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .priority-badge.urgent {
+            background: #fecaca;
+            color: #991b1b;
+        }
+        
+        .priority-badge.high {
+            background: #fed7aa;
+            color: #9a3412;
+        }
+        
+        .priority-badge.medium {
+            background: #fde68a;
+            color: #92400e;
+        }
+        
+        .priority-badge.low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .priority-badge.active {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 1px #2563eb;
+        }
         
         .search-section { 
             background: white; 
@@ -184,10 +250,6 @@
             border-color: #2563eb;
         }
         
-        /* ===================================================================
-                                PROBLEMS LIST STYLES
-        =================================================================== */
-        
         .problems-section {
             background: white;
             border-radius: 12px;
@@ -217,6 +279,139 @@
             border-radius: 12px;
             font-size: 14px;
             font-weight: 500;
+        }
+        
+        .report-section {
+            display: flex;
+            gap: 10px;
+            margin: 15px 25px;
+            justify-content: flex-start;
+        }
+        
+        .report-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #2563eb;
+            color: white;
+        }
+        
+        .report-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .report-btn.green {
+            background: #059669;
+            color: white;
+        }
+        
+        .report-btn.green:hover {
+            background: #047857;
+        }
+        
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .back-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: #4b5563;
+        }
+        
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .section-title-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 25px;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 25px;
+        }
+        
+        .detail-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        
+        .detail-field.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .detail-field label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+        }
+        
+        .detail-field span {
+            padding: 10px 12px;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            color: #6b7280;
+            font-size: 14px;
+            min-height: 38px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .contact-group {
+            grid-column: 1 / -1;
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .contact-group h4 {
+            margin-bottom: 15px;
+            color: #1f2937;
+            font-size: 16px;
+        }
+        
+        .contact-group .detail-grid {
+            padding: 0;
         }
         
         .problems-list {
@@ -250,11 +445,6 @@
             margin-bottom: 4px;
         }
         
-        .problem-unit-zone {
-            color: #6b7280;
-            font-size: 14px;
-        }
-        
         .problem-footer {
             display: flex;
             justify-content: space-between;
@@ -272,6 +462,16 @@
         .problem-date {
             color: #6b7280;
             font-size: 14px;
+        }
+        
+        .problem-details {
+            margin-bottom: 0;
+        }
+        
+        .problem-description {
+            color: #4b5563;
+            margin-bottom: 8px;
+            line-height: 1.5;
         }
         
         .badge {
@@ -292,20 +492,6 @@
         .badge-on-hold { background: #f3e8ff; color: #7c3aed; }
         .badge-completed { background: #d1fae5; color: #065f46; }
         .badge-cancelled { background: #f3f4f6; color: #6b7280; }
-        
-        .problem-details {
-            margin-bottom: 0;
-        }
-        
-        .problem-description {
-            color: #4b5563;
-            margin-bottom: 8px;
-            line-height: 1.5;
-        }
-        
-        /* ===================================================================
-                                MODAL STYLES
-        =================================================================== */
         
         .modal {
             position: fixed;
@@ -437,14 +623,59 @@
             cursor: not-allowed;
         }
         
-        /* ===================================================================
-                                LOADING & EMPTY STATES
-        =================================================================== */
-        
-        .loading-state {
+        /* Enhanced Loading Styles */
+        .loading-sequence {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #6b7280;
+        }
+        
+        .loading-sequence .loading-spinner {
+            width: 50px;
+            height: 50px;
+            margin: 0 auto 20px;
+        }
+        
+        .loading-phase {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .loading-progress {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin: 0 auto 10px;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .loading-detail {
+            font-size: 14px;
+            color: #6b7280;
+        }
+        
+        /* Clickable Contact Styles */
+        .contact-link {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        .contact-link:hover {
+            color: #1d4ed8;
+            text-decoration: underline;
         }
         
         .loading-spinner {
@@ -472,10 +703,6 @@
             margin-bottom: 8px;
             color: #374151;
         }
-        
-        /* ===================================================================
-                                RESPONSIVE DESIGN
-        =================================================================== */
         
         @media (max-width: 768px) {
             .container {
@@ -517,31 +744,130 @@
             .modal-content {
                 margin: 20px;
             }
+            
+            .summary-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- HEADER SECTION -->
-    <div class="header-section">
+    <!-- LOGIN SCREEN -->
+    <div id="loginView">
+        <div style="min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; padding: 20px;">
+            <div style="background: white; border-radius: 20px; padding: 40px; max-width: 500px; width: 100%; box-shadow: 0 20px 40px rgba(0,0,0,0.1);">
+                
+                <!-- Header -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h1 style="color: #667eea; font-size: 36px; margin-bottom: 10px; font-weight: bold;">Maintenance Portal</h1>
+                    <div style="background: #e0e7ff; color: #3730a3; padding: 6px 16px; border-radius: 20px; display: inline-block; font-size: 14px; font-weight: 600; margin-bottom: 20px;">v2.2</div>
+                    <p style="color: #6b7280; font-size: 18px; margin: 0;">Lake Illawong Maintenance System</p>
+                </div>
+                
+                <!-- Features -->
+                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 30px; border-left: 4px solid #667eea;">
+                    <div style="display: flex; align-items: center; margin-bottom: 10px;">
+                        <span style="color: #667eea; font-size: 20px; margin-right: 10px;">🎯</span>
+                        <strong style="color: #1f2937;">Smart Maintenance Workflow</strong>
+                    </div>
+                    <p style="color: #6b7280; margin: 0; font-size: 14px;">Dynamic dropdowns • Auto-completion • Email notifications • Mobile-optimized</p>
+                </div>
+                
+                <!-- Status Indicator -->
+                <div id="loginDataStatus" style="background: #d1fae5; color: #065f46; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;">
+                    🟢 System Ready - Portal Operational
+                </div>
+                
+                <!-- Security Notice -->
+                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 30px;">
+                    <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                        <span style="color: #92400e; font-size: 16px; margin-right: 8px;">⚠️</span>
+                        <strong style="color: #92400e;">Authorized Personnel Only</strong>
+                    </div>
+                    <p style="color: #92400e; margin: 0; font-size: 14px;">This system contains sensitive maintenance data. Unauthorized access is prohibited.</p>
+                </div>
+                
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div style="margin-bottom: 20px;">
+                        <label style="display: block; font-weight: 600; color: #374151; font-size: 16px; margin-bottom: 8px;">Password</label>
+                        <div style="position: relative;">
+                            <input type="password" id="passwordInput" 
+                                   style="width: 100%; padding: 14px 50px 14px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; transition: border-color 0.3s ease;"
+                                   placeholder="Enter maintenance password"
+                                   required>
+                            <button type="button" id="togglePassword" 
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; font-size: 18px;">
+                                👁️
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="loginBtn" 
+                            style="width: 100%; background: #667eea; color: white; border: none; padding: 16px 20px; border-radius: 8px; font-size: 18px; font-weight: 600; cursor: pointer; transition: background-color 0.3s ease; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                        🔐 Access Maintenance Portal
+                    </button>
+                </form>
+                
+                <!-- Footer -->
+                <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #9ca3af; font-size: 12px; margin: 0;">Lake Illawong Maintenance Team</p>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="header-section" id="mainHeader" class="hidden">
         <div class="container">
             <div class="header-content">
                 <div class="header">
-                    <h1>🔧 Holden Maintenance Portal</h1>
-                    <p>Simple Problem Management System</p>
+                    <h1>🔧 Maintenance Portal</h1>
+                    <p>Problem Management System</p>
                 </div>
                 <div class="header-right">
+                    <button id="refreshDataBtn" class="back-btn" style="background: #059669; margin-right: 10px;">🔄 Refresh</button>
+                    <button id="logoutBtn" class="back-btn" style="background: #dc2626;">🚪 Logout</button>
                     <span id="dataStatus" class="data-indicator loading">Loading...</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="container">
-        <!-- SEARCH SECTION -->
+    <div class="container" id="listView">
+        <!-- Compact Status Summary -->
+        <div class="status-summary" id="statusSummary">
+            <div class="summary-content">
+                <div class="summary-title">
+                    <span>📊</span>
+                    <span>Priority Overview:</span>
+                </div>
+                <div class="priority-badges">
+                    <div class="priority-badge all" data-priority="all">
+                        📋 All
+                    </div>
+                    <div class="priority-badge urgent" data-priority="urgent">
+                        🚨 <span id="urgentCount">-</span>
+                    </div>
+                    <div class="priority-badge high" data-priority="high">
+                        🔥 <span id="highCount">-</span>
+                    </div>
+                    <div class="priority-badge medium" data-priority="medium">
+                        ⚡ <span id="mediumCount">-</span>
+                    </div>
+                    <div class="priority-badge low" data-priority="low">
+                        ✅ <span id="lowCount">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
         <div class="search-section">
             <h2>🔍 Search & Filter Problems</h2>
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit (eg unit 9), zone (eg zone 1) or description...">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search by PID, unit, zone, description, or reporter...">
                 <button id="searchBtn" class="search-btn">🔍 Search</button>
             </div>
             
@@ -551,26 +877,134 @@
                 <button class="filter-tab" data-filter="In Progress">In Progress</button>
                 <button class="filter-tab" data-filter="On Hold">On Hold</button>
                 <button class="filter-tab" data-filter="Completed">Completed</button>
+                <button class="filter-tab" data-filter="Cancelled">Cancelled</button>
             </div>
         </div>
 
-        <!-- PROBLEMS SECTION -->
         <div class="problems-section">
             <div class="section-header">
                 <h3 class="section-title">Problems List</h3>
                 <span id="resultsCount" class="results-count">Loading...</span>
             </div>
             
+            <div class="report-section">
+                <button id="viewListReport" class="report-btn">📄 View Report</button>
+                <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
+            </div>
+            
             <div id="problemsList" class="problems-list">
-                <div class="loading-state">
+                <div class="loading-sequence">
                     <div class="loading-spinner"></div>
-                    <p>Loading problems...</p>
+                    <div class="loading-phase" id="loadingPhase">Initializing system...</div>
+                    <div class="loading-progress">
+                        <div class="loading-progress-bar" id="loadingProgressBar"></div>
+                    </div>
+                    <div class="loading-detail" id="loadingDetail">Please wait while we prepare your data</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- EDIT PROBLEM MODAL -->
+    <!-- PROBLEM DETAILS PAGE -->
+    <div id="problemDetailsView" class="container hidden">
+        <div class="page-header">
+            <button id="backToList" class="back-btn">← Back to List</button>
+            <h2 id="problemPageTitle">Problem Details</h2>
+            //<div style="display: flex; gap: 10px; margin-left: auto;">
+                
+           //</div>
+        </div>
+        
+        <!-- Report Buttons Section -->
+        <div class="report-section" style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 25px;">
+            <button id="viewProblemReport" class="report-btn">📄 View Report</button>
+            <button id="copyProblemReport" class="report-btn green">📋 Copy Report</button>
+        </div>
+
+        <!-- Section 1: Problem Details -->
+        <div class="detail-section">
+            <div class="section-title-bar">📋 Problem Details</div>
+            <div class="detail-grid">
+                <div class="detail-field">
+                    <label>Problem ID</label>
+                    <span id="detailProblemId">-</span>
+                </div>
+                <div class="detail-field">
+                    <label>Unit Number</label>
+                    <span id="detailUnitNumber">-</span>
+                </div>
+                <div class="detail-field">
+                    <label>Reported Date</label>
+                    <span id="detailReportedDate">-</span>
+                </div>
+                <div class="detail-field">
+                    <label>Zone</label>
+                    <span id="detailZone">-</span>
+                </div>
+                <div class="detail-field full-width">
+                    <label>Problem Description</label>
+                    <span id="detailDescription">-</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Management Details -->
+        <div class="detail-section">
+            <div class="section-title-bar">🔧 Management Details</div>
+            <form id="managementForm">
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <label>Status</label>
+                        <select id="detailStatus" class="form-input">
+                            <option value="">Select Status</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Priority</label>
+                        <select id="detailPriority" class="form-input">
+                            <option value="">Select Priority</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Category</label>
+                        <select id="detailCategory" class="form-input">
+                            <option value="">Select Category</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Sub-Category</label>
+                        <select id="detailSubCategory" class="form-input">
+                            <option value="">Select Sub-Category</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Assigned To</label>
+                        <select id="detailAssignedTo" class="form-input">
+                            <option value="">Select Assignee</option>
+                        </select>
+                    </div>
+                    <div class="detail-field">
+                        <label>Completion Date</label>
+                        <input type="date" id="detailCompletionDate" class="form-input">
+                    </div>
+                    <div class="detail-field full-width">
+                        <label>Internal Comments</label>
+                        <textarea id="detailComments" class="form-input" placeholder="Add internal comments..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" id="saveDetailsBtn" class="save-btn">💾 Save Changes</button>
+            </form>
+        </div>
+
+        <!-- Section 3: Contact Details -->
+        <div class="detail-section">
+            <div class="section-title-bar">👥 Contact Details</div>
+            <div id="contactDetailsContent" class="detail-grid">
+                <!-- Dynamic content based on reporter logic -->
+            </div>
+        </div>
+    </div>
+
     <div id="problemModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
@@ -591,20 +1025,13 @@
                         <div class="form-group">
                             <label class="form-label">Status</label>
                             <select id="editStatus" class="form-input">
-                                <option value="Reported">Reported</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="On Hold">On Hold</option>
-                                <option value="Completed">Completed</option>
-                                <option value="Cancelled">Cancelled</option>
+                                <option value="">Select Status</option>
                             </select>
                         </div>
                         <div class="form-group">
                             <label class="form-label">Priority</label>
                             <select id="editPriority" class="form-input">
-                                <option value="Low">Low</option>
-                                <option value="Medium">Medium</option>
-                                <option value="High">High</option>
-                                <option value="Urgent">Urgent</option>
+                                <option value="">Select Priority</option>
                             </select>
                         </div>
                         <div class="form-group full-width">
@@ -622,101 +1049,444 @@
         </div>
     </div>
 
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 class="modal-title">Report Preview</h3>
+                <button id="closeReportModal" class="close-btn">×</button>
+            </div>
+            <div class="modal-body">
+                <pre id="reportText" style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; background: #f8f9fa; padding: 20px; border-radius: 6px; max-height: 600px; overflow-y: auto;"></pre>
+                <div style="margin-top: 20px;">
+                    <button id="copyModalReport" class="report-btn">📋 Copy Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ===================================================================
-        // HOLDEN MAINTENANCE PORTAL - COMPLETE VERSION
-        // ===================================================================
-        
-        // Configuration - Your actual backend URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
         
-        // Global state
         let problems = [];
         let filteredProblems = [];
         let activeFilter = 'all';
         let searchTerm = '';
         let currentProblem = null;
         
-        // Initialize on page load
+        // Dynamic dropdown data storage
+        let dynamicDropdownData = {
+            categories: [],
+            subCategories: [],
+            priorities: [],
+            statuses: [],
+            assignedTo: []
+        };
+        
+        // Authentication system
+        const MAINTENANCE_PASSWORD = 'maint2025';
+        let isAuthenticated = false;
+        
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Holden Maintenance Portal - Initializing...');
+            console.log('🔧 Maintenance Portal V2.2 - Initializing...');
             setupEventListeners();
-            loadProblems();
+            
+            if (isAuthenticated) {
+                showMainPortal();
+                initializeSystem();
+            } else {
+                showLoginScreen();
+            }
         });
         
-        // ===================================================================
-        // EVENT LISTENERS
-        // ===================================================================
+        function showLoginScreen() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('mainHeader').classList.add('hidden');
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
+            
+            setTimeout(() => {
+                const passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) passwordInput.focus();
+            }, 100);
+        }
+        
+        function showMainPortal() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('mainHeader').classList.remove('hidden');
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
+        }
+        
+        async function authenticateUser(password) {
+            if (password === MAINTENANCE_PASSWORD) {
+                isAuthenticated = true;
+                showMainPortal();
+                await initializeSystem();
+                return true;
+            } else {
+                return false;
+            }
+        }
+        
+        // System initialization with enhanced loading
+        async function initializeSystem() {
+            try {
+                updateLoadingPhase('Loading dropdown options...', 20, 'Fetching categories, priorities, and assignments');
+                await loadDropdownOptions();
+                
+                updateLoadingPhase('Loading problems data...', 60, 'Retrieving maintenance requests from database');
+                await loadProblems();
+                
+                updateLoadingPhase('Finalizing display...', 90, 'Preparing user interface');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                updateLoadingPhase('Complete!', 100, 'System ready for use');
+                console.log('✅ System initialization complete');
+                
+            } catch (error) {
+                console.error('❌ Error initializing system:', error);
+                updateLoadingPhase('Loading with limited features...', 80, 'Some features may be unavailable');
+                await loadProblems();
+            }
+        }
+        
+        function updateLoadingPhase(phase, progress, detail) {
+            const phaseElement = document.getElementById('loadingPhase');
+            const progressBar = document.getElementById('loadingProgressBar');
+            const detailElement = document.getElementById('loadingDetail');
+            
+            if (phaseElement) phaseElement.textContent = phase;
+            if (progressBar) progressBar.style.width = `${progress}%`;
+            if (detailElement) detailElement.textContent = detail;
+        }
         
         function setupEventListeners() {
-            // Auto-search functionality with dynamic button
+            // Login form listeners
+            const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordInput');
+            
+            if (loginForm) {
+                loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                });
+            }
+            
+            // Search and filter listeners
             const searchInput = document.getElementById('searchInput');
             const searchBtn = document.getElementById('searchBtn');
 
-            // Real-time search as user types
-            searchInput.addEventListener('input', function() {
-                const value = this.value.trim();
-                
-                if (value.length > 0) {
-                    // Auto-search as user types
-                    searchTerm = value;
-                    applyFilters();
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const value = this.value.trim();
                     
-                    // Change to red clear button
-                    searchBtn.textContent = '❌ Clear Search';
-                    searchBtn.className = 'search-btn search-btn-clear';
-                    searchBtn.dataset.action = 'clear';
-                } else {
-                    // Reset to search state
-                    searchTerm = '';
-                    applyFilters();
-                    
-                    searchBtn.textContent = '🔍 Search';
-                    searchBtn.className = 'search-btn';
-                    searchBtn.dataset.action = 'search';
-                }
-            });
+                    if (value.length > 0) {
+                        searchTerm = value;
+                        applyFilters();
+                        searchBtn.textContent = '❌ Clear Search';
+                        searchBtn.className = 'search-btn search-btn-clear';
+                        searchBtn.dataset.action = 'clear';
+                    } else {
+                        searchTerm = '';
+                        applyFilters();
+                        searchBtn.textContent = '🔍 Search';
+                        searchBtn.className = 'search-btn';
+                        searchBtn.dataset.action = 'search';
+                    }
+                });
+            }
 
-            // Clear search when button clicked
-            searchBtn.addEventListener('click', function() {
-                if (this.dataset.action === 'clear') {
-                    searchInput.value = '';
-                    searchTerm = '';
-                    applyFilters();
-                    
-                    // Reset button
-                    this.textContent = '🔍 Search';
-                    this.className = 'search-btn';
-                    this.dataset.action = 'search';
-                    searchInput.focus();
-                }
-            });
+            if (searchBtn) {
+                searchBtn.addEventListener('click', function() {
+                    if (this.dataset.action === 'clear') {
+                        searchInput.value = '';
+                        searchTerm = '';
+                        applyFilters();
+                        this.textContent = '🔍 Search';
+                        this.className = 'search-btn';
+                        this.dataset.action = 'search';
+                        searchInput.focus();
+                    }
+                });
+            }
 
-            // Filter tabs
+            // Filter tab listeners
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.addEventListener('click', function() {
                     setActiveFilter(this.dataset.filter);
                 });
             });
             
-            // Modal controls
-            document.getElementById('closeModal').addEventListener('click', closeModal);
-            document.getElementById('problemModal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
+            // Modal listeners
+            const closeModal = document.getElementById('closeModal');
+            const problemModal = document.getElementById('problemModal');
+            const problemForm = document.getElementById('problemForm');
             
-            // Form submission
-            document.getElementById('problemForm').addEventListener('submit', saveProblem);
+            if (closeModal) {
+                closeModal.addEventListener('click', closeModalFunction);
+            }
             
-            // Keyboard shortcuts
+            if (problemModal) {
+                problemModal.addEventListener('click', function(e) {
+                    if (e.target === this) closeModalFunction();
+                });
+            }
+            
+            if (problemForm) {
+                problemForm.addEventListener('submit', saveProblem);
+            }
+            
+            // Navigation listeners
+            const backToList = document.getElementById('backToList');
+            const managementForm = document.getElementById('managementForm');
+            
+            if (backToList) {
+                backToList.addEventListener('click', showListView);
+            }
+            
+            if (managementForm) {
+                managementForm.addEventListener('submit', saveDetailsFromPage);
+            }
+            
+            // Report button listeners
+            const viewReportBtn = document.getElementById('viewListReport');
+            const copyReportBtn = document.getElementById('copyListReport');
+            const closeReportModal = document.getElementById('closeReportModal');
+            const copyModalReport = document.getElementById('copyModalReport');
+            const viewProblemReportBtn = document.getElementById('viewProblemReport');
+            const copyProblemReportBtn = document.getElementById('copyProblemReport');
+            
+            if (viewReportBtn) {
+                viewReportBtn.addEventListener('click', showReportModal);
+            }
+            
+            if (copyReportBtn) {
+                copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (viewProblemReportBtn) {
+                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
+            }
+            
+            if (copyProblemReportBtn) {
+                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
+            }
+            
+            if (copyModalReport) {
+                copyModalReport.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (closeReportModal) {
+                closeReportModal.addEventListener('click', () => {
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
+            }
+            
+            // Logout and refresh listeners
+            const logoutBtn = document.getElementById('logoutBtn');
+            const logoutBtn2 = document.getElementById('logoutBtn2');
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+            
+            if (logoutBtn2) {
+                logoutBtn2.addEventListener('click', logout);
+            }
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+            
+            if (refreshBtn2) {
+                refreshBtn2.addEventListener('click', refreshData);
+            }
+
+            // Keyboard listeners
             document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeModal();
+                if (e.key === 'Escape') {
+                    closeModalFunction();
+                    document.getElementById('reportModal').classList.add('hidden');
+                }
             });
         }
         
-        // ===================================================================
-        // DATA LOADING
-        // ===================================================================
+        async function loadDropdownOptions() {
+            try {
+                console.log('🎛️ Loading dropdown options from Categories TAB...');
+                
+                const response = await makeRequest('getDropdownOptions');
+                
+                if (response.success) {
+                    dynamicDropdownData = response.data;
+                    console.log('✅ Dropdown data loaded:', dynamicDropdownData);
+                    updateAllDropdowns();
+                    return response.data;
+                } else {
+                    console.error('❌ Failed to load dropdown data:', response.error);
+                    throw new Error(response.error || 'Failed to load dropdown options');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdown options:', error);
+                console.log('⚠️ Using fallback dropdown values');
+                updateAllDropdowns();
+                throw error;
+            }
+        }
+        
+        function updateAllDropdowns() {
+            updateStatusDropdowns();
+            updatePriorityDropdowns();
+            updateCategoryDropdowns();
+            updateSubCategoryDropdowns();
+            updateAssignedToDropdowns();
+        }
+        
+        function updateStatusDropdowns() {
+            const statusSelects = [
+                document.getElementById('detailStatus'),
+                document.getElementById('editStatus')
+            ];
+            
+            statusSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Status</option>';
+                
+                const statuses = dynamicDropdownData.statuses.length > 0 
+                    ? dynamicDropdownData.statuses 
+                    : ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled'];
+                
+                statuses.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    if (status === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updatePriorityDropdowns() {
+            const prioritySelects = [
+                document.getElementById('detailPriority'),
+                document.getElementById('editPriority')
+            ];
+            
+            prioritySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Priority</option>';
+                
+                const priorities = dynamicDropdownData.priorities.length > 0 
+                    ? dynamicDropdownData.priorities 
+                    : ['Low', 'Medium', 'High', 'Urgent'];
+                
+                priorities.forEach(priority => {
+                    const option = document.createElement('option');
+                    option.value = priority;
+                    option.textContent = priority;
+                    if (priority === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateCategoryDropdowns() {
+            const categorySelects = [
+                document.getElementById('detailCategory')
+            ];
+            
+            categorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Category</option>';
+                
+                const categories = dynamicDropdownData.categories.length > 0 
+                    ? dynamicDropdownData.categories 
+                    : ['Plumbing', 'HVAC', 'Electrical', 'Security', 'Cleaning', 'General'];
+                
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    if (category === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateSubCategoryDropdowns() {
+            const subCategorySelects = [
+                document.getElementById('detailSubCategory')
+            ];
+            
+            subCategorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Sub-Category</option>';
+                
+                const subCategories = dynamicDropdownData.subCategories.length > 0 
+                    ? dynamicDropdownData.subCategories 
+                    : ['Faucet/Tap', 'Air Conditioning', 'Lighting', 'Door Lock', 'General Maintenance'];
+                
+                subCategories.forEach(subCategory => {
+                    const option = document.createElement('option');
+                    option.value = subCategory;
+                    option.textContent = subCategory;
+                    if (subCategory === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateAssignedToDropdowns() {
+            const assignedToSelects = [
+                document.getElementById('detailAssignedTo')
+            ];
+            
+            assignedToSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Assignee</option>';
+                
+                const assignedToOptions = dynamicDropdownData.assignedTo.length > 0 
+                    ? dynamicDropdownData.assignedTo 
+                    : ['Ben', 'David', 'Jade', 'Residents Committee'];
+                
+                assignedToOptions.forEach(person => {
+                    const option = document.createElement('option');
+                    option.value = person;
+                    option.textContent = person;
+                    if (person === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
         
         async function loadProblems() {
             try {
@@ -726,7 +1496,8 @@
                 
                 if (response.success) {
                     problems = response.data || [];
-                    applyFilters();
+console.log('First problem after load:', problems[0]);
+applyFilters();
                     updateDataStatus(`${problems.length} problems loaded`, 'success');
                     console.log('✅ Problems loaded successfully:', problems.length);
                 } else {
@@ -740,14 +1511,9 @@
             }
         }
         
-        // ===================================================================
-        // SEARCH & FILTERING
-        // ===================================================================
-        
         function setActiveFilter(filter) {
             activeFilter = filter;
             
-            // Update active tab
             document.querySelectorAll('.filter-tab').forEach(tab => {
                 tab.classList.remove('active');
             });
@@ -756,53 +1522,195 @@
             applyFilters();
         }
         
-        function applyFilters() {
-            let filtered = [...problems];
+function applyFilters() {
+    let filtered = [...problems];
+    
+    if (activeFilter !== 'all') {
+        filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+    } else {
+        // For "All Problems" - exclude completed
+        filtered = filtered.filter(problem => 
+            problem.problemStatus !== 'Completed'
+        );
+    }
+    
+    if (searchTerm) {
+        const searchLower = searchTerm.toLowerCase();
+        filtered = filtered.filter(problem => {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const unitNumber = String(problem.unitNumber || '');
+            const description = String(problem.problemDescription || '');
+            const reporter = String(problem.reportedBy || '');
+            const zone = String(problem.zone || '');
             
-            // Apply status filter - use problemStatus (as returned by backend)
-            if (activeFilter !== 'all') {
-                filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
-            }
-            
-            // Apply search filter with safe string conversion
-            if (searchTerm) {
-                const searchLower = searchTerm.toLowerCase();
-                filtered = filtered.filter(problem => {
-                    const friendlyPID = getFriendlyPID(problem.internalId);
-                    const unitNumber = String(problem.unitNumber || '');
-                    const description = String(problem.problemDescription || '');
-                    const reporter = String(problem.reportedBy || '');
-                    const zone = String(problem.zone || '');
-                    
-                    return friendlyPID.toLowerCase().includes(searchLower) ||
-                           unitNumber.toLowerCase().includes(searchLower) ||
-                           description.toLowerCase().includes(searchLower) ||
-                           reporter.toLowerCase().includes(searchLower) ||
-                           zone.toLowerCase().includes(searchLower);
-                });
-            }
-            
-            // Sort by priority (Urgent first) - use problemPriority (as returned by backend)
-            const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
-            filtered.sort((a, b) => {
-                const aPriority = priorityOrder[a.problemPriority] || 3;
-                const bPriority = priorityOrder[b.problemPriority] || 3;
-                return aPriority - bPriority;
-            });
-            
-            filteredProblems = filtered;
-            renderProblemsList();
+            return friendlyPID.toLowerCase().includes(searchLower) ||
+                   unitNumber.toLowerCase().includes(searchLower) ||
+                   description.toLowerCase().includes(searchLower) ||
+                   reporter.toLowerCase().includes(searchLower) ||
+                   zone.toLowerCase().includes(searchLower);
+        });
+    }
+    
+    const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+    filtered.sort((a, b) => {
+        const aPriority = priorityOrder[a.problemPriority] || 3;
+        const bPriority = priorityOrder[b.problemPriority] || 3;
+        
+        if (aPriority !== bPriority) {
+            return aPriority - bPriority;
         }
         
-        // ===================================================================
-        // RENDERING
-        // ===================================================================
+        const getTimestamp = (problem) => {
+            const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+            if (!timestamp) return 0;
+            const date = new Date(timestamp);
+            return isNaN(date.getTime()) ? 0 : date.getTime();
+        };
+        
+        const aTime = getTimestamp(a);
+        const bTime = getTimestamp(b);
+        
+        if (aTime === bTime) {
+            return (a.internalId || '').localeCompare(b.internalId || '');
+        }
+        
+        return aTime - bTime;
+    });
+    
+    filteredProblems = filtered;
+    renderProblemsList();
+    updateStatusDashboard();
+
+    // DEBUG: Show final order
+console.log('Final sorted order:');
+filteredProblems.slice(0, 5).forEach((problem, index) => {
+    console.log(`${index + 1}. PID ${problem.internalId} - Priority: ${problem.problemPriority}, Status: ${problem.problemStatus}`);
+});
+}
+        
+        // Status dashboard functionality
+        function updateStatusDashboard() {
+            const priorityCounts = {
+                urgent: 0,
+                high: 0,
+                medium: 0,
+                low: 0
+            };
+            
+            problems.forEach(problem => {
+                const priority = (problem.problemPriority || 'medium').toLowerCase();
+                if (priorityCounts.hasOwnProperty(priority)) {
+                    priorityCounts[priority]++;
+                }
+            });
+            
+            document.getElementById('urgentCount').textContent = priorityCounts.urgent;
+            document.getElementById('highCount').textContent = priorityCounts.high;
+            document.getElementById('mediumCount').textContent = priorityCounts.medium;
+            document.getElementById('lowCount').textContent = priorityCounts.low;
+            
+            setupDashboardFilters();
+            
+            // Set "All" as active by default
+            document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+            document.querySelector('[data-priority="all"]').classList.add('active');
+        }
+        
+        function setupDashboardFilters() {
+            document.querySelectorAll('.priority-badge').forEach(badge => {
+                badge.addEventListener('click', function() {
+                    const priority = this.dataset.priority;
+                    
+                    document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    filterByPriority(priority);
+                });
+            });
+        }
+        
+        function filterByPriority(priority) {
+            // Clear any previous priority badge selections
+            document.querySelectorAll('.priority-badge').forEach(b => b.classList.remove('active'));
+            
+            // Mark the selected badge as active
+            document.querySelector(`[data-priority="${priority}"]`).classList.add('active');
+            
+            // Clear search term to avoid conflicts
+            searchTerm = '';
+            const searchInput = document.getElementById('searchInput');
+            if (searchInput) {
+                searchInput.value = '';
+                // Reset search button
+                const searchBtn = document.getElementById('searchBtn');
+                if (searchBtn) {
+                    searchBtn.textContent = '🔍 Search';
+                    searchBtn.className = 'search-btn';
+                    searchBtn.dataset.action = 'search';
+                }
+            }
+            
+            if (priority === 'all') {
+                // Show all problems - just use the current status filter
+                applyFilters();
+            } else {
+                // Filter by specific priority
+                const priorityMap = {
+                    'urgent': 'Urgent',
+                    'high': 'High', 
+                    'medium': 'Medium',
+                    'low': 'Low'
+                };
+                
+                let filtered = [...problems];
+                
+                // Apply status filter first (if any)
+                if (activeFilter !== 'all') {
+                    filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+                }
+                
+                // Then apply priority filter
+                filtered = filtered.filter(problem => {
+                    const problemPriority = (problem.problemPriority || 'medium').toLowerCase();
+                    return problemPriority === priority;
+                });
+                
+                // Apply same sorting as normal
+                const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+                filtered.sort((a, b) => {
+                    const aPriority = priorityOrder[a.problemPriority] || 3;
+                    const bPriority = priorityOrder[b.problemPriority] || 3;
+                    
+                    if (aPriority !== bPriority) {
+                        return aPriority - bPriority;
+                    }
+                    
+                    const getTimestamp = (problem) => {
+                        const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+                        if (!timestamp) return 0;
+                        const date = new Date(timestamp);
+                        return isNaN(date.getTime()) ? 0 : date.getTime();
+                    };
+                    
+                    const aTime = getTimestamp(a);
+                    const bTime = getTimestamp(b);
+                    
+                    if (aTime === bTime) {
+                        return (a.internalId || '').localeCompare(b.internalId || '');
+                    }
+                    
+                    return aTime - bTime;
+                });
+                
+                filteredProblems = filtered;
+                renderProblemsList();
+            }
+        }
         
         function renderProblemsList() {
             const container = document.getElementById('problemsList');
             const countElement = document.getElementById('resultsCount');
             
-            // Update count
             const filterText = activeFilter === 'all' ? 'All Problems' : activeFilter;
             countElement.textContent = `${filteredProblems.length} ${filterText}`;
             
@@ -813,12 +1721,11 @@
             
             container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
             
-            // Add click listeners
             container.querySelectorAll('.problem-item').forEach(item => {
                 item.addEventListener('click', function() {
                     const problemId = this.dataset.problemId;
                     const problem = problems.find(p => p.internalId === problemId);
-                    if (problem) openEditModal(problem);
+                    if (problem) openProblemDetailsPage(problem);
                 });
             });
         }
@@ -828,14 +1735,13 @@
             const priorityClass = `badge-${(problem.problemPriority || 'medium').toLowerCase()}`;
             const statusClass = `badge-${(problem.problemStatus || 'reported').toLowerCase().replace(' ', '-')}`;
             
-            // Use lastUpdated since timestamp is empty in your backend
             const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
             const formattedDate = formatDate(timestamp);
             
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
                     <div class="problem-header">
-                        <div class="problem-id">${friendlyPID} Unit ${problem.unitNumber || 'Unknown'} • ${problem.zone || 'Zone Unknown'}</div>
+                        <div class="problem-id">${friendlyPID} ${problem.unitNumber || 'Unknown Unit'} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-details">
                         <div class="problem-description">${problem.problemDescription || 'No description'}</div>
@@ -860,43 +1766,122 @@
             `;
         }
         
-        // ===================================================================
-        // MODAL MANAGEMENT
-        // ===================================================================
-        
-        function openEditModal(problem) {
+        function openProblemDetailsPage(problem) {
             currentProblem = problem;
             
             const friendlyPID = getFriendlyPID(problem.internalId);
-            document.getElementById('modalTitle').textContent = `Edit ${friendlyPID} - ${problem.unitNumber}`;
             
-            // Populate form - use problemStatus and problemPriority
-            document.getElementById('editProblemId').value = friendlyPID;
-            document.getElementById('editUnitNumber').value = problem.unitNumber || '';
-            document.getElementById('editStatus').value = problem.problemStatus || 'Reported';
-            document.getElementById('editPriority').value = problem.problemPriority || 'Medium';
-            document.getElementById('editDescription').value = problem.problemDescription || '';
-            document.getElementById('editComments').value = problem.comments || '';
+            document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${problem.unitNumber}`;
             
-            // Show modal
-            document.getElementById('problemModal').classList.remove('hidden');
+            // Section 1: Problem Details (read-only)
+            document.getElementById('detailProblemId').textContent = friendlyPID;
+            document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
+            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
+            document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
+            document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description';
+            
+            // Update dropdowns before setting values
+            updateAllDropdowns();
+            
+            // Section 2: Management Details (editable)
+            document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
+            document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
+            document.getElementById('detailCategory').value = problem.category || '';
+            document.getElementById('detailSubCategory').value = problem.subCategory || '';
+            document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
+            
+            //document.getElementById('detailCompletionDate').value = problem.completionDate || '';
+            
+            // Format completion date for HTML date input
+const completionDate = problem.completionDate || '';
+if (completionDate) {
+    // Convert to YYYY-MM-DD format for HTML date input
+    const date = new Date(completionDate);
+    const formattedDate = date.toISOString().split('T')[0];
+    document.getElementById('detailCompletionDate').value = formattedDate;
+} else {
+    document.getElementById('detailCompletionDate').value = '';
+}
+            document.getElementById('detailComments').value = problem.comments || '';
+
+            
+            // Section 3: Contact Details
+            populateContactDetails(problem);
+            
+            showDetailsView();
         }
         
-        function closeModal() {
-            document.getElementById('problemModal').classList.add('hidden');
+        function populateContactDetails(problem) {
+            const container = document.getElementById('contactDetailsContent');
+            const reportedBy = problem.reportedBy || '';
+            const unitPrimaryName = problem.unitPrimaryName || '';
+            
+            let contactHTML = '';
+            
+            // Unit Primary Contact (always shown)
+            contactHTML += `
+                <div class="contact-group">
+                    <h4>Unit Primary Contact</h4>
+                    <div class="detail-grid">
+                        <div class="detail-field">
+                            <label>Name</label>
+                            <span>${problem.unitPrimaryName || 'Not available'}</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Email</label>
+                            <span>${problem.unitPrimaryEmail ? `<a href="mailto:${problem.unitPrimaryEmail}" class="contact-link">${problem.unitPrimaryEmail}</a>` : 'Not available'}</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Mobile</label>
+                            <span>${problem.unitPrimaryPhone ? `<a href="tel:${problem.unitPrimaryPhone.replace(/\s/g, '')}" class="contact-link">${problem.unitPrimaryPhone}</a>` : 'Not available'}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Reporter Contact (only if different from unit primary)
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                contactHTML += `
+                    <div class="contact-group">
+                        <h4>Reporter Contact</h4>
+                        <div class="detail-grid">
+                            <div class="detail-field">
+                                <label>Name</label>
+                                <span>${problem.reportedBy || 'Not available'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Email</label>
+                                <span>${problem.reporterEmail ? `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 'Not available'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Mobile</label>
+                                <span>${problem.reporterPhone ? `<a href="tel:${problem.reporterPhone.replace(/\s/g, '')}" class="contact-link">${problem.reporterPhone}</a>` : 'Not available'}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = contactHTML;
+        }
+        
+        function showListView() {
+            document.getElementById('listView').classList.remove('hidden');
+            document.getElementById('problemDetailsView').classList.add('hidden');
             currentProblem = null;
         }
         
-        // ===================================================================
-        // PROBLEM SAVING
-        // ===================================================================
+        function showDetailsView() {
+            document.getElementById('listView').classList.add('hidden');
+            document.getElementById('problemDetailsView').classList.remove('hidden');
+        }
         
-        async function saveProblem(e) {
+        async function saveDetailsFromPage(e) {
             e.preventDefault();
             
             if (!currentProblem) return;
             
-            const saveBtn = document.getElementById('saveBtn');
+            const saveBtn = document.getElementById('saveDetailsBtn');
             const originalText = saveBtn.textContent;
             
             try {
@@ -904,30 +1889,37 @@
                 saveBtn.textContent = '💾 Saving...';
                 
                 const updateData = {
-                    action: 'updateProblem',
                     internalId: currentProblem.internalId,
-                    problemStatus: document.getElementById('editStatus').value,
-                    problemPriority: document.getElementById('editPriority').value,
-                    comments: document.getElementById('editComments').value
+                    problemStatus: document.getElementById('detailStatus').value,
+                    problemPriority: document.getElementById('detailPriority').value,
+                    category: document.getElementById('detailCategory').value,
+                    subCategory: document.getElementById('detailSubCategory').value,
+                    assignedTo: document.getElementById('detailAssignedTo').value,
+                    completionDate: document.getElementById('detailCompletionDate').value,
+                    comments: document.getElementById('detailComments').value
                 };
                 
                 const response = await makeRequest('updateProblem', updateData);
                 
                 if (response.success) {
-                    // Update local data - use problemStatus and problemPriority
                     const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
                     if (problemIndex !== -1) {
                         problems[problemIndex] = { 
                             ...problems[problemIndex], 
                             problemStatus: updateData.problemStatus,
                             problemPriority: updateData.problemPriority,
+                            category: updateData.category,
+                            subCategory: updateData.subCategory,
+                            assignedTo: updateData.assignedTo,
+                            completionDate: updateData.completionDate,
                             comments: updateData.comments
                         };
                     }
                     
                     applyFilters();
-                    closeModal();
                     updateDataStatus('Problem updated successfully', 'success');
+                    
+                    currentProblem = problems[problemIndex];
                 } else {
                     throw new Error(response.message || 'Failed to update problem');
                 }
@@ -941,9 +1933,60 @@
             }
         }
         
-        // ===================================================================
-        // UTILITY FUNCTIONS
-        // ===================================================================
+        function closeModalFunction() {
+            document.getElementById('problemModal').classList.add('hidden');
+            currentProblem = null;
+        }
+        
+        async function saveProblem(e) {
+            e.preventDefault();
+            
+            if (!currentProblem) return;
+            
+            const saveBtn = document.getElementById('saveBtn');
+            const originalText = saveBtn.textContent;
+            
+            try {
+                saveBtn.disabled = true;
+                saveBtn.textContent = '💾 Saving...';
+                
+                updateAllDropdowns();
+                
+                const updateData = {
+                    internalId: currentProblem.internalId,
+                    problemStatus: document.getElementById('editStatus').value,
+                    problemPriority: document.getElementById('editPriority').value,
+                    comments: document.getElementById('editComments').value
+                };
+                
+                const response = await makeRequest('updateProblem', updateData);
+                
+                if (response.success) {
+                    const problemIndex = problems.findIndex(p => p.internalId === currentProblem.internalId);
+                    if (problemIndex !== -1) {
+                        problems[problemIndex] = { 
+                            ...problems[problemIndex], 
+                            problemStatus: updateData.problemStatus,
+                            problemPriority: updateData.problemPriority,
+                            comments: updateData.comments
+                        };
+                    }
+                    
+                    applyFilters();
+                    closeModalFunction();
+                    updateDataStatus('Problem updated successfully', 'success');
+                } else {
+                    throw new Error(response.message || 'Failed to update problem');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error saving problem:', error);
+                updateDataStatus('Error saving problem', 'error');
+            } finally {
+                saveBtn.disabled = false;
+                saveBtn.textContent = originalText;
+            }
+        }
         
         async function makeRequest(action, additionalData = {}) {
             return new Promise((resolve, reject) => {
@@ -976,8 +2019,10 @@
         
         function updateDataStatus(message, type) {
             const indicator = document.getElementById('dataStatus');
-            indicator.textContent = message;
-            indicator.className = `data-indicator ${type}`;
+            if (indicator) {
+                indicator.textContent = message;
+                indicator.className = `data-indicator ${type}`;
+            }
         }
         
         function getFriendlyPID(internalId) {
@@ -1002,11 +2047,337 @@
             }
         }
         
-        // ===================================================================
-        // INITIALIZATION
-        // ===================================================================
+        function generateListReport() {
+            const reportData = filteredProblems.map(problem => ({
+                pid: getFriendlyPID(problem.internalId),
+                unit: problem.unitNumber || 'Unknown',
+                zone: problem.zone || 'Unknown',
+                priority: problem.problemPriority || 'Medium',
+                status: problem.problemStatus || 'Reported',
+                description: problem.problemDescription || 'No description',
+                reporter: problem.reportedBy || 'Unknown',
+                date: formatDate(problem.timestamp),
+                assignedTo: problem.assignedTo || 'Unassigned'
+            }));
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEMS REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Total Problems: ${reportData.length}\n`;
+            report += `Filter: ${activeFilter === 'all' ? 'All Problems' : activeFilter}\n`;
+            report += `Search: ${searchTerm || 'None'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            const priorityCount = {
+                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
+                'High': reportData.filter(p => p.priority === 'High').length,
+                'Medium': reportData.filter(p => p.priority === 'Medium').length,
+                'Low': reportData.filter(p => p.priority === 'Low').length
+            };
+            
+            report += 'PRIORITY BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(priorityCount).forEach(([priority, count]) => {
+                if (count > 0) {
+                    report += `${priority}: ${count}\n`;
+                }
+            });
+            report += '\n';
+            
+            const statusCount = {};
+            reportData.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+            
+            report += 'STATUS BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(statusCount).forEach(([status, count]) => {
+                report += `${status}: ${count}\n`;
+            });
+            report += '\n';
+            
+            report += 'DETAILED PROBLEM LIST:\n';
+            report += '-'.repeat(60) + '\n';
+            
+            reportData.forEach((problem, index) => {
+                report += `${index + 1}. ${problem.pid}\n`;
+                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
+                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
+                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
+                report += `   Assigned: ${problem.assignedTo}\n`;
+                report += `   Description: ${problem.description}\n`;
+                report += '\n';
+            });
+            
+            report += '='.repeat(60) + '\n';
+            report += 'End of Report\n';
+            
+            return report;
+        }
         
-        console.log('🔧 Holden Maintenance Portal - Ready');
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateListReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function showProblemReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateProblemReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function generateProblemReport() {
+            if (!currentProblem) {
+                return 'No problem selected for report generation.';
+            }
+            
+            const friendlyPID = getFriendlyPID(currentProblem.internalId);
+            const reportedDate = formatDate(currentProblem.timestamp);
+            const completionDate = currentProblem.completionDate ? formatDate(currentProblem.completionDate) : 'Not completed';
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${currentProblem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Reported By: ${currentProblem.reportedBy || 'Unknown'}\n`;
+            report += `Description: ${currentProblem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${currentProblem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${currentProblem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${currentProblem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${currentProblem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${currentProblem.assignedTo || 'Unassigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            
+            if (currentProblem.comments && currentProblem.comments.trim()) {
+                report += `Internal Comments: ${currentProblem.comments}\n`;
+            }
+            report += '\n';
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            
+            // Unit Primary Contact
+            report += 'Unit Primary Contact:\n';
+            report += `  Name: ${currentProblem.unitPrimaryName || 'Not available'}\n`;
+            report += `  Email: ${currentProblem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `  Phone: ${currentProblem.unitPrimaryPhone || 'Not available'}\n`;
+            
+            // Reporter Contact (if different)
+            const reportedBy = currentProblem.reportedBy || '';
+            const unitPrimaryName = currentProblem.unitPrimaryName || '';
+            
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                report += '\nReporter Contact:\n';
+                report += `  Name: ${currentProblem.reportedBy || 'Not available'}\n`;
+                report += `  Email: ${currentProblem.reporterEmail || 'Not available'}\n`;
+                report += `  Phone: ${currentProblem.reporterPhone || 'Not available'}\n`;
+            }
+            
+            report += '\n' + '='.repeat(60) + '\n';
+            report += 'End of Problem Report\n';
+            
+            return report;
+        }
+        
+        async function copyProblemReportToClipboard() {
+            const report = generateProblemReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyProblemReport');
+                const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = originalBackground;
+                }, 2000);
+                
+                updateDataStatus('Problem report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy problem report:', error);
+                updateDataStatus('Failed to copy problem report', 'error');
+            }
+        }
+        
+        async function copyReportToClipboard() {
+            const report = generateListReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyListReport');
+                const originalText = copyBtn.innerHTML;
+                const originalBackground = copyBtn.style.background || '';
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#059669';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = originalBackground;
+                }, 2000);
+                
+                updateDataStatus('Report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy report:', error);
+                updateDataStatus('Failed to copy report', 'error');
+            }
+        }
+        
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const passwordInput = document.getElementById('passwordInput');
+            const loginBtn = document.getElementById('loginBtn');
+            const password = passwordInput.value.trim();
+            
+            if (!password) {
+                showLoginError('Please enter a password');
+                return;
+            }
+            
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '⏳ Authenticating...';
+            
+            try {
+                const success = await authenticateUser(password);
+                
+                if (success) {
+                    console.log('✅ Authentication successful');
+                } else {
+                    showLoginError('Invalid password. Please try again.');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
+                
+            } catch (error) {
+                console.error('❌ Authentication error:', error);
+                showLoginError('Authentication failed. Please try again.');
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '🔐 Access Maintenance Portal';
+            }
+        }
+        
+        function showLoginError(message) {
+            const statusDiv = document.getElementById('loginDataStatus');
+            if (statusDiv) {
+                statusDiv.style.background = '#fecaca';
+                statusDiv.style.color = '#991b1b';
+                statusDiv.innerHTML = `❌ ${message}`;
+                
+                setTimeout(() => {
+                    statusDiv.style.background = '#d1fae5';
+                    statusDiv.style.color = '#065f46';
+                    statusDiv.innerHTML = '🟢 System Ready - Portal Operational';
+                }, 3000);
+            }
+        }
+        
+        function logout() {
+            if (confirm('Are you sure you want to logout? You will need to re-authenticate to access the portal.')) {
+                problems = [];
+                filteredProblems = [];
+                currentProblem = null;
+                dynamicDropdownData = {
+                    categories: [],
+                    subCategories: [],
+                    priorities: [],
+                    statuses: [],
+                    assignedTo: []
+                };
+                
+                isAuthenticated = false;
+                showLoginScreen();
+                updateDataStatus('Logged out', 'error');
+                
+                const passwordInput = document.getElementById('passwordInput');
+                if (passwordInput) {
+                    passwordInput.value = '';
+                }
+                
+                console.log('🚪 User logged out');
+            }
+        }
+        
+        async function refreshData() {
+            const refreshBtn = document.getElementById('refreshDataBtn');
+            const refreshBtn2 = document.getElementById('refreshDataBtn2');
+            
+            if (refreshBtn) {
+                refreshBtn.disabled = true;
+                refreshBtn.innerHTML = '⏳ Refreshing...';
+            }
+            if (refreshBtn2) {
+                refreshBtn2.disabled = true;
+                refreshBtn2.innerHTML = '⏳ Refreshing...';
+            }
+            
+            try {
+                updateDataStatus('Refreshing data...', 'loading');
+                
+                console.log('🔄 Refreshing dropdown options...');
+                await loadDropdownOptions();
+                
+                console.log('🔄 Refreshing problems...');
+                await loadProblems();
+                
+                if (currentProblem && !document.getElementById('problemDetailsView').classList.contains('hidden')) {
+                    console.log('🔄 Refreshing current problem details...');
+                    const updatedProblem = problems.find(p => p.internalId === currentProblem.internalId);
+                    if (updatedProblem) {
+                        currentProblem = updatedProblem;
+                        openProblemDetailsPage(updatedProblem);
+                    }
+                }
+                
+                updateDataStatus('Data refreshed successfully', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error refreshing data:', error);
+                updateDataStatus('Error refreshing data', 'error');
+            } finally {
+                if (refreshBtn) {
+                    refreshBtn.disabled = false;
+                    refreshBtn.innerHTML = '🔄 Refresh';
+                }
+                if (refreshBtn2) {
+                    refreshBtn2.disabled = false;
+                    refreshBtn2.innerHTML = '🔄 Refresh';
+                }
+            }
+        }
+        
+        console.log('🔧 Maintenance Portal V2.2 - Ready');
     </script>
 </body>
 </html>
