@@ -1537,6 +1537,13 @@ function applyFilters() {
             problem.problemStatus !== 'Completed'
         );
     }
+
+    // ADD DEBUG HERE - after completed problems are filtered out
+filtered.forEach(problem => {
+    const priority = problem.problemPriority || 'Unknown';
+    const priorityIndex = priorityOrder[priority] || 999;
+    console.log(`Problem ${problem.internalId}: Priority="${priority}", Index=${priorityIndex}, Status=${problem.problemStatus}`);
+});
     
     if (searchTerm) {
         const searchLower = searchTerm.toLowerCase();
