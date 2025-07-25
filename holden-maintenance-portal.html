@@ -1537,55 +1537,52 @@ function applyFilters() {
     }
     
     if (searchTerm) {
-        // ... rest of existing search code
+        const searchLower = searchTerm.toLowerCase();
+        filtered = filtered.filter(problem => {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const unitNumber = String(problem.unitNumber || '');
+            const description = String(problem.problemDescription || '');
+            const reporter = String(problem.reportedBy || '');
+            const zone = String(problem.zone || '');
             
-            if (searchTerm) {
-                const searchLower = searchTerm.toLowerCase();
-                filtered = filtered.filter(problem => {
-                    const friendlyPID = getFriendlyPID(problem.internalId);
-                    const unitNumber = String(problem.unitNumber || '');
-                    const description = String(problem.problemDescription || '');
-                    const reporter = String(problem.reportedBy || '');
-                    const zone = String(problem.zone || '');
-                    
-                    return friendlyPID.toLowerCase().includes(searchLower) ||
-                           unitNumber.toLowerCase().includes(searchLower) ||
-                           description.toLowerCase().includes(searchLower) ||
-                           reporter.toLowerCase().includes(searchLower) ||
-                           zone.toLowerCase().includes(searchLower);
-                });
-            }
-            
-            const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
-            filtered.sort((a, b) => {
-                const aPriority = priorityOrder[a.problemPriority] || 3;
-                const bPriority = priorityOrder[b.problemPriority] || 3;
-                
-                if (aPriority !== bPriority) {
-                    return aPriority - bPriority;
-                }
-                
-                const getTimestamp = (problem) => {
-                    const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
-                    if (!timestamp) return 0;
-                    const date = new Date(timestamp);
-                    return isNaN(date.getTime()) ? 0 : date.getTime();
-                };
-                
-                const aTime = getTimestamp(a);
-                const bTime = getTimestamp(b);
-                
-                if (aTime === bTime) {
-                    return (a.internalId || '').localeCompare(b.internalId || '');
-                }
-                
-                return aTime - bTime;
-            });
-            
-            filteredProblems = filtered;
-            renderProblemsList();
-            updateStatusDashboard();
+            return friendlyPID.toLowerCase().includes(searchLower) ||
+                   unitNumber.toLowerCase().includes(searchLower) ||
+                   description.toLowerCase().includes(searchLower) ||
+                   reporter.toLowerCase().includes(searchLower) ||
+                   zone.toLowerCase().includes(searchLower);
+        });
+    }
+    
+    const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+    filtered.sort((a, b) => {
+        const aPriority = priorityOrder[a.problemPriority] || 3;
+        const bPriority = priorityOrder[b.problemPriority] || 3;
+        
+        if (aPriority !== bPriority) {
+            return aPriority - bPriority;
         }
+        
+        const getTimestamp = (problem) => {
+            const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
+            if (!timestamp) return 0;
+            const date = new Date(timestamp);
+            return isNaN(date.getTime()) ? 0 : date.getTime();
+        };
+        
+        const aTime = getTimestamp(a);
+        const bTime = getTimestamp(b);
+        
+        if (aTime === bTime) {
+            return (a.internalId || '').localeCompare(b.internalId || '');
+        }
+        
+        return aTime - bTime;
+    });
+    
+    filteredProblems = filtered;
+    renderProblemsList();
+    updateStatusDashboard();
+}
         
         // Status dashboard functionality
         function updateStatusDashboard() {
