@@ -1556,6 +1556,13 @@ function applyFilters() {
     }
     
     const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
+// ADD THIS DEBUG CODE HERE:
+filtered.forEach(problem => {
+    const priority = problem.problemPriority || 'Unknown';
+    const priorityIndex = priorityOrder[priority] || 999;
+    console.log(`Problem ${problem.internalId}: Priority="${priority}", Index=${priorityIndex}, Status=${problem.problemStatus}`);
+});
+    
     filtered.sort((a, b) => {
         const aPriority = priorityOrder[a.problemPriority] || 3;
         const bPriority = priorityOrder[b.problemPriority] || 3;
