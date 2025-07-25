@@ -1551,14 +1551,7 @@ function applyFilters() {
         });
     }
     
-    const priorityOrder = { 'Urgent': 0, 'High': 1, 'Medium': 2, 'Low': 3 };
-    filtered.sort((a, b) => {
-        const aPriority = priorityOrder[a.problemPriority] || 3;
-        const bPriority = priorityOrder[b.problemPriority] || 3;
-        
-        if (aPriority !== bPriority) {
-            return aPriority - bPriority;
-        }
+   
         
         const getTimestamp = (problem) => {
             const timestamp = problem.timestamp || problem.lastUpdated || problem.Timestamp || problem.reportedDate;
