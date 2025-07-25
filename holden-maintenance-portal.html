@@ -1522,12 +1522,22 @@
             applyFilters();
         }
         
-        function applyFilters() {
-            let filtered = [...problems];
-            
-            if (activeFilter !== 'all') {
-                filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
-            }
+function applyFilters() {
+    let filtered = [...problems];
+    
+    if (activeFilter !== 'all') {
+        filtered = filtered.filter(problem => problem.problemStatus === activeFilter);
+    }
+    
+    // NEW: Hide completed problems from "All Problems" view
+    if (activeFilter === 'all') {
+        filtered = filtered.filter(problem => 
+            problem.problemStatus !== 'Completed'
+        );
+    }
+    
+    if (searchTerm) {
+        // ... rest of existing search code
             
             if (searchTerm) {
                 const searchLower = searchTerm.toLowerCase();
