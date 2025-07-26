@@ -869,6 +869,15 @@
         let currentProblem = null;
         let isAuthenticated = false;
         
+        // Dynamic dropdown data storage
+        let dynamicDropdownData = {
+            categories: [],
+            subCategories: [],
+            priorities: [],
+            statuses: [],
+            assignedTo: []
+        };
+        
         // PROVEN PRIORITY ORDER
         const PRIORITY_ORDER = ['Urgent', 'High', 'Medium', 'Low'];
         
@@ -914,6 +923,9 @@
         
         async function initializeSystem() {
             try {
+                updateDataStatus('Loading dropdown options...', 'loading');
+                await loadDropdownOptions();
+                
                 updateDataStatus('Loading problems...', 'loading');
                 await loadProblems();
                 updateDataStatus(`${problems.length} problems loaded`, 'success');
@@ -963,6 +975,173 @@
             if (managementForm) {
                 managementForm.addEventListener('submit', saveDetailsFromPage);
             }
+        }
+        
+        async function loadDropdownOptions() {
+            try {
+                console.log('🎛️ Loading dropdown options from Categories TAB...');
+                
+                const response = await makeRequest('getDropdownOptions');
+                
+                if (response.success) {
+                    dynamicDropdownData = response.data;
+                    console.log('✅ Dropdown data loaded:', dynamicDropdownData);
+                    updateAllDropdowns();
+                    return response.data;
+                } else {
+                    console.error('❌ Failed to load dropdown data:', response.error);
+                    throw new Error(response.error || 'Failed to load dropdown options');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdown options:', error);
+                console.log('⚠️ Using fallback dropdown values');
+                updateAllDropdowns();
+                throw error;
+            }
+        }
+        
+        function updateAllDropdowns() {
+            updateStatusDropdowns();
+            updatePriorityDropdowns();
+            updateCategoryDropdowns();
+            updateSubCategoryDropdowns();
+            updateAssignedToDropdowns();
+        }
+        
+        function updateStatusDropdowns() {
+            const statusSelects = [
+                document.getElementById('detailStatus')
+            ];
+            
+            statusSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Status</option>';
+                
+                const statuses = dynamicDropdownData.statuses.length > 0 
+                    ? dynamicDropdownData.statuses 
+                    : ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled'];
+                
+                statuses.forEach(status => {
+                    const option = document.createElement('option');
+                    option.value = status;
+                    option.textContent = status;
+                    if (status === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updatePriorityDropdowns() {
+            const prioritySelects = [
+                document.getElementById('detailPriority')
+            ];
+            
+            prioritySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Priority</option>';
+                
+                const priorities = dynamicDropdownData.priorities.length > 0 
+                    ? dynamicDropdownData.priorities 
+                    : ['Low', 'Medium', 'High', 'Urgent'];
+                
+                priorities.forEach(priority => {
+                    const option = document.createElement('option');
+                    option.value = priority;
+                    option.textContent = priority;
+                    if (priority === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateCategoryDropdowns() {
+            const categorySelects = [
+                document.getElementById('detailCategory')
+            ];
+            
+            categorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Category</option>';
+                
+                const categories = dynamicDropdownData.categories.length > 0 
+                    ? dynamicDropdownData.categories 
+                    : ['Plumbing', 'HVAC', 'Electrical', 'Security', 'Cleaning', 'General'];
+                
+                categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    if (category === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateSubCategoryDropdowns() {
+            const subCategorySelects = [
+                document.getElementById('detailSubCategory')
+            ];
+            
+            subCategorySelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Sub-Category</option>';
+                
+                const subCategories = dynamicDropdownData.subCategories.length > 0 
+                    ? dynamicDropdownData.subCategories 
+                    : ['Faucet/Tap', 'Air Conditioning', 'Lighting', 'Door Lock', 'General'];
+                
+                subCategories.forEach(subCategory => {
+                    const option = document.createElement('option');
+                    option.value = subCategory;
+                    option.textContent = subCategory;
+                    if (subCategory === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
+        }
+        
+        function updateAssignedToDropdowns() {
+            const assignedToSelects = [
+                document.getElementById('detailAssignedTo')
+            ];
+            
+            assignedToSelects.forEach(select => {
+                if (!select) return;
+                
+                const currentValue = select.value;
+                select.innerHTML = '<option value="">Select Assignee</option>';
+                
+                const assignedToOptions = dynamicDropdownData.assignedTo.length > 0 
+                    ? dynamicDropdownData.assignedTo 
+                    : ['Ben', 'David', 'Jade', 'Residents Committee'];
+                
+                assignedToOptions.forEach(person => {
+                    const option = document.createElement('option');
+                    option.value = person;
+                    option.textContent = person;
+                    if (person === currentValue) {
+                        option.selected = true;
+                    }
+                    select.appendChild(option);
+                });
+            });
             
             // Header buttons
             const refreshBtn = document.getElementById('refreshBtn');
@@ -1111,10 +1290,8 @@
                 
                 // Secondary sort: Date (oldest first)
                 const getTimestamp = (problem) => {
-                    // Try multiple date field names
-                    const timestamp = problem.timestamp || problem.lastUpdated || 
-                                    problem.Timestamp || problem.reportedDate || 
-                                    problem.dateReported || problem.created;
+                    // FIXED: Use correct timestamp field (Col A - Timestamp)
+                    const timestamp = problem.timestamp;
                     if (!timestamp) return 0;
                     const date = new Date(timestamp);
                     return isNaN(date.getTime()) ? 0 : date.getTime();
@@ -1200,11 +1377,8 @@
             const priorityClass = `badge-${priority.toLowerCase()}`;
             const statusClass = `badge-${status.toLowerCase().replace(' ', '-')}`;
             
-            // Try multiple date fields
-            const timestamp = problem.timestamp || problem.lastUpdated || 
-                            problem.Timestamp || problem.reportedDate || 
-                            problem.dateReported || problem.created;
-            const formattedDate = formatDate(timestamp);
+            // FIXED: Use correct timestamp field (Col A - Timestamp)
+            const formattedDate = formatDate(problem.timestamp);
             
             return `
                 <div class="problem-item" data-problem-id="${problem.internalId}">
@@ -1243,14 +1417,14 @@
             document.getElementById('detailProblemId').textContent = friendlyPID;
             document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
             
-            // Date handling - try multiple fields
-            const timestamp = problem.timestamp || problem.lastUpdated || 
-                            problem.Timestamp || problem.reportedDate || 
-                            problem.dateReported || problem.created;
-            document.getElementById('detailReportedDate').textContent = formatDate(timestamp);
+            // FIXED: Use correct timestamp field (Col A - Timestamp) for reported date
+            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
             
             document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
             document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description';
+            
+            // Update dropdowns before setting values
+            updateAllDropdowns();
             
             // Management Details (editable)
             document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
@@ -1531,7 +1705,10 @@
             }
             
             try {
-                updateDataStatus('Refreshing data...', 'loading');
+                console.log('🔄 Refreshing dropdown options...');
+                await loadDropdownOptions();
+                
+                updateDataStatus('Refreshing problems...', 'loading');
                 await loadProblems();
                 updateDataStatus('Data refreshed successfully', 'success');
                 
