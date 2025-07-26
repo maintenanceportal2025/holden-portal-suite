@@ -318,7 +318,31 @@
         .badge-completed { background: #d1fae5; color: #065f46; }
         .badge-cancelled { background: #f3f4f6; color: #6b7280; }
         
-        /* LOADING */
+        /* LOADING PROGRESS BAR */
+        .loading-phase {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #374151;
+        }
+        
+        .loading-progress {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: #e5e7eb;
+            border-radius: 4px;
+            margin: 0 auto 10px;
+            overflow: hidden;
+        }
+        
+        .loading-progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
         .loading-sequence {
             text-align: center;
             padding: 40px 20px;
@@ -657,8 +681,14 @@
                 <form id="loginForm">
                     <div style="margin-bottom: 20px;">
                         <label style="display: block; font-weight: 600; color: #374151; font-size: 16px; margin-bottom: 8px;">Password</label>
-                        <input type="password" id="passwordInput" class="login-input"
-                               placeholder="Enter maintenance password" required>
+                        <div style="position: relative;">
+                            <input type="password" id="passwordInput" class="login-input"
+                                   placeholder="Enter maintenance password" required>
+                            <button type="button" id="togglePassword" 
+                                    style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6b7280; cursor: pointer; font-size: 18px;">
+                                👁️
+                            </button>
+                        </div>
                     </div>
                     
                     <button type="submit" id="loginBtn" class="login-btn">
@@ -730,10 +760,19 @@
                     <span id="resultsCount" class="results-count">Loading...</span>
                 </div>
                 
+                <div class="report-section" style="padding: 15px 20px; border-bottom: 1px solid #e5e7eb;">
+                    <button id="viewListReport" class="btn" style="background: #2563eb; color: white;">📄 View Report</button>
+                    <button id="copyListReport" class="btn" style="background: #059669; color: white; margin-left: 10px;">📋 Copy Report</button>
+                </div>
+                
                 <div id="problemsList" class="problems-list">
                     <div class="loading-sequence">
                         <div class="loading-spinner"></div>
-                        <div class="loading-detail">Loading maintenance problems...</div>
+                        <div class="loading-phase" id="loadingPhase">Initializing system...</div>
+                        <div class="loading-progress">
+                            <div class="loading-progress-bar" id="loadingProgressBar"></div>
+                        </div>
+                        <div class="loading-detail" id="loadingDetail">Loading maintenance problems...</div>
                     </div>
                 </div>
             </div>
@@ -744,6 +783,12 @@
             <div class="page-header">
                 <button id="backToList" class="back-btn">← Back</button>
                 <h2 id="problemPageTitle">Problem Details</h2>
+            </div>
+
+            <!-- Report Buttons Section -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 20px;">
+                <button id="viewProblemReport" class="btn" style="background: #2563eb; color: white;">📄 View Report</button>
+                <button id="copyProblemReport" class="btn" style="background: #059669; color: white; margin-left: 10px;">📋 Copy Report</button>
             </div>
 
             <!-- Problem Details -->
@@ -856,6 +901,22 @@
         </div>
     </div>
 
+    <!-- REPORT MODAL -->
+    <div id="reportModal" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
+        <div style="background: white; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);">
+            <div style="padding: 25px; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-size: 20px; font-weight: 600; color: #1f2937;">Report Preview</h3>
+                <button id="closeReportModal" style="background: none; border: none; font-size: 24px; cursor: pointer; color: #6b7280; padding: 0; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 6px; transition: background-color 0.2s ease;">×</button>
+            </div>
+            <div style="padding: 25px;">
+                <pre id="reportText" style="white-space: pre-wrap; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.4; background: #f8f9fa; padding: 20px; border-radius: 6px; max-height: 600px; overflow-y: auto;"></pre>
+                <div style="margin-top: 20px;">
+                    <button id="copyModalReport" class="btn" style="background: #059669; color: white;">📋 Copy Report</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // SIMPLIFIED MAINTENANCE PORTAL V3.0
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
@@ -923,11 +984,16 @@
         
         async function initializeSystem() {
             try {
-                updateDataStatus('Loading dropdown options...', 'loading');
+                updateLoadingPhase('Loading dropdown options...', 20, 'Fetching categories, priorities, and assignments');
                 await loadDropdownOptions();
                 
-                updateDataStatus('Loading problems...', 'loading');
+                updateLoadingPhase('Loading problems data...', 60, 'Retrieving maintenance requests from database');
                 await loadProblems();
+                
+                updateLoadingPhase('Finalizing display...', 90, 'Preparing user interface');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                updateLoadingPhase('Complete!', 100, 'System ready for use');
                 updateDataStatus(`${problems.length} problems loaded`, 'success');
                 console.log('✅ System initialization complete');
             } catch (error) {
@@ -937,11 +1003,32 @@
             }
         }
         
+        function updateLoadingPhase(phase, progress, detail) {
+            const phaseElement = document.getElementById('loadingPhase');
+            const progressBar = document.getElementById('loadingProgressBar');
+            const detailElement = document.getElementById('loadingDetail');
+            
+            if (phaseElement) phaseElement.textContent = phase;
+            if (progressBar) progressBar.style.width = `${progress}%`;
+            if (detailElement) detailElement.textContent = detail;
+        }
+        
         function setupEventListeners() {
             // Login
             const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('passwordInput');
+            
             if (loginForm) {
                 loginForm.addEventListener('submit', handleLogin);
+            }
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                    passwordInput.setAttribute('type', type);
+                    this.textContent = type === 'password' ? '👁️' : '🙈';
+                });
             }
             
             // Search
@@ -1153,6 +1240,40 @@
             
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', logout);
+            }
+            
+            // Report button listeners
+            const viewReportBtn = document.getElementById('viewListReport');
+            const copyReportBtn = document.getElementById('copyListReport');
+            const closeReportModal = document.getElementById('closeReportModal');
+            const copyModalReport = document.getElementById('copyModalReport');
+            const viewProblemReportBtn = document.getElementById('viewProblemReport');
+            const copyProblemReportBtn = document.getElementById('copyProblemReport');
+            
+            if (viewReportBtn) {
+                viewReportBtn.addEventListener('click', showReportModal);
+            }
+            
+            if (copyReportBtn) {
+                copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (viewProblemReportBtn) {
+                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
+            }
+            
+            if (copyProblemReportBtn) {
+                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
+            }
+            
+            if (copyModalReport) {
+                copyModalReport.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (closeReportModal) {
+                closeReportModal.addEventListener('click', () => {
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
             }
             
             // Keyboard shortcuts
@@ -1367,6 +1488,206 @@
             });
             
             console.log('✅ Rendered', filteredProblems.length, 'problems');
+        }
+        
+        function generateListReport() {
+            const reportData = filteredProblems.map(problem => ({
+                pid: getFriendlyPID(problem.internalId),
+                unit: problem.unitNumber || 'Unknown',
+                zone: problem.zone || 'Unknown',
+                priority: problem.problemPriority || 'Medium',
+                status: problem.problemStatus || 'Reported',
+                description: problem.problemDescription || 'No description',
+                reporter: problem.reportedBy || 'Unknown',
+                date: formatDate(problem.timestamp),
+                assignedTo: problem.assignedTo || 'Unassigned'
+            }));
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEMS REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Total Problems: ${reportData.length}\n`;
+            report += `Filter: ${activePriorityFilter === 'all' ? 'All Active Problems' : activePriorityFilter.charAt(0).toUpperCase() + activePriorityFilter.slice(1) + ' Priority'}\n`;
+            report += `Search: ${searchTerm || 'None'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            const priorityCount = {
+                'Urgent': reportData.filter(p => p.priority === 'Urgent').length,
+                'High': reportData.filter(p => p.priority === 'High').length,
+                'Medium': reportData.filter(p => p.priority === 'Medium').length,
+                'Low': reportData.filter(p => p.priority === 'Low').length
+            };
+            
+            report += 'PRIORITY BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(priorityCount).forEach(([priority, count]) => {
+                if (count > 0) {
+                    report += `${priority}: ${count}\n`;
+                }
+            });
+            report += '\n';
+            
+            const statusCount = {};
+            reportData.forEach(p => {
+                statusCount[p.status] = (statusCount[p.status] || 0) + 1;
+            });
+            
+            report += 'STATUS BREAKDOWN:\n';
+            report += '-'.repeat(30) + '\n';
+            Object.entries(statusCount).forEach(([status, count]) => {
+                report += `${status}: ${count}\n`;
+            });
+            report += '\n';
+            
+            report += 'DETAILED PROBLEM LIST:\n';
+            report += '-'.repeat(60) + '\n';
+            
+            reportData.forEach((problem, index) => {
+                report += `${index + 1}. ${problem.pid}\n`;
+                report += `   Unit: ${problem.unit} (${problem.zone})\n`;
+                report += `   Priority: ${problem.priority} | Status: ${problem.status}\n`;
+                report += `   Reporter: ${problem.reporter} | Date: ${problem.date}\n`;
+                report += `   Assigned: ${problem.assignedTo}\n`;
+                report += `   Description: ${problem.description}\n`;
+                report += '\n';
+            });
+            
+            report += '='.repeat(60) + '\n';
+            report += 'End of Report\n';
+            
+            return report;
+        }
+        
+        function generateProblemReport() {
+            if (!currentProblem) {
+                return 'No problem selected for report generation.';
+            }
+            
+            const friendlyPID = getFriendlyPID(currentProblem.internalId);
+            const reportedDate = formatDate(currentProblem.timestamp);
+            const completionDate = currentProblem.completionDate ? formatDate(currentProblem.completionDate) : 'Not completed';
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${currentProblem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${currentProblem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Reported By: ${currentProblem.reportedBy || 'Unknown'}\n`;
+            report += `Description: ${currentProblem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${currentProblem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${currentProblem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${currentProblem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${currentProblem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${currentProblem.assignedTo || 'Unassigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            
+            if (currentProblem.comments && currentProblem.comments.trim()) {
+                report += `Internal Comments: ${currentProblem.comments}\n`;
+            }
+            report += '\n';
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            
+            // Unit Primary Contact
+            report += 'Unit Primary Contact:\n';
+            report += `  Name: ${currentProblem.unitPrimaryName || 'Not available'}\n`;
+            report += `  Email: ${currentProblem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `  Phone: ${currentProblem.unitPrimaryPhone || 'Not available'}\n`;
+            
+            // Reporter Contact (if different)
+            const reportedBy = currentProblem.reportedBy || '';
+            const unitPrimaryName = currentProblem.unitPrimaryName || '';
+            
+            if (reportedBy && reportedBy !== unitPrimaryName) {
+                report += '\nReporter Contact:\n';
+                report += `  Name: ${currentProblem.reportedBy || 'Not available'}\n`;
+                report += `  Email: ${currentProblem.reporterEmail || 'Not available'}\n`;
+                report += `  Phone: ${currentProblem.reporterPhone || 'Not available'}\n`;
+            }
+            
+            report += '\n' + '='.repeat(60) + '\n';
+            report += 'End of Problem Report\n';
+            
+            return report;
+        }
+        
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateListReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        function showProblemReportModal() {
+            const modal = document.getElementById('reportModal');
+            const reportText = document.getElementById('reportText');
+            
+            const report = generateProblemReport();
+            reportText.textContent = report;
+            
+            modal.classList.remove('hidden');
+        }
+        
+        async function copyReportToClipboard() {
+            const report = generateListReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyListReport');
+                const originalText = copyBtn.innerHTML;
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+                
+                updateDataStatus('Report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy report:', error);
+                updateDataStatus('Failed to copy report', 'error');
+            }
+        }
+        
+        async function copyProblemReportToClipboard() {
+            const report = generateProblemReport();
+            
+            try {
+                await navigator.clipboard.writeText(report);
+                
+                const copyBtn = document.getElementById('copyProblemReport');
+                const originalText = copyBtn.innerHTML;
+                
+                copyBtn.innerHTML = '✅ Copied!';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                }, 2000);
+                
+                updateDataStatus('Problem report copied to clipboard', 'success');
+            } catch (error) {
+                console.error('Failed to copy problem report:', error);
+                updateDataStatus('Failed to copy problem report', 'error');
+            }
         }
         
         function createProblemCard(problem) {
