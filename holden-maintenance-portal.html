@@ -316,7 +316,34 @@
         .badge-in-progress { background: #fed7aa; color: #9a3412; }
         .badge-on-hold { background: #f3e8ff; color: #7c3aed; }
         .badge-completed { background: #d1fae5; color: #065f46; }
-        .badge-cancelled { background: #f3f4f6; color: #6b7280; }
+        .report-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #2563eb;
+            color: white;
+        }
+        
+        .report-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-1px);
+        }
+        
+        .report-btn.green {
+            background: #059669;
+            color: white;
+        }
+        
+        .report-btn.green:hover {
+            background: #047857;
+        }
         
         /* LOADING PROGRESS BAR */
         .loading-phase {
@@ -760,9 +787,9 @@
                     <span id="resultsCount" class="results-count">Loading...</span>
                 </div>
                 
-                <div class="report-section" style="padding: 15px 20px; border-bottom: 1px solid #e5e7eb;">
-                    <button id="viewListReport" class="btn" style="background: #2563eb; color: white;">📄 View Report</button>
-                    <button id="copyListReport" class="btn" style="background: #059669; color: white; margin-left: 10px;">📋 Copy Report</button>
+                <div class="report-section" style="padding: 15px 20px; border-bottom: 1px solid #e5e7eb; display: flex; gap: 10px;">
+                    <button id="viewListReport" class="report-btn">📄 View Report</button>
+                    <button id="copyListReport" class="report-btn green">📋 Copy Report</button>
                 </div>
                 
                 <div id="problemsList" class="problems-list">
@@ -786,9 +813,9 @@
             </div>
 
             <!-- Report Buttons Section -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 20px;">
-                <button id="viewProblemReport" class="btn" style="background: #2563eb; color: white;">📄 View Report</button>
-                <button id="copyProblemReport" class="btn" style="background: #059669; color: white; margin-left: 10px;">📋 Copy Report</button>
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 20px; display: flex; gap: 10px;">
+                <button id="viewProblemReport" class="report-btn">📄 View Report</button>
+                <button id="copyProblemReport" class="report-btn green">📋 Copy Report</button>
             </div>
 
             <!-- Problem Details -->
@@ -1276,9 +1303,27 @@
                 });
             }
             
+            // Modal click-outside-to-close
+            const reportModal = document.getElementById('reportModal');
+            if (reportModal) {
+                reportModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            }
+            
             // Keyboard shortcuts
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
+                    // Close report modal
+                    const reportModal = document.getElementById('reportModal');
+                    if (reportModal && !reportModal.classList.contains('hidden')) {
+                        reportModal.classList.add('hidden');
+                        return;
+                    }
+                    
+                    // Or go back to list view
                     if (!document.getElementById('problemDetailsView').classList.contains('hidden')) {
                         showListView();
                     }
@@ -1652,14 +1697,16 @@
             try {
                 await navigator.clipboard.writeText(report);
                 
-                const copyBtn = document.getElementById('copyListReport');
-                const originalText = copyBtn.innerHTML;
-                
-                copyBtn.innerHTML = '✅ Copied!';
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                }, 2000);
+                const copyBtn = document.getElementById('copyListReport') || document.getElementById('copyModalReport');
+                if (copyBtn) {
+                    const originalText = copyBtn.innerHTML;
+                    
+                    copyBtn.innerHTML = '✅ Copied!';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }
                 
                 updateDataStatus('Report copied to clipboard', 'success');
             } catch (error) {
@@ -1674,14 +1721,16 @@
             try {
                 await navigator.clipboard.writeText(report);
                 
-                const copyBtn = document.getElementById('copyProblemReport');
-                const originalText = copyBtn.innerHTML;
-                
-                copyBtn.innerHTML = '✅ Copied!';
-                
-                setTimeout(() => {
-                    copyBtn.innerHTML = originalText;
-                }, 2000);
+                const copyBtn = document.getElementById('copyProblemReport') || document.getElementById('copyModalReport');
+                if (copyBtn) {
+                    const originalText = copyBtn.innerHTML;
+                    
+                    copyBtn.innerHTML = '✅ Copied!';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalText;
+                    }, 2000);
+                }
                 
                 updateDataStatus('Problem report copied to clipboard', 'success');
             } catch (error) {
