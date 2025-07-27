@@ -316,6 +316,7 @@
         .badge-in-progress { background: #fed7aa; color: #9a3412; }
         .badge-on-hold { background: #f3e8ff; color: #7c3aed; }
         .badge-completed { background: #d1fae5; color: #065f46; }
+        
         .report-btn {
             padding: 10px 20px;
             border: none;
@@ -370,6 +371,7 @@
             transition: width 0.5s ease;
             width: 0%;
         }
+        
         .loading-sequence {
             text-align: center;
             padding: 40px 20px;
@@ -649,6 +651,19 @@
         .login-btn:hover {
             background: #5a67d8;
         }
+
+        /* URL SEARCH PARAMETER ENHANCEMENT STYLES */
+        .login-search-indicator {
+            background: #dbeafe !important;
+            color: #1e40af !important;
+            border: 1px solid #93c5fd;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.8; }
+        }
         
         /* RESPONSIVE */
         @media (min-width: 768px) {
@@ -701,7 +716,7 @@
             
             <!-- Status -->
             <div id="loginDataStatus" style="background: #d1fae5; color: #065f46; padding: 12px 20px; border-radius: 8px; margin-bottom: 20px; text-align: center; font-weight: 600;">
-                🟢 System Ready - UX Improvements Active
+                🟢 System Ready - URL Search Parameter Enhancement Active
             </div>
             
             <!-- Warning Box -->
@@ -965,7 +980,7 @@
     </div>
 
     <script>
-        // SIMPLIFIED MAINTENANCE PORTAL V3.0
+        // SIMPLIFIED MAINTENANCE PORTAL V3.0 - Enhanced with URL Search Parameter
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
         const MAINTENANCE_PASSWORD = 'maint2025';
         
@@ -976,6 +991,9 @@
         let searchTerm = '';
         let currentProblem = null;
         let isAuthenticated = false;
+        
+        // URL SEARCH PARAMETER ENHANCEMENT
+        let pendingSearchParam = null;
         
         // Dynamic dropdown data storage
         let dynamicDropdownData = {
@@ -991,6 +1009,10 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 Maintenance Portal V3.0 SIMPLIFIED - Initializing...');
+            
+            // CAPTURE SEARCH PARAMETER FROM URL
+            captureSearchParameter();
+            
             setupEventListeners();
             
             if (isAuthenticated) {
@@ -1000,15 +1022,46 @@
                 showLoginScreen();
             }
         });
+
+        // NEW FUNCTION: Capture search parameter from URL
+        function captureSearchParameter() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('search');
+            
+            if (searchParam) {
+                console.log('🔍 Captured search parameter from URL:', searchParam);
+                pendingSearchParam = searchParam;
+                
+                // Clean the URL (remove the search parameter from browser address bar)
+                const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
+                window.history.replaceState({}, document.title, newUrl);
+            }
+        }
         
         function showLoginScreen() {
             document.getElementById('loginView').classList.remove('hidden');
             document.getElementById('mainView').classList.add('hidden');
             
+            // Show pending search indicator if there is one
+            if (pendingSearchParam) {
+                showLoginSearchIndicator();
+            }
+            
             setTimeout(() => {
                 const passwordInput = document.getElementById('passwordInput');
                 if (passwordInput) passwordInput.focus();
             }, 100);
+        }
+
+        // NEW FUNCTION: Show search indicator on login screen
+        function showLoginSearchIndicator() {
+            const statusDiv = document.getElementById('loginDataStatus');
+            if (statusDiv && pendingSearchParam) {
+                statusDiv.className = 'login-search-indicator';
+                statusDiv.style.background = '#dbeafe';
+                statusDiv.style.color = '#1e40af';
+                statusDiv.innerHTML = `🔍 Will search for: "${pendingSearchParam}" after login`;
+            }
         }
         
         function showMainPortal() {
@@ -1023,9 +1076,53 @@
                 isAuthenticated = true;
                 showMainPortal();
                 await initializeSystem();
+                
+                // APPLY PENDING SEARCH AFTER AUTHENTICATION
+                if (pendingSearchParam) {
+                    console.log('🔍 Applying pending search after authentication:', pendingSearchParam);
+                    applyPendingSearch();
+                }
+                
                 return true;
             } else {
                 return false;
+            }
+        }
+
+        // NEW FUNCTION: Apply the pending search
+        function applyPendingSearch() {
+            if (!pendingSearchParam) return;
+            
+            try {
+                // Set the search input field
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.value = pendingSearchParam;
+                    
+                    // Update search term variable
+                    searchTerm = pendingSearchParam;
+                    
+                    // Update search button state
+                    const searchBtn = document.getElementById('searchBtn');
+                    if (searchBtn) {
+                        searchBtn.textContent = '❌ Clear';
+                        searchBtn.className = 'search-btn search-btn-clear';
+                        searchBtn.dataset.action = 'clear';
+                    }
+                    
+                    // Apply the search filter
+                    applyFilters();
+                    
+                    // Show success message
+                    updateDataStatus(`Search applied: "${pendingSearchParam}"`, 'success');
+                    
+                    console.log('✅ Successfully applied pending search:', pendingSearchParam);
+                }
+            } catch (error) {
+                console.error('❌ Error applying pending search:', error);
+            } finally {
+                // Clear the pending search
+                pendingSearchParam = null;
             }
         }
         
@@ -1109,6 +1206,79 @@
             if (managementForm) {
                 managementForm.addEventListener('submit', saveDetailsFromPage);
             }
+            
+            // Header buttons
+            const refreshBtn = document.getElementById('refreshBtn');
+            const logoutBtn = document.getElementById('logoutBtn');
+            
+            if (refreshBtn) {
+                refreshBtn.addEventListener('click', refreshData);
+            }
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+            
+            // Report button listeners
+            const viewReportBtn = document.getElementById('viewListReport');
+            const copyReportBtn = document.getElementById('copyListReport');
+            const closeReportModal = document.getElementById('closeReportModal');
+            const copyModalReport = document.getElementById('copyModalReport');
+            const viewProblemReportBtn = document.getElementById('viewProblemReport');
+            const copyProblemReportBtn = document.getElementById('copyProblemReport');
+            
+            if (viewReportBtn) {
+                viewReportBtn.addEventListener('click', showReportModal);
+            }
+            
+            if (copyReportBtn) {
+                copyReportBtn.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (viewProblemReportBtn) {
+                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
+            }
+            
+            if (copyProblemReportBtn) {
+                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
+            }
+            
+            if (copyModalReport) {
+                copyModalReport.addEventListener('click', copyReportToClipboard);
+            }
+            
+            if (closeReportModal) {
+                closeReportModal.addEventListener('click', () => {
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
+            }
+            
+            // Modal click-outside-to-close
+            const reportModal = document.getElementById('reportModal');
+            if (reportModal) {
+                reportModal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.add('hidden');
+                    }
+                });
+            }
+            
+            // Keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    // Close report modal
+                    const reportModal = document.getElementById('reportModal');
+                    if (reportModal && !reportModal.classList.contains('hidden')) {
+                        reportModal.classList.add('hidden');
+                        return;
+                    }
+                    
+                    // Or go back to list view
+                    if (!document.getElementById('problemDetailsView').classList.contains('hidden')) {
+                        showListView();
+                    }
+                }
+            });
         }
         
         async function loadDropdownOptions() {
@@ -1275,79 +1445,6 @@
                     }
                     select.appendChild(option);
                 });
-            });
-            
-            // Header buttons
-            const refreshBtn = document.getElementById('refreshBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', refreshData);
-            }
-            
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', logout);
-            }
-            
-            // Report button listeners
-            const viewReportBtn = document.getElementById('viewListReport');
-            const copyReportBtn = document.getElementById('copyListReport');
-            const closeReportModal = document.getElementById('closeReportModal');
-            const copyModalReport = document.getElementById('copyModalReport');
-            const viewProblemReportBtn = document.getElementById('viewProblemReport');
-            const copyProblemReportBtn = document.getElementById('copyProblemReport');
-            
-            if (viewReportBtn) {
-                viewReportBtn.addEventListener('click', showReportModal);
-            }
-            
-            if (copyReportBtn) {
-                copyReportBtn.addEventListener('click', copyReportToClipboard);
-            }
-            
-            if (viewProblemReportBtn) {
-                viewProblemReportBtn.addEventListener('click', showProblemReportModal);
-            }
-            
-            if (copyProblemReportBtn) {
-                copyProblemReportBtn.addEventListener('click', copyProblemReportToClipboard);
-            }
-            
-            if (copyModalReport) {
-                copyModalReport.addEventListener('click', copyReportToClipboard);
-            }
-            
-            if (closeReportModal) {
-                closeReportModal.addEventListener('click', () => {
-                    document.getElementById('reportModal').classList.add('hidden');
-                });
-            }
-            
-            // Modal click-outside-to-close
-            const reportModal = document.getElementById('reportModal');
-            if (reportModal) {
-                reportModal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.add('hidden');
-                    }
-                });
-            }
-            
-            // Keyboard shortcuts
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    // Close report modal
-                    const reportModal = document.getElementById('reportModal');
-                    if (reportModal && !reportModal.classList.contains('hidden')) {
-                        reportModal.classList.add('hidden');
-                        return;
-                    }
-                    
-                    // Or go back to list view
-                    if (!document.getElementById('problemDetailsView').classList.contains('hidden')) {
-                        showListView();
-                    }
-                }
             });
         }
         
@@ -1583,8 +1680,6 @@
                 'Low': reportData.filter(p => p.priority === 'Low').length
             };
             
-            report += 'PRIORITY BREAKDOWN:\n';
-            report += '-'.repeat(30) + '\n';
             Object.entries(priorityCount).forEach(([priority, count]) => {
                 if (count > 0) {
                     report += `${priority}: ${count}\n`;
@@ -2064,7 +2159,7 @@
                 setTimeout(() => {
                     statusDiv.style.background = '#d1fae5';
                     statusDiv.style.color = '#065f46';
-                    statusDiv.innerHTML = '🟢 System Ready - Clean Architecture';
+                    statusDiv.innerHTML = '🟢 System Ready - URL Search Parameter Enhancement Active';
                 }, 3000);
             }
         }
@@ -2077,6 +2172,9 @@
                 activePriorityFilter = 'all';
                 searchTerm = '';
                 isAuthenticated = false;
+                
+                // Clear pending search parameter on logout
+                pendingSearchParam = null;
                 
                 showLoginScreen();
                 updateDataStatus('Logged out', 'error');
@@ -2122,7 +2220,7 @@
             }
         }
         
-        console.log('🎯 Maintenance Portal V3.0 SIMPLIFIED - Ready for action!');
+        console.log('🎯 Maintenance Portal V3.0 SIMPLIFIED - Enhanced with URL Search Parameter - Ready for action!');
     </script>
 </body>
 </html>
