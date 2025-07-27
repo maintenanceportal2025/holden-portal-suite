@@ -1076,13 +1076,6 @@
                 isAuthenticated = true;
                 showMainPortal();
                 await initializeSystem();
-                
-                // APPLY PENDING SEARCH AFTER AUTHENTICATION
-                if (pendingSearchParam) {
-                    console.log('🔍 Applying pending search after authentication:', pendingSearchParam);
-                    applyPendingSearch();
-                }
-                
                 return true;
             } else {
                 return false;
@@ -1094,6 +1087,17 @@
             if (!pendingSearchParam) return;
             
             try {
+                console.log('🔍 Attempting to apply pending search:', pendingSearchParam);
+                
+                // Ensure we have problems loaded
+                if (!problems || problems.length === 0) {
+                    console.log('⚠️ No problems loaded yet, will retry in 1 second');
+                    setTimeout(() => {
+                        applyPendingSearch();
+                    }, 1000);
+                    return;
+                }
+                
                 // Set the search input field
                 const searchInput = document.getElementById('searchInput');
                 if (searchInput) {
@@ -1117,6 +1121,9 @@
                     updateDataStatus(`Search applied: "${pendingSearchParam}"`, 'success');
                     
                     console.log('✅ Successfully applied pending search:', pendingSearchParam);
+                    console.log('📊 Filtered problems count:', filteredProblems.length);
+                } else {
+                    console.error('❌ Search input element not found');
                 }
             } catch (error) {
                 console.error('❌ Error applying pending search:', error);
@@ -1140,6 +1147,13 @@
                 updateLoadingPhase('Complete!', 100, 'System ready for use');
                 updateDataStatus(`${problems.length} problems loaded`, 'success');
                 console.log('✅ System initialization complete');
+                
+                // TRIGGER PENDING SEARCH APPLICATION AFTER FULL INITIALIZATION
+                if (pendingSearchParam && isAuthenticated) {
+                    console.log('🔍 System ready - applying pending search:', pendingSearchParam);
+                    applyPendingSearch();
+                }
+                
             } catch (error) {
                 console.error('❌ Error initializing system:', error);
                 updateDataStatus('Error loading problems', 'error');
