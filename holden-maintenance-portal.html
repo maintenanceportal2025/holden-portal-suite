@@ -1028,15 +1028,24 @@
             const urlParams = new URLSearchParams(window.location.search);
             const searchParam = urlParams.get('search');
             
+            console.log('🔍 Raw URL search params:', window.location.search);
+            console.log('🔍 URLSearchParams object:', urlParams);
+            console.log('🔍 Raw search parameter:', searchParam);
+            
             if (searchParam) {
                 // Decode URL-encoded spaces and special characters
                 const decodedParam = decodeURIComponent(searchParam);
-                console.log('🔍 Captured search parameter from URL:', decodedParam);
+                console.log('🔍 Decoded search parameter:', decodedParam);
+                console.log('🔍 Parameter length:', decodedParam.length);
+                console.log('🔍 Parameter characters:', decodedParam.split('').map(c => `'${c}'`));
+                
                 pendingSearchParam = decodedParam;
                 
                 // Clean the URL (remove the search parameter from browser address bar)
                 const newUrl = window.location.protocol + "//" + window.location.host + window.location.pathname;
                 window.history.replaceState({}, document.title, newUrl);
+            } else {
+                console.log('🔍 No search parameter found in URL');
             }
         }
         
@@ -1575,8 +1584,8 @@
                 console.log('🔍 After search filter (' + searchTerm + '):', filtered.length);
             }
             
-            // Step 4: CHRONOLOGICAL SORTING (Report Order - NOT Priority)
-            // Sort by timestamp (newest first) - this is the natural report order
+            // Step 4: CHRONOLOGICAL SORTING (Oldest to Newest)
+            // Sort by timestamp (oldest first) - oldest problems at top
             filtered.sort((a, b) => {
                 const getTimestamp = (problem) => {
                     const timestamp = problem.timestamp;
@@ -1588,17 +1597,17 @@
                 const aTime = getTimestamp(a);
                 const bTime = getTimestamp(b);
                 
-                // Sort by date (newest first for report order)
+                // Sort by date (oldest first)
                 if (aTime !== bTime) {
-                    return bTime - aTime; // Newest first
+                    return aTime - bTime; // Oldest first
                 }
                 
-                // Secondary sort: Internal ID
-                return (b.internalId || '').localeCompare(a.internalId || '');
+                // Secondary sort: Internal ID (oldest first)
+                return (a.internalId || '').localeCompare(b.internalId || '');
             });
             
             // Debug the sort result
-            console.log('🎯 FINAL SORT ORDER (Chronological - Report Order):');
+            console.log('🎯 FINAL SORT ORDER (Oldest to Newest):');
             filtered.slice(0, 5).forEach((problem, index) => {
                 const date = problem.timestamp ? new Date(problem.timestamp).toLocaleDateString() : 'No date';
                 console.log(`  ${index + 1}. ${getFriendlyPID(problem.internalId)} - ${date} - ${problem.problemPriority} - ${problem.problemStatus}`);
