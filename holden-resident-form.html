@@ -24,21 +24,56 @@
             margin: 0 auto;
         }
 
-        /* NEW: Separate logo section */
-        .logo-section {
+        /* UPDATED: Header section with logo and text side by side */
+        .header-section {
             background: #eeeeee;
-            text-align: center;
             padding: 20px;
             margin-bottom: 20px;
         }
 
-        .logo-image {
-            max-width: 100%;
-            height: auto;
-            max-height: 180px;
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
         }
 
-        /* NEW: Title card section */
+        .logo-container {
+            flex-shrink: 0;
+        }
+
+        .logo-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .header-text {
+            flex: 1;
+            text-align: left;
+        }
+
+        .system-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+        }
+
+        .system-subtitle {
+            font-size: 14px;
+            color: #64748b;
+            margin: 4px 0 0 0;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* NEW: Resident Form title section */
         .title-card {
             background: white;
             border-radius: 20px;
@@ -76,8 +111,6 @@
             overflow: hidden;
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
-
-        /* Remove old styles */
 
         .form-container {
             padding: 40px 32px;
@@ -265,15 +298,33 @@
             font-weight: 600;
         }
 
-        /* Enhanced mobile optimizations */
+        /* Mobile Responsive Adjustments */
         @media (max-width: 580px) {
             body {
                 padding: 12px;
             }
             
-            .logo-section {
+            .header-section {
                 padding: 16px;
                 margin-bottom: 16px;
+            }
+            
+            .header-content {
+                gap: 16px;
+                padding: 0 10px;
+            }
+            
+            .logo-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .system-title {
+                font-size: 20px;
+            }
+            
+            .system-subtitle {
+                font-size: 12px;
             }
             
             .title-card {
@@ -288,18 +339,6 @@
             .form-card {
                 border-radius: 16px;
                 margin: 0;
-            }
-            
-            .header {
-                padding: 32px 24px;
-            }
-            
-            .logo-image {
-                max-height: 140px;
-            }
-            
-            .header h1 {
-                font-size: 24px;
             }
             
             .form-container {
@@ -319,6 +358,28 @@
             .info-box {
                 padding: 20px;
                 font-size: 14px;
+            }
+        }
+
+        /* Very small screens */
+        @media (max-width: 380px) {
+            .header-content {
+                flex-direction: column;
+                gap: 12px;
+                text-align: center;
+            }
+            
+            .header-text {
+                text-align: center;
+            }
+            
+            .logo-image {
+                width: 110px;
+                height: 110px;
+            }
+            
+            .system-title {
+                font-size: 18px;
             }
         }
 
@@ -342,18 +403,26 @@
 </head>
 <body>
     <div class="container">
-        <!-- NEW: Separate logo section -->
-        <div class="logo-section">
-            <img src="logo.png" class="logo-image" alt="Illawong Residential Club">
+        <!-- UPDATED: Header section with logo and text side by side -->
+        <div class="header-section">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="pelican-logo.png" class="logo-image" alt="Lake Illawong Residential Club">
+                </div>
+                <div class="header-text">
+                    <h1 class="system-title">PROBLEM REPORTING SYSTEM</h1>
+                    <p class="system-subtitle">Lake Illawong Residential Club</p>
+                </div>
+            </div>
         </div>
 
-        <!-- NEW: Resident Form title section -->
+        <!-- Resident Form title section -->
         <div class="title-card">
             <h1>Resident Form</h1>
             <p>Report maintenance issues for your unit or common areas</p>
         </div>
 
-        <!-- Modified: Form section -->
+        <!-- Form section -->
         <div class="form-card">
             <div class="form-container">
                 <div class="info-box">
@@ -407,6 +476,8 @@
             </div>
         </div>
     </div>
+
+    
 
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
