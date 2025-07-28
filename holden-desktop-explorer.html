@@ -1695,6 +1695,11 @@
             document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelector('button[onclick="setDateRange(\'all\')"]').classList.add('active');
             
+            // Clear highlighting
+            clearHighlighting('unitFilters');
+            clearHighlighting('categoryFilters');
+            clearHighlighting('subCategoryFilters');
+            
             applyFilters();
         }
         
