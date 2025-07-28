@@ -5,11 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holden Problem Data Explorer - Desktop</title>
     <style>
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         
         body { 
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -19,7 +15,6 @@
             overflow-x: hidden;
         }
         
-        /* DESKTOP GRID LAYOUT */
         .desktop-container {
             display: grid;
             grid-template-columns: 320px 1fr;
@@ -28,7 +23,6 @@
             gap: 0;
         }
         
-        /* HEADER SPANS BOTH COLUMNS */
         .header {
             grid-column: 1 / -1;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -54,6 +48,30 @@
             justify-content: space-between;
             align-items: center;
             gap: 12px;
+        }
+        
+        .dataset-toggle {
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 3px;
+            display: flex;
+            gap: 2px;
+        }
+        
+        .dataset-btn {
+            background: transparent;
+            color: white;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dataset-btn.active {
+            background: rgba(255,255,255,0.3);
+            font-weight: 600;
         }
         
         .access-badge {
@@ -90,40 +108,6 @@
             cursor: pointer;
         }
         
-        .back-btn:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        /* DATASET TOGGLE */
-        .dataset-toggle {
-            background: rgba(255,255,255,0.2);
-            border-radius: 8px;
-            padding: 3px;
-            display: flex;
-            gap: 2px;
-        }
-        
-        .dataset-btn {
-            background: transparent;
-            color: white;
-            padding: 6px 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .dataset-btn.active {
-            background: rgba(255,255,255,0.3);
-            font-weight: 600;
-        }
-        
-        .dataset-btn:hover:not(.active) {
-            background: rgba(255,255,255,0.15);
-        }
-        
-        /* SIDEBAR FILTERS */
         .filters-sidebar {
             background: white;
             border-right: 1px solid #e2e8f0;
@@ -156,7 +140,6 @@
             font-weight: 600;
         }
         
-        /* FILTER SECTIONS */
         .filter-section {
             margin-bottom: 28px;
         }
@@ -185,27 +168,22 @@
             font-size: 0.7rem;
         }
         
-        .section-actions {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            margin-bottom: 20px;
         }
         
-        .select-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            color: #64748b;
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
-        .select-btn:hover {
-            background: #e2e8f0;
-        }
-        
-        /* CHECKBOX LISTS */
         .checkbox-list {
             display: flex;
             flex-direction: column;
@@ -228,7 +206,6 @@
         .checkbox-item.highlighted {
             background: #e0e7ff;
             border: 1px solid #667eea;
-            border-radius: 6px;
             font-weight: 600;
         }
         
@@ -260,103 +237,28 @@
             text-align: center;
         }
         
-        /* SEARCH INPUT */
-        .search-section {
-            margin-bottom: 20px;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            background: white;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        /* DATE RANGE */
-        .date-range {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-bottom: 12px;
-        }
-        
-        .date-input {
-            padding: 8px;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
-            font-size: 0.85rem;
-        }
-        
-        .date-presets {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
+        .section-actions {
+            display: flex;
             gap: 4px;
+            margin-top: 8px;
         }
         
-        .date-preset-btn {
+        .select-btn {
             background: #f8fafc;
             border: 1px solid #e2e8f0;
-            padding: 6px 8px;
-            border-radius: 6px;
-            font-size: 0.75rem;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
             cursor: pointer;
-            text-align: center;
-        }
-        
-        .date-preset-btn.active {
-            background: #667eea;
-            color: white;
-            border-color: #667eea;
-        }
-        
-        /* FILTER ACTIONS */
-        .filter-actions {
-            margin-top: 24px;
-            padding-top: 16px;
-            border-top: 1px solid #e2e8f0;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-        }
-        
-        .btn-apply {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            border: none;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-        
-        .btn-clear {
-            background: #f1f5f9;
             color: #64748b;
-            border: 1px solid #d1d5db;
-            padding: 10px 12px;
-            border-radius: 8px;
-            font-weight: 500;
-            font-size: 0.9rem;
-            cursor: pointer;
         }
         
-        /* MAIN CONTENT */
         .main-content {
             display: flex;
             flex-direction: column;
             overflow: hidden;
         }
         
-        /* STATS DASHBOARD */
         .stats-dashboard {
             padding: 20px 24px;
             background: white;
@@ -397,7 +299,6 @@
             color: #64748b;
         }
         
-        /* RESULTS SECTION */
         .results-section {
             flex: 1;
             display: flex;
@@ -428,179 +329,12 @@
             font-size: 0.85rem;
         }
         
-        .results-controls {
-            padding: 12px 24px;
-            border-bottom: 1px solid #f1f5f9;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .view-toggle {
-            background: #f1f5f9;
-            border-radius: 8px;
-            padding: 3px;
-            display: flex;
-        }
-        
-        .view-btn {
-            padding: 8px 16px;
-            border: none;
-            background: transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-        }
-        
-        .view-btn.active {
-            background: white;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            font-weight: 600;
-        }
-        
-        .export-btn {
-            background: #10b981;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 500;
-            cursor: pointer;
-        }
-        
-        /* PROBLEMS CONTAINER */
         .problems-container {
             flex: 1;
             overflow-y: auto;
             padding: 16px 24px;
         }
         
-        /* CARD VIEW */
-        .problems-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-            gap: 16px;
-        }
-        
-        .problem-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .problem-card:hover {
-            border-color: #667eea;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.1);
-        }
-        
-        .problem-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-        }
-        
-        .problem-id {
-            font-weight: 600;
-            color: #667eea;
-            font-size: 1rem;
-        }
-        
-        .problem-unit {
-            color: #64748b;
-            font-size: 0.85rem;
-            margin-top: 2px;
-        }
-        
-        .problem-badges {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-        
-        .badge {
-            padding: 3px 8px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        
-        .priority-urgent { background: #fecaca; color: #991b1b; }
-        .priority-high { background: #fed7aa; color: #9a3412; }
-        .priority-medium { background: #fde68a; color: #92400e; }
-        .priority-low { background: #d1fae5; color: #065f46; }
-        
-        .status-reported { background: #dbeafe; color: #1e40af; }
-        .status-inprogress { background: #fed7aa; color: #9a3412; }
-        .status-completed { background: #d1fae5; color: #065f46; }
-        .status-onhold { background: #f3e8ff; color: #7c3aed; }
-        
-        .problem-description {
-            color: #374151;
-            font-size: 0.9rem;
-            line-height: 1.4;
-            margin-bottom: 12px;
-        }
-        
-        .problem-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.8rem;
-            color: #64748b;
-        }
-        
-        .problem-date {
-            font-weight: 500;
-        }
-        
-        .problem-assigned {
-            background: #f1f5f9;
-            padding: 3px 8px;
-            border-radius: 8px;
-        }
-        
-        /* TABLE VIEW */
-        .table-view {
-            display: none;
-        }
-        
-        .problems-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        
-        .problems-table th {
-            background: #f8fafc;
-            padding: 12px 16px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: #374151;
-            border-bottom: 1px solid #e2e8f0;
-        }
-        
-        .problems-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid #f1f5f9;
-            font-size: 0.9rem;
-        }
-        
-        .problems-table tr:hover {
-            background: #f8fafc;
-        }
-        
-        /* LOADING STATES */
         .loading {
             display: flex;
             align-items: center;
@@ -635,23 +369,12 @@
             margin-bottom: 12px;
         }
         
-        /* RESPONSIVE FOR SMALLER DESKTOPS */
-        @media (max-width: 1200px) {
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .problems-grid {
-                grid-template-columns: 1fr;
-            }
-        }
+        .hidden { display: none !important; }
         
-        /* HIDE ON MOBILE */
         @media (max-width: 768px) {
-            .desktop-container {
-                display: none;
-            }
+            .desktop-container { display: none; }
             body::before {
-                content: "This desktop version requires a larger screen. Please use the mobile version or access from a desktop/tablet.";
+                content: "This desktop version requires a larger screen.";
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -663,15 +386,10 @@
                 font-size: 1.1rem;
             }
         }
-        
-        .hidden {
-            display: none !important;
-        }
     </style>
 </head>
 <body>
     <div class="desktop-container">
-        <!-- HEADER -->
         <div class="header">
             <h1>📊 Problem Data Explorer</h1>
             <p>Desktop Analytics & Multi-Field Filtering</p>
@@ -692,36 +410,14 @@
             </div>
         </div>
 
-        <!-- FILTERS SIDEBAR -->
         <div class="filters-sidebar">
             <div class="sidebar-header">
                 <span class="sidebar-title">🎛️ Data Slicers</span>
                 <span class="active-filters-count" id="activeFiltersCount">0</span>
             </div>
 
-            <!-- SEARCH -->
-            <div class="search-section">
-                <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description..." onkeyup="handleSearchInput()">
-            </div>
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description..." onkeyup="handleSearchInput()">
 
-            <!-- DATE RANGE -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-label">📅 Date Range</div>
-                </div>
-                <div class="date-range">
-                    <input type="date" id="startDate" class="date-input">
-                    <input type="date" id="endDate" class="date-input">
-                </div>
-                <div class="date-presets">
-                    <button class="date-preset-btn" onclick="setDateRange('last30')">30 Days</button>
-                    <button class="date-preset-btn" onclick="setDateRange('last90')">90 Days</button>
-                    <button class="date-preset-btn" onclick="setDateRange('ytd')">YTD</button>
-                    <button class="date-preset-btn active" onclick="setDateRange('all')">All Time</button>
-                </div>
-            </div>
-
-            <!-- UNITS -->
             <div class="filter-section" id="unitsSection">
                 <div class="filter-header">
                     <div class="filter-label">🏠 Units</div>
@@ -731,12 +427,9 @@
                     <button class="select-btn" onclick="selectAllUnits()">All</button>
                     <button class="select-btn" onclick="selectNoneUnits()">None</button>
                 </div>
-                <div class="checkbox-list" id="unitFilters">
-                    <!-- Dynamic unit checkboxes -->
-                </div>
+                <div class="checkbox-list" id="unitFilters"></div>
             </div>
 
-            <!-- PRIORITY -->
             <div class="filter-section">
                 <div class="filter-header">
                     <div class="filter-label">⚡ Priority</div>
@@ -746,57 +439,9 @@
                     <button class="select-btn" onclick="selectAllPriorities()">All</button>
                     <button class="select-btn" onclick="selectNonePriorities()">None</button>
                 </div>
-                <div class="checkbox-list" id="priorityFilters">
-                    <!-- Dynamic priority checkboxes -->
-                </div>
+                <div class="checkbox-list" id="priorityFilters"></div>
             </div>
 
-            <!-- ZONES -->
-            <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-label">🏘️ Zones</div>
-                    <div class="section-count" id="zoneCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllZones()">All</button>
-                    <button class="select-btn" onclick="selectNoneZones()">None</button>
-                </div>
-                <div class="checkbox-list" id="zoneFilters">
-                    <!-- Dynamic zone checkboxes -->
-                </div>
-            </div>
-
-            <!-- STATUS -->
-            <div class="filter-section" id="statusSection">
-                <div class="filter-header">
-                    <div class="filter-label">📋 Status</div>
-                    <div class="section-count" id="statusCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllStatuses()">All</button>
-                    <button class="select-btn" onclick="selectNoneStatuses()">None</button>
-                </div>
-                <div class="checkbox-list" id="statusFilters">
-                    <!-- Dynamic status checkboxes -->
-                </div>
-            </div>
-
-            <!-- ASSIGNED TO -->
-            <div class="filter-section" id="assignedSection">
-                <div class="filter-header">
-                    <div class="filter-label">👤 Assigned To</div>
-                    <div class="section-count" id="assignedCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllAssigned()">All</button>
-                    <button class="select-btn" onclick="selectNoneAssigned()">None</button>
-                </div>
-                <div class="checkbox-list" id="assignedFilters">
-                    <!-- Dynamic assigned to checkboxes -->
-                </div>
-            </div>
-
-            <!-- CATEGORIES -->
             <div class="filter-section">
                 <div class="filter-header">
                     <div class="filter-label">🏷️ Categories</div>
@@ -806,12 +451,9 @@
                     <button class="select-btn" onclick="selectAllCategories()">All</button>
                     <button class="select-btn" onclick="selectNoneCategories()">None</button>
                 </div>
-                <div class="checkbox-list" id="categoryFilters">
-                    <!-- Dynamic category checkboxes -->
-                </div>
+                <div class="checkbox-list" id="categoryFilters"></div>
             </div>
 
-            <!-- SUB-CATEGORIES -->
             <div class="filter-section">
                 <div class="filter-header">
                     <div class="filter-label">🏪 Sub-Categories</div>
@@ -821,21 +463,11 @@
                     <button class="select-btn" onclick="selectAllSubCategories()">All</button>
                     <button class="select-btn" onclick="selectNoneSubCategories()">None</button>
                 </div>
-                <div class="checkbox-list" id="subCategoryFilters">
-                    <!-- Dynamic sub-category checkboxes -->
-                </div>
-            </div>
-
-            <!-- FILTER ACTIONS -->
-            <div class="filter-actions">
-                <button class="btn-apply" onclick="applyFilters()">Apply Filters</button>
-                <button class="btn-clear" onclick="clearAllFilters()">Clear All</button>
+                <div class="checkbox-list" id="subCategoryFilters"></div>
             </div>
         </div>
 
-        <!-- MAIN CONTENT -->
         <div class="main-content">
-            <!-- STATS DASHBOARD -->
             <div class="stats-dashboard">
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -861,56 +493,16 @@
                 </div>
             </div>
 
-            <!-- RESULTS -->
             <div class="results-section">
                 <div class="results-header">
                     <div class="results-title">Problem Details</div>
                     <div class="results-count" id="resultsCount">Loading...</div>
                 </div>
                 
-                <div class="results-controls">
-                    <div class="view-toggle">
-                        <button class="view-btn active" onclick="setView('cards')">📋 Cards</button>
-                        <button class="view-btn" onclick="setView('table')">📊 Table</button>
-                    </div>
-                    <button class="export-btn" onclick="exportData()">📥 Export CSV</button>
-                </div>
-                
-                <!-- CARDS VIEW -->
-                <div id="cardsView">
-                    <div class="problems-container" id="problemsContainer">
-                        <div class="loading">
-                            <div class="loading-spinner"></div>
-                            Loading problem data...
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- TABLE VIEW -->
-                <div id="tableView" class="table-view hidden">
-                    <div class="problems-container">
-                        <table class="problems-table">
-                            <thead>
-                                <tr>
-                                    <th>PID</th>
-                                    <th>Unit</th>
-                                    <th>Zone</th>
-                                    <th>Priority</th>
-                                    <th>Status</th>
-                                    <th>Category</th>
-                                    <th>Assigned</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="tableBody">
-                                <tr>
-                                    <td colspan="8" class="loading">
-                                        <div class="loading-spinner"></div>
-                                        Loading...
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                <div class="problems-container" id="problemsContainer">
+                    <div class="loading">
+                        <div class="loading-spinner"></div>
+                        Loading problem data...
                     </div>
                 </div>
             </div>
@@ -918,232 +510,93 @@
     </div>
 
     <script>
-        // DESKTOP HOLDEN PROBLEM DATA EXPLORER V1.0 - Phase 1 Complete
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
         
-        // State Management
         let allProblems = [];
         let filteredProblems = [];
-        let dynamicDropdownData = {};
-        let currentView = 'cards';
-        let currentDataset = 'current'; // 'current' or 'legacy'
-        let filterRelationships = {}; // For cross-highlighting
+        let currentDataset = 'current';
+        let filterRelationships = {};
         
-        // Initialize Desktop Explorer
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🖥️ Desktop Holden Problem Data Explorer V1.0 - Initializing...');
-            initializeDateRanges();
+            console.log('🖥️ Desktop Explorer - Starting...');
             loadProblemsData();
-            loadDropdownOptions();
         });
         
-        // Switch between current and legacy datasets
         function switchDataset(dataset) {
             currentDataset = dataset;
-            
-            // Update button states
             document.querySelectorAll('.dataset-btn').forEach(btn => btn.classList.remove('active'));
             document.getElementById(dataset + 'Btn').classList.add('active');
-            
-            // Show/hide relevant filter sections
-            if (dataset === 'legacy') {
-                document.getElementById('statusSection').style.display = 'none';
-                document.getElementById('assignedSection').style.display = 'none';
-            } else {
-                document.getElementById('statusSection').style.display = 'block';
-                document.getElementById('assignedSection').style.display = 'block';
-            }
-            
-            // Load appropriate data
             loadProblemsData();
         }
         
-        // Initialize default date ranges
-        function initializeDateRanges() {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setFullYear(2023, 0, 1); // Start from 2023
-            
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-        }
-        
-        // Load problems data
         async function loadProblemsData() {
             try {
-                const action = currentDataset === 'legacy' ? 'getLegacyLogData' : 'getFaultLogData';
-                console.log(`🔄 Loading ${currentDataset} data from Holden Explorer backend...`);
-                updateLoadingState(`Connecting to backend (${currentDataset} data)...`);
+                console.log('Loading data...');
+                updateLoadingState('Connecting to backend...');
                 
-                const response = await makeRequest(action);
+                const response = await makeRequest('getFaultLogData');
                 
                 if (response && response.success) {
                     allProblems = response.data || [];
-                    console.log('✅ Loaded', allProblems.length, currentDataset, 'problems');
-                    
-                    if (allProblems.length === 0) {
-                        showError(`No ${currentDataset} problems found in the system.`);
-                        return;
-                    }
+                    console.log('Loaded', allProblems.length, 'problems');
                     
                     buildFilterRelationships();
                     buildDynamicFilters();
                     applyFilters();
                 } else {
-                    console.error('❌ Backend returned error:', response);
-                    throw new Error(response?.message || `Failed to load ${currentDataset} data from backend`);
+                    throw new Error('Failed to load data');
                 }
             } catch (error) {
-                console.error('❌ Error loading data:', error);
-                showError(`Failed to load ${currentDataset} problem data. Please check your connection and try again.`);
+                console.error('Error loading data:', error);
+                showError('Failed to load problem data');
             }
         }
         
-        // Load dynamic dropdown options from Categories tab
-        async function loadDropdownOptions() {
-            try {
-                console.log('🎛️ Loading dynamic dropdown options...');
-                
-                const response = await makeRequest('getDropdownOptions');
-                
-                if (response && response.success) {
-                    dynamicDropdownData = response.data;
-                    console.log('✅ Dropdown data loaded:', dynamicDropdownData);
-                    
-                    buildDynamicFilters();
-                } else {
-                    console.error('❌ Failed to load dropdown data:', response.error);
-                    buildFallbackFilters();
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading dropdown options:', error);
-                console.log('⚠️ Using fallback dropdown values');
-                buildFallbackFilters();
-            }
-        }
-        
-        // Build filter relationships for cross-highlighting
         function buildFilterRelationships() {
             filterRelationships = {
                 unitToCategories: {},
-                categoryToUnits: {},
-                unitToSubCategories: {},
-                subCategoryToUnits: {}
+                categoryToUnits: {}
             };
             
             allProblems.forEach(problem => {
                 const unit = problem.unitNumber;
                 const category = problem.category;
-                const subCategory = problem.subCategory;
                 
-                // Unit → Categories
                 if (!filterRelationships.unitToCategories[unit]) {
                     filterRelationships.unitToCategories[unit] = new Set();
                 }
                 if (category) filterRelationships.unitToCategories[unit].add(category);
                 
-                // Category → Units
                 if (category) {
                     if (!filterRelationships.categoryToUnits[category]) {
                         filterRelationships.categoryToUnits[category] = new Set();
                     }
                     filterRelationships.categoryToUnits[category].add(unit);
                 }
-                
-                // Unit → Sub-Categories
-                if (!filterRelationships.unitToSubCategories[unit]) {
-                    filterRelationships.unitToSubCategories[unit] = new Set();
-                }
-                if (subCategory) filterRelationships.unitToSubCategories[unit].add(subCategory);
-                
-                // Sub-Category → Units
-                if (subCategory) {
-                    if (!filterRelationships.subCategoryToUnits[subCategory]) {
-                        filterRelationships.subCategoryToUnits[subCategory] = new Set();
-                    }
-                    filterRelationships.subCategoryToUnits[subCategory].add(unit);
-                }
             });
         }
         
-        // Build dynamic filter checkboxes from Maintenance tab
         function buildDynamicFilters() {
-            // Build units with numerical sorting
             const units = [...new Set(allProblems.map(p => p.unitNumber).filter(Boolean))]
                 .sort((a, b) => {
-                    // Extract numbers for proper numerical sorting
                     const numA = parseInt(a.replace(/\D/g, '')) || 0;
                     const numB = parseInt(b.replace(/\D/g, '')) || 0;
                     return numA - numB;
                 });
             buildCheckboxSection('unitFilters', units, 'unit');
             
-            // Build zones from actual data (not from Maintenance tab)
-            const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
-            buildCheckboxSection('zoneFilters', zones, 'zone');
-            
-            // Build priorities from Maintenance tab
-            const priorities = dynamicDropdownData.priorities?.length > 0 
-                ? dynamicDropdownData.priorities 
-                : ['Urgent', 'High', 'Medium', 'Low'];
-            buildCheckboxSection('priorityFilters', priorities, 'priority');
-            
-            // Build statuses from Maintenance tab
-            const statuses = dynamicDropdownData.statuses?.length > 0 
-                ? dynamicDropdownData.statuses 
-                : ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled'];
-            buildCheckboxSection('statusFilters', statuses, 'status');
-            
-            // Build categories from Maintenance tab
-            const categories = dynamicDropdownData.categories?.length > 0 
-                ? dynamicDropdownData.categories 
-                : [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
-            buildCheckboxSection('categoryFilters', categories, 'category');
-            
-            // Build sub-categories from Maintenance tab
-            const subCategories = dynamicDropdownData.subCategories?.length > 0 
-                ? dynamicDropdownData.subCategories 
-                : [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
-            buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
-            
-            // Build assigned to from Maintenance tab
-            const assignedTo = dynamicDropdownData.assignedTo?.length > 0 
-                ? dynamicDropdownData.assignedTo 
-                : [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
-            buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
-            
-            // Update section counts
-            updateSectionCounts();
-        }
-        
-        // Build fallback filters if dynamic loading fails
-        function buildFallbackFilters() {
-            const units = [...new Set(allProblems.map(p => p.unitNumber).filter(Boolean))]
-                .sort((a, b) => {
-                    const numA = parseInt(a.replace(/\D/g, '')) || 0;
-                    const numB = parseInt(b.replace(/\D/g, '')) || 0;
-                    return numA - numB;
-                });
-            const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
             const priorities = ['Urgent', 'High', 'Medium', 'Low'];
-            const statuses = ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled'];
-            const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
-            const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
-            const assignedTo = [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
-            
-            buildCheckboxSection('unitFilters', units, 'unit');
-            buildCheckboxSection('zoneFilters', zones, 'zone');
             buildCheckboxSection('priorityFilters', priorities, 'priority');
-            buildCheckboxSection('statusFilters', statuses, 'status');
+            
+            const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             buildCheckboxSection('categoryFilters', categories, 'category');
+            
+            const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
             buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
-            buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
             
             updateSectionCounts();
         }
         
-        // Build checkbox section with change handler for cross-highlighting
         function buildCheckboxSection(containerId, options, fieldName) {
             const container = document.getElementById(containerId);
             if (!container) return;
@@ -1165,75 +618,23 @@
             }).join('');
         }
         
-        // Get field value from problem object
         function getFieldValue(problem, fieldName) {
             switch (fieldName) {
                 case 'unit': return problem.unitNumber;
-                case 'zone': return problem.zone;
                 case 'priority': return problem.problemPriority;
-                case 'status': return problem.problemStatus;
                 case 'category': return problem.category;
                 case 'subCategory': return problem.subCategory;
-                case 'assignedTo': return problem.assignedTo;
                 default: return '';
             }
         }
         
-        // Update section counts
         function updateSectionCounts() {
             document.getElementById('unitCount').textContent = document.querySelectorAll('#unitFilters input').length;
-            document.getElementById('zoneCount').textContent = document.querySelectorAll('#zoneFilters input').length;
             document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
-            document.getElementById('statusCount').textContent = document.querySelectorAll('#statusFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
             document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
-            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
         }
         
-        // Update loading state
-        function updateLoadingState(message) {
-            document.getElementById('totalTrend').textContent = message;
-            
-            const container = document.getElementById('problemsContainer');
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    ${message}
-                </div>
-            `;
-        }
-        
-        // Set date range presets
-        function setDateRange(preset) {
-            const endDate = new Date();
-            const startDate = new Date();
-            
-            // Remove active class from all date buttons
-            document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
-            
-            switch(preset) {
-                case 'last30':
-                    startDate.setDate(endDate.getDate() - 30);
-                    break;
-                case 'last90':
-                    startDate.setDate(endDate.getDate() - 90);
-                    break;
-                case 'ytd':
-                    startDate.setMonth(0, 1);
-                    break;
-                case 'all':
-                    startDate.setFullYear(2023, 0, 1);
-                    break;
-            }
-            
-            // Add active class to clicked button
-            event.target.classList.add('active');
-            
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-        }
-        
-        // Select all/none functions for each section
         function selectAllUnits() {
             document.querySelectorAll('#unitFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
             updateActiveFiltersCount();
@@ -1246,16 +647,6 @@
             updateCrossHighlighting();
         }
         
-        function selectAllZones() {
-            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneZones() {
-            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
         function selectAllPriorities() {
             document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
             updateActiveFiltersCount();
@@ -1263,16 +654,6 @@
         
         function selectNonePriorities() {
             document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function selectAllStatuses() {
-            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneStatuses() {
-            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
             updateActiveFiltersCount();
         }
         
@@ -1291,59 +672,35 @@
         function selectAllSubCategories() {
             document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
             updateActiveFiltersCount();
-            updateCrossHighlighting();
         }
         
         function selectNoneSubCategories() {
             document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
             updateActiveFiltersCount();
-            updateCrossHighlighting();
         }
         
-        function selectAllAssigned() {
-            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneAssigned() {
-            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        // Update cross-highlighting between filters
         function updateCrossHighlighting() {
-            // Get selected units and categories
             const selectedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
             const selectedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
-            const selectedSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input:checked')).map(cb => cb.value);
             
-            // Highlight units based on selected categories
             if (selectedCategories.length > 0 && selectedCategories.length < document.querySelectorAll('#categoryFilters input').length) {
-                highlightRelatedUnits(selectedCategories, 'category');
-            } else if (selectedSubCategories.length > 0 && selectedSubCategories.length < document.querySelectorAll('#subCategoryFilters input').length) {
-                highlightRelatedUnits(selectedSubCategories, 'subCategory');
+                highlightRelatedUnits(selectedCategories);
             } else {
                 clearHighlighting('unitFilters');
             }
             
-            // Highlight categories based on selected units
             if (selectedUnits.length > 0 && selectedUnits.length < document.querySelectorAll('#unitFilters input').length) {
                 highlightRelatedCategories(selectedUnits);
-                highlightRelatedSubCategories(selectedUnits);
             } else {
                 clearHighlighting('categoryFilters');
-                clearHighlighting('subCategoryFilters');
             }
         }
         
-        // Highlight units related to selected categories
-        function highlightRelatedUnits(selectedItems, type) {
-            const relationshipMap = type === 'category' ? filterRelationships.categoryToUnits : filterRelationships.subCategoryToUnits;
+        function highlightRelatedUnits(selectedCategories) {
             const relatedUnits = new Set();
-            
-            selectedItems.forEach(item => {
-                if (relationshipMap[item]) {
-                    relationshipMap[item].forEach(unit => relatedUnits.add(unit));
+            selectedCategories.forEach(category => {
+                if (filterRelationships.categoryToUnits[category]) {
+                    filterRelationships.categoryToUnits[category].forEach(unit => relatedUnits.add(unit));
                 }
             });
             
@@ -1359,10 +716,8 @@
             });
         }
         
-        // Highlight categories related to selected units
         function highlightRelatedCategories(selectedUnits) {
             const relatedCategories = new Set();
-            
             selectedUnits.forEach(unit => {
                 if (filterRelationships.unitToCategories[unit]) {
                     filterRelationships.unitToCategories[unit].forEach(cat => relatedCategories.add(cat));
@@ -1381,90 +736,35 @@
             });
         }
         
-        // Highlight sub-categories related to selected units
-        function highlightRelatedSubCategories(selectedUnits) {
-            const relatedSubCategories = new Set();
-            
-            selectedUnits.forEach(unit => {
-                if (filterRelationships.unitToSubCategories[unit]) {
-                    filterRelationships.unitToSubCategories[unit].forEach(subCat => relatedSubCategories.add(subCat));
-                }
-            });
-            
-            document.querySelectorAll('#subCategoryFilters .checkbox-item').forEach(item => {
-                const subCategory = item.querySelector('input').value;
-                item.classList.remove('highlighted', 'dimmed');
-                
-                if (relatedSubCategories.has(subCategory)) {
-                    item.classList.add('highlighted');
-                } else {
-                    item.classList.add('dimmed');
-                }
-            });
-        }
-        
-        // Clear highlighting from a filter section
         function clearHighlighting(containerId) {
             document.querySelectorAll(`#${containerId} .checkbox-item`).forEach(item => {
                 item.classList.remove('highlighted', 'dimmed');
             });
         }
         
-        // Apply all filters
         function applyFilters() {
             let filtered = [...allProblems];
             
-            // Date range filter
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            filtered = filtered.filter(problem => {
-                const problemDate = new Date(problem.timestamp);
-                return problemDate >= startDate && problemDate <= endDate;
-            });
-            
-            // Unit filter
             const selectedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
             if (selectedUnits.length > 0) {
                 filtered = filtered.filter(p => selectedUnits.includes(p.unitNumber));
             }
             
-            // Zone filter
-            const selectedZones = Array.from(document.querySelectorAll('#zoneFilters input:checked')).map(cb => cb.value);
-            if (selectedZones.length > 0) {
-                filtered = filtered.filter(p => selectedZones.includes(p.zone));
-            }
-            
-            // Priority filter
             const selectedPriorities = Array.from(document.querySelectorAll('#priorityFilters input:checked')).map(cb => cb.value);
             if (selectedPriorities.length > 0) {
                 filtered = filtered.filter(p => selectedPriorities.includes(p.problemPriority));
             }
             
-            // Status filter
-            const selectedStatuses = Array.from(document.querySelectorAll('#statusFilters input:checked')).map(cb => cb.value);
-            if (selectedStatuses.length > 0) {
-                filtered = filtered.filter(p => selectedStatuses.includes(p.problemStatus));
-            }
-            
-            // Category filter
             const selectedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
             if (selectedCategories.length > 0) {
                 filtered = filtered.filter(p => selectedCategories.includes(p.category));
             }
             
-            // Sub-category filter
             const selectedSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input:checked')).map(cb => cb.value);
             if (selectedSubCategories.length > 0) {
                 filtered = filtered.filter(p => selectedSubCategories.includes(p.subCategory));
             }
             
-            // Assigned to filter
-            const selectedAssigned = Array.from(document.querySelectorAll('#assignedFilters input:checked')).map(cb => cb.value);
-            if (selectedAssigned.length > 0) {
-                filtered = filtered.filter(p => selectedAssigned.includes(p.assignedTo));
-            }
-            
-            // Search filter
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             if (searchTerm) {
                 filtered = filtered.filter(problem => {
@@ -1472,17 +772,13 @@
                         getFriendlyPID(problem.internalId),
                         problem.unitNumber,
                         problem.problemDescription,
-                        problem.reportedBy,
-                        problem.zone,
-                        problem.category,
-                        problem.assignedTo
+                        problem.reportedBy
                     ].filter(Boolean).join(' ').toLowerCase();
                     
                     return searchText.includes(searchTerm);
                 });
             }
             
-            // Sort by date (newest first)
             filtered.sort((a, b) => {
                 const aTime = new Date(a.timestamp).getTime();
                 const bTime = new Date(b.timestamp).getTime();
@@ -1491,16 +787,11 @@
             
             filteredProblems = filtered;
             
-            // Update displays
             updateStats();
             updateActiveFiltersCount();
-            updateCrossHighlighting();
             updateResultsDisplay();
-            
-            console.log('🖥️ Desktop filtered to', filteredProblems.length, currentDataset, 'problems');
         }
         
-        // Update statistics
         function updateStats() {
             const totalProblems = filteredProblems.length;
             const activeProblems = filteredProblems.filter(p => 
@@ -1508,37 +799,18 @@
             ).length;
             const urgentCount = filteredProblems.filter(p => p.problemPriority === 'Urgent').length;
             
-            // Calculate average resolution time
-            const completedProblems = filteredProblems.filter(p => 
-                p.problemStatus === 'Completed' && p.completionDate
-            );
-            
-            let avgResolution = 0;
-            if (completedProblems.length > 0) {
-                const totalDays = completedProblems.reduce((sum, problem) => {
-                    const reported = new Date(problem.timestamp);
-                    const completed = new Date(problem.completionDate);
-                    const days = Math.ceil((completed - reported) / (1000 * 60 * 60 * 24));
-                    return sum + days;
-                }, 0);
-                avgResolution = Math.round(totalDays / completedProblems.length);
-            }
-            
-            // Update display
             document.getElementById('totalProblems').textContent = totalProblems;
             document.getElementById('activeProblems').textContent = activeProblems;
             document.getElementById('urgentCount').textContent = urgentCount;
-            document.getElementById('avgResolution').textContent = avgResolution > 0 ? avgResolution : 'N/A';
+            document.getElementById('avgResolution').textContent = 'N/A';
             
-            // Update trends
             const activePercent = totalProblems > 0 ? Math.round((activeProblems/totalProblems)*100) : 0;
             document.getElementById('totalTrend').textContent = 'Current selection';
             document.getElementById('activeTrend').textContent = `${activePercent}% active`;
             document.getElementById('urgentTrend').textContent = urgentCount > 0 ? 'Needs attention' : 'Under control';
-            document.getElementById('resolutionTrend').textContent = avgResolution > 0 ? 'Average time' : 'No completed items';
+            document.getElementById('resolutionTrend').textContent = 'No completed items';
         }
         
-        // Update active filters count
         function updateActiveFiltersCount() {
             const totalCheckboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]').length;
             const checkedCheckboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]:checked').length;
@@ -1550,19 +822,12 @@
             document.getElementById('activeFiltersCount').textContent = activeCount;
         }
         
-        // Update results display
         function updateResultsDisplay() {
             document.getElementById('resultsCount').textContent = `${filteredProblems.length} problems`;
-            
-            if (currentView === 'cards') {
-                updateCardsView();
-            } else {
-                updateTableView();
-            }
+            updateProblemsView();
         }
         
-        // Update cards view
-        function updateCardsView() {
+        function updateProblemsView() {
             const container = document.getElementById('problemsContainer');
             
             if (filteredProblems.length === 0) {
@@ -1570,191 +835,52 @@
                     <div class="empty-state">
                         <div class="empty-icon">📭</div>
                         <div>No problems match your current filters</div>
-                        <div style="font-size: 0.9rem; margin-top: 8px; opacity: 0.8;">Try adjusting your filter selections</div>
                     </div>
                 `;
                 return;
             }
             
-            const problemsGrid = document.createElement('div');
-            problemsGrid.className = 'problems-grid';
-            
-            problemsGrid.innerHTML = filteredProblems.map(problem => {
+            const problemsHTML = filteredProblems.slice(0, 20).map(problem => {
                 const friendlyPID = getFriendlyPID(problem.internalId);
                 const reportedDate = formatDate(problem.timestamp);
                 const priority = problem.problemPriority || 'Medium';
-                const status = problem.problemStatus || 'Reported';
                 
                 return `
-                    <div class="problem-card" onclick="showProblemDetails('${problem.internalId}')">
-                        <div class="problem-header">
+                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
                             <div>
-                                <div class="problem-id">${friendlyPID}</div>
-                                <div class="problem-unit">${problem.unitNumber} • ${problem.zone}</div>
+                                <div style="font-weight: 600; color: #667eea; font-size: 1rem;">${friendlyPID}</div>
+                                <div style="color: #64748b; font-size: 0.9rem;">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
                             </div>
-                            <div class="problem-badges">
-                                <span class="badge priority-${priority.toLowerCase()}">${priority}</span>
-                                <span class="badge status-${status.toLowerCase().replace(/\s+/g, '')}">${status}</span>
+                            <div>
+                                <span style="background: #fde68a; color: #92400e; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${priority}</span>
                             </div>
                         </div>
-                        <div class="problem-description">
-                            ${(problem.problemDescription || 'No description').substring(0, 150)}${(problem.problemDescription || '').length > 150 ? '...' : ''}
+                        <div style="color: #374151; font-size: 0.9rem; margin-bottom: 8px;">
+                            ${(problem.problemDescription || 'No description').substring(0, 120)}${(problem.problemDescription || '').length > 120 ? '...' : ''}
                         </div>
-                        <div class="problem-footer">
-                            <div class="problem-date">${reportedDate}</div>
-                            <div class="problem-assigned">${problem.assignedTo || 'Unassigned'}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b;">
+                            <div>${reportedDate}</div>
+                            <div>${problem.category || 'No Category'}</div>
                         </div>
                     </div>
                 `;
             }).join('');
             
-            container.innerHTML = '';
-            container.appendChild(problemsGrid);
+            container.innerHTML = problemsHTML;
         }
         
-            
-            if (filteredProblems.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 60px; color: #64748b;">
-                            📭 No problems match your current filters
-                        </td>
-                    </tr>
-                `;
-                return;
-            }
-            
-            tbody.innerHTML = filteredProblems.map(problem => {
-                const friendlyPID = getFriendlyPID(problem.internalId);
-                const reportedDate = formatDateShort(problem.timestamp);
-                const priority = problem.problemPriority || 'Med';
-                const status = (problem.problemStatus || 'Reported').substring(0, 12);
-                
-                return `
-                    <tr onclick="showProblemDetails('${problem.internalId}')">
-                        <td style="font-weight: 600; color: #667eea;">${friendlyPID}</td>
-                        <td>${problem.unitNumber}</td>
-                        <td>${problem.zone}</td>
-                        <td><span class="badge priority-${priority.toLowerCase()}">${priority}</span></td>
-                        <td><span class="badge status-${status.toLowerCase().replace(/\s+/g, '')}">${status}</span></td>
-                        <td>${problem.category || 'N/A'}</td>
-                        <td>${problem.assignedTo || 'Unassigned'}</td>
-                        <td>${reportedDate}</td>
-                    </tr>
-                `;
-            }).join('');
+        function updateLoadingState(message) {
+            document.getElementById('totalTrend').textContent = message;
+            const container = document.getElementById('problemsContainer');
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="loading-spinner"></div>
+                    ${message}
+                </div>
+            `;
         }
         
-        // Set view mode
-        function setView(view) {
-            currentView = view;
-            
-            // Update view buttons
-            document.querySelectorAll('.view-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            // Show/hide views
-            if (view === 'cards') {
-                document.getElementById('cardsView').classList.remove('hidden');
-                document.getElementById('tableView').classList.add('hidden');
-                updateCardsView();
-            } else {
-                document.getElementById('cardsView').classList.add('hidden');
-                document.getElementById('tableView').classList.remove('hidden');
-                updateTableView();
-            }
-        }
-        
-        // Handle search input with debounce
-        let searchTimeout;
-        function handleSearchInput() {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(() => {
-                updateActiveFiltersCount();
-            }, 300);
-        }
-        
-        // Clear all filters
-        function clearAllFilters() {
-            // Reset date range
-            initializeDateRanges();
-            
-            // Check all checkboxes
-            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
-            
-            // Clear search
-            document.getElementById('searchInput').value = '';
-            
-            // Reset date range buttons
-            document.querySelectorAll('.date-preset-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('button[onclick="setDateRange(\'all\')"]').classList.add('active');
-            
-            // Clear highlighting
-            clearHighlighting('unitFilters');
-            clearHighlighting('categoryFilters');
-            clearHighlighting('subCategoryFilters');
-            
-            applyFilters();
-        }
-        
-        // Export data to CSV
-        function exportData() {
-            if (filteredProblems.length === 0) {
-                alert('No data to export. Please adjust your filters.');
-                return;
-            }
-            
-            const headers = ['PID', 'Unit', 'Zone', 'Date', 'Priority', 'Status', 'Category', 'Sub-Category', 'Assigned', 'Description'];
-            const csvData = filteredProblems.map(problem => [
-                getFriendlyPID(problem.internalId),
-                problem.unitNumber || '',
-                problem.zone || '',
-                formatDate(problem.timestamp),
-                problem.problemPriority || '',
-                problem.problemStatus || '',
-                problem.category || '',
-                problem.subCategory || '',
-                problem.assignedTo || '',
-                `"${(problem.problemDescription || '').replace(/"/g, '""')}"`
-            ]);
-            
-            const csvContent = [headers, ...csvData].map(row => row.join(',')).join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv' });
-            const url = window.URL.createObjectURL(blob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `holden-problems-${currentDataset}-${formatDateForFilename(new Date())}.csv`;
-            link.click();
-            window.URL.revokeObjectURL(url);
-            
-            console.log('📥 Exported', filteredProblems.length, currentDataset, 'problems to CSV');
-        }
-        
-        // Show problem details
-        function showProblemDetails(internalId) {
-            const problem = allProblems.find(p => p.internalId === internalId);
-            if (problem) {
-                const friendlyPID = getFriendlyPID(problem.internalId);
-                const details = `${friendlyPID} - ${problem.unitNumber}
-
-Zone: ${problem.zone}
-Priority: ${problem.problemPriority}
-Status: ${problem.problemStatus}
-Reported: ${formatDate(problem.timestamp)}
-${problem.assignedTo ? `Assigned: ${problem.assignedTo}` : 'Unassigned'}
-${problem.category ? `Category: ${problem.category}` : ''}
-${problem.subCategory ? `Sub-Category: ${problem.subCategory}` : ''}
-
-Description:
-${problem.problemDescription || 'No description'}
-
-💡 This is a read-only view. Use the maintenance portal to make changes.`;
-                
-                alert(details);
-            }
-        }
-        
-        // Show error message
         function showError(message) {
             document.getElementById('problemsContainer').innerHTML = `
                 <div class="empty-state">
@@ -1764,7 +890,6 @@ ${problem.problemDescription || 'No description'}
             `;
         }
         
-        // Utility functions
         function getFriendlyPID(internalId) {
             if (!internalId) return 'PID Unknown';
             const parts = internalId.split('-');
@@ -1785,24 +910,13 @@ ${problem.problemDescription || 'No description'}
             }
         }
         
-        function formatDateShort(dateString) {
-            if (!dateString) return 'N/A';
-            try {
-                const date = new Date(dateString);
-                return date.toLocaleDateString('en-AU', {
-                    day: '2-digit',
-                    month: '2-digit'
-                });
-            } catch (error) {
-                return 'N/A';
-            }
+        function handleSearchInput() {
+            setTimeout(() => {
+                updateActiveFiltersCount();
+                applyFilters();
+            }, 300);
         }
         
-        function formatDateForFilename(date) {
-            return date.toISOString().split('T')[0];
-        }
-        
-        // JSONP request function
         async function makeRequest(action, additionalData = {}) {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
@@ -1839,13 +953,7 @@ ${problem.problemDescription || 'No description'}
             });
         }
         
-        console.log('🖥️ Desktop Holden Problem Data Explorer V1.0 - Ready!');
-        console.log('🎛️ Excel-like slicer functionality with always-visible filters');
-        console.log('📊 Dynamic dropdowns from Maintenance tab');
-        console.log('🔄 Real-time filtering and analytics');
-        console.log('📚 Dataset switching: Current vs Legacy data');
-        console.log('🎯 Cross-highlighting: Units ↔ Categories ↔ Sub-Categories');
-        console.log('🔗 Backend URL:', WEB_APP_URL);
+        console.log('🖥️ Desktop Explorer - Ready!');
     </script>
 </body>
 </html>
