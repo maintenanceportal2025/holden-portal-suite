@@ -163,7 +163,7 @@
         
         .filter-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 12px;
         }
@@ -183,7 +183,6 @@
             padding: 2px 6px;
             border-radius: 8px;
             font-size: 0.7rem;
-            margin-left: auto;
         }
         
         .section-actions {
@@ -919,7 +918,7 @@
     </div>
 
     <script>
-        // DESKTOP HOLDEN PROBLEM DATA EXPLORER V1.0
+        // DESKTOP HOLDEN PROBLEM DATA EXPLORER V1.0 - Phase 1 Complete
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
         
         // State Management
@@ -1000,7 +999,7 @@
             }
         }
         
-        // Load dynamic dropdown options from Maintenance tab
+        // Load dynamic dropdown options from Categories tab
         async function loadDropdownOptions() {
             try {
                 console.log('🎛️ Loading dynamic dropdown options...');
@@ -1067,6 +1066,7 @@
                 }
             });
         }
+        
         // Build dynamic filter checkboxes from Maintenance tab
         function buildDynamicFilters() {
             // Build units with numerical sorting
@@ -1187,10 +1187,6 @@
             document.getElementById('statusCount').textContent = document.querySelectorAll('#statusFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
             document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
-            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
-        }document.querySelectorAll('#subCategoryFilters input').length;
-            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
-        }document.querySelectorAll('#subCategoryFilters input').length;
             document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
         }
         
@@ -1413,6 +1409,7 @@
                 item.classList.remove('highlighted', 'dimmed');
             });
         }
+        
         // Apply all filters
         function applyFilters() {
             let filtered = [...allProblems];
@@ -1615,9 +1612,6 @@
             container.appendChild(problemsGrid);
         }
         
-        // Update table view
-        function updateTableView() {
-            const tbody = document.getElementById('tableBody');
             
             if (filteredProblems.length === 0) {
                 tbody.innerHTML = `
@@ -1729,11 +1723,11 @@
             const url = window.URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = `holden-problems-${formatDateForFilename(new Date())}.csv`;
+            link.download = `holden-problems-${currentDataset}-${formatDateForFilename(new Date())}.csv`;
             link.click();
             window.URL.revokeObjectURL(url);
             
-            console.log('📥 Exported', filteredProblems.length, 'problems to CSV');
+            console.log('📥 Exported', filteredProblems.length, currentDataset, 'problems to CSV');
         }
         
         // Show problem details
@@ -1849,6 +1843,9 @@ ${problem.problemDescription || 'No description'}
         console.log('🎛️ Excel-like slicer functionality with always-visible filters');
         console.log('📊 Dynamic dropdowns from Maintenance tab');
         console.log('🔄 Real-time filtering and analytics');
+        console.log('📚 Dataset switching: Current vs Legacy data');
+        console.log('🎯 Cross-highlighting: Units ↔ Categories ↔ Sub-Categories');
+        console.log('🔗 Backend URL:', WEB_APP_URL);
     </script>
 </body>
 </html>
