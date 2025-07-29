@@ -990,10 +990,79 @@
                 });
             }
             
+        function applyFilters() {
+            let filtered = [...allProblems];
+            console.log('Starting with', filtered.length, 'total problems');
+            
+            // Unit filter
+            const checkedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
+            const allUnits = Array.from(document.querySelectorAll('#unitFilters input')).map(cb => cb.value);
+            if (checkedUnits.length < allUnits.length && checkedUnits.length > 0) {
+                filtered = filtered.filter(p => checkedUnits.includes(String(p.unitNumber || '')));
+            }
+            
+            // Status filter
+            const checkedStatuses = Array.from(document.querySelectorAll('#statusFilters input:checked')).map(cb => cb.value);
+            const allStatuses = Array.from(document.querySelectorAll('#statusFilters input')).map(cb => cb.value);
+            if (checkedStatuses.length < allStatuses.length && checkedStatuses.length > 0) {
+                filtered = filtered.filter(p => checkedStatuses.includes(String(p.problemStatus || '')));
+            }
+            
+            // Priority filter
+            const checkedPriorities = Array.from(document.querySelectorAll('#priorityFilters input:checked')).map(cb => cb.value);
+            const allPriorities = Array.from(document.querySelectorAll('#priorityFilters input')).map(cb => cb.value);
+            if (checkedPriorities.length < allPriorities.length && checkedPriorities.length > 0) {
+                filtered = filtered.filter(p => checkedPriorities.includes(String(p.problemPriority || '')));
+            }
+            
+            // Category filter
+            const checkedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
+            const allCategories = Array.from(document.querySelectorAll('#categoryFilters input')).map(cb => cb.value);
+            if (checkedCategories.length < allCategories.length && checkedCategories.length > 0) {
+                filtered = filtered.filter(p => checkedCategories.includes(String(p.category || '')));
+            }
+            
+            // Sub-category filter
+            const checkedSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input:checked')).map(cb => cb.value);
+            const allSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input')).map(cb => cb.value);
+            if (checkedSubCategories.length < allSubCategories.length && checkedSubCategories.length > 0) {
+                filtered = filtered.filter(p => checkedSubCategories.includes(String(p.subCategory || '')));
+            }
+            
+            // Zone filter
+            const checkedZones = Array.from(document.querySelectorAll('#zoneFilters input:checked')).map(cb => cb.value);
+            const allZones = Array.from(document.querySelectorAll('#zoneFilters input')).map(cb => cb.value);
+            if (checkedZones.length < allZones.length && checkedZones.length > 0) {
+                filtered = filtered.filter(p => checkedZones.includes(String(p.zone || '')));
+            }
+            
+            // Assigned To filter
+            const checkedAssigned = Array.from(document.querySelectorAll('#assignedFilters input:checked')).map(cb => cb.value);
+            const allAssigned = Array.from(document.querySelectorAll('#assignedFilters input')).map(cb => cb.value);
+            if (checkedAssigned.length < allAssigned.length && checkedAssigned.length > 0) {
+                filtered = filtered.filter(p => checkedAssigned.includes(String(p.assignedTo || '')));
+            }
+            
+            // Search filter
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+            if (searchTerm) {
+                filtered = filtered.filter(problem => {
+                    const searchText = [
+                        getFriendlyPID(problem.internalId),
+                        problem.unitNumber,
+                        problem.problemDescription,
+                        problem.reportedBy
+                    ].filter(Boolean).join(' ').toLowerCase();
+                    
+                    return searchText.includes(searchTerm);
+                });
+            }
+            
+            // Sort by date - handle different date formats
             filtered.sort((a, b) => {
-                const aTime = new Date(a.timestamp).getTime();
-                const bTime = new Date(b.timestamp).getTime();
-                return bTime - aTime;
+                const aTime = parseDate(a.timestamp);
+                const bTime = parseDate(b.timestamp);
+                return bTime - aTime; // Newest first
             });
             
             filteredProblems = filtered;
@@ -1001,6 +1070,31 @@
             
             updateStats();
             updateResults();
+        }
+        
+        function parseDate(dateString) {
+            if (!dateString) return 0;
+            
+            try {
+                if (dateString.includes('/')) {
+                    // Handle dd/mm/yyyy format (legacy data)
+                    const parts = dateString.split('/');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
+                        const year = parseInt(parts[2]);
+                        
+                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                            return new Date(year, month, day).getTime();
+                        }
+                    }
+                }
+                // Handle standard date formats
+                return new Date(dateString).getTime();
+            } catch (error) {
+                console.warn('Date parsing error:', error, 'for date:', dateString);
+                return 0;
+            }
         }
         
         function updateStats() {
@@ -1342,13 +1436,43 @@
         function formatDate(dateString) {
             if (!dateString) return 'No Date';
             try {
-                const date = new Date(dateString);
+                let date;
+                
+                // Handle different date formats
+                if (dateString.includes('/')) {
+                    // Handle dd/mm/yyyy format (legacy data)
+                    const parts = dateString.split('/');
+                    if (parts.length === 3) {
+                        const day = parseInt(parts[0]);
+                        const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
+                        const year = parseInt(parts[2]);
+                        
+                        // Validate date parts
+                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                            date = new Date(year, month, day);
+                        } else {
+                            return 'Invalid Date';
+                        }
+                    } else {
+                        return 'Invalid Date';
+                    }
+                } else {
+                    // Handle standard date formats
+                    date = new Date(dateString);
+                }
+                
+                // Check if date is valid
+                if (isNaN(date.getTime())) {
+                    return 'Invalid Date';
+                }
+                
                 return date.toLocaleDateString('en-AU', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric'
                 });
             } catch (error) {
+                console.warn('Date formatting error:', error, 'for date:', dateString);
                 return 'Invalid Date';
             }
         }
