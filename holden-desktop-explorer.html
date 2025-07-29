@@ -12,7 +12,6 @@
             background: #f8fafc;
             line-height: 1.6;
             color: #334155;
-            overflow-x: hidden;
         }
         
         .desktop-container {
@@ -20,7 +19,6 @@
             grid-template-columns: 320px 1fr;
             grid-template-rows: auto 1fr;
             height: 100vh;
-            gap: 0;
         }
         
         .header {
@@ -28,20 +26,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 16px 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .header h1 {
-            font-size: 1.75rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 1rem;
-            margin-bottom: 12px;
-        }
+        .header h1 { font-size: 1.75rem; font-weight: 600; margin-bottom: 4px; }
+        .header p { opacity: 0.9; font-size: 1rem; margin-bottom: 12px; }
         
         .header-actions {
             display: flex;
@@ -66,7 +54,6 @@
             border-radius: 6px;
             font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.2s;
         }
         
         .dataset-btn.active {
@@ -79,33 +66,6 @@
             padding: 6px 16px;
             border-radius: 20px;
             font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            background: #10b981;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            text-decoration: none;
-            cursor: pointer;
         }
         
         .filters-sidebar {
@@ -113,7 +73,6 @@
             border-right: 1px solid #e2e8f0;
             padding: 20px;
             overflow-y: auto;
-            max-height: calc(100vh - 90px);
         }
         
         .sidebar-header {
@@ -155,9 +114,6 @@
             font-weight: 600;
             color: #374151;
             font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
         
         .section-count {
@@ -178,12 +134,6 @@
             margin-bottom: 20px;
         }
         
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
         .checkbox-list {
             display: flex;
             flex-direction: column;
@@ -200,18 +150,6 @@
             padding: 6px 8px;
             border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        
-        .checkbox-item.highlighted {
-            background: #e0e7ff;
-            border: 1px solid #667eea;
-            font-weight: 600;
-        }
-        
-        .checkbox-item.dimmed {
-            opacity: 0.4;
-            background: #f8fafc;
         }
         
         .checkbox-item input[type="checkbox"] {
@@ -235,22 +173,6 @@
             border-radius: 8px;
             min-width: 24px;
             text-align: center;
-        }
-        
-        .section-actions {
-            display: flex;
-            gap: 4px;
-            margin-top: 8px;
-        }
-        
-        .select-btn {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.7rem;
-            cursor: pointer;
-            color: #64748b;
         }
         
         .main-content {
@@ -364,27 +286,61 @@
             color: #64748b;
         }
         
-        .empty-icon {
-            font-size: 3rem;
+        .problem-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px;
             margin-bottom: 12px;
         }
         
-        .hidden { display: none !important; }
+        .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
         
-        @media (max-width: 768px) {
-            .desktop-container { display: none; }
-            body::before {
-                content: "This desktop version requires a larger screen.";
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                background: #f8fafc;
-                color: #64748b;
-                text-align: center;
-                padding: 20px;
-                font-size: 1.1rem;
-            }
+        .problem-id {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 1rem;
+        }
+        
+        .problem-unit {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .badge {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 6px;
+        }
+        
+        .priority-urgent { background: #fecaca; color: #991b1b; }
+        .priority-high { background: #fed7aa; color: #9a3412; }
+        .priority-medium { background: #fde68a; color: #92400e; }
+        .priority-low { background: #d1fae5; color: #065f46; }
+        
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-reported { background: #dbeafe; color: #1e40af; }
+        .status-inprogress { background: #fed7aa; color: #9a3412; }
+        
+        .problem-description {
+            color: #374151;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .problem-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+            color: #64748b;
         }
     </style>
 </head>
@@ -395,18 +351,10 @@
             <p>Desktop Analytics & Multi-Field Filtering</p>
             <div class="header-actions">
                 <div class="dataset-toggle">
-                    <button class="dataset-btn active" id="currentBtn" onclick="switchDataset('current')">
-                        📊 Current Data
-                    </button>
-                    <button class="dataset-btn" id="legacyBtn" onclick="switchDataset('legacy')">
-                        📚 Legacy Data
-                    </button>
+                    <button class="dataset-btn active" id="currentBtn">📊 Current Data</button>
+                    <button class="dataset-btn" id="legacyBtn">📚 Legacy Data</button>
                 </div>
-                <div class="access-badge">
-                    <div class="status-dot"></div>
-                    Live Data
-                </div>
-                <a href="../" class="back-btn">← Dashboard</a>
+                <div class="access-badge">Live Data</div>
             </div>
         </div>
 
@@ -416,84 +364,28 @@
                 <span class="active-filters-count" id="activeFiltersCount">0</span>
             </div>
 
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description..." onkeyup="handleSearchInput()">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description...">
 
-            <!-- DATE RANGE -->
             <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-label">📅 Date Range</div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
-                    <input type="date" id="startDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem;">
-                    <input type="date" id="endDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem;">
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-                    <button onclick="setDateRange('last30')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">30 Days</button>
-                    <button onclick="setDateRange('last90')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">90 Days</button>
-                    <button onclick="setDateRange('ytd')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">YTD</button>
-                    <button onclick="setDateRange('all')" class="active-date-preset" style="background: #667eea; color: white; border: 1px solid #667eea; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">All Time</button>
-                </div>
-            </div>
-
-            <div class="filter-section" id="unitsSection">
                 <div class="filter-header">
                     <div class="filter-label">🏠 Units</div>
                     <div class="section-count" id="unitCount">0</div>
                 </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllUnits()">All</button>
-                    <button class="select-btn" onclick="selectNoneUnits()">None</button>
-                </div>
                 <div class="checkbox-list" id="unitFilters"></div>
             </div>
 
-            <!-- ZONES -->
             <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-label">🏘️ Zones</div>
-                    <div class="section-count" id="zoneCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllZones()">All</button>
-                    <button class="select-btn" onclick="selectNoneZones()">None</button>
-                </div>
-                <div class="checkbox-list" id="zoneFilters"></div>
-            </div>
-
-            <!-- STATUS -->
-            <div class="filter-section" id="statusSection">
                 <div class="filter-header">
                     <div class="filter-label">📋 Status</div>
                     <div class="section-count" id="statusCount">0</div>
                 </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllStatuses()">All</button>
-                    <button class="select-btn" onclick="selectNoneStatuses()">None</button>
-                </div>
                 <div class="checkbox-list" id="statusFilters"></div>
-            </div>
-
-            <!-- ASSIGNED TO -->
-            <div class="filter-section" id="assignedSection">
-                <div class="filter-header">
-                    <div class="filter-label">👤 Assigned To</div>
-                    <div class="section-count" id="assignedCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllAssigned()">All</button>
-                    <button class="select-btn" onclick="selectNoneAssigned()">None</button>
-                </div>
-                <div class="checkbox-list" id="assignedFilters"></div>
             </div>
 
             <div class="filter-section">
                 <div class="filter-header">
                     <div class="filter-label">⚡ Priority</div>
                     <div class="section-count" id="priorityCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllPriorities()">All</button>
-                    <button class="select-btn" onclick="selectNonePriorities()">None</button>
                 </div>
                 <div class="checkbox-list" id="priorityFilters"></div>
             </div>
@@ -503,23 +395,7 @@
                     <div class="filter-label">🏷️ Categories</div>
                     <div class="section-count" id="categoryCount">0</div>
                 </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllCategories()">All</button>
-                    <button class="select-btn" onclick="selectNoneCategories()">None</button>
-                </div>
                 <div class="checkbox-list" id="categoryFilters"></div>
-            </div>
-
-            <div class="filter-section">
-                <div class="filter-header">
-                    <div class="filter-label">🏪 Sub-Categories</div>
-                    <div class="section-count" id="subCategoryCount">0</div>
-                </div>
-                <div class="section-actions">
-                    <button class="select-btn" onclick="selectAllSubCategories()">All</button>
-                    <button class="select-btn" onclick="selectNoneSubCategories()">None</button>
-                </div>
-                <div class="checkbox-list" id="subCategoryFilters"></div>
             </div>
         </div>
 
@@ -570,125 +446,36 @@
         
         let allProblems = [];
         let filteredProblems = [];
-        let currentDataset = 'current';
-        let filterRelationships = {};
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🖥️ Desktop Explorer - Starting...');
-            initializeDateRanges();
+            console.log('🖥️ Minimal Desktop Explorer - Starting...');
             loadProblemsData();
         });
         
-        function initializeDateRanges() {
-            const endDate = new Date();
-            const startDate = new Date();
-            startDate.setFullYear(2020, 0, 1); // Start from 2020 to catch all data
-            
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-        }
-        
-        function setDateRange(preset) {
-            const endDate = new Date();
-            const startDate = new Date();
-            
-            // Remove active class from all date buttons
-            document.querySelectorAll('[onclick^="setDateRange"]').forEach(btn => {
-                btn.style.background = '#f8fafc';
-                btn.style.color = '#64748b';
-                btn.style.borderColor = '#e2e8f0';
-            });
-            
-            switch(preset) {
-                case 'last30':
-                    startDate.setDate(endDate.getDate() - 30);
-                    break;
-                case 'last90':
-                    startDate.setDate(endDate.getDate() - 90);
-                    break;
-                case 'ytd':
-                    startDate.setMonth(0, 1);
-                    break;
-                case 'all':
-                    startDate.setFullYear(2020, 0, 1); // Start from 2020
-                    break;
-            }
-            
-            // Add active class to clicked button
-            event.target.style.background = '#667eea';
-            event.target.style.color = 'white';
-            event.target.style.borderColor = '#667eea';
-            
-            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
-            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-            
-            applyFilters();
-        }
-        
-        function switchDataset(dataset) {
-            currentDataset = dataset;
-            document.querySelectorAll('.dataset-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(dataset + 'Btn').classList.add('active');
-            loadProblemsData();
-        }
-        
         async function loadProblemsData() {
             try {
-                console.log('🔄 Loading data from backend...');
-                updateLoadingState('Connecting to backend...');
+                console.log('Loading data from backend...');
                 
                 const response = await makeRequest('getFaultLogData');
-                console.log('📡 Backend response:', response);
+                console.log('Backend response:', response);
                 
                 if (response && response.success) {
                     allProblems = response.data || [];
-                    console.log('✅ Loaded', allProblems.length, 'problems from backend');
-                    console.log('📋 First problem sample:', allProblems[0]);
-                    console.log('📋 Problem statuses found:', [...new Set(allProblems.map(p => p.problemStatus))]);
-                    console.log('📋 Problem units found:', [...new Set(allProblems.map(p => p.unitNumber))]);
+                    console.log('Loaded', allProblems.length, 'problems');
                     
-                    if (allProblems.length === 0) {
-                        showError('No problems found in the system.');
-                        return;
-                    }
-                    
-                    buildFilterRelationships();
-                    buildDynamicFilters();
+                    buildFilters();
                     applyFilters();
                 } else {
-                    throw new Error(response?.message || 'Failed to load data');
+                    throw new Error('Failed to load data');
                 }
             } catch (error) {
-                console.error('❌ Error loading data:', error);
-                showError('Failed to load problem data: ' + error.message);
+                console.error('Error loading data:', error);
+                showError('Failed to load problem data');
             }
         }
         
-        function buildFilterRelationships() {
-            filterRelationships = {
-                unitToCategories: {},
-                categoryToUnits: {}
-            };
-            
-            allProblems.forEach(problem => {
-                const unit = problem.unitNumber;
-                const category = problem.category;
-                
-                if (!filterRelationships.unitToCategories[unit]) {
-                    filterRelationships.unitToCategories[unit] = new Set();
-                }
-                if (category) filterRelationships.unitToCategories[unit].add(category);
-                
-                if (category) {
-                    if (!filterRelationships.categoryToUnits[category]) {
-                        filterRelationships.categoryToUnits[category] = new Set();
-                    }
-                    filterRelationships.categoryToUnits[category].add(unit);
-                }
-            });
-        }
-        
-        function buildDynamicFilters() {
+        function buildFilters() {
+            // Build units with numerical sorting
             const units = [...new Set(allProblems.map(p => p.unitNumber).filter(Boolean))]
                 .sort((a, b) => {
                     const numA = parseInt(a.replace(/\D/g, '')) || 0;
@@ -697,26 +484,17 @@
                 });
             buildCheckboxSection('unitFilters', units, 'unit');
             
-            // Build zones from actual data
-            const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
-            buildCheckboxSection('zoneFilters', zones, 'zone');
-            
-            const priorities = ['Urgent', 'High', 'Medium', 'Low'];
-            buildCheckboxSection('priorityFilters', priorities, 'priority');
-            
-            // Build statuses from actual data  
+            // Build statuses
             const statuses = [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
             buildCheckboxSection('statusFilters', statuses, 'status');
             
-            // Build assigned to from actual data
-            const assignedTo = [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
-            buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
+            // Build priorities
+            const priorities = ['Urgent', 'High', 'Medium', 'Low'];
+            buildCheckboxSection('priorityFilters', priorities, 'priority');
             
+            // Build categories
             const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             buildCheckboxSection('categoryFilters', categories, 'category');
-            
-            const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
-            buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
             
             updateSectionCounts();
         }
@@ -734,7 +512,7 @@
                 return `
                     <div class="checkbox-item">
                         <input type="checkbox" id="${fieldName}_${option}" value="${option}" checked 
-                               onchange="updateActiveFiltersCount(); updateCrossHighlighting();">
+                               onchange="applyFilters();">
                         <label for="${fieldName}_${option}">${option}</label>
                         <span class="item-count">${count}</span>
                     </div>
@@ -745,221 +523,50 @@
         function getFieldValue(problem, fieldName) {
             switch (fieldName) {
                 case 'unit': return problem.unitNumber;
-                case 'zone': return problem.zone;
-                case 'priority': return problem.problemPriority;
                 case 'status': return problem.problemStatus;
-                case 'assignedTo': return problem.assignedTo;
+                case 'priority': return problem.problemPriority;
                 case 'category': return problem.category;
-                case 'subCategory': return problem.subCategory;
                 default: return '';
             }
         }
         
         function updateSectionCounts() {
             document.getElementById('unitCount').textContent = document.querySelectorAll('#unitFilters input').length;
-            document.getElementById('zoneCount').textContent = document.querySelectorAll('#zoneFilters input').length;
-            document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
             document.getElementById('statusCount').textContent = document.querySelectorAll('#statusFilters input').length;
-            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
+            document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
-            document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
-        }
-        
-        function selectAllUnits() {
-            document.querySelectorAll('#unitFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-            updateCrossHighlighting();
-        }
-        
-        function selectNoneUnits() {
-            document.querySelectorAll('#unitFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-            updateCrossHighlighting();
-        }
-        
-        function selectAllPriorities() {
-            document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNonePriorities() {
-            document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function selectAllCategories() {
-            document.querySelectorAll('#categoryFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-            updateCrossHighlighting();
-        }
-        
-        function selectNoneCategories() {
-            document.querySelectorAll('#categoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-            updateCrossHighlighting();
-        }
-        
-        function selectAllSubCategories() {
-            document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneSubCategories() {
-            document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function selectAllZones() {
-            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneZones() {
-            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function selectAllStatuses() {
-            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneStatuses() {
-            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function selectAllAssigned() {
-            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
-            updateActiveFiltersCount();
-        }
-        
-        function selectNoneAssigned() {
-            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
-            updateActiveFiltersCount();
-        }
-        
-        function updateCrossHighlighting() {
-            const selectedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
-            const selectedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
-            
-            if (selectedCategories.length > 0 && selectedCategories.length < document.querySelectorAll('#categoryFilters input').length) {
-                highlightRelatedUnits(selectedCategories);
-            } else {
-                clearHighlighting('unitFilters');
-            }
-            
-            if (selectedUnits.length > 0 && selectedUnits.length < document.querySelectorAll('#unitFilters input').length) {
-                highlightRelatedCategories(selectedUnits);
-            } else {
-                clearHighlighting('categoryFilters');
-            }
-        }
-        
-        function highlightRelatedUnits(selectedCategories) {
-            const relatedUnits = new Set();
-            selectedCategories.forEach(category => {
-                if (filterRelationships.categoryToUnits[category]) {
-                    filterRelationships.categoryToUnits[category].forEach(unit => relatedUnits.add(unit));
-                }
-            });
-            
-            document.querySelectorAll('#unitFilters .checkbox-item').forEach(item => {
-                const unit = item.querySelector('input').value;
-                item.classList.remove('highlighted', 'dimmed');
-                
-                if (relatedUnits.has(unit)) {
-                    item.classList.add('highlighted');
-                } else {
-                    item.classList.add('dimmed');
-                }
-            });
-        }
-        
-        function highlightRelatedCategories(selectedUnits) {
-            const relatedCategories = new Set();
-            selectedUnits.forEach(unit => {
-                if (filterRelationships.unitToCategories[unit]) {
-                    filterRelationships.unitToCategories[unit].forEach(cat => relatedCategories.add(cat));
-                }
-            });
-            
-            document.querySelectorAll('#categoryFilters .checkbox-item').forEach(item => {
-                const category = item.querySelector('input').value;
-                item.classList.remove('highlighted', 'dimmed');
-                
-                if (relatedCategories.has(category)) {
-                    item.classList.add('highlighted');
-                } else {
-                    item.classList.add('dimmed');
-                }
-            });
-        }
-        
-        function clearHighlighting(containerId) {
-            document.querySelectorAll(`#${containerId} .checkbox-item`).forEach(item => {
-                item.classList.remove('highlighted', 'dimmed');
-            });
         }
         
         function applyFilters() {
             let filtered = [...allProblems];
-            console.log('🔍 Starting with', filtered.length, 'total problems');
+            console.log('Starting with', filtered.length, 'total problems');
             
-            // Date range filter
-            const startDate = new Date(document.getElementById('startDate').value);
-            const endDate = new Date(document.getElementById('endDate').value);
-            endDate.setHours(23, 59, 59, 999); // Include full end date
-            
-            filtered = filtered.filter(problem => {
-                const problemDate = new Date(problem.timestamp);
-                return problemDate >= startDate && problemDate <= endDate;
-            });
-            console.log('📅 After date filter:', filtered.length, 'problems');
-            
-            // Unit filter - only apply if some are unchecked
-            const allUnitCheckboxes = document.querySelectorAll('#unitFilters input[type="checkbox"]');
-            const checkedUnitCheckboxes = document.querySelectorAll('#unitFilters input[type="checkbox"]:checked');
-            if (checkedUnitCheckboxes.length < allUnitCheckboxes.length && checkedUnitCheckboxes.length > 0) {
-                const selectedUnits = Array.from(checkedUnitCheckboxes).map(cb => cb.value);
-                filtered = filtered.filter(p => selectedUnits.includes(p.unitNumber));
-                console.log('🏠 After units filter:', filtered.length, 'problems');
+            // Unit filter
+            const checkedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
+            const allUnits = Array.from(document.querySelectorAll('#unitFilters input')).map(cb => cb.value);
+            if (checkedUnits.length < allUnits.length && checkedUnits.length > 0) {
+                filtered = filtered.filter(p => checkedUnits.includes(p.unitNumber));
             }
             
-            // Zone filter - only apply if some are unchecked
-            const allZoneCheckboxes = document.querySelectorAll('#zoneFilters input[type="checkbox"]');
-            const checkedZoneCheckboxes = document.querySelectorAll('#zoneFilters input[type="checkbox"]:checked');
-            if (checkedZoneCheckboxes.length < allZoneCheckboxes.length && checkedZoneCheckboxes.length > 0) {
-                const selectedZones = Array.from(checkedZoneCheckboxes).map(cb => cb.value);
-                filtered = filtered.filter(p => selectedZones.includes(p.zone));
-                console.log('🏘️ After zones filter:', filtered.length, 'problems');
+            // Status filter
+            const checkedStatuses = Array.from(document.querySelectorAll('#statusFilters input:checked')).map(cb => cb.value);
+            const allStatuses = Array.from(document.querySelectorAll('#statusFilters input')).map(cb => cb.value);
+            if (checkedStatuses.length < allStatuses.length && checkedStatuses.length > 0) {
+                filtered = filtered.filter(p => checkedStatuses.includes(p.problemStatus));
             }
             
-            // Priority filter - only apply if some are unchecked
-            const allPriorityCheckboxes = document.querySelectorAll('#priorityFilters input[type="checkbox"]');
-            const checkedPriorityCheckboxes = document.querySelectorAll('#priorityFilters input[type="checkbox"]:checked');
-            if (checkedPriorityCheckboxes.length < allPriorityCheckboxes.length && checkedPriorityCheckboxes.length > 0) {
-                const selectedPriorities = Array.from(checkedPriorityCheckboxes).map(cb => cb.value);
-                filtered = filtered.filter(p => selectedPriorities.includes(p.problemPriority));
-                console.log('⚡ After priority filter:', filtered.length, 'problems');
+            // Priority filter
+            const checkedPriorities = Array.from(document.querySelectorAll('#priorityFilters input:checked')).map(cb => cb.value);
+            const allPriorities = Array.from(document.querySelectorAll('#priorityFilters input')).map(cb => cb.value);
+            if (checkedPriorities.length < allPriorities.length && checkedPriorities.length > 0) {
+                filtered = filtered.filter(p => checkedPriorities.includes(p.problemPriority));
             }
             
-            // Status filter - only apply if some are unchecked
-            const allStatusCheckboxes = document.querySelectorAll('#statusFilters input[type="checkbox"]');
-            const checkedStatusCheckboxes = document.querySelectorAll('#statusFilters input[type="checkbox"]:checked');
-            if (checkedStatusCheckboxes.length < allStatusCheckboxes.length && checkedStatusCheckboxes.length > 0) {
-                const selectedStatuses = Array.from(checkedStatusCheckboxes).map(cb => cb.value);
-                filtered = filtered.filter(p => selectedStatuses.includes(p.problemStatus));
-                console.log('📋 After status filter:', filtered.length, 'problems');
-            }
-            
-            // Category filter - only apply if some are unchecked
-            const allCategoryCheckboxes = document.querySelectorAll('#categoryFilters input[type="checkbox"]');
-            const checkedCategoryCheckboxes = document.querySelectorAll('#categoryFilters input[type="checkbox"]:checked');
-            if (checkedCategoryCheckboxes.length < allCategoryCheckboxes.length && checkedCategoryCheckboxes.length > 0) {
-                const selectedCategories = Array.from(checkedCategoryCheckboxes).map(cb => cb.value);
-                filtered = filtered.filter(p => selectedCategories.includes(p.category));
-                console.log('🏷️ After category filter:', filtered.length, 'problems');
+            // Category filter
+            const checkedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
+            const allCategories = Array.from(document.querySelectorAll('#categoryFilters input')).map(cb => cb.value);
+            if (checkedCategories.length < allCategories.length && checkedCategories.length > 0) {
+                filtered = filtered.filter(p => checkedCategories.includes(p.category));
             }
             
             // Search filter
@@ -970,18 +577,13 @@
                         getFriendlyPID(problem.internalId),
                         problem.unitNumber,
                         problem.problemDescription,
-                        problem.reportedBy,
-                        problem.zone,
-                        problem.category,
-                        problem.problemStatus
+                        problem.reportedBy
                     ].filter(Boolean).join(' ').toLowerCase();
                     
                     return searchText.includes(searchTerm);
                 });
-                console.log('🔍 After search filter:', filtered.length, 'problems');
             }
             
-            // Sort by date (newest first)
             filtered.sort((a, b) => {
                 const aTime = new Date(a.timestamp).getTime();
                 const bTime = new Date(b.timestamp).getTime();
@@ -989,11 +591,10 @@
             });
             
             filteredProblems = filtered;
-            console.log('✅ Final filtered result:', filteredProblems.length, 'problems');
+            console.log('Final filtered result:', filteredProblems.length, 'problems');
             
             updateStats();
-            updateActiveFiltersCount();
-            updateResultsDisplay();
+            updateResults();
         }
         
         function updateStats() {
@@ -1012,109 +613,59 @@
             document.getElementById('totalTrend').textContent = 'Current selection';
             document.getElementById('activeTrend').textContent = `${activePercent}% active`;
             document.getElementById('urgentTrend').textContent = urgentCount > 0 ? 'Needs attention' : 'Under control';
-            document.getElementById('resolutionTrend').textContent = 'No completed items';
+            document.getElementById('resolutionTrend').textContent = 'Analytics';
         }
         
-        function updateActiveFiltersCount() {
-            const totalCheckboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]').length;
-            const checkedCheckboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]:checked').length;
-            const hasSearch = document.getElementById('searchInput').value.trim().length > 0;
-            
-            let activeCount = totalCheckboxes - checkedCheckboxes;
-            if (hasSearch) activeCount++;
-            
-            document.getElementById('activeFiltersCount').textContent = activeCount;
-        }
-        
-        function updateResultsDisplay() {
+        function updateResults() {
             document.getElementById('resultsCount').textContent = `${filteredProblems.length} problems`;
-            updateProblemsView();
-        }
-        
-        function updateProblemsView() {
+            
             const container = document.getElementById('problemsContainer');
             
             if (filteredProblems.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div class="empty-icon">📭</div>
-                        <div>No problems match your current filters</div>
+                        <div>📭 No problems match your current filters</div>
                     </div>
                 `;
                 return;
             }
             
-            const problemsHTML = filteredProblems.map((problem, index) => {
+            const problemsHTML = filteredProblems.map(problem => {
                 const friendlyPID = getFriendlyPID(problem.internalId);
                 const reportedDate = formatDate(problem.timestamp);
                 const priority = problem.problemPriority || 'Medium';
                 const status = problem.problemStatus || 'Reported';
                 
                 return `
-                    <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div class="problem-card">
+                        <div class="problem-header">
                             <div>
-                                <div style="font-weight: 600; color: #667eea; font-size: 1rem;">${friendlyPID}</div>
-                                <div style="color: #64748b; font-size: 0.9rem;">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
+                                <div class="problem-id">${friendlyPID}</div>
+                                <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
                             </div>
-                            <div style="display: flex; gap: 6px;">
-                                <span style="background: ${getPriorityColor(priority)}; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${priority}</span>
-                                <span style="background: ${getStatusColor(status)}; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${status}</span>
+                            <div>
+                                <span class="badge priority-${priority.toLowerCase()}">${priority}</span>
+                                <span class="badge status-${status.toLowerCase().replace(/\s+/g, '')}">${status}</span>
                             </div>
                         </div>
-                        <div style="color: #374151; font-size: 0.9rem; margin-bottom: 8px;">
+                        <div class="problem-description">
                             ${(problem.problemDescription || 'No description').substring(0, 120)}${(problem.problemDescription || '').length > 120 ? '...' : ''}
                         </div>
-                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b;">
+                        <div class="problem-footer">
                             <div>${reportedDate}</div>
-                            <div>${problem.category || 'No Category'} ${problem.assignedTo ? '• ' + problem.assignedTo : ''}</div>
+                            <div>${problem.category || 'No Category'}</div>
                         </div>
                     </div>
                 `;
             }).join('');
             
-            console.log(`📊 Displaying ${filteredProblems.length} problem cards`);
             container.innerHTML = problemsHTML;
-        }
-        
-        function getPriorityColor(priority) {
-            switch(priority?.toLowerCase()) {
-                case 'urgent': return '#fecaca; color: #991b1b';
-                case 'high': return '#fed7aa; color: #9a3412';
-                case 'medium': return '#fde68a; color: #92400e';
-                case 'low': return '#d1fae5; color: #065f46';
-                default: return '#f1f5f9; color: #64748b';
-            }
-        }
-        
-        function getStatusColor(status) {
-            switch(status?.toLowerCase()) {
-                case 'completed': return '#d1fae5; color: #065f46';
-                case 'in progress': return '#fed7aa; color: #9a3412';
-                case 'reported': return '#dbeafe; color: #1e40af';
-                case 'on hold': return '#f3e8ff; color: #7c3aed';
-                case 'cancelled': return '#f1f5f9; color: #64748b';
-                default: return '#f1f5f9; color: #64748b';
-            }
-        }
-        }
-        
-        function updateLoadingState(message) {
-            document.getElementById('totalTrend').textContent = message;
-            const container = document.getElementById('problemsContainer');
-            container.innerHTML = `
-                <div class="loading">
-                    <div class="loading-spinner"></div>
-                    ${message}
-                </div>
-            `;
         }
         
         function showError(message) {
             document.getElementById('problemsContainer').innerHTML = `
                 <div class="empty-state">
-                    <div class="empty-icon">❌</div>
-                    <div style="color: #dc2626;">${message}</div>
+                    <div>❌ ${message}</div>
                 </div>
             `;
         }
@@ -1137,13 +688,6 @@
             } catch (error) {
                 return 'Invalid Date';
             }
-        }
-        
-        function handleSearchInput() {
-            setTimeout(() => {
-                updateActiveFiltersCount();
-                applyFilters();
-            }, 300);
         }
         
         async function makeRequest(action, additionalData = {}) {
@@ -1182,7 +726,12 @@
             });
         }
         
-        console.log('🖥️ Desktop Explorer - Ready!');
+        // Add search input listener
+        document.getElementById('searchInput').addEventListener('input', function() {
+            setTimeout(applyFilters, 300);
+        });
+        
+        console.log('🖥️ Minimal Desktop Explorer - Ready!');
     </script>
 </body>
 </html>
