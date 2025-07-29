@@ -418,6 +418,23 @@
 
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description..." onkeyup="handleSearchInput()">
 
+            <!-- DATE RANGE -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <div class="filter-label">📅 Date Range</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                    <input type="date" id="startDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem;">
+                    <input type="date" id="endDate" style="padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem;">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
+                    <button onclick="setDateRange('last30')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">30 Days</button>
+                    <button onclick="setDateRange('last90')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">90 Days</button>
+                    <button onclick="setDateRange('ytd')" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">YTD</button>
+                    <button onclick="setDateRange('all')" class="active-date-preset" style="background: #667eea; color: white; border: 1px solid #667eea; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer;">All Time</button>
+                </div>
+            </div>
+
             <div class="filter-section" id="unitsSection">
                 <div class="filter-header">
                     <div class="filter-label">🏠 Units</div>
@@ -428,6 +445,45 @@
                     <button class="select-btn" onclick="selectNoneUnits()">None</button>
                 </div>
                 <div class="checkbox-list" id="unitFilters"></div>
+            </div>
+
+            <!-- ZONES -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <div class="filter-label">🏘️ Zones</div>
+                    <div class="section-count" id="zoneCount">0</div>
+                </div>
+                <div class="section-actions">
+                    <button class="select-btn" onclick="selectAllZones()">All</button>
+                    <button class="select-btn" onclick="selectNoneZones()">None</button>
+                </div>
+                <div class="checkbox-list" id="zoneFilters"></div>
+            </div>
+
+            <!-- STATUS -->
+            <div class="filter-section" id="statusSection">
+                <div class="filter-header">
+                    <div class="filter-label">📋 Status</div>
+                    <div class="section-count" id="statusCount">0</div>
+                </div>
+                <div class="section-actions">
+                    <button class="select-btn" onclick="selectAllStatuses()">All</button>
+                    <button class="select-btn" onclick="selectNoneStatuses()">None</button>
+                </div>
+                <div class="checkbox-list" id="statusFilters"></div>
+            </div>
+
+            <!-- ASSIGNED TO -->
+            <div class="filter-section" id="assignedSection">
+                <div class="filter-header">
+                    <div class="filter-label">👤 Assigned To</div>
+                    <div class="section-count" id="assignedCount">0</div>
+                </div>
+                <div class="section-actions">
+                    <button class="select-btn" onclick="selectAllAssigned()">All</button>
+                    <button class="select-btn" onclick="selectNoneAssigned()">None</button>
+                </div>
+                <div class="checkbox-list" id="assignedFilters"></div>
             </div>
 
             <div class="filter-section">
@@ -519,8 +575,55 @@
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Desktop Explorer - Starting...');
+            initializeDateRanges();
             loadProblemsData();
         });
+        
+        function initializeDateRanges() {
+            const endDate = new Date();
+            const startDate = new Date();
+            startDate.setFullYear(2023, 0, 1); // Start from 2023
+            
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+        }
+        
+        function setDateRange(preset) {
+            const endDate = new Date();
+            const startDate = new Date();
+            
+            // Remove active class from all date buttons
+            document.querySelectorAll('[onclick^="setDateRange"]').forEach(btn => {
+                btn.style.background = '#f8fafc';
+                btn.style.color = '#64748b';
+                btn.style.borderColor = '#e2e8f0';
+            });
+            
+            switch(preset) {
+                case 'last30':
+                    startDate.setDate(endDate.getDate() - 30);
+                    break;
+                case 'last90':
+                    startDate.setDate(endDate.getDate() - 90);
+                    break;
+                case 'ytd':
+                    startDate.setMonth(0, 1);
+                    break;
+                case 'all':
+                    startDate.setFullYear(2023, 0, 1);
+                    break;
+            }
+            
+            // Add active class to clicked button
+            event.target.style.background = '#667eea';
+            event.target.style.color = 'white';
+            event.target.style.borderColor = '#667eea';
+            
+            document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
+            document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
+            
+            applyFilters();
+        }
         
         function switchDataset(dataset) {
             currentDataset = dataset;
@@ -585,8 +688,20 @@
                 });
             buildCheckboxSection('unitFilters', units, 'unit');
             
+            // Build zones from actual data
+            const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
+            buildCheckboxSection('zoneFilters', zones, 'zone');
+            
             const priorities = ['Urgent', 'High', 'Medium', 'Low'];
             buildCheckboxSection('priorityFilters', priorities, 'priority');
+            
+            // Build statuses from actual data  
+            const statuses = [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
+            buildCheckboxSection('statusFilters', statuses, 'status');
+            
+            // Build assigned to from actual data
+            const assignedTo = [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
+            buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
             
             const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             buildCheckboxSection('categoryFilters', categories, 'category');
@@ -621,7 +736,10 @@
         function getFieldValue(problem, fieldName) {
             switch (fieldName) {
                 case 'unit': return problem.unitNumber;
+                case 'zone': return problem.zone;
                 case 'priority': return problem.problemPriority;
+                case 'status': return problem.problemStatus;
+                case 'assignedTo': return problem.assignedTo;
                 case 'category': return problem.category;
                 case 'subCategory': return problem.subCategory;
                 default: return '';
@@ -630,7 +748,10 @@
         
         function updateSectionCounts() {
             document.getElementById('unitCount').textContent = document.querySelectorAll('#unitFilters input').length;
+            document.getElementById('zoneCount').textContent = document.querySelectorAll('#zoneFilters input').length;
             document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
+            document.getElementById('statusCount').textContent = document.querySelectorAll('#statusFilters input').length;
+            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
             document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
         }
@@ -676,6 +797,36 @@
         
         function selectNoneSubCategories() {
             document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateActiveFiltersCount();
+        }
+        
+        function selectAllZones() {
+            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateActiveFiltersCount();
+        }
+        
+        function selectNoneZones() {
+            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateActiveFiltersCount();
+        }
+        
+        function selectAllStatuses() {
+            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateActiveFiltersCount();
+        }
+        
+        function selectNoneStatuses() {
+            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            updateActiveFiltersCount();
+        }
+        
+        function selectAllAssigned() {
+            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            updateActiveFiltersCount();
+        }
+        
+        function selectNoneAssigned() {
+            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
             updateActiveFiltersCount();
         }
         
@@ -745,14 +896,37 @@
         function applyFilters() {
             let filtered = [...allProblems];
             
+            // Date range filter
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            filtered = filtered.filter(problem => {
+                const problemDate = new Date(problem.timestamp);
+                return problemDate >= startDate && problemDate <= endDate;
+            });
+            
             const selectedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
             if (selectedUnits.length > 0) {
                 filtered = filtered.filter(p => selectedUnits.includes(p.unitNumber));
             }
             
+            const selectedZones = Array.from(document.querySelectorAll('#zoneFilters input:checked')).map(cb => cb.value);
+            if (selectedZones.length > 0) {
+                filtered = filtered.filter(p => selectedZones.includes(p.zone));
+            }
+            
             const selectedPriorities = Array.from(document.querySelectorAll('#priorityFilters input:checked')).map(cb => cb.value);
             if (selectedPriorities.length > 0) {
                 filtered = filtered.filter(p => selectedPriorities.includes(p.problemPriority));
+            }
+            
+            const selectedStatuses = Array.from(document.querySelectorAll('#statusFilters input:checked')).map(cb => cb.value);
+            if (selectedStatuses.length > 0) {
+                filtered = filtered.filter(p => selectedStatuses.includes(p.problemStatus));
+            }
+            
+            const selectedAssigned = Array.from(document.querySelectorAll('#assignedFilters input:checked')).map(cb => cb.value);
+            if (selectedAssigned.length > 0) {
+                filtered = filtered.filter(p => selectedAssigned.includes(p.assignedTo));
             }
             
             const selectedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
