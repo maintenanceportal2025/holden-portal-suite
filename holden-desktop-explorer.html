@@ -634,24 +634,33 @@
         
         async function loadProblemsData() {
             try {
-                console.log('Loading data...');
+                console.log('🔄 Loading data from backend...');
                 updateLoadingState('Connecting to backend...');
                 
                 const response = await makeRequest('getFaultLogData');
+                console.log('📡 Backend response:', response);
                 
                 if (response && response.success) {
                     allProblems = response.data || [];
-                    console.log('Loaded', allProblems.length, 'problems');
+                    console.log('✅ Loaded', allProblems.length, 'problems from backend');
+                    console.log('📋 First problem sample:', allProblems[0]);
+                    console.log('📋 Problem statuses found:', [...new Set(allProblems.map(p => p.problemStatus))]);
+                    console.log('📋 Problem units found:', [...new Set(allProblems.map(p => p.unitNumber))]);
+                    
+                    if (allProblems.length === 0) {
+                        showError('No problems found in the system.');
+                        return;
+                    }
                     
                     buildFilterRelationships();
                     buildDynamicFilters();
                     applyFilters();
                 } else {
-                    throw new Error('Failed to load data');
+                    throw new Error(response?.message || 'Failed to load data');
                 }
             } catch (error) {
-                console.error('Error loading data:', error);
-                showError('Failed to load problem data');
+                console.error('❌ Error loading data:', error);
+                showError('Failed to load problem data: ' + error.message);
             }
         }
         
@@ -1035,10 +1044,11 @@
                 return;
             }
             
-            const problemsHTML = filteredProblems.slice(0, 20).map(problem => {
+            const problemsHTML = filteredProblems.map((problem, index) => {
                 const friendlyPID = getFriendlyPID(problem.internalId);
                 const reportedDate = formatDate(problem.timestamp);
                 const priority = problem.problemPriority || 'Medium';
+                const status = problem.problemStatus || 'Reported';
                 
                 return `
                     <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 12px;">
@@ -1047,8 +1057,9 @@
                                 <div style="font-weight: 600; color: #667eea; font-size: 1rem;">${friendlyPID}</div>
                                 <div style="color: #64748b; font-size: 0.9rem;">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
                             </div>
-                            <div>
-                                <span style="background: #fde68a; color: #92400e; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${priority}</span>
+                            <div style="display: flex; gap: 6px;">
+                                <span style="background: ${getPriorityColor(priority)}; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${priority}</span>
+                                <span style="background: ${getStatusColor(status)}; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: 600;">${status}</span>
                             </div>
                         </div>
                         <div style="color: #374151; font-size: 0.9rem; margin-bottom: 8px;">
@@ -1056,13 +1067,36 @@
                         </div>
                         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b;">
                             <div>${reportedDate}</div>
-                            <div>${problem.category || 'No Category'}</div>
+                            <div>${problem.category || 'No Category'} ${problem.assignedTo ? '• ' + problem.assignedTo : ''}</div>
                         </div>
                     </div>
                 `;
             }).join('');
             
+            console.log(`📊 Displaying ${filteredProblems.length} problem cards`);
             container.innerHTML = problemsHTML;
+        }
+        
+        function getPriorityColor(priority) {
+            switch(priority?.toLowerCase()) {
+                case 'urgent': return '#fecaca; color: #991b1b';
+                case 'high': return '#fed7aa; color: #9a3412';
+                case 'medium': return '#fde68a; color: #92400e';
+                case 'low': return '#d1fae5; color: #065f46';
+                default: return '#f1f5f9; color: #64748b';
+            }
+        }
+        
+        function getStatusColor(status) {
+            switch(status?.toLowerCase()) {
+                case 'completed': return '#d1fae5; color: #065f46';
+                case 'in progress': return '#fed7aa; color: #9a3412';
+                case 'reported': return '#dbeafe; color: #1e40af';
+                case 'on hold': return '#f3e8ff; color: #7c3aed';
+                case 'cancelled': return '#f1f5f9; color: #64748b';
+                default: return '#f1f5f9; color: #64748b';
+            }
+        }
         }
         
         function updateLoadingState(message) {
