@@ -1088,7 +1088,10 @@
             if (!dateString) return 0;
             
             try {
-                if (typeof dateString === 'string' && dateString.includes('/')) {
+                // If it's already a Date object, use it directly
+                if (dateString instanceof Date) {
+                    return dateString.getTime();
+                } else if (typeof dateString === 'string' && dateString.includes('/')) {
                     // Handle d/m/yyyy or dd/mm/yyyy format (legacy data)
                     const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
@@ -1111,6 +1114,101 @@
                 return 0;
             }
         }
+        
+        // Add event listeners
+        document.getElementById('searchInput').addEventListener('input', function() {
+            setTimeout(applyFilters, 300);
+        });
+        
+        document.getElementById('backToList').addEventListener('click', showMainView);
+        
+        document.getElementById('viewProblemReport').addEventListener('click', function() {
+            if (currentProblem) {
+                const report = generateProblemReport(currentProblem);
+                document.getElementById('reportText').textContent = report;
+                document.getElementById('reportModal').classList.remove('hidden');
+            }
+        });
+        
+        document.getElementById('copyProblemReport').addEventListener('click', function() {
+            if (currentProblem) {
+                const report = generateProblemReport(currentProblem);
+                navigator.clipboard.writeText(report).then(() => {
+                    alert('Report copied to clipboard!');
+                });
+            }
+        });
+        
+        document.getElementById('closeReportModal').addEventListener('click', function() {
+            document.getElementById('reportModal').classList.add('hidden');
+        });
+        
+        document.getElementById('copyReportFromModal').addEventListener('click', function() {
+            if (currentProblem) {
+                const report = generateProblemReport(currentProblem);
+                navigator.clipboard.writeText(report).then(() => {
+                    alert('Report copied to clipboard!');
+                    document.getElementById('reportModal').classList.add('hidden');
+                });
+            }
+        });
+        
+        // Close modal when clicking outside
+        document.getElementById('reportModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.add('hidden');
+            }
+        });
+        
+        function generateProblemReport(problem) {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const reportedDate = formatDate(problem.timestamp);
+            const completionDate = problem.completionDate ? formatDate(problem.completionDate) : 'Not completed';
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${problem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${problem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${problem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Description: ${problem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${problem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${problem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${problem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${problem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${problem.assignedTo || 'Not assigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            report += `Comments: ${problem.comments || 'No comments'}\n\n`;
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Unit Primary Name: ${problem.unitPrimaryName || 'Not available'}\n`;
+            report += `Unit Primary Email: ${problem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `Unit Primary Phone: ${problem.unitPrimaryPhone || 'Not available'}\n`;
+            report += `Reported By: ${problem.reportedBy || 'Unknown'}\n`;
+            report += `Reporter Email: ${problem.reporterEmail || 'Not available'}\n`;
+            report += `Reporter Phone: ${problem.reporterPhone || 'Not available'}\n\n`;
+            
+            report += '='.repeat(60) + '\n';
+            report += 'Generated by Lake Illawong Maintenance Portal\n';
+            
+            return report;
+        }
+        
+        console.log('🖥️ Problem Data Explorer - Ready!');
         
         function updateStats() {
             const totalProblems = filteredProblems.length;
