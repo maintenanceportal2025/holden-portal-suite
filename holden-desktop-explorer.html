@@ -839,16 +839,19 @@
         }
         
         function buildFilters() {
-            // Build units with numerical sorting
+            // Build units with numerical sorting - handle different data types
             const units = [...new Set(allProblems.map(p => p.unitNumber).filter(Boolean))]
                 .sort((a, b) => {
-                    const numA = parseInt(a.replace(/\D/g, '')) || 0;
-                    const numB = parseInt(b.replace(/\D/g, '')) || 0;
+                    // Convert to strings first, then extract numbers
+                    const strA = String(a || '');
+                    const strB = String(b || '');
+                    const numA = parseInt(strA.replace(/\D/g, '') || '0') || 0;
+                    const numB = parseInt(strB.replace(/\D/g, '') || '0') || 0;
                     return numA - numB;
                 });
             buildCheckboxSection('unitFilters', units, 'unit');
             
-            // Build statuses
+            // Build statuses - handle potential null/undefined values
             const statuses = [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
             buildCheckboxSection('statusFilters', statuses, 'status');
             
@@ -856,19 +859,19 @@
             const priorities = ['Urgent', 'High', 'Medium', 'Low'];
             buildCheckboxSection('priorityFilters', priorities, 'priority');
             
-            // Build categories
+            // Build categories - handle potential null/undefined values
             const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             buildCheckboxSection('categoryFilters', categories, 'category');
             
-            // Build sub-categories  
+            // Build sub-categories - handle potential null/undefined values
             const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
             buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
             
-            // Build zones
+            // Build zones - handle potential null/undefined values
             const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
             buildCheckboxSection('zoneFilters', zones, 'zone');
             
-            // Build assigned to
+            // Build assigned to - handle potential null/undefined values
             const assignedTo = [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
             buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
             
@@ -898,13 +901,13 @@
         
         function getFieldValue(problem, fieldName) {
             switch (fieldName) {
-                case 'unit': return problem.unitNumber;
-                case 'status': return problem.problemStatus;
-                case 'priority': return problem.problemPriority;
-                case 'category': return problem.category;
-                case 'subCategory': return problem.subCategory;
-                case 'zone': return problem.zone;
-                case 'assignedTo': return problem.assignedTo;
+                case 'unit': return String(problem.unitNumber || '');
+                case 'status': return String(problem.problemStatus || '');
+                case 'priority': return String(problem.problemPriority || '');
+                case 'category': return String(problem.category || '');
+                case 'subCategory': return String(problem.subCategory || '');
+                case 'zone': return String(problem.zone || '');
+                case 'assignedTo': return String(problem.assignedTo || '');
                 default: return '';
             }
         }
