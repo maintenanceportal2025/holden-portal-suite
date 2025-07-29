@@ -398,12 +398,31 @@
                 <div class="checkbox-list" id="categoryFilters"></div>
             </div>
 
+            <!-- SUB-CATEGORIES -->
             <div class="filter-section">
                 <div class="filter-header">
                     <div class="filter-label">🏪 Sub-Categories</div>
                     <div class="section-count" id="subCategoryCount">0</div>
                 </div>
                 <div class="checkbox-list" id="subCategoryFilters"></div>
+            </div>
+
+            <!-- ZONES -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <div class="filter-label">🏘️ Zones</div>
+                    <div class="section-count" id="zoneCount">0</div>
+                </div>
+                <div class="checkbox-list" id="zoneFilters"></div>
+            </div>
+
+            <!-- ASSIGNED TO -->
+            <div class="filter-section">
+                <div class="filter-header">
+                    <div class="filter-label">👤 Assigned To</div>
+                    <div class="section-count" id="assignedCount">0</div>
+                </div>
+                <div class="checkbox-list" id="assignedFilters"></div>
             </div>
         </div>
 
@@ -627,6 +646,14 @@
             const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
             buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
             
+            // Build zones
+            const zones = [...new Set(allProblems.map(p => p.zone).filter(Boolean))].sort();
+            buildCheckboxSection('zoneFilters', zones, 'zone');
+            
+            // Build assigned to
+            const assignedTo = [...new Set(allProblems.map(p => p.assignedTo).filter(Boolean))].sort();
+            buildCheckboxSection('assignedFilters', assignedTo, 'assignedTo');
+            
             updateSectionCounts();
         }
         
@@ -658,6 +685,8 @@
                 case 'priority': return problem.problemPriority;
                 case 'category': return problem.category;
                 case 'subCategory': return problem.subCategory;
+                case 'zone': return problem.zone;
+                case 'assignedTo': return problem.assignedTo;
                 default: return '';
             }
         }
@@ -668,6 +697,8 @@
             document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
             document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
+            document.getElementById('zoneCount').textContent = document.querySelectorAll('#zoneFilters input').length;
+            document.getElementById('assignedCount').textContent = document.querySelectorAll('#assignedFilters input').length;
         }
         
         function applyFilters() {
@@ -707,6 +738,20 @@
             const allSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input')).map(cb => cb.value);
             if (checkedSubCategories.length < allSubCategories.length && checkedSubCategories.length > 0) {
                 filtered = filtered.filter(p => checkedSubCategories.includes(p.subCategory));
+            }
+            
+            // Zone filter
+            const checkedZones = Array.from(document.querySelectorAll('#zoneFilters input:checked')).map(cb => cb.value);
+            const allZones = Array.from(document.querySelectorAll('#zoneFilters input')).map(cb => cb.value);
+            if (checkedZones.length < allZones.length && checkedZones.length > 0) {
+                filtered = filtered.filter(p => checkedZones.includes(p.zone));
+            }
+            
+            // Assigned To filter
+            const checkedAssigned = Array.from(document.querySelectorAll('#assignedFilters input:checked')).map(cb => cb.value);
+            const allAssigned = Array.from(document.querySelectorAll('#assignedFilters input')).map(cb => cb.value);
+            if (checkedAssigned.length < allAssigned.length && checkedAssigned.length > 0) {
+                filtered = filtered.filter(p => checkedAssigned.includes(p.assignedTo));
             }
             
             // Search filter
