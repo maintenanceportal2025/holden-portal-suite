@@ -582,7 +582,7 @@
         function initializeDateRanges() {
             const endDate = new Date();
             const startDate = new Date();
-            startDate.setFullYear(2023, 0, 1); // Start from 2023
+            startDate.setFullYear(2020, 0, 1); // Start from 2020 to catch all data
             
             document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
             document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
@@ -610,7 +610,7 @@
                     startDate.setMonth(0, 1);
                     break;
                 case 'all':
-                    startDate.setFullYear(2023, 0, 1);
+                    startDate.setFullYear(2020, 0, 1); // Start from 2020
                     break;
             }
             
@@ -895,50 +895,65 @@
         
         function applyFilters() {
             let filtered = [...allProblems];
+            console.log('🔍 Starting with', filtered.length, 'total problems');
             
             // Date range filter
             const startDate = new Date(document.getElementById('startDate').value);
             const endDate = new Date(document.getElementById('endDate').value);
+            endDate.setHours(23, 59, 59, 999); // Include full end date
+            
             filtered = filtered.filter(problem => {
                 const problemDate = new Date(problem.timestamp);
                 return problemDate >= startDate && problemDate <= endDate;
             });
+            console.log('📅 After date filter:', filtered.length, 'problems');
             
-            const selectedUnits = Array.from(document.querySelectorAll('#unitFilters input:checked')).map(cb => cb.value);
-            if (selectedUnits.length > 0) {
+            // Unit filter - only apply if some are unchecked
+            const allUnitCheckboxes = document.querySelectorAll('#unitFilters input[type="checkbox"]');
+            const checkedUnitCheckboxes = document.querySelectorAll('#unitFilters input[type="checkbox"]:checked');
+            if (checkedUnitCheckboxes.length < allUnitCheckboxes.length && checkedUnitCheckboxes.length > 0) {
+                const selectedUnits = Array.from(checkedUnitCheckboxes).map(cb => cb.value);
                 filtered = filtered.filter(p => selectedUnits.includes(p.unitNumber));
+                console.log('🏠 After units filter:', filtered.length, 'problems');
             }
             
-            const selectedZones = Array.from(document.querySelectorAll('#zoneFilters input:checked')).map(cb => cb.value);
-            if (selectedZones.length > 0) {
+            // Zone filter - only apply if some are unchecked
+            const allZoneCheckboxes = document.querySelectorAll('#zoneFilters input[type="checkbox"]');
+            const checkedZoneCheckboxes = document.querySelectorAll('#zoneFilters input[type="checkbox"]:checked');
+            if (checkedZoneCheckboxes.length < allZoneCheckboxes.length && checkedZoneCheckboxes.length > 0) {
+                const selectedZones = Array.from(checkedZoneCheckboxes).map(cb => cb.value);
                 filtered = filtered.filter(p => selectedZones.includes(p.zone));
+                console.log('🏘️ After zones filter:', filtered.length, 'problems');
             }
             
-            const selectedPriorities = Array.from(document.querySelectorAll('#priorityFilters input:checked')).map(cb => cb.value);
-            if (selectedPriorities.length > 0) {
+            // Priority filter - only apply if some are unchecked
+            const allPriorityCheckboxes = document.querySelectorAll('#priorityFilters input[type="checkbox"]');
+            const checkedPriorityCheckboxes = document.querySelectorAll('#priorityFilters input[type="checkbox"]:checked');
+            if (checkedPriorityCheckboxes.length < allPriorityCheckboxes.length && checkedPriorityCheckboxes.length > 0) {
+                const selectedPriorities = Array.from(checkedPriorityCheckboxes).map(cb => cb.value);
                 filtered = filtered.filter(p => selectedPriorities.includes(p.problemPriority));
+                console.log('⚡ After priority filter:', filtered.length, 'problems');
             }
             
-            const selectedStatuses = Array.from(document.querySelectorAll('#statusFilters input:checked')).map(cb => cb.value);
-            if (selectedStatuses.length > 0) {
+            // Status filter - only apply if some are unchecked
+            const allStatusCheckboxes = document.querySelectorAll('#statusFilters input[type="checkbox"]');
+            const checkedStatusCheckboxes = document.querySelectorAll('#statusFilters input[type="checkbox"]:checked');
+            if (checkedStatusCheckboxes.length < allStatusCheckboxes.length && checkedStatusCheckboxes.length > 0) {
+                const selectedStatuses = Array.from(checkedStatusCheckboxes).map(cb => cb.value);
                 filtered = filtered.filter(p => selectedStatuses.includes(p.problemStatus));
+                console.log('📋 After status filter:', filtered.length, 'problems');
             }
             
-            const selectedAssigned = Array.from(document.querySelectorAll('#assignedFilters input:checked')).map(cb => cb.value);
-            if (selectedAssigned.length > 0) {
-                filtered = filtered.filter(p => selectedAssigned.includes(p.assignedTo));
-            }
-            
-            const selectedCategories = Array.from(document.querySelectorAll('#categoryFilters input:checked')).map(cb => cb.value);
-            if (selectedCategories.length > 0) {
+            // Category filter - only apply if some are unchecked
+            const allCategoryCheckboxes = document.querySelectorAll('#categoryFilters input[type="checkbox"]');
+            const checkedCategoryCheckboxes = document.querySelectorAll('#categoryFilters input[type="checkbox"]:checked');
+            if (checkedCategoryCheckboxes.length < allCategoryCheckboxes.length && checkedCategoryCheckboxes.length > 0) {
+                const selectedCategories = Array.from(checkedCategoryCheckboxes).map(cb => cb.value);
                 filtered = filtered.filter(p => selectedCategories.includes(p.category));
+                console.log('🏷️ After category filter:', filtered.length, 'problems');
             }
             
-            const selectedSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input:checked')).map(cb => cb.value);
-            if (selectedSubCategories.length > 0) {
-                filtered = filtered.filter(p => selectedSubCategories.includes(p.subCategory));
-            }
-            
+            // Search filter
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             if (searchTerm) {
                 filtered = filtered.filter(problem => {
@@ -946,13 +961,18 @@
                         getFriendlyPID(problem.internalId),
                         problem.unitNumber,
                         problem.problemDescription,
-                        problem.reportedBy
+                        problem.reportedBy,
+                        problem.zone,
+                        problem.category,
+                        problem.problemStatus
                     ].filter(Boolean).join(' ').toLowerCase();
                     
                     return searchText.includes(searchTerm);
                 });
+                console.log('🔍 After search filter:', filtered.length, 'problems');
             }
             
+            // Sort by date (newest first)
             filtered.sort((a, b) => {
                 const aTime = new Date(a.timestamp).getTime();
                 const bTime = new Date(b.timestamp).getTime();
@@ -960,6 +980,7 @@
             });
             
             filteredProblems = filtered;
+            console.log('✅ Final filtered result:', filteredProblems.length, 'problems');
             
             updateStats();
             updateActiveFiltersCount();
