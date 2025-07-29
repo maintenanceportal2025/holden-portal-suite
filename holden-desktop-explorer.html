@@ -244,7 +244,7 @@
         });
         
         async function switchDataset(dataset) {
-            console.log(\`🔄 Switching to \${dataset} dataset...\`);
+            console.log(`🔄 Switching to ${dataset} dataset...`);
             currentDataset = dataset;
             document.getElementById('currentBtn').classList.toggle('active', dataset === 'current');
             document.getElementById('legacyBtn').classList.toggle('active', dataset === 'legacy');
@@ -284,7 +284,7 @@
         
         function buildFilters() {
             const units = [...new Set(allProblems.map(p => String(p.unitNumber || '')).filter(Boolean))].sort((a, b) => {
-                const numA = parseInt(a.replace(/\\D/g, '') || '0') || 0, numB = parseInt(b.replace(/\\D/g, '') || '0') || 0;
+                const numA = parseInt(a.replace(/\D/g, '') || '0') || 0, numB = parseInt(b.replace(/\D/g, '') || '0') || 0;
                 return numA - numB;
             });
             buildCheckboxSection('unitFilters', units, 'unit');
@@ -307,7 +307,7 @@
             if (!container) return;
             container.innerHTML = options.map(option => {
                 const count = allProblems.filter(p => getFieldValue(p, fieldName) === option).length;
-                return \`<div class="checkbox-item"><input type="checkbox" id="\${fieldName}_\${option}" value="\${option}" checked onchange="applyFilters();"><label for="\${fieldName}_\${option}">\${option}</label><span style="font-size: 0.7rem; color: #64748b;">\${count}</span></div>\`;
+                return `<div class="checkbox-item"><input type="checkbox" id="${fieldName}_${option}" value="${option}" checked onchange="applyFilters();"><label for="${fieldName}_${option}">${option}</label><span style="font-size: 0.7rem; color: #64748b;">${count}</span></div>`;
             }).join('');
         }
         
@@ -327,8 +327,8 @@
         function applyFilters() {
             let filtered = [...allProblems];
             ['unit', 'status', 'priority', 'category', 'subCategory', 'zone', 'assignedTo'].forEach(filterType => {
-                const checked = Array.from(document.querySelectorAll(\`#\${filterType}Filters input:checked\`)).map(cb => cb.value);
-                const all = Array.from(document.querySelectorAll(\`#\${filterType}Filters input\`)).map(cb => cb.value);
+                const checked = Array.from(document.querySelectorAll(`#${filterType}Filters input:checked`)).map(cb => cb.value);
+                const all = Array.from(document.querySelectorAll(`#${filterType}Filters input`)).map(cb => cb.value);
                 if (checked.length < all.length && checked.length > 0) {
                     filtered = filtered.filter(p => checked.includes(getFieldValue(p, filterType)));
                 }
@@ -394,10 +394,10 @@
         
         function updateResults() {
             const label = currentDataset === 'current' ? 'problems' : 'legacy problems';
-            document.getElementById('resultsCount').textContent = \`\${filteredProblems.length} \${label}\`;
+            document.getElementById('resultsCount').textContent = `${filteredProblems.length} ${label}`;
             const container = document.getElementById('problemsContainer');
             if (filteredProblems.length === 0) {
-                container.innerHTML = \`<div class="empty-state">No \${label} match your filters</div>\`;
+                container.innerHTML = `<div class="empty-state">No ${label} match your filters</div>`;
                 return;
             }
             container.innerHTML = filteredProblems.map(problem => {
@@ -407,14 +407,14 @@
                 const status = problem.problemStatus || 'Reported';
                 const cardClass = currentDataset === 'legacy' ? 'problem-card legacy-card' : 'problem-card';
                 const pidPrefix = currentDataset === 'legacy' ? '📚 ' : '';
-                return \`<div class="\${cardClass}" onclick="openProblemDetails('\${problem.internalId}')">
+                return `<div class="${cardClass}" onclick="openProblemDetails('${problem.internalId}')">
                     <div class="problem-header">
-                        <div><div class="problem-id">\${pidPrefix}\${friendlyPID}</div><div class="problem-unit">\${problem.unitNumber} • \${problem.zone || 'No Zone'}</div></div>
-                        <div><span class="badge priority-\${priority.toLowerCase()}">\${priority}</span><span class="badge status-\${status.toLowerCase().replace(/\\s+/g, '')}">\${status}</span></div>
+                        <div><div class="problem-id">${pidPrefix}${friendlyPID}</div><div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div></div>
+                        <div><span class="badge priority-${priority.toLowerCase()}">${priority}</span><span class="badge status-${status.toLowerCase().replace(/\s+/g, '')}">${status}</span></div>
                     </div>
-                    <div class="problem-description">\${(problem.problemDescription || 'No description').substring(0, 120)}\${(problem.problemDescription || '').length > 120 ? '...' : ''}</div>
-                    <div class="problem-footer"><div>\${reportedDate}</div><div>\${problem.category || 'No Category'}</div></div>
-                </div>\`;
+                    <div class="problem-description">${(problem.problemDescription || 'No description').substring(0, 120)}${(problem.problemDescription || '').length > 120 ? '...' : ''}</div>
+                    <div class="problem-footer"><div>${reportedDate}</div><div>${problem.category || 'No Category'}</div></div>
+                </div>`;
             }).join('');
         }
         
@@ -442,25 +442,25 @@
         
         function populateContactDetails(problem) {
             const container = document.getElementById('contactDetailsContent');
-            let contactHTML = \`<div class="contact-group"><h4>🏠 Unit Primary Contact</h4><div class="detail-grid">
-                <div class="detail-field"><label>Name</label><span>\${problem.unitPrimaryName || 'Not available'}</span></div>
-                <div class="detail-field"><label>Email</label><span>\${problem.unitPrimaryEmail ? \`<a href="mailto:\${problem.unitPrimaryEmail}" class="contact-link">\${problem.unitPrimaryEmail}</a>\` : 'Not available'}</span></div>
-                <div class="detail-field"><label>Phone</label><span>\${problem.unitPrimaryPhone ? \`<a href="tel:\${problem.unitPrimaryPhone.replace(/\\s/g, '')}" class="contact-link">\${problem.unitPrimaryPhone}</a>\` : 'Not available'}</span></div>
-            </div></div>\`;
+            let contactHTML = `<div class="contact-group"><h4>🏠 Unit Primary Contact</h4><div class="detail-grid">
+                <div class="detail-field"><label>Name</label><span>${problem.unitPrimaryName || 'Not available'}</span></div>
+                <div class="detail-field"><label>Email</label><span>${problem.unitPrimaryEmail ? `<a href="mailto:${problem.unitPrimaryEmail}" class="contact-link">${problem.unitPrimaryEmail}</a>` : 'Not available'}</span></div>
+                <div class="detail-field"><label>Phone</label><span>${problem.unitPrimaryPhone ? `<a href="tel:${problem.unitPrimaryPhone.replace(/\s/g, '')}" class="contact-link">${problem.unitPrimaryPhone}</a>` : 'Not available'}</span></div>
+            </div></div>`;
             const reporterName = problem.reportedBy || '', unitPrimaryName = problem.unitPrimaryName || '';
             const reporterEmail = problem.reporterEmail || '', unitPrimaryEmail = problem.unitPrimaryEmail || '';
             const reporterIsDifferent = (reporterName && unitPrimaryName && reporterName.toLowerCase() !== unitPrimaryName.toLowerCase()) || (reporterEmail && unitPrimaryEmail && reporterEmail.toLowerCase() !== unitPrimaryEmail.toLowerCase());
             if (reporterIsDifferent) {
-                contactHTML += \`<div class="contact-group"><h4>📝 Reporter Contact</h4><div class="detail-grid">
-                    <div class="detail-field"><label>Reported By</label><span>\${problem.reportedBy || 'Unknown'}</span></div>
-                    <div class="detail-field"><label>Reporter Email</label><span>\${problem.reporterEmail ? \`<a href="mailto:\${problem.reporterEmail}" class="contact-link">\${problem.reporterEmail}</a>\` : 'Not available'}</span></div>
-                    <div class="detail-field"><label>Reporter Phone</label><span>\${problem.reporterPhone ? \`<a href="tel:\${problem.reporterPhone.replace(/\\s/g, '')}" class="contact-link">\${problem.reporterPhone}</a>\` : 'Not available'}</span></div>
-                </div></div>\`;
+                contactHTML += `<div class="contact-group"><h4>📝 Reporter Contact</h4><div class="detail-grid">
+                    <div class="detail-field"><label>Reported By</label><span>${problem.reportedBy || 'Unknown'}</span></div>
+                    <div class="detail-field"><label>Reporter Email</label><span>${problem.reporterEmail ? `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 'Not available'}</span></div>
+                    <div class="detail-field"><label>Reporter Phone</label><span>${problem.reporterPhone ? `<a href="tel:${problem.reporterPhone.replace(/\s/g, '')}" class="contact-link">${problem.reporterPhone}</a>` : 'Not available'}</span></div>
+                </div></div>`;
             }
-            contactHTML += \`<div class="contact-group"><h4>ℹ️ Additional Information</h4><div class="detail-grid">
-                <div class="detail-field"><label>Last Updated</label><span>\${problem.lastUpdated ? formatDate(problem.lastUpdated) : 'Not available'}</span></div>
-                <div class="detail-field"><label>Reported By</label><span>\${problem.reportedBy || 'Unknown'}</span></div>
-            </div></div>\`;
+            contactHTML += `<div class="contact-group"><h4>ℹ️ Additional Information</h4><div class="detail-grid">
+                <div class="detail-field"><label>Last Updated</label><span>${problem.lastUpdated ? formatDate(problem.lastUpdated) : 'Not available'}</span></div>
+                <div class="detail-field"><label>Reported By</label><span>${problem.reportedBy || 'Unknown'}</span></div>
+            </div></div>`;
             container.innerHTML = contactHTML;
         }
         
@@ -499,13 +499,13 @@
             const reportedDate = formatDate(problem.timestamp);
             const completionDate = problem.completionDate ? formatDate(problem.completionDate) : 'Not completed';
             let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\\n' + '='.repeat(60) + '\\n';
-            report += \`Generated: \${new Date().toLocaleString('en-AU')}\\nProblem ID: \${friendlyPID}\\nUnit: \${problem.unitNumber || 'Unknown'}\\n\` + '='.repeat(60) + '\\n\\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\\nProblem ID: ${friendlyPID}\\nUnit: ${problem.unitNumber || 'Unknown'}\\n` + '='.repeat(60) + '\\n\\n';
             report += 'PROBLEM DETAILS:\\n' + '-'.repeat(30) + '\\n';
-            report += \`Problem ID: \${friendlyPID}\\nUnit Number: \${problem.unitNumber || 'Unknown'}\\nZone: \${problem.zone || 'Unknown'}\\nReported Date: \${reportedDate}\\nDescription: \${problem.problemDescription || 'No description'}\\n\\n\`;
+            report += `Problem ID: ${friendlyPID}\\nUnit Number: ${problem.unitNumber || 'Unknown'}\\nZone: ${problem.zone || 'Unknown'}\\nReported Date: ${reportedDate}\\nDescription: ${problem.problemDescription || 'No description'}\\n\\n`;
             report += 'MANAGEMENT DETAILS:\\n' + '-'.repeat(30) + '\\n';
-            report += \`Status: \${problem.problemStatus || 'Unknown'}\\nPriority: \${problem.problemPriority || 'Unknown'}\\nCategory: \${problem.category || 'Not assigned'}\\nSub-Category: \${problem.subCategory || 'Not assigned'}\\nAssigned To: \${problem.assignedTo || 'Not assigned'}\\nCompletion Date: \${completionDate}\\nComments: \${problem.comments || 'No comments'}\\n\\n\`;
+            report += `Status: ${problem.problemStatus || 'Unknown'}\\nPriority: ${problem.problemPriority || 'Unknown'}\\nCategory: ${problem.category || 'Not assigned'}\\nSub-Category: ${problem.subCategory || 'Not assigned'}\\nAssigned To: ${problem.assignedTo || 'Not assigned'}\\nCompletion Date: ${completionDate}\\nComments: ${problem.comments || 'No comments'}\\n\\n`;
             report += 'CONTACT DETAILS:\\n' + '-'.repeat(30) + '\\n';
-            report += \`Unit Primary Name: \${problem.unitPrimaryName || 'Not available'}\\nUnit Primary Email: \${problem.unitPrimaryEmail || 'Not available'}\\nUnit Primary Phone: \${problem.unitPrimaryPhone || 'Not available'}\\nReported By: \${problem.reportedBy || 'Unknown'}\\nReporter Email: \${problem.reporterEmail || 'Not available'}\\nReporter Phone: \${problem.reporterPhone || 'Not available'}\\n\\n\`;
+            report += `Unit Primary Name: ${problem.unitPrimaryName || 'Not available'}\\nUnit Primary Email: ${problem.unitPrimaryEmail || 'Not available'}\\nUnit Primary Phone: ${problem.unitPrimaryPhone || 'Not available'}\\nReported By: ${problem.reportedBy || 'Unknown'}\\nReporter Email: ${problem.reporterEmail || 'Not available'}\\nReporter Phone: ${problem.reporterPhone || 'Not available'}\\n\\n`;
             report += '='.repeat(60) + '\\nGenerated by Lake Illawong Maintenance Portal\\n';
             return report;
         }
@@ -527,15 +527,15 @@
         function clearAllFilters() { document.getElementById('searchInput').value = ''; document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false); applyFilters(); }
         function showAllProblems() { document.getElementById('searchInput').value = ''; document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true); applyFilters(); }
         
-        function showError(message) { document.getElementById('problemsContainer').innerHTML = \`<div class="empty-state">❌ \${message}</div>\`; }
-        function getFriendlyPID(internalId) { if (!internalId) return 'PID Unknown'; const parts = internalId.split('-'); return parts.length === 2 ? \`PID \${parts[1]}\` : \`PID \${internalId}\`; }
+        function showError(message) { document.getElementById('problemsContainer').innerHTML = `<div class="empty-state">❌ ${message}</div>`; }
+        function getFriendlyPID(internalId) { if (!internalId) return 'PID Unknown'; const parts = internalId.split('-'); return parts.length === 2 ? `PID ${parts[1]}` : `PID ${internalId}`; }
         
         async function makeRequest(action, additionalData = {}) {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
                 const params = new URLSearchParams({ action: action, callback: callbackName, ...additionalData });
-                script.src = \`\${WEB_APP_URL}?\${params.toString()}\`;
+                script.src = `${WEB_APP_URL}?${params.toString()}`;
                 window[callbackName] = function(response) { document.head.removeChild(script); delete window[callbackName]; resolve(response); };
                 script.onerror = function() { document.head.removeChild(script); delete window[callbackName]; reject(new Error('Network request failed')); };
                 setTimeout(() => { if (window[callbackName]) { document.head.removeChild(script); delete window[callbackName]; reject(new Error('Request timeout')); } }, 10000);
