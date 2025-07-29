@@ -1083,26 +1083,55 @@
                 </div>
             `;
             
-            // Reporter Contact Group
-            contactHTML += `
-                <div class="contact-group">
-                    <h4>📝 Reporter Contact</h4>
-                    <div class="detail-grid">
-                        <div class="detail-field">
-                            <label>Reported By</label>
-                            <span>${problem.reportedBy || 'Unknown'}</span>
-                        </div>
-                        <div class="detail-field">
-                            <label>Reporter Email</label>
-                            <span>${problem.reporterEmail ? `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 'Not available'}</span>
-                        </div>
-                        <div class="detail-field">
-                            <label>Reporter Phone</label>
-                            <span>${problem.reporterPhone ? `<a href="tel:${problem.reporterPhone.replace(/\s/g, '')}" class="contact-link">${problem.reporterPhone}</a>` : 'Not available'}</span>
+            // Only show Reporter Contact if different from Unit Primary
+            const reporterName = problem.reportedBy || '';
+            const unitPrimaryName = problem.unitPrimaryName || '';
+            const reporterEmail = problem.reporterEmail || '';
+            const unitPrimaryEmail = problem.unitPrimaryEmail || '';
+            
+            // Check if reporter is different from unit primary (by name or email)
+            const reporterIsDifferent = (
+                reporterName && 
+                unitPrimaryName && 
+                reporterName.toLowerCase() !== unitPrimaryName.toLowerCase()
+            ) || (
+                reporterEmail && 
+                unitPrimaryEmail && 
+                reporterEmail.toLowerCase() !== unitPrimaryEmail.toLowerCase()
+            );
+            
+            console.log('🔍 Contact comparison:', {
+                reporterName,
+                unitPrimaryName,
+                reporterEmail,
+                unitPrimaryEmail,
+                reporterIsDifferent
+            });
+            
+            // Only add Reporter Contact group if they're different
+            if (reporterIsDifferent) {
+                contactHTML += `
+                    <div class="contact-group">
+                        <h4>📝 Reporter Contact</h4>
+                        <div class="detail-grid">
+                            <div class="detail-field">
+                                <label>Reported By</label>
+                                <span>${problem.reportedBy || 'Unknown'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Reporter Email</label>
+                                <span>${problem.reporterEmail ? `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 'Not available'}</span>
+                            </div>
+                            <div class="detail-field">
+                                <label>Reporter Phone</label>
+                                <span>${problem.reporterPhone ? `<a href="tel:${problem.reporterPhone.replace(/\s/g, '')}" class="contact-link">${problem.reporterPhone}</a>` : 'Not available'}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                console.log('ℹ️ Reporter is same as unit primary - skipping duplicate contact info');
+            }
             
             // Additional Info Group
             contactHTML += `
@@ -1112,6 +1141,10 @@
                         <div class="detail-field">
                             <label>Last Updated</label>
                             <span>${problem.lastUpdated ? formatDate(problem.lastUpdated) : 'Not available'}</span>
+                        </div>
+                        <div class="detail-field">
+                            <label>Reported By</label>
+                            <span>${problem.reportedBy || 'Unknown'}</span>
                         </div>
                     </div>
                 </div>
