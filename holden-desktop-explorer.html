@@ -342,6 +342,100 @@
             font-size: 0.8rem;
             color: #64748b;
         }
+        
+        /* PAGE 2 STYLES */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 20px 0;
+        }
+        
+        .back-btn {
+            background: #6b7280;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .back-btn:hover {
+            background: #4b5563;
+        }
+        
+        .detail-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .section-title-bar {
+            background: #f8fafc;
+            padding: 15px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            border-radius: 12px 12px 0 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+        
+        .detail-grid {
+            padding: 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+        
+        .detail-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .detail-field.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .detail-field label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .detail-field span {
+            color: #6b7280;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            padding: 8px 0;
+        }
+        
+        .report-btn {
+            background: #2563eb;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .report-btn.green {
+            background: #10b981;
+        }
+        
+        .report-btn:hover {
+            opacity: 0.9;
+        }
     </style>
 </head>
 <body>
@@ -503,117 +597,119 @@
     </div>
 
     <!-- PROBLEM DETAILS PAGE -->
-    <div id="problemDetailsView" class="hidden">
+    <div id="problemDetailsView" class="hidden" style="background: #f8fafc; min-height: 100vh;">
         <div class="header">
             <h1>📋 Problem Details</h1>
             <p>Complete Problem Information & Management</p>
             <div class="header-actions">
-                <button id="backToList" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;">← Back to List</button>
+                <button id="backToList" class="back-btn">← Back to List</button>
             </div>
         </div>
 
         <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <div class="page-header">
+                <h2 id="problemPageTitle" style="font-size: 1.5rem; font-weight: 600; color: #1f2937;">Problem Details</h2>
+            </div>
+
             <!-- Report Buttons Section -->
             <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 20px; display: flex; gap: 10px;">
-                <button id="viewProblemReport" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">📄 View Report</button>
-                <button id="copyProblemReport" style="background: #10b981; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">📋 Copy Report</button>
+                <button id="viewProblemReport" class="report-btn">📄 View Report</button>
+                <button id="copyProblemReport" class="report-btn green">📋 Copy Report</button>
             </div>
 
             <!-- Problem Details Section -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">📋 Problem Details</h3>
-                </div>
-                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Problem ID</label>
-                        <span id="detailProblemId" style="display: block; color: #6b7280;">-</span>
+            <div class="detail-section">
+                <div class="section-title-bar">📋 Problem Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <label>Problem ID</label>
+                        <span id="detailProblemId">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Number</label>
-                        <span id="detailUnitNumber" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Unit Number</label>
+                        <span id="detailUnitNumber">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reported Date</label>
-                        <span id="detailReportedDate" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Reported Date</label>
+                        <span id="detailReportedDate">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Zone</label>
-                        <span id="detailZone" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Zone</label>
+                        <span id="detailZone">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reported By</label>
-                        <span id="detailReportedBy" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Reported By</label>
+                        <span id="detailReportedBy">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reporter Email</label>
-                        <span id="detailReporterEmail" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Reporter Email</label>
+                        <span id="detailReporterEmail">-</span>
                     </div>
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Problem Description</label>
-                        <span id="detailDescription" style="display: block; color: #6b7280; line-height: 1.6;">-</span>
+                    <div class="detail-field full-width">
+                        <label>Problem Description</label>
+                        <span id="detailDescription">-</span>
                     </div>
                 </div>
             </div>
 
             <!-- Management Details Section -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
-                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">🔧 Management Details</h3>
-                </div>
-                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Status</label>
-                        <span id="detailStatus" style="display: block; color: #6b7280;">-</span>
+            <div class="detail-section">
+                <div class="section-title-bar">🔧 Management Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <label>Status</label>
+                        <span id="detailStatus">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Priority</label>
-                        <span id="detailPriority" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Priority</label>
+                        <span id="detailPriority">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Category</label>
-                        <span id="detailCategory" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Category</label>
+                        <span id="detailCategory">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Sub-Category</label>
-                        <span id="detailSubCategory" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Sub-Category</label>
+                        <span id="detailSubCategory">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Assigned To</label>
-                        <span id="detailAssignedTo" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Assigned To</label>
+                        <span id="detailAssignedTo">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Completion Date</label>
-                        <span id="detailCompletionDate" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Completion Date</label>
+                        <span id="detailCompletionDate">-</span>
                     </div>
-                    <div style="grid-column: 1 / -1;">
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Comments</label>
-                        <span id="detailComments" style="display: block; color: #6b7280; line-height: 1.6;">-</span>
+                    <div class="detail-field full-width">
+                        <label>Comments</label>
+                        <span id="detailComments">-</span>
                     </div>
                 </div>
             </div>
 
             <!-- Contact Details Section -->
-            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
-                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
-                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">👤 Contact Details</h3>
-                </div>
-                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Name</label>
-                        <span id="detailUnitPrimaryName" style="display: block; color: #6b7280;">-</span>
+            <div class="detail-section">
+                <div class="section-title-bar">👤 Contact Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <label>Unit Primary Name</label>
+                        <span id="detailUnitPrimaryName">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Email</label>
-                        <span id="detailUnitPrimaryEmail" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Unit Primary Email</label>
+                        <span id="detailUnitPrimaryEmail">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Phone</label>
-                        <span id="detailUnitPrimaryPhone" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Unit Primary Phone</label>
+                        <span id="detailUnitPrimaryPhone">-</span>
                     </div>
-                    <div>
-                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Last Updated</label>
-                        <span id="detailLastUpdated" style="display: block; color: #6b7280;">-</span>
+                    <div class="detail-field">
+                        <label>Reporter Phone</label>
+                        <span id="detailReporterPhone">-</span>
+                    </div>
+                    <div class="detail-field">
+                        <label>Last Updated</label>
+                        <span id="detailLastUpdated">-</span>
                     </div>
                 </div>
             </div>
@@ -887,6 +983,9 @@
             
             const friendlyPID = getFriendlyPID(currentProblem.internalId);
             
+            // Update page title
+            document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${currentProblem.unitNumber}`;
+            
             // Populate Problem Details
             document.getElementById('detailProblemId').textContent = friendlyPID;
             document.getElementById('detailUnitNumber').textContent = currentProblem.unitNumber || 'Unknown';
@@ -909,16 +1008,22 @@
             document.getElementById('detailUnitPrimaryName').textContent = currentProblem.unitPrimaryName || 'Not available';
             document.getElementById('detailUnitPrimaryEmail').textContent = currentProblem.unitPrimaryEmail || 'Not available';
             document.getElementById('detailUnitPrimaryPhone').textContent = currentProblem.unitPrimaryPhone || 'Not available';
+            document.getElementById('detailReporterPhone').textContent = currentProblem.reporterPhone || 'Not available';
             document.getElementById('detailLastUpdated').textContent = currentProblem.lastUpdated ? formatDate(currentProblem.lastUpdated) : 'Not available';
             
-            // Switch to details view
-            document.getElementById('desktopContainer').classList.add('hidden');
-            document.getElementById('problemDetailsView').classList.remove('hidden');
+            // Switch to details view - COMPLETELY HIDE main view
+            document.getElementById('desktopContainer').style.display = 'none';
+            document.getElementById('problemDetailsView').style.display = 'block';
+            
+            console.log('📋 Opened problem details for:', friendlyPID);
         }
         
         function showMainView() {
-            document.getElementById('problemDetailsView').classList.add('hidden');
-            document.getElementById('desktopContainer').classList.remove('hidden');
+            // Switch back to main view - COMPLETELY HIDE details view
+            document.getElementById('problemDetailsView').style.display = 'none';
+            document.getElementById('desktopContainer').style.display = 'grid';
+            
+            console.log('🔙 Returned to main problem list');
         }
         
         // Individual section clear functions
