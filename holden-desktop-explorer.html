@@ -453,9 +453,10 @@
                 <div class="checkbox-list" id="assignedFilters"></div>
             </div>
 
-            <!-- GLOBAL CLEAR ALL -->
-            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
-                <button onclick="clearAllFilters()" style="width: 100%; background: #dc2626; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">🗑️ Clear All Filters</button>
+            <!-- GLOBAL FILTER CONTROLS -->
+            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                <button onclick="showAllProblems()" style="background: #10b981; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">✅ Show All</button>
+                <button onclick="clearAllFilters()" style="background: #dc2626; color: white; border: none; padding: 10px; border-radius: 8px; font-weight: 600; font-size: 0.85rem; cursor: pointer;">🗑️ Clear All</button>
             </div>
         </div>
 
@@ -996,13 +997,27 @@
             // Clear search
             document.getElementById('searchInput').value = '';
             
-            // Clear all checkboxes
+            // CLEAR all checkboxes (uncheck them to hide all)
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+            
+            // Apply filters
+            applyFilters();
+            
+            console.log('🗑️ All filters cleared - hiding all problems');
+        }
+        
+        // Global show all problems
+        function showAllProblems() {
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            
+            // CHECK all checkboxes (show everything)
             document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
             
             // Apply filters
             applyFilters();
             
-            console.log('🗑️ All filters cleared - showing all problems');
+            console.log('✅ All filters selected - showing all problems');
         }
         
         function showError(message) {
