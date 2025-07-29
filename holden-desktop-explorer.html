@@ -371,6 +371,10 @@
                     <div class="filter-label">🏠 Units</div>
                     <div class="section-count" id="unitCount">0</div>
                 </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllUnits()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearUnits()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                </div>
                 <div class="checkbox-list" id="unitFilters"></div>
             </div>
 
@@ -378,6 +382,10 @@
                 <div class="filter-header">
                     <div class="filter-label">📋 Status</div>
                     <div class="section-count" id="statusCount">0</div>
+                </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllStatuses()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearStatuses()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
                 </div>
                 <div class="checkbox-list" id="statusFilters"></div>
             </div>
@@ -387,6 +395,10 @@
                     <div class="filter-label">⚡ Priority</div>
                     <div class="section-count" id="priorityCount">0</div>
                 </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllPriorities()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearPriorities()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                </div>
                 <div class="checkbox-list" id="priorityFilters"></div>
             </div>
 
@@ -394,6 +406,10 @@
                 <div class="filter-header">
                     <div class="filter-label">🏷️ Categories</div>
                     <div class="section-count" id="categoryCount">0</div>
+                </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
                 </div>
                 <div class="checkbox-list" id="categoryFilters"></div>
             </div>
@@ -404,6 +420,10 @@
                     <div class="filter-label">🏪 Sub-Categories</div>
                     <div class="section-count" id="subCategoryCount">0</div>
                 </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllSubCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearSubCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                </div>
                 <div class="checkbox-list" id="subCategoryFilters"></div>
             </div>
 
@@ -412,6 +432,10 @@
                 <div class="filter-header">
                     <div class="filter-label">🏘️ Zones</div>
                     <div class="section-count" id="zoneCount">0</div>
+                </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllZones()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearZones()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
                 </div>
                 <div class="checkbox-list" id="zoneFilters"></div>
             </div>
@@ -422,7 +446,16 @@
                     <div class="filter-label">👤 Assigned To</div>
                     <div class="section-count" id="assignedCount">0</div>
                 </div>
+                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
+                    <button onclick="selectAllAssigned()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
+                    <button onclick="clearAssigned()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                </div>
                 <div class="checkbox-list" id="assignedFilters"></div>
+            </div>
+
+            <!-- GLOBAL CLEAR ALL -->
+            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
+                <button onclick="clearAllFilters()" style="width: 100%; background: #dc2626; color: white; border: none; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; cursor: pointer;">🗑️ Clear All Filters</button>
             </div>
         </div>
 
@@ -887,6 +920,90 @@
             document.getElementById('desktopContainer').classList.remove('hidden');
         }
         
+        // Individual section clear functions
+        function selectAllUnits() {
+            document.querySelectorAll('#unitFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearUnits() {
+            document.querySelectorAll('#unitFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllStatuses() {
+            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearStatuses() {
+            document.querySelectorAll('#statusFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllPriorities() {
+            document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearPriorities() {
+            document.querySelectorAll('#priorityFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllCategories() {
+            document.querySelectorAll('#categoryFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearCategories() {
+            document.querySelectorAll('#categoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllSubCategories() {
+            document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearSubCategories() {
+            document.querySelectorAll('#subCategoryFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllZones() {
+            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearZones() {
+            document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        function selectAllAssigned() {
+            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = true);
+            applyFilters();
+        }
+        
+        function clearAssigned() {
+            document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = false);
+            applyFilters();
+        }
+        
+        // Global clear all filters
+        function clearAllFilters() {
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            
+            // Clear all checkboxes
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+            
+            // Apply filters
+            applyFilters();
+            
+            console.log('🗑️ All filters cleared - showing all problems');
+        }
         
         function showError(message) {
             document.getElementById('problemsContainer').innerHTML = `
