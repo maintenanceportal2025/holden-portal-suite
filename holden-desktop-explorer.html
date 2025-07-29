@@ -90,6 +90,30 @@
             </div>
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description...">
             <div class="filter-section">
+                <div class="filter-header"><div class="filter-label">📅 Date Range</div></div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+                    <button onclick="setDateRange('1M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 1M</button>
+                    <button onclick="setDateRange('3M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 3M</button>
+                    <button onclick="setDateRange('6M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 6M</button>
+                    <button onclick="setDateRange('1Y')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 1Y</button>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+                    <button onclick="setDateRange('2023')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2023</button>
+                    <button onclick="setDateRange('2024')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2024</button>
+                    <button onclick="setDateRange('2025')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2025</button>
+                    <button onclick="clearDateFilter()" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🗓️ All</button>
+                </div>
+                <div style="border-top: 1px solid #e2e8f0; margin: 12px 0; padding-top: 12px;">
+                    <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                        <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="Start">
+                        <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="End">
+                    </div>
+                    <button onclick="applyCustomDateRange()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
+                </div>
+                <div id="dateRangeDisplay" style="font-size: 0.75rem; color: #64748b; text-align: center; padding: 4px; background: #f8fafc; border-radius: 4px; margin-bottom: 8px;">All dates</div>
+            </div>
+            <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">🏠 Units</div></div>
                 <div style="display: flex; gap: 4px; margin-bottom: 8px;">
                     <button onclick="selectAllUnits()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
@@ -228,6 +252,8 @@
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
         let allProblems = [], filteredProblems = [], currentProblem = null, currentDataset = 'current';
+        let currentDateFilter = null; // Track active date filter
+        let customDateRange = null; // Track custom date range { start, end }
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Problem Data Explorer - Starting...');
@@ -326,6 +352,16 @@
         
         function applyFilters() {
             let filtered = [...allProblems];
+            
+            // Apply date filter first
+            if (currentDateFilter || customDateRange) {
+                if (customDateRange) {
+                    filtered = applyCustomDateFilter(filtered);
+                } else if (currentDateFilter) {
+                    filtered = applyDateFilter(filtered, currentDateFilter);
+                }
+            }
+            
             ['unit', 'status', 'priority', 'category', 'subCategory', 'zone', 'assignedTo'].forEach(filterType => {
                 const checked = Array.from(document.querySelectorAll(`#${filterType}Filters input:checked`)).map(cb => cb.value);
                 const all = Array.from(document.querySelectorAll(`#${filterType}Filters input`)).map(cb => cb.value);
@@ -344,6 +380,187 @@
             filteredProblems = filtered;
             updateStats();
             updateResults();
+        }
+        
+        function applyCustomDateFilter(problems) {
+            if (!customDateRange) return problems;
+            
+            const startTime = customDateRange.start.getTime();
+            const endTime = customDateRange.end.getTime();
+            
+            return problems.filter(problem => {
+                const problemDate = parseDate(problem.timestamp);
+                return problemDate >= startTime && problemDate <= endTime;
+            });
+        }
+        
+        function applyCustomDateRange() {
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            
+            if (!startInput.value || !endInput.value) {
+                alert('Please select both start and end dates');
+                return;
+            }
+            
+            const startDate = new Date(startInput.value);
+            const endDate = new Date(endInput.value);
+            endDate.setHours(23, 59, 59, 999); // Include the entire end date
+            
+            if (startDate > endDate) {
+                alert('Start date must be before or equal to end date');
+                return;
+            }
+            
+            // Clear preset date filter and set custom range
+            currentDateFilter = null;
+            customDateRange = { start: startDate, end: endDate };
+            
+            // Update display
+            updateDateRangeDisplay('custom');
+            
+            // Reset preset button styles and highlight apply button
+            document.querySelectorAll('.filter-section button').forEach(btn => {
+                btn.style.background = '#f1f5f9';
+                btn.style.borderColor = '#e2e8f0';
+            });
+            
+            event.target.style.background = '#1d4ed8';
+            event.target.style.borderColor = '#1d4ed8';
+            
+            setTimeout(() => {
+                event.target.style.background = '#3b82f6';
+                event.target.style.borderColor = '#3b82f6';
+            }, 200);
+            
+            applyFilters();
+        }
+        
+        function applyDateFilter(problems, filterType) {
+            const now = new Date();
+            let startDate, endDate;
+            
+            switch (filterType) {
+                case '1M':
+                    startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                    endDate = now;
+                    break;
+                case '3M':
+                    startDate = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+                    endDate = now;
+                    break;
+                case '6M':
+                    startDate = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+                    endDate = now;
+                    break;
+                case '1Y':
+                    startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                    endDate = now;
+                    break;
+                case '2023':
+                    startDate = new Date(2023, 0, 1);
+                    endDate = new Date(2023, 11, 31);
+                    break;
+                case '2024':
+                    startDate = new Date(2024, 0, 1);
+                    endDate = new Date(2024, 11, 31);
+                    break;
+                case '2025':
+                    startDate = new Date(2025, 0, 1);
+                    endDate = new Date(2025, 11, 31);
+                    break;
+                default:
+                    return problems;
+            }
+            
+            return problems.filter(problem => {
+                const problemDate = parseDate(problem.timestamp);
+                return problemDate >= startDate.getTime() && problemDate <= endDate.getTime();
+            });
+        }
+        
+        function setDateRange(range) {
+            currentDateFilter = range;
+            customDateRange = null; // Clear custom range when using preset
+            clearCustomDateInputs();
+            updateDateRangeDisplay(range);
+            applyFilters();
+            
+            // Visual feedback for button press
+            document.querySelectorAll('.filter-section button').forEach(btn => {
+                btn.style.background = '#f1f5f9';
+                btn.style.borderColor = '#e2e8f0';
+            });
+            
+            event.target.style.background = '#dbeafe';
+            event.target.style.borderColor = '#3b82f6';
+        }
+        
+        function clearDateFilter() {
+            currentDateFilter = null;
+            customDateRange = null;
+            clearCustomDateInputs();
+            updateDateRangeDisplay('all');
+            applyFilters();
+            
+            // Reset all button styles
+            document.querySelectorAll('.filter-section button').forEach(btn => {
+                btn.style.background = '#f1f5f9';
+                btn.style.borderColor = '#e2e8f0';
+            });
+        }
+        
+        function clearCustomDateInputs() {
+            const startInput = document.getElementById('startDate');
+            const endInput = document.getElementById('endDate');
+            if (startInput) startInput.value = '';
+            if (endInput) endInput.value = '';
+        }
+        
+        function updateDateRangeDisplay(range) {
+            const display = document.getElementById('dateRangeDisplay');
+            if (!display) return;
+            
+            const now = new Date();
+            let text = 'All dates';
+            
+            if (range === 'custom' && customDateRange) {
+                const startStr = customDateRange.start.toLocaleDateString('en-AU');
+                const endStr = customDateRange.end.toLocaleDateString('en-AU');
+                text = `Custom: ${startStr} to ${endStr}`;
+            } else {
+                switch (range) {
+                    case '1M':
+                        const oneMonth = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+                        text = `Last month (from ${oneMonth.toLocaleDateString('en-AU')})`;
+                        break;
+                    case '3M':
+                        const threeMonths = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
+                        text = `Last 3 months (from ${threeMonths.toLocaleDateString('en-AU')})`;
+                        break;
+                    case '6M':
+                        const sixMonths = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
+                        text = `Last 6 months (from ${sixMonths.toLocaleDateString('en-AU')})`;
+                        break;
+                    case '1Y':
+                        const oneYear = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
+                        text = `Last year (from ${oneYear.toLocaleDateString('en-AU')})`;
+                        break;
+                    case '2023':
+                        text = 'Year 2023 (1 Jan - 31 Dec)';
+                        break;
+                    case '2024':
+                        text = 'Year 2024 (1 Jan - 31 Dec)';
+                        break;
+                    case '2025':
+                        text = 'Year 2025 (1 Jan - 31 Dec)';
+                        break;
+                    default:
+                        text = 'All dates';
+                }
+            }
+            
+            display.textContent = text;
         }
         
         function parseDate(dateString) {
@@ -524,8 +741,18 @@
         function clearZones() { document.querySelectorAll('#zoneFilters input[type="checkbox"]').forEach(cb => cb.checked = false); applyFilters(); }
         function selectAllAssigned() { document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = true); applyFilters(); }
         function clearAssigned() { document.querySelectorAll('#assignedFilters input[type="checkbox"]').forEach(cb => cb.checked = false); applyFilters(); }
-        function clearAllFilters() { document.getElementById('searchInput').value = ''; document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false); applyFilters(); }
-        function showAllProblems() { document.getElementById('searchInput').value = ''; document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearAllFilters() { 
+            document.getElementById('searchInput').value = ''; 
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false); 
+            clearDateFilter(); 
+            applyFilters(); 
+        }
+        function showAllProblems() { 
+            document.getElementById('searchInput').value = ''; 
+            document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true); 
+            clearDateFilter(); 
+            applyFilters(); 
+        }
         
         function showError(message) { document.getElementById('problemsContainer').innerHTML = `<div class="empty-state">❌ ${message}</div>`; }
         function getFriendlyPID(internalId) { if (!internalId) return 'PID Unknown'; const parts = internalId.split('-'); return parts.length === 2 ? `PID ${parts[1]}` : `PID ${internalId}`; }
