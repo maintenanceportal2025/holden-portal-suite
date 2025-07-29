@@ -298,9 +298,14 @@
             transition: all 0.3s ease;
         }
         
-        .problem-card:hover {
+        .problem-card.legacy-card {
+            border-left: 4px solid #8b5cf6;
+            background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+        }
+        
+        .problem-card.legacy-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 16px rgba(139, 92, 246, 0.2);
         }
         
         .problem-header {
@@ -757,11 +762,59 @@
         let allProblems = [];
         let filteredProblems = [];
         let currentProblem = null;
+        let currentDataset = 'current'; // 'current' or 'legacy'
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Minimal Desktop Explorer - Starting...');
+            
+            // Add event listeners for dataset toggle
+            document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
+            document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
+            
             loadProblemsData();
         });
+        
+        async function switchDataset(dataset) {
+            console.log(`🔄 Switching to ${dataset} dataset...`);
+            currentDataset = dataset;
+            
+            // Update UI buttons
+            document.getElementById('currentBtn').classList.toggle('active', dataset === 'current');
+            document.getElementById('legacyBtn').classList.toggle('active', dataset === 'legacy');
+            
+            // Update access badge
+            const accessBadge = document.querySelector('.access-badge');
+            accessBadge.textContent = dataset === 'current' ? 'Live Data' : 'Legacy Data';
+            
+            // Load appropriate data
+            if (dataset === 'current') {
+                await loadProblemsData();
+            } else {
+                await loadLegacyData();
+            }
+        }
+        
+        async function loadLegacyData() {
+            try {
+                console.log('📚 Loading legacy data from LegacyLog tab...');
+                
+                const response = await makeRequest('getLegacyLogData');
+                console.log('Legacy data response:', response);
+                
+                if (response && response.success) {
+                    allProblems = response.data || [];
+                    console.log('Loaded', allProblems.length, 'legacy problems');
+                    
+                    buildFilters();
+                    applyFilters();
+                } else {
+                    throw new Error('Failed to load legacy data');
+                }
+            } catch (error) {
+                console.error('Error loading legacy data:', error);
+                showError('Failed to load legacy problem data');
+            }
+        }
         
         async function loadProblemsData() {
             try {
@@ -960,21 +1013,25 @@
             document.getElementById('avgResolution').textContent = 'N/A';
             
             const activePercent = totalProblems > 0 ? Math.round((activeProblems/totalProblems)*100) : 0;
-            document.getElementById('totalTrend').textContent = 'Current selection';
-            document.getElementById('activeTrend').textContent = `${activePercent}% active`;
+            document.getElementById('totalTrend').textContent = currentDataset === 'current' ? 'Current selection' : 'Legacy data';
+            document.getElementById('activeTrend').textContent = currentDataset === 'legacy' ? 'Historical data' : `${activePercent}% active`;
             document.getElementById('urgentTrend').textContent = urgentCount > 0 ? 'Needs attention' : 'Under control';
-            document.getElementById('resolutionTrend').textContent = 'Analytics';
+            document.getElementById('resolutionTrend').textContent = currentDataset === 'legacy' ? 'Historical' : 'Analytics';
         }
         
         function updateResults() {
-            document.getElementById('resultsCount').textContent = `${filteredProblems.length} problems`;
+            const datasetLabel = currentDataset === 'current' ? 'problems' : 'legacy problems';
+            document.getElementById('resultsCount').textContent = `${filteredProblems.length} ${datasetLabel}`;
             
             const container = document.getElementById('problemsContainer');
             
             if (filteredProblems.length === 0) {
+                const emptyMessage = currentDataset === 'current' 
+                    ? '📭 No problems match your current filters'
+                    : '📚 No legacy problems match your current filters';
                 container.innerHTML = `
                     <div class="empty-state">
-                        <div>📭 No problems match your current filters</div>
+                        <div>${emptyMessage}</div>
                     </div>
                 `;
                 return;
@@ -986,11 +1043,15 @@
                 const priority = problem.problemPriority || 'Medium';
                 const status = problem.problemStatus || 'Reported';
                 
+                // Special styling for legacy problems
+                const cardClass = currentDataset === 'legacy' ? 'problem-card legacy-card' : 'problem-card';
+                const pidPrefix = currentDataset === 'legacy' ? '📚 ' : '';
+                
                 return `
-                    <div class="problem-card" onclick="openProblemDetails('${problem.internalId}')">
+                    <div class="${cardClass}" onclick="openProblemDetails('${problem.internalId}')">
                         <div class="problem-header">
                             <div>
-                                <div class="problem-id">${friendlyPID}</div>
+                                <div class="problem-id">${pidPrefix}${friendlyPID}</div>
                                 <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
                             </div>
                             <div>
