@@ -186,7 +186,12 @@
             <div class="results-section">
                 <div class="results-header">
                     <div class="results-title">Problem Details</div>
-                    <div class="results-count" id="resultsCount">Loading...</div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button onclick="exportToCSV()" style="background: #059669; color: white; padding: 6px 12px; border: none; border-radius: 6px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+                            📊 Export CSV
+                        </button>
+                        <div class="results-count" id="resultsCount">Loading...</div>
+                    </div>
                 </div>
                 <div class="problems-container" id="problemsContainer">
                     <div class="loading">Loading problem data...</div>
@@ -756,6 +761,102 @@
         
         function showError(message) { document.getElementById('problemsContainer').innerHTML = `<div class="empty-state">❌ ${message}</div>`; }
         function getFriendlyPID(internalId) { if (!internalId) return 'PID Unknown'; const parts = internalId.split('-'); return parts.length === 2 ? `PID ${parts[1]}` : `PID ${internalId}`; }
+        
+        function exportToCSV() {
+            if (!filteredProblems || filteredProblems.length === 0) {
+                alert('No data to export. Please adjust your filters or check if data has loaded.');
+                return;
+            }
+            
+            // Define CSV headers
+            const headers = [
+                'Problem ID',
+                'Unit Number',
+                'Zone',
+                'Reported Date',
+                'Reported By',
+                'Reporter Email',
+                'Reporter Phone',
+                'Problem Description',
+                'Status',
+                'Priority',
+                'Category',
+                'Sub-Category',
+                'Assigned To',
+                'Completion Date',
+                'Comments',
+                'Unit Primary Name',
+                'Unit Primary Email',
+                'Unit Primary Phone',
+                'Last Updated'
+            ];
+            
+            // Convert data to CSV format
+            const csvData = filteredProblems.map(problem => {
+                return [
+                    getFriendlyPID(problem.internalId),
+                    problem.unitNumber || '',
+                    problem.zone || '',
+                    formatDate(problem.timestamp),
+                    problem.reportedBy || '',
+                    problem.reporterEmail || '',
+                    problem.reporterPhone || '',
+                    `"${(problem.problemDescription || '').replace(/"/g, '""')}"`, // Escape quotes
+                    problem.problemStatus || '',
+                    problem.problemPriority || '',
+                    problem.category || '',
+                    problem.subCategory || '',
+                    problem.assignedTo || '',
+                    problem.completionDate ? formatDate(problem.completionDate) : '',
+                    `"${(problem.comments || '').replace(/"/g, '""')}"`, // Escape quotes
+                    problem.unitPrimaryName || '',
+                    problem.unitPrimaryEmail || '',
+                    problem.unitPrimaryPhone || '',
+                    problem.lastUpdated ? formatDate(problem.lastUpdated) : ''
+                ];
+            });
+            
+            // Combine headers and data
+            const csvContent = [headers, ...csvData]
+                .map(row => row.join(','))
+                .join('\n');
+            
+            // Create filename with current date and filter info
+            const now = new Date();
+            const dateStr = now.toISOString().split('T')[0]; // YYYY-MM-DD format
+            const datasetType = currentDataset === 'legacy' ? 'Legacy' : 'Current';
+            const filterInfo = currentDateFilter ? `_${currentDateFilter}` : customDateRange ? '_CustomRange' : '';
+            const filename = `Holden_Problems_${datasetType}_${dateStr}${filterInfo}.csv`;
+            
+            // Create and trigger download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            
+            if (link.download !== undefined) {
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', filename);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                
+                // Show success message
+                const exportBtn = event.target;
+                const originalText = exportBtn.innerHTML;
+                exportBtn.innerHTML = '✅ Exported!';
+                exportBtn.style.backgroundColor = '#10b981';
+                
+                setTimeout(() => {
+                    exportBtn.innerHTML = originalText;
+                    exportBtn.style.backgroundColor = '#059669';
+                }, 2000);
+                
+                console.log(`📊 CSV exported: ${filename} with ${filteredProblems.length} records`);
+            } else {
+                alert('CSV export not supported in this browser.');
+            }
+        }
         
         async function makeRequest(action, additionalData = {}) {
             return new Promise((resolve, reject) => {
