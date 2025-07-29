@@ -805,6 +805,18 @@
                     allProblems = response.data || [];
                     console.log('Loaded', allProblems.length, 'legacy problems');
                     
+                    // DEBUG: Log first few problems to see date format
+                    console.log('🔍 DEBUG: First 3 legacy problems:');
+                    allProblems.slice(0, 3).forEach((problem, index) => {
+                        console.log(`Problem ${index + 1}:`, {
+                            internalId: problem.internalId,
+                            timestamp: problem.timestamp,
+                            timestampType: typeof problem.timestamp,
+                            unitNumber: problem.unitNumber,
+                            description: problem.problemDescription
+                        });
+                    });
+                    
                     buildFilters();
                     applyFilters();
                 } else {
@@ -1076,15 +1088,18 @@
             if (!dateString) return 0;
             
             try {
-                if (dateString.includes('/')) {
-                    // Handle dd/mm/yyyy format (legacy data)
-                    const parts = dateString.split('/');
+                if (typeof dateString === 'string' && dateString.includes('/')) {
+                    // Handle d/m/yyyy or dd/mm/yyyy format (legacy data)
+                    const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
                         const day = parseInt(parts[0]);
                         const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
                         const year = parseInt(parts[2]);
                         
-                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                        if (!isNaN(day) && !isNaN(month) && !isNaN(year) && 
+                            day >= 1 && day <= 31 && 
+                            month >= 0 && month <= 11 && 
+                            year >= 1900 && year <= 2100) {
                             return new Date(year, month, day).getTime();
                         }
                     }
@@ -1435,25 +1450,38 @@
         
         function formatDate(dateString) {
             if (!dateString) return 'No Date';
+            
+            console.log('🔍 formatDate called with:', {
+                value: dateString,
+                type: typeof dateString,
+                constructor: dateString.constructor.name
+            });
+            
             try {
                 let date;
                 
-                // Handle different date formats
-                if (dateString.includes('/')) {
-                    // Handle dd/mm/yyyy format (legacy data)
-                    const parts = dateString.split('/');
+                // If it's already a Date object, use it directly
+                if (dateString instanceof Date) {
+                    date = dateString;
+                } else if (typeof dateString === 'string' && dateString.includes('/')) {
+                    // Handle d/m/yyyy or dd/mm/yyyy format (legacy data)
+                    const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
                         const day = parseInt(parts[0]);
                         const month = parseInt(parts[1]) - 1; // JS months are 0-indexed
                         const year = parseInt(parts[2]);
                         
-                        // Validate date parts
-                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                        if (!isNaN(day) && !isNaN(month) && !isNaN(year) && 
+                            day >= 1 && day <= 31 && 
+                            month >= 0 && month <= 11 && 
+                            year >= 1900 && year <= 2100) {
                             date = new Date(year, month, day);
                         } else {
+                            console.warn(`❌ Invalid date parts from "${dateString}": day:${day}, month:${month+1}, year:${year}`);
                             return 'Invalid Date';
                         }
                     } else {
+                        console.warn(`❌ Unexpected date format: "${dateString}" (${parts.length} parts)`);
                         return 'Invalid Date';
                     }
                 } else {
@@ -1463,16 +1491,21 @@
                 
                 // Check if date is valid
                 if (isNaN(date.getTime())) {
+                    console.warn(`❌ Invalid date result for: "${dateString}"`);
                     return 'Invalid Date';
                 }
                 
-                return date.toLocaleDateString('en-AU', {
+                const formatted = date.toLocaleDateString('en-AU', {
                     day: '2-digit',
                     month: '2-digit',
                     year: 'numeric'
                 });
+                
+                console.log(`✅ formatDate: "${dateString}" -> "${formatted}"`);
+                return formatted;
+                
             } catch (error) {
-                console.warn('Date formatting error:', error, 'for date:', dateString);
+                console.error('Date formatting error:', error, 'for date:', dateString);
                 return 'Invalid Date';
             }
         }
