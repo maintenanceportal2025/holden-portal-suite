@@ -1014,21 +1014,28 @@
         
         function openProblemDetails(internalId) {
             currentProblem = allProblems.find(p => p.internalId === internalId);
-            if (!currentProblem) return;
+            if (!currentProblem) {
+                console.error('❌ Problem not found:', internalId);
+                return;
+            }
+            
+            console.log('🔍 DEBUG: Current problem data:', currentProblem);
             
             const friendlyPID = getFriendlyPID(currentProblem.internalId);
             
             // Update page title
             document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${currentProblem.unitNumber}`;
             
-            // Populate Problem Details
+            // Populate Problem Details - with debug logging
+            console.log('🔍 Setting Problem Details...');
             document.getElementById('detailProblemId').textContent = friendlyPID;
             document.getElementById('detailUnitNumber').textContent = currentProblem.unitNumber || 'Unknown';
             document.getElementById('detailReportedDate').textContent = formatDate(currentProblem.timestamp);
             document.getElementById('detailZone').textContent = currentProblem.zone || 'Unknown';
             document.getElementById('detailDescription').textContent = currentProblem.problemDescription || 'No description available';
             
-            // Populate Management Details
+            // Populate Management Details - with debug logging
+            console.log('🔍 Setting Management Details...');
             document.getElementById('detailStatus').textContent = currentProblem.problemStatus || 'Not assigned';
             document.getElementById('detailPriority').textContent = currentProblem.problemPriority || 'Not assigned';
             document.getElementById('detailCategory').textContent = currentProblem.category || 'Not assigned';
@@ -1038,11 +1045,14 @@
             document.getElementById('detailComments').textContent = currentProblem.comments || 'No comments';
             
             // Populate Contact Details with proper contact groups
+            console.log('🔍 Setting Contact Details...');
             populateContactDetails(currentProblem);
             
             // Switch to details view - COMPLETELY HIDE main view
+            console.log('🔍 Switching to details view...');
             document.getElementById('desktopContainer').style.display = 'none';
             document.getElementById('problemDetailsView').style.display = 'block';
+            document.getElementById('problemDetailsView').classList.remove('hidden');
             
             console.log('📋 Opened problem details for:', friendlyPID);
         }
@@ -1113,6 +1123,7 @@
         function showMainView() {
             // Switch back to main view - COMPLETELY HIDE details view
             document.getElementById('problemDetailsView').style.display = 'none';
+            document.getElementById('problemDetailsView').classList.add('hidden');
             document.getElementById('desktopContainer').style.display = 'grid';
             
             console.log('🔙 Returned to main problem list');
