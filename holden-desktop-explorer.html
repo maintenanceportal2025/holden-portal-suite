@@ -345,7 +345,7 @@
     </style>
 </head>
 <body>
-    <div class="desktop-container">
+    <div class="desktop-container" id="desktopContainer">
         <div class="header">
             <h1>📊 Problem Data Explorer</h1>
             <p>Desktop Analytics & Multi-Field Filtering</p>
@@ -397,6 +397,14 @@
                 </div>
                 <div class="checkbox-list" id="categoryFilters"></div>
             </div>
+
+            <div class="filter-section">
+                <div class="filter-header">
+                    <div class="filter-label">🏪 Sub-Categories</div>
+                    <div class="section-count" id="subCategoryCount">0</div>
+                </div>
+                <div class="checkbox-list" id="subCategoryFilters"></div>
+            </div>
         </div>
 
         <div class="main-content">
@@ -441,11 +449,130 @@
         </div>
     </div>
 
+    <!-- PROBLEM DETAILS PAGE -->
+    <div id="problemDetailsView" class="hidden">
+        <div class="header">
+            <h1>📋 Problem Details</h1>
+            <p>Complete Problem Information & Management</p>
+            <div class="header-actions">
+                <button id="backToList" style="background: rgba(255,255,255,0.2); color: white; padding: 8px 16px; border: none; border-radius: 8px; font-size: 0.9rem; cursor: pointer;">← Back to List</button>
+            </div>
+        </div>
+
+        <div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+            <!-- Report Buttons Section -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; padding: 15px 20px; display: flex; gap: 10px;">
+                <button id="viewProblemReport" style="background: #2563eb; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">📄 View Report</button>
+                <button id="copyProblemReport" style="background: #10b981; color: white; padding: 8px 16px; border: none; border-radius: 6px; font-size: 0.9rem; cursor: pointer;">📋 Copy Report</button>
+            </div>
+
+            <!-- Problem Details Section -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">📋 Problem Details</h3>
+                </div>
+                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Problem ID</label>
+                        <span id="detailProblemId" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Number</label>
+                        <span id="detailUnitNumber" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reported Date</label>
+                        <span id="detailReportedDate" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Zone</label>
+                        <span id="detailZone" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reported By</label>
+                        <span id="detailReportedBy" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Reporter Email</label>
+                        <span id="detailReporterEmail" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Problem Description</label>
+                        <span id="detailDescription" style="display: block; color: #6b7280; line-height: 1.6;">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Management Details Section -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">🔧 Management Details</h3>
+                </div>
+                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Status</label>
+                        <span id="detailStatus" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Priority</label>
+                        <span id="detailPriority" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Category</label>
+                        <span id="detailCategory" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Sub-Category</label>
+                        <span id="detailSubCategory" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Assigned To</label>
+                        <span id="detailAssignedTo" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Completion Date</label>
+                        <span id="detailCompletionDate" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div style="grid-column: 1 / -1;">
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Comments</label>
+                        <span id="detailComments" style="display: block; color: #6b7280; line-height: 1.6;">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Details Section -->
+            <div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+                <div style="background: #f8fafc; padding: 15px 20px; border-bottom: 1px solid #e5e7eb; border-radius: 12px 12px 0 0;">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1f2937;">👤 Contact Details</h3>
+                </div>
+                <div style="padding: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Name</label>
+                        <span id="detailUnitPrimaryName" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Email</label>
+                        <span id="detailUnitPrimaryEmail" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Unit Primary Phone</label>
+                        <span id="detailUnitPrimaryPhone" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                    <div>
+                        <label style="display: block; font-weight: 600; color: #374151; margin-bottom: 4px;">Last Updated</label>
+                        <span id="detailLastUpdated" style="display: block; color: #6b7280;">-</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
         
         let allProblems = [];
         let filteredProblems = [];
+        let currentProblem = null;
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Minimal Desktop Explorer - Starting...');
@@ -496,6 +623,10 @@
             const categories = [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             buildCheckboxSection('categoryFilters', categories, 'category');
             
+            // Build sub-categories  
+            const subCategories = [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
+            buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
+            
             updateSectionCounts();
         }
         
@@ -526,6 +657,7 @@
                 case 'status': return problem.problemStatus;
                 case 'priority': return problem.problemPriority;
                 case 'category': return problem.category;
+                case 'subCategory': return problem.subCategory;
                 default: return '';
             }
         }
@@ -535,6 +667,7 @@
             document.getElementById('statusCount').textContent = document.querySelectorAll('#statusFilters input').length;
             document.getElementById('priorityCount').textContent = document.querySelectorAll('#priorityFilters input').length;
             document.getElementById('categoryCount').textContent = document.querySelectorAll('#categoryFilters input').length;
+            document.getElementById('subCategoryCount').textContent = document.querySelectorAll('#subCategoryFilters input').length;
         }
         
         function applyFilters() {
@@ -567,6 +700,13 @@
             const allCategories = Array.from(document.querySelectorAll('#categoryFilters input')).map(cb => cb.value);
             if (checkedCategories.length < allCategories.length && checkedCategories.length > 0) {
                 filtered = filtered.filter(p => checkedCategories.includes(p.category));
+            }
+            
+            // Sub-category filter
+            const checkedSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input:checked')).map(cb => cb.value);
+            const allSubCategories = Array.from(document.querySelectorAll('#subCategoryFilters input')).map(cb => cb.value);
+            if (checkedSubCategories.length < allSubCategories.length && checkedSubCategories.length > 0) {
+                filtered = filtered.filter(p => checkedSubCategories.includes(p.subCategory));
             }
             
             // Search filter
@@ -637,7 +777,7 @@
                 const status = problem.problemStatus || 'Reported';
                 
                 return `
-                    <div class="problem-card">
+                    <div class="problem-card" onclick="openProblemDetails('${problem.internalId}')">
                         <div class="problem-header">
                             <div>
                                 <div class="problem-id">${friendlyPID}</div>
@@ -660,6 +800,47 @@
             }).join('');
             
             container.innerHTML = problemsHTML;
+        }
+        
+        function openProblemDetails(internalId) {
+            currentProblem = allProblems.find(p => p.internalId === internalId);
+            if (!currentProblem) return;
+            
+            const friendlyPID = getFriendlyPID(currentProblem.internalId);
+            
+            // Populate Problem Details
+            document.getElementById('detailProblemId').textContent = friendlyPID;
+            document.getElementById('detailUnitNumber').textContent = currentProblem.unitNumber || 'Unknown';
+            document.getElementById('detailReportedDate').textContent = formatDate(currentProblem.timestamp);
+            document.getElementById('detailZone').textContent = currentProblem.zone || 'Unknown';
+            document.getElementById('detailReportedBy').textContent = currentProblem.reportedBy || 'Unknown';
+            document.getElementById('detailReporterEmail').textContent = currentProblem.reporterEmail || 'Not available';
+            document.getElementById('detailDescription').textContent = currentProblem.problemDescription || 'No description available';
+            
+            // Populate Management Details
+            document.getElementById('detailStatus').textContent = currentProblem.problemStatus || 'Not assigned';
+            document.getElementById('detailPriority').textContent = currentProblem.problemPriority || 'Not assigned';
+            document.getElementById('detailCategory').textContent = currentProblem.category || 'Not assigned';
+            document.getElementById('detailSubCategory').textContent = currentProblem.subCategory || 'Not assigned';
+            document.getElementById('detailAssignedTo').textContent = currentProblem.assignedTo || 'Not assigned';
+            document.getElementById('detailCompletionDate').textContent = currentProblem.completionDate ? formatDate(currentProblem.completionDate) : 'Not completed';
+            document.getElementById('detailComments').textContent = currentProblem.comments || 'No comments';
+            
+            // Populate Contact Details
+            document.getElementById('detailUnitPrimaryName').textContent = currentProblem.unitPrimaryName || 'Not available';
+            document.getElementById('detailUnitPrimaryEmail').textContent = currentProblem.unitPrimaryEmail || 'Not available';
+            document.getElementById('detailUnitPrimaryPhone').textContent = currentProblem.unitPrimaryPhone || 'Not available';
+            document.getElementById('detailLastUpdated').textContent = currentProblem.lastUpdated ? formatDate(currentProblem.lastUpdated) : 'Not available';
+            
+            // Switch to details view
+            document.getElementById('desktopContainer').classList.add('hidden');
+            document.getElementById('problemDetailsView').classList.remove('hidden');
+        }
+        
+        function showMainView() {
+            document.getElementById('problemDetailsView').classList.add('hidden');
+            document.getElementById('desktopContainer').classList.remove('hidden');
+        }
         }
         
         function showError(message) {
@@ -726,10 +907,75 @@
             });
         }
         
-        // Add search input listener
+        // Add event listeners
         document.getElementById('searchInput').addEventListener('input', function() {
             setTimeout(applyFilters, 300);
         });
+        
+        document.getElementById('backToList').addEventListener('click', showMainView);
+        
+        document.getElementById('viewProblemReport').addEventListener('click', function() {
+            if (currentProblem) {
+                const report = generateProblemReport(currentProblem);
+                alert(report);
+            }
+        });
+        
+        document.getElementById('copyProblemReport').addEventListener('click', function() {
+            if (currentProblem) {
+                const report = generateProblemReport(currentProblem);
+                navigator.clipboard.writeText(report).then(() => {
+                    alert('Report copied to clipboard!');
+                });
+            }
+        });
+        
+        function generateProblemReport(problem) {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const reportedDate = formatDate(problem.timestamp);
+            const completionDate = problem.completionDate ? formatDate(problem.completionDate) : 'Not completed';
+            
+            let report = 'MAINTENANCE PORTAL - PROBLEM REPORT\n';
+            report += '='.repeat(60) + '\n';
+            report += `Generated: ${new Date().toLocaleString('en-AU')}\n`;
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit: ${problem.unitNumber || 'Unknown'}\n`;
+            report += '='.repeat(60) + '\n\n';
+            
+            // Problem Details Section
+            report += 'PROBLEM DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Problem ID: ${friendlyPID}\n`;
+            report += `Unit Number: ${problem.unitNumber || 'Unknown'}\n`;
+            report += `Zone: ${problem.zone || 'Unknown'}\n`;
+            report += `Reported Date: ${reportedDate}\n`;
+            report += `Reported By: ${problem.reportedBy || 'Unknown'}\n`;
+            report += `Description: ${problem.problemDescription || 'No description'}\n\n`;
+            
+            // Management Details Section
+            report += 'MANAGEMENT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Status: ${problem.problemStatus || 'Unknown'}\n`;
+            report += `Priority: ${problem.problemPriority || 'Unknown'}\n`;
+            report += `Category: ${problem.category || 'Not assigned'}\n`;
+            report += `Sub-Category: ${problem.subCategory || 'Not assigned'}\n`;
+            report += `Assigned To: ${problem.assignedTo || 'Not assigned'}\n`;
+            report += `Completion Date: ${completionDate}\n`;
+            report += `Comments: ${problem.comments || 'No comments'}\n\n`;
+            
+            // Contact Details Section
+            report += 'CONTACT DETAILS:\n';
+            report += '-'.repeat(30) + '\n';
+            report += `Unit Primary Name: ${problem.unitPrimaryName || 'Not available'}\n`;
+            report += `Unit Primary Email: ${problem.unitPrimaryEmail || 'Not available'}\n`;
+            report += `Unit Primary Phone: ${problem.unitPrimaryPhone || 'Not available'}\n`;
+            report += `Reporter Email: ${problem.reporterEmail || 'Not available'}\n\n`;
+            
+            report += '='.repeat(60) + '\n';
+            report += 'Generated by Lake Illawong Maintenance Portal\n';
+            
+            return report;
+        }
         
         console.log('🖥️ Minimal Desktop Explorer - Ready!');
     </script>
