@@ -608,10 +608,35 @@
             const total = filteredProblems.length;
             const active = filteredProblems.filter(p => p.problemStatus !== 'Completed' && p.problemStatus !== 'Cancelled').length;
             const urgent = filteredProblems.filter(p => p.problemPriority === 'Urgent').length;
+            
+            // Calculate average resolution time for completed problems
+            const completedProblems = filteredProblems.filter(p => 
+                p.problemStatus === 'Completed' && p.completionDate && p.timestamp
+            );
+            
+            let avgDays = 'N/A';
+            if (completedProblems.length > 0) {
+                const totalDays = completedProblems.reduce((sum, problem) => {
+                    const reportedDate = parseDate(problem.timestamp);
+                    const completedDate = parseDate(problem.completionDate);
+                    
+                    if (reportedDate && completedDate && completedDate > reportedDate) {
+                        const diffTime = completedDate - reportedDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        return sum + diffDays;
+                    }
+                    return sum;
+                }, 0);
+                
+                if (totalDays > 0) {
+                    avgDays = Math.round(totalDays / completedProblems.length);
+                }
+            }
+            
             document.getElementById('totalProblems').textContent = total;
             document.getElementById('activeProblems').textContent = active;
             document.getElementById('urgentCount').textContent = urgent;
-            document.getElementById('avgResolution').textContent = 'N/A';
+            document.getElementById('avgResolution').textContent = avgDays;
         }
         
         function updateResults() {
