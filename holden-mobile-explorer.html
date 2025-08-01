@@ -731,17 +731,22 @@
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
-            // Sort by date with proper direction
+            // Sort by date with proper direction and debugging
             filtered.sort((a, b) => {
                 const dateA = parseDate(a.timestamp);
                 const dateB = parseDate(b.timestamp);
+                
+                // Log the comparison for debugging
+                console.log(`Comparing: ${a.internalId} (${a.timestamp} -> ${new Date(dateA).toLocaleDateString()}) vs ${b.internalId} (${b.timestamp} -> ${new Date(dateB).toLocaleDateString()})`);
                 
                 // Handle invalid dates by putting them at the end
                 if (!dateA && !dateB) return 0;
                 if (!dateA) return 1;
                 if (!dateB) return -1;
                 
-                return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+                const result = sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+                console.log(`Result: ${result} (${sortDirection})`);
+                return result;
             });
             
             filteredProblems = filtered;
@@ -769,9 +774,12 @@
                 if (typeof dateString === 'string' && dateString.includes('/')) {
                     const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
+                        // Handle DD/MM/YYYY format (Australian/Legacy format)
                         const day = parseInt(parts[0]);
-                        const month = parseInt(parts[1]) - 1;
+                        const month = parseInt(parts[1]) - 1; // Month is 0-indexed
                         const year = parseInt(parts[2]);
+                        
+                        console.log(`Parsing date: ${dateString} -> Day: ${day}, Month: ${month + 1}, Year: ${year}`);
                         
                         if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
                             return new Date(year, month, day).getTime();
@@ -781,6 +789,7 @@
                 
                 return new Date(dateString).getTime();
             } catch (error) {
+                console.warn(`Error parsing date: ${dateString}`, error);
                 return 0;
             }
         }
