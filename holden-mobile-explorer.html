@@ -126,6 +126,8 @@
         
         .date-range {
             margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f1f5f9;
         }
         
         .date-range-title {
@@ -467,7 +469,7 @@
             </div>
             
             <input type="text" class="search-input" id="searchInput" 
-                   placeholder="🔍 Search PID, Unit 1, Zone 1, description...">
+                   placeholder="🔍 Search PID, Unit 1, Zone 1, description...">>
             
             <div class="quick-filters">
                 <select class="filter-select" id="statusFilter">
@@ -595,10 +597,19 @@
         }
         
         function toggleSort() {
-            sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+            // Prevent rapid clicking
             const sortBtn = document.getElementById('sortBtn');
+            if (sortBtn.disabled) return;
+            
+            sortBtn.disabled = true;
+            sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
             sortBtn.textContent = sortDirection === 'desc' ? '📅 Date ↓' : '📅 Date ↑';
-            applyFilters(); // Re-apply to resort
+            
+            // Apply filters with a small delay to ensure UI updates
+            setTimeout(() => {
+                applyFilters();
+                sortBtn.disabled = false;
+            }, 100);
         }
         
         async function switchDataset(dataset) {
