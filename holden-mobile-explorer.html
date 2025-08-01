@@ -731,22 +731,22 @@
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
-            // Sort by date with proper direction and debugging
+            // Sort by date - simplified and reliable
             filtered.sort((a, b) => {
                 const dateA = parseDate(a.timestamp);
                 const dateB = parseDate(b.timestamp);
                 
-                // Log the comparison for debugging
-                console.log(`Comparing: ${a.internalId} (${a.timestamp} -> ${new Date(dateA).toLocaleDateString()}) vs ${b.internalId} (${b.timestamp} -> ${new Date(dateB).toLocaleDateString()})`);
-                
-                // Handle invalid dates by putting them at the end
+                // Put invalid dates at end
                 if (!dateA && !dateB) return 0;
                 if (!dateA) return 1;
                 if (!dateB) return -1;
                 
-                const result = sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
-                console.log(`Result: ${result} (${sortDirection})`);
-                return result;
+                // Simple numeric comparison
+                if (sortDirection === 'desc') {
+                    return dateB - dateA; // Newest first
+                } else {
+                    return dateA - dateB; // Oldest first
+                }
             });
             
             filteredProblems = filtered;
@@ -773,10 +773,8 @@
                 
                 if (typeof dateString === 'string') {
                     // Handle ISO timestamp format (2024-12-05T13:00:00.000Z)
-                    if (dateString.includes('T') && dateString.includes('Z')) {
-                        const date = new Date(dateString);
-                        console.log(`Parsing ISO date: ${dateString} -> ${date.toLocaleDateString()}`);
-                        return date.getTime();
+                    if (dateString.includes('T') && (dateString.includes('Z') || dateString.includes('+'))) {
+                        return new Date(dateString).getTime();
                     }
                     
                     // Handle DD/MM/YYYY format
@@ -787,23 +785,16 @@
                             const month = parseInt(parts[1]) - 1; // Month is 0-indexed
                             const year = parseInt(parts[2]);
                             
-                            console.log(`Parsing DD/MM/YYYY date: ${dateString} -> Day: ${day}, Month: ${month + 1}, Year: ${year}`);
-                            
                             if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
-                                const date = new Date(year, month, day);
-                                console.log(`Created date: ${date.toLocaleDateString()}`);
-                                return date.getTime();
+                                return new Date(year, month, day).getTime();
                             }
                         }
                     }
                 }
                 
                 // Fallback to standard Date parsing
-                const fallbackDate = new Date(dateString);
-                console.log(`Fallback parsing: ${dateString} -> ${fallbackDate.toLocaleDateString()}`);
-                return fallbackDate.getTime();
+                return new Date(dateString).getTime();
             } catch (error) {
-                console.warn(`Error parsing date: ${dateString}`, error);
                 return 0;
             }
         }
