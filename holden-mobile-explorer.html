@@ -771,23 +771,37 @@
                     return dateString.getTime();
                 }
                 
-                if (typeof dateString === 'string' && dateString.includes('/')) {
-                    const parts = dateString.trim().split('/');
-                    if (parts.length === 3) {
-                        // Handle DD/MM/YYYY format (Australian/Legacy format)
-                        const day = parseInt(parts[0]);
-                        const month = parseInt(parts[1]) - 1; // Month is 0-indexed
-                        const year = parseInt(parts[2]);
-                        
-                        console.log(`Parsing date: ${dateString} -> Day: ${day}, Month: ${month + 1}, Year: ${year}`);
-                        
-                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
-                            return new Date(year, month, day).getTime();
+                if (typeof dateString === 'string') {
+                    // Handle ISO timestamp format (2024-12-05T13:00:00.000Z)
+                    if (dateString.includes('T') && dateString.includes('Z')) {
+                        const date = new Date(dateString);
+                        console.log(`Parsing ISO date: ${dateString} -> ${date.toLocaleDateString()}`);
+                        return date.getTime();
+                    }
+                    
+                    // Handle DD/MM/YYYY format
+                    if (dateString.includes('/')) {
+                        const parts = dateString.trim().split('/');
+                        if (parts.length === 3) {
+                            const day = parseInt(parts[0]);
+                            const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+                            const year = parseInt(parts[2]);
+                            
+                            console.log(`Parsing DD/MM/YYYY date: ${dateString} -> Day: ${day}, Month: ${month + 1}, Year: ${year}`);
+                            
+                            if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                                const date = new Date(year, month, day);
+                                console.log(`Created date: ${date.toLocaleDateString()}`);
+                                return date.getTime();
+                            }
                         }
                     }
                 }
                 
-                return new Date(dateString).getTime();
+                // Fallback to standard Date parsing
+                const fallbackDate = new Date(dateString);
+                console.log(`Fallback parsing: ${dateString} -> ${fallbackDate.toLocaleDateString()}`);
+                return fallbackDate.getTime();
             } catch (error) {
                 console.warn(`Error parsing date: ${dateString}`, error);
                 return 0;
