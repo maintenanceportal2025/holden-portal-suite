@@ -206,14 +206,32 @@
             color: #1e293b;
         }
         
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .sort-btn {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            min-height: 36px;
+        }
+        
         .clear-btn {
             background: #f1f5f9;
             color: #64748b;
             border: 1px solid #e2e8f0;
             padding: 6px 12px;
             border-radius: 6px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             cursor: pointer;
+            min-height: 36px;
         }
         
         /* Problems List */
@@ -444,8 +462,8 @@
                 <div class="date-inputs">
                     <input type="date" id="startDate" class="date-input">
                     <input type="date" id="endDate" class="date-input">
-                    <button id="applyDateBtn" class="apply-btn">Apply</button>
                 </div>
+                <button id="applyDateBtn" class="apply-btn">Apply Date Filter</button>
             </div>
             
             <input type="text" class="search-input" id="searchInput" 
@@ -465,7 +483,10 @@
         <div class="results-section">
             <div class="results-header">
                 <div class="results-count" id="resultsCount">Loading...</div>
-                <button class="clear-btn" id="clearBtn">Clear All</button>
+                <div class="header-actions">
+                    <button class="sort-btn" id="sortBtn">📅 Date ↓</button>
+                    <button class="clear-btn" id="clearBtn">Clear</button>
+                </div>
             </div>
             <div class="problems-list" id="problemsList">
                 <div class="loading">
@@ -547,6 +568,7 @@
         let filteredProblems = [];
         let currentProblem = null;
         let currentDataset = 'current';
+        let sortDirection = 'desc'; // 'desc' = newest first, 'asc' = oldest first
         
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
@@ -566,9 +588,17 @@
             document.getElementById('statusFilter').addEventListener('change', applyFilters);
             document.getElementById('priorityFilter').addEventListener('change', applyFilters);
             document.getElementById('clearBtn').addEventListener('click', clearAllFilters);
+            document.getElementById('sortBtn').addEventListener('click', toggleSort);
             
             // Detail view
             document.getElementById('backToList').addEventListener('click', hideDetailView);
+        }
+        
+        function toggleSort() {
+            sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+            const sortBtn = document.getElementById('sortBtn');
+            sortBtn.textContent = sortDirection === 'desc' ? '📅 Date ↓' : '📅 Date ↑';
+            applyFilters(); // Re-apply to resort
         }
         
         async function switchDataset(dataset) {
@@ -701,8 +731,18 @@
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
-            // Sort by date (newest first)
-            filtered.sort((a, b) => parseDate(b.timestamp) - parseDate(a.timestamp));
+            // Sort by date with proper direction
+            filtered.sort((a, b) => {
+                const dateA = parseDate(a.timestamp);
+                const dateB = parseDate(b.timestamp);
+                
+                // Handle invalid dates by putting them at the end
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                
+                return sortDirection === 'desc' ? dateB - dateA : dateA - dateB;
+            });
             
             filteredProblems = filtered;
             updateStats();
