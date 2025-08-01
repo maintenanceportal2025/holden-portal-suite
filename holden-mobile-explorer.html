@@ -150,6 +150,8 @@
             border-radius: 8px;
             font-size: 16px; /* Prevents zoom on iOS */
             background: white;
+            min: "2020-01-01";
+            max: "2030-12-31";
         }
         
         .apply-btn {
@@ -456,8 +458,8 @@
             <div class="date-range">
                 <div class="date-range-title">📅 Date Range</div>
                 <div class="date-inputs">
-                    <input type="date" id="startDate" class="date-input">
-                    <input type="date" id="endDate" class="date-input">
+                    <input type="date" id="startDate" class="date-input" min="2020-01-01" max="2030-12-31">
+                    <input type="date" id="endDate" class="date-input" min="2020-01-01" max="2030-12-31">
                 </div>
                 <button id="applyDateBtn" class="apply-btn">Apply Date Filter</button>
             </div>
@@ -565,12 +567,21 @@
         let currentProblem = null;
         let currentDataset = 'current';
         let sortDirection = 'asc'; // 'asc' = oldest first, 'desc' = newest first
+        let dynamicDropdownData = {
+            categories: [],
+            subCategories: [],
+            assignedTo: [],
+            priorities: [],
+            statuses: []
+        };
         
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 Mobile Problem Explorer - Starting...');
             setupEventListeners();
-            loadProblemsData();
+            loadDynamicDropdowns().then(() => {
+                loadProblemsData();
+            });
         });
         
         function setupEventListeners() {
@@ -602,6 +613,36 @@
                 sortBtn.textContent = sortDirection === 'asc' ? '🔢 PID ↑' : '🔢 PID ↓';
             } else {
                 sortBtn.textContent = sortDirection === 'asc' ? '📅 Date ↑' : '📅 Date ↓';
+            }
+        }
+        
+        async function loadDynamicDropdowns() {
+            try {
+                console.log('📋 Loading dynamic dropdown options...');
+                const response = await makeRequest('getDropdownOptions');
+                
+                if (response && response.success && response.data) {
+                    dynamicDropdownData = {
+                        categories: response.data.categories || [],
+                        subCategories: response.data.subCategories || [],
+                        assignedTo: response.data.assignedTo || [],
+                        priorities: response.data.priorities || [],
+                        statuses: response.data.statuses || []
+                    };
+                    console.log('✅ Dynamic dropdowns loaded from Categories tab');
+                } else {
+                    throw new Error('No dropdown data received');
+                }
+            } catch (error) {
+                console.warn('⚠️ Dropdown loading failed, using fallbacks:', error);
+                // Set fallback data
+                dynamicDropdownData = {
+                    categories: ['Aircon', 'Doors', 'Electrical', 'Plumbing', 'General'],
+                    subCategories: ['General', 'Repair', 'Maintenance', 'Installation'],
+                    assignedTo: ['Ben', 'Jade', 'David', 'Gardening Club', 'External'],
+                    priorities: ['Low', 'Medium', 'High', 'Urgent'],
+                    statuses: ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled']
+                };
             }
         }
         
@@ -665,16 +706,22 @@
         }
         
         function buildFilterOptions() {
-            // Build status filter options
-            const statuses = [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
+            // Build status filter options - DYNAMIC
+            const statuses = dynamicDropdownData.statuses.length > 0 
+                ? dynamicDropdownData.statuses 
+                : [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
+            
             const statusFilter = document.getElementById('statusFilter');
             statusFilter.innerHTML = '<option value="">All Status</option>';
             statuses.forEach(status => {
                 statusFilter.innerHTML += `<option value="${status}">${status}</option>`;
             });
             
-            // Build priority filter options
-            const priorities = ['Urgent', 'High', 'Medium', 'Low'];
+            // Build priority filter options - DYNAMIC
+            const priorities = dynamicDropdownData.priorities.length > 0 
+                ? dynamicDropdownData.priorities 
+                : [...new Set(allProblems.map(p => p.problemPriority).filter(Boolean))].sort();
+            
             const priorityFilter = document.getElementById('priorityFilter');
             priorityFilter.innerHTML = '<option value="">All Priority</option>';
             priorities.forEach(priority => {
@@ -799,15 +846,14 @@
                 }
                 
                 if (typeof dateString === 'string') {
-                    // Clean the string
                     const cleanString = dateString.trim();
                     
-                    // Handle DD/MM/YYYY format (Australian/Legacy format)
+                    // Handle M/D/YYYY or MM/DD/YYYY format (your legacy data format)
                     if (cleanString.includes('/')) {
                         const parts = cleanString.split('/');
                         if (parts.length === 3) {
-                            const day = parseInt(parts[0]);
-                            const month = parseInt(parts[1]) - 1; // Month is 0-indexed
+                            const month = parseInt(parts[0]) - 1; // Month is 0-indexed
+                            const day = parseInt(parts[1]);
                             const year = parseInt(parts[2]);
                             
                             if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
@@ -816,7 +862,7 @@
                         }
                     }
                     
-                    // Handle ISO timestamp format
+                    // Handle ISO timestamp format (current data)
                     if (cleanString.includes('T')) {
                         return new Date(cleanString).getTime();
                     }
@@ -840,12 +886,12 @@
                 } else if (typeof dateString === 'string') {
                     const cleanString = dateString.trim();
                     
-                    // Handle DD/MM/YYYY format
+                    // Handle M/D/YYYY or MM/DD/YYYY format (your legacy data)
                     if (cleanString.includes('/')) {
                         const parts = cleanString.split('/');
                         if (parts.length === 3) {
-                            const day = parseInt(parts[0]);
-                            const month = parseInt(parts[1]) - 1;
+                            const month = parseInt(parts[0]) - 1; // Month is 0-indexed
+                            const day = parseInt(parts[1]);
                             const year = parseInt(parts[2]);
                             
                             if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
