@@ -125,23 +125,23 @@
         }
         
         .date-range {
-            margin-bottom: 16px;
-            padding-bottom: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
             border-bottom: 1px solid #f1f5f9;
         }
         
         .date-range-title {
             font-weight: 600;
             color: #374151;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             font-size: 0.9rem;
         }
         
         .date-inputs {
             display: grid;
-            grid-template-columns: 1fr 1fr 80px;
+            grid-template-columns: 1fr 1fr;
             gap: 8px;
-            align-items: end;
+            margin-bottom: 12px;
         }
         
         .date-input {
@@ -156,12 +156,13 @@
             background: #667eea;
             color: white;
             border: none;
-            padding: 10px 8px;
+            padding: 12px 16px;
             border-radius: 8px;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             cursor: pointer;
             font-weight: 600;
             min-height: 44px;
+            width: 100%;
         }
         
         .search-input {
@@ -171,7 +172,7 @@
             border-radius: 12px;
             font-size: 16px; /* Prevents zoom on iOS */
             background: white;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }
         
         .quick-filters {
@@ -418,13 +419,6 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
-        /* Safe area handling */
-        @supports(padding: max(0px)) {
-            .mobile-container {
-                padding-bottom: env(safe-area-inset-bottom);
-            }
-        }
     </style>
 </head>
 <body>
@@ -469,7 +463,7 @@
             </div>
             
             <input type="text" class="search-input" id="searchInput" 
-                   placeholder="🔍 Search PID, Unit 1, Zone 1, description...">>
+                   placeholder="🔍 Search PID, Unit 1, Zone 1, description...">
             
             <div class="quick-filters">
                 <select class="filter-select" id="statusFilter">
@@ -597,19 +591,10 @@
         }
         
         function toggleSort() {
-            // Prevent rapid clicking
-            const sortBtn = document.getElementById('sortBtn');
-            if (sortBtn.disabled) return;
-            
-            sortBtn.disabled = true;
             sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
+            const sortBtn = document.getElementById('sortBtn');
             sortBtn.textContent = sortDirection === 'desc' ? '📅 Date ↓' : '📅 Date ↑';
-            
-            // Apply filters with a small delay to ensure UI updates
-            setTimeout(() => {
-                applyFilters();
-                sortBtn.disabled = false;
-            }, 100);
+            applyFilters();
         }
         
         async function switchDataset(dataset) {
@@ -742,22 +727,17 @@
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
-            // Sort by date - simplified and reliable
+            // Sort by date - simplified for reliability
             filtered.sort((a, b) => {
                 const dateA = parseDate(a.timestamp);
                 const dateB = parseDate(b.timestamp);
                 
-                // Put invalid dates at end
+                // Handle invalid dates
                 if (!dateA && !dateB) return 0;
                 if (!dateA) return 1;
                 if (!dateB) return -1;
                 
-                // Simple numeric comparison
-                if (sortDirection === 'desc') {
-                    return dateB - dateA; // Newest first
-                } else {
-                    return dateA - dateB; // Oldest first
-                }
+                return sortDirection === 'desc' ? (dateB - dateA) : (dateA - dateB);
             });
             
             filteredProblems = filtered;
@@ -783,14 +763,12 @@
                 }
                 
                 if (typeof dateString === 'string') {
-                    // Handle ISO timestamp format (2024-12-05T13:00:00.000Z)
-                    if (dateString.includes('T') && (dateString.includes('Z') || dateString.includes('+'))) {
-                        return new Date(dateString).getTime();
-                    }
+                    // Clean the string
+                    const cleanString = dateString.trim();
                     
-                    // Handle DD/MM/YYYY format
-                    if (dateString.includes('/')) {
-                        const parts = dateString.trim().split('/');
+                    // Handle DD/MM/YYYY format (Australian/Legacy format)
+                    if (cleanString.includes('/')) {
+                        const parts = cleanString.split('/');
                         if (parts.length === 3) {
                             const day = parseInt(parts[0]);
                             const month = parseInt(parts[1]) - 1; // Month is 0-indexed
@@ -801,9 +779,14 @@
                             }
                         }
                     }
+                    
+                    // Handle ISO timestamp format
+                    if (cleanString.includes('T')) {
+                        return new Date(cleanString).getTime();
+                    }
                 }
                 
-                // Fallback to standard Date parsing
+                // Fallback
                 return new Date(dateString).getTime();
             } catch (error) {
                 return 0;
@@ -818,24 +801,29 @@
                 
                 if (dateString instanceof Date) {
                     date = dateString;
-                } else if (typeof dateString === 'string' && dateString.includes('/')) {
-                    const parts = dateString.trim().split('/');
-                    if (parts.length === 3) {
-                        const day = parseInt(parts[0]);
-                        const month = parseInt(parts[1]) - 1;
-                        const year = parseInt(parts[2]);
-                        
-                        if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
-                            date = new Date(year, month, day);
-                        } else {
-                            return 'Invalid Date';
+                } else if (typeof dateString === 'string') {
+                    const cleanString = dateString.trim();
+                    
+                    // Handle DD/MM/YYYY format
+                    if (cleanString.includes('/')) {
+                        const parts = cleanString.split('/');
+                        if (parts.length === 3) {
+                            const day = parseInt(parts[0]);
+                            const month = parseInt(parts[1]) - 1;
+                            const year = parseInt(parts[2]);
+                            
+                            if (day >= 1 && day <= 31 && month >= 0 && month <= 11 && year >= 1900) {
+                                date = new Date(year, month, day);
+                            }
                         }
+                    } else {
+                        date = new Date(cleanString);
                     }
                 } else {
                     date = new Date(dateString);
                 }
                 
-                if (isNaN(date.getTime())) {
+                if (!date || isNaN(date.getTime())) {
                     return 'Invalid Date';
                 }
                 
@@ -881,6 +869,12 @@
             container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
         }
         
+        function createProblemCard(problem) {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            const reportedDate = formatDate(problem.timestamp);
+            const priority = problem.problemPriority || 'Medium';
+            const status = problem.problemStatus || 'Reported';
+            const cardClass = currentDataset === 'legacy' ? 'problem-card legacy-card' : 'problem-card';
         function createProblemCard(problem) {
             const friendlyPID = getFriendlyPID(problem.internalId);
             const reportedDate = formatDate(problem.timestamp);
