@@ -864,12 +864,15 @@
                 </div>
                 <div class="detail-section">
                     <div class="detail-label">Management Information</div>
+                    
                     <div class="detail-value">
-                        <strong>Status:</strong> ${problem.problemStatus || 'Reported'}<br>
-                        <strong>Priority:</strong> ${problem.problemPriority || 'Medium'}<br>
-                        <strong>Category:</strong> ${problem.category || 'Not categorized'}<br>
-                        <strong>Assigned To:</strong> ${problem.assignedTo || 'Unassigned'}
-                    </div>
+    <strong>Status:</strong> ${problem.problemStatus || 'Reported'}<br>
+    <strong>Priority:</strong> ${problem.problemPriority || 'Medium'}<br>
+    <strong>Category:</strong> ${problem.category || 'Not categorized'}<br>
+    <strong>Sub-Category:</strong> ${problem.subCategory || 'Not specified'}<br>
+    <strong>Assigned To:</strong> ${problem.assignedTo || 'Unassigned'}
+</div>
+                    
                 </div>
                 ${problem.comments ? `
                 <div class="detail-section">
