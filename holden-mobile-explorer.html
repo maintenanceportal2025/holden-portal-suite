@@ -191,22 +191,30 @@
         }
         
         .results-header {
-            padding: 16px;
+            padding: 12px 16px;
             border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .results-top-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
+        .results-actions {
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        
         .results-count {
             font-weight: 600;
             color: #1e293b;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
+            font-size: 0.9rem;
         }
         
         .sort-btn {
@@ -570,16 +578,16 @@
             
             <div class="quick-filters">
                 <select class="filter-select" id="categoryFilter">
-                    <option value="">All Categories</option>
+                    <option value="">Categories</option>
                 </select>
                 <select class="filter-select" id="priorityFilter">
-                    <option value="">All Priority</option>
+                    <option value="">Priorities</option>
                 </select>
             </div>
             
             <div class="filter-row-2">
                 <select class="filter-select" id="subCategoryFilter">
-                    <option value="">All Sub-Categories</option>
+                    <option value="">Sub-Categories</option>
                 </select>
             </div>
         </div>
@@ -587,16 +595,18 @@
         <!-- Results Section -->
         <div class="results-section">
             <div class="results-header">
-                <div class="results-count" id="resultsCount">Loading...</div>
-                <div class="header-actions">
-                    <select class="filter-select" id="itemsPerPageSelect" style="min-height: 36px; padding: 4px 8px; font-size: 0.8rem;">
+                <div class="results-top-row">
+                    <div class="results-count" id="resultsCount">Loading...</div>
+                    <button class="clear-btn" id="clearBtn">Clear</button>
+                </div>
+                <div class="results-actions">
+                    <select class="filter-select" id="itemsPerPageSelect" style="min-height: 36px; padding: 4px 8px; font-size: 0.8rem; flex: 1;">
                         <option value="10">10 per page</option>
                         <option value="25" selected>25 per page</option>
                         <option value="50">50 per page</option>
                         <option value="all">Show All</option>
                     </select>
                     <button class="sort-btn" id="sortBtn">📅 Date ↑</button>
-                    <button class="clear-btn" id="clearBtn">Clear</button>
                 </div>
             </div>
             
@@ -857,7 +867,7 @@
                 : [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
             
             const categoryFilter = document.getElementById('categoryFilter');
-            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            categoryFilter.innerHTML = '<option value="">Categories</option>';
             categories.forEach(category => {
                 categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
             });
@@ -868,7 +878,7 @@
                 : [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
             
             const subCategoryFilter = document.getElementById('subCategoryFilter');
-            subCategoryFilter.innerHTML = '<option value="">All Sub-Categories</option>';
+            subCategoryFilter.innerHTML = '<option value="">Sub-Categories</option>';
             subCategories.forEach(subCategory => {
                 subCategoryFilter.innerHTML += `<option value="${subCategory}">${subCategory}</option>`;
             });
@@ -879,7 +889,7 @@
                 : [...new Set(allProblems.map(p => p.problemPriority).filter(Boolean))].sort();
             
             const priorityFilter = document.getElementById('priorityFilter');
-            priorityFilter.innerHTML = '<option value="">All Priority</option>';
+            priorityFilter.innerHTML = '<option value="">Priorities</option>';
             priorities.forEach(priority => {
                 priorityFilter.innerHTML += `<option value="${priority}">${priority}</option>`;
             });
