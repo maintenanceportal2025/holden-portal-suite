@@ -154,6 +154,11 @@
                 <div class="filter-header"><div class="filter-label">👷 Assigned To</div></div>
                 <div class="checkbox-list" id="assignedToFilters"></div>
             </div>
+            
+            <!-- Clear All Filters Button -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+                <button onclick="clearAllFilters()" style="width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">🗑️ Clear All Filters</button>
+            </div>
         </div>
         <div class="main-content">
             <div class="results-header">
@@ -206,6 +211,8 @@
         let customDateRange = null;
         let sortDirection = 'desc'; // NEW: Track sort direction
         let dynamicDropdowns = {}; // NEW: Store dynamic dropdown data
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 20; // NEW: Pagination support
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Problem Data Explorer - Starting...');
@@ -252,6 +259,9 @@
             document.getElementById('legacyBtn').classList.toggle('active', dataset === 'legacy');
             document.querySelector('.access-badge').textContent = dataset === 'current' ? 'Live Data' : 'Legacy Data';
             
+            // Reset pagination when switching datasets
+            currentPage = 1;
+            
             if (dataset === 'current') { 
                 await loadProblemsData(); 
             } else { 
@@ -266,6 +276,13 @@
                 if (response && response.success) {
                     allProblems = response.data || [];
                     console.log('Loaded', allProblems.length, 'legacy problems');
+                    
+                    // Clear date filters when switching to legacy data
+                    currentDateFilter = null;
+                    customDateRange = null;
+                    clearCustomDateInputs();
+                    updateDateRangeDisplay('all');
+                    
                     buildFilters(); 
                     applyFilters();
                 } else { 
@@ -403,7 +420,37 @@
             });
             
             filteredProblems = filtered;
+            currentPage = 1; // Reset to first page when filters change
             updateResults();
+        }
+        
+        // NEW: Clear all filters function
+        function clearAllFilters() {
+            // Clear date filters
+            currentDateFilter = null;
+            customDateRange = null;
+            clearCustomDateInputs();
+            updateDateRangeDisplay('all');
+            
+            // Clear search
+            document.getElementById('searchInput').value = '';
+            
+            // Check all checkboxes
+            document.querySelectorAll('.checkbox-list input[type="checkbox"]').forEach(cb => {
+                cb.checked = true;
+            });
+            
+            // Reset button styles
+            document.querySelectorAll('.filter-section button').forEach(btn => {
+                btn.style.background = '#f1f5f9';
+                btn.style.borderColor = '#e2e8f0';
+            });
+            
+            // Reset pagination
+            currentPage = 1;
+            
+            // Apply filters
+            applyFilters();
         }
         
         function applyCustomDateFilter(problems) {
@@ -640,7 +687,20 @@
             const resultsInfo = document.getElementById('resultsInfo');
             const problemsGrid = document.getElementById('problemsGrid');
             
-            resultsInfo.textContent = `${filteredProblems.length} problems found`;
+            // Calculate pagination
+            const totalItems = filteredProblems.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+            const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
+            
+            // Update results info with pagination
+            resultsInfo.innerHTML = `
+                <div>
+                    ${totalItems} problems found
+                    ${totalPages > 1 ? `<span style="color: #64748b; font-weight: normal;"> (Page ${currentPage} of ${totalPages})</span>` : ''}
+                </div>
+            `;
             
             if (filteredProblems.length === 0) {
                 problemsGrid.innerHTML = '<div class="loading">No problems found matching current filters</div>';
@@ -649,10 +709,57 @@
             
             problemsGrid.innerHTML = '';
             
-            filteredProblems.forEach(problem => {
+            // Add pagination controls if needed
+            if (totalPages > 1) {
+                const paginationContainer = document.createElement('div');
+                paginationContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
+                
+                // Previous button
+                const prevBtn = document.createElement('button');
+                prevBtn.textContent = '← Previous';
+                prevBtn.disabled = currentPage === 1;
+                prevBtn.style.cssText = `padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background: ${currentPage === 1 ? '#f8fafc' : '#3b82f6'}; color: ${currentPage === 1 ? '#9ca3af' : 'white'}; cursor: ${currentPage === 1 ? 'not-allowed' : 'pointer'};`;
+                prevBtn.onclick = () => {
+                    if (currentPage > 1) {
+                        currentPage--;
+                        updateResults();
+                    }
+                };
+                
+                // Page info
+                const pageInfo = document.createElement('span');
+                pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+                pageInfo.style.cssText = 'font-weight: 600; color: #374151;';
+                
+                // Next button
+                const nextBtn = document.createElement('button');
+                nextBtn.textContent = 'Next →';
+                nextBtn.disabled = currentPage === totalPages;
+                nextBtn.style.cssText = `padding: 8px 16px; border: 1px solid #e2e8f0; border-radius: 6px; background: ${currentPage === totalPages ? '#f8fafc' : '#3b82f6'}; color: ${currentPage === totalPages ? '#9ca3af' : 'white'}; cursor: ${currentPage === totalPages ? 'not-allowed' : 'pointer'};`;
+                nextBtn.onclick = () => {
+                    if (currentPage < totalPages) {
+                        currentPage++;
+                        updateResults();
+                    }
+                };
+                
+                paginationContainer.appendChild(prevBtn);
+                paginationContainer.appendChild(pageInfo);
+                paginationContainer.appendChild(nextBtn);
+                problemsGrid.appendChild(paginationContainer);
+            }
+            
+            // Add problem cards
+            paginatedProblems.forEach(problem => {
                 const card = createProblemCard(problem);
                 problemsGrid.appendChild(card);
             });
+            
+            // Add pagination controls at bottom too if more than one page
+            if (totalPages > 1) {
+                const bottomPagination = problemsGrid.firstChild.cloneNode(true);
+                problemsGrid.appendChild(bottomPagination);
+            }
         }
         
         function createProblemCard(problem) {
