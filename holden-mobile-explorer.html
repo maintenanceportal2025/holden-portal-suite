@@ -163,6 +163,13 @@
         
         .quick-filters {
             display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-row-2 {
+            display: grid;
             grid-template-columns: 1fr;
             gap: 8px;
         }
@@ -387,6 +394,81 @@
             text-decoration: none;
         }
         
+        /* Pagination Controls */
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .pagination-btn {
+            background: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #e2e8f0;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            min-height: 44px;
+        }
+        
+        .pagination-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination-info {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+        
+        /* Progress Bar */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-bottom: 16px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            border-radius: 2px;
+            transition: width 0.3s ease;
+            animation: loading-pulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes loading-pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        /* Pull to Refresh */
+        .pull-refresh {
+            position: absolute;
+            top: -60px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        
+        .pull-refresh.show {
+            top: 0;
+        }
+        
         .back-btn {
             background: rgba(255,255,255,0.2);
             border: none;
@@ -473,8 +555,17 @@
                    placeholder="🔍 Search PID, Unit, description...">
             
             <div class="quick-filters">
+                <select class="filter-select" id="categoryFilter">
+                    <option value="">All Categories</option>
+                </select>
                 <select class="filter-select" id="priorityFilter">
                     <option value="">All Priority</option>
+                </select>
+            </div>
+            
+            <div class="filter-row-2">
+                <select class="filter-select" id="subCategoryFilter">
+                    <option value="">All Sub-Categories</option>
                 </select>
             </div>
         </div>
@@ -484,13 +575,29 @@
             <div class="results-header">
                 <div class="results-count" id="resultsCount">Loading...</div>
                 <div class="header-actions">
+                    <select class="filter-select" id="itemsPerPageSelect" style="min-height: 36px; padding: 4px 8px; font-size: 0.8rem;">
+                        <option value="10">10 per page</option>
+                        <option value="25" selected>25 per page</option>
+                        <option value="50">50 per page</option>
+                        <option value="all">Show All</option>
+                    </select>
                     <button class="sort-btn" id="sortBtn">📅 Date ↑</button>
                     <button class="clear-btn" id="clearBtn">Clear</button>
                 </div>
             </div>
+            
+            <!-- Pagination Controls -->
+            <div id="paginationControls" class="pagination-controls hidden">
+                <button class="pagination-btn" id="prevBtn">‹ Previous</button>
+                <span class="pagination-info" id="paginationInfo">Page 1 of 1</span>
+                <button class="pagination-btn" id="nextBtn">Next ›</button>
+            </div>
             <div class="problems-list" id="problemsList">
+                <div class="pull-refresh" id="pullRefresh">↓ Pull to refresh</div>
                 <div class="loading">
-                    <div class="loading-spinner"></div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+                    </div>
                     <div>Loading problems...</div>
                 </div>
             </div>
@@ -577,6 +684,8 @@
         let currentProblem = null;
         let currentDataset = 'current';
         let sortDirection = 'asc'; // 'asc' = oldest first, 'desc' = newest first
+        let currentPage = 1;
+        let itemsPerPage = 25;
         let dynamicDropdownData = {
             categories: [],
             subCategories: [],
@@ -602,9 +711,19 @@
             // Filters
             document.getElementById('applyDateBtn').addEventListener('click', applyFilters);
             document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
+            document.getElementById('categoryFilter').addEventListener('change', applyFilters);
+            document.getElementById('subCategoryFilter').addEventListener('change', applyFilters);
             document.getElementById('priorityFilter').addEventListener('change', applyFilters);
             document.getElementById('clearBtn').addEventListener('click', clearAllFilters);
             document.getElementById('sortBtn').addEventListener('click', toggleSort);
+            
+            // Pagination
+            document.getElementById('itemsPerPageSelect').addEventListener('change', changeItemsPerPage);
+            document.getElementById('prevBtn').addEventListener('click', () => changePage(currentPage - 1));
+            document.getElementById('nextBtn').addEventListener('click', () => changePage(currentPage + 1));
+            
+            // Pull to refresh
+            setupPullToRefresh();
             
             // Detail view
             document.getElementById('backToList').addEventListener('click', hideDetailView);
@@ -676,6 +795,7 @@
                 if (response && response.success && response.data) {
                     allProblems = response.data;
                     console.log(`✅ Loaded ${allProblems.length} current problems`);
+                    hideLoading();
                     buildFilterOptions();
                     applyFilters();
                 } else {
@@ -696,6 +816,7 @@
                 if (response && response.success && response.data) {
                     allProblems = response.data;
                     console.log(`✅ Loaded ${allProblems.length} legacy problems`);
+                    hideLoading();
                     buildFilterOptions();
                     applyFilters();
                 } else {
@@ -708,6 +829,28 @@
         }
         
         function buildFilterOptions() {
+            // Build category filter options - DYNAMIC
+            const categories = dynamicDropdownData.categories.length > 0 
+                ? dynamicDropdownData.categories 
+                : [...new Set(allProblems.map(p => p.category).filter(Boolean))].sort();
+            
+            const categoryFilter = document.getElementById('categoryFilter');
+            categoryFilter.innerHTML = '<option value="">All Categories</option>';
+            categories.forEach(category => {
+                categoryFilter.innerHTML += `<option value="${category}">${category}</option>`;
+            });
+            
+            // Build sub-category filter options - DYNAMIC
+            const subCategories = dynamicDropdownData.subCategories.length > 0 
+                ? dynamicDropdownData.subCategories 
+                : [...new Set(allProblems.map(p => p.subCategory).filter(Boolean))].sort();
+            
+            const subCategoryFilter = document.getElementById('subCategoryFilter');
+            subCategoryFilter.innerHTML = '<option value="">All Sub-Categories</option>';
+            subCategories.forEach(subCategory => {
+                subCategoryFilter.innerHTML += `<option value="${subCategory}">${subCategory}</option>`;
+            });
+            
             // Build priority filter options - DYNAMIC
             const priorities = dynamicDropdownData.priorities.length > 0 
                 ? dynamicDropdownData.priorities 
@@ -770,6 +913,18 @@
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
+            // Apply category filter
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            if (categoryFilter) {
+                filtered = filtered.filter(problem => problem.category === categoryFilter);
+            }
+            
+            // Apply sub-category filter
+            const subCategoryFilter = document.getElementById('subCategoryFilter').value;
+            if (subCategoryFilter) {
+                filtered = filtered.filter(problem => problem.subCategory === subCategoryFilter);
+            }
+            
             // Sort by date - fixed DD/MM/YYYY parsing for legacy data
             filtered.sort((a, b) => {
                 const dateA = parseDate(a.timestamp);
@@ -784,6 +939,7 @@
             });
             
             filteredProblems = filtered;
+            currentPage = 1; // Reset to first page when filters change
             updateStats();
             updateResults();
         }
@@ -792,6 +948,8 @@
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
             document.getElementById('searchInput').value = '';
+            document.getElementById('categoryFilter').value = '';
+            document.getElementById('subCategoryFilter').value = '';
             document.getElementById('priorityFilter').value = '';
             applyFilters();
         }
@@ -895,9 +1053,31 @@
             const container = document.getElementById('problemsList');
             const label = currentDataset === 'current' ? 'problems' : 'legacy problems';
             
-            document.getElementById('resultsCount').textContent = `${filteredProblems.length} ${label}`;
+            // Calculate pagination
+            const totalItems = filteredProblems.length;
+            let paginatedProblems = filteredProblems;
+            let totalPages = 1;
             
-            if (filteredProblems.length === 0) {
+            if (itemsPerPage !== 'all') {
+                totalPages = Math.ceil(totalItems / parseInt(itemsPerPage));
+                const startIndex = (currentPage - 1) * parseInt(itemsPerPage);
+                const endIndex = startIndex + parseInt(itemsPerPage);
+                paginatedProblems = filteredProblems.slice(startIndex, endIndex);
+            }
+            
+            // Update results count
+            if (itemsPerPage === 'all') {
+                document.getElementById('resultsCount').textContent = `${totalItems} ${label}`;
+            } else {
+                const start = totalItems === 0 ? 0 : (currentPage - 1) * parseInt(itemsPerPage) + 1;
+                const end = Math.min(currentPage * parseInt(itemsPerPage), totalItems);
+                document.getElementById('resultsCount').textContent = `${start}-${end} of ${totalItems} ${label}`;
+            }
+            
+            // Update pagination controls
+            updatePaginationControls(totalPages, totalItems);
+            
+            if (paginatedProblems.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div style="font-size: 3rem; margin-bottom: 16px;">📭</div>
@@ -908,7 +1088,108 @@
                 return;
             }
             
-            container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
+            container.innerHTML = paginatedProblems.map(problem => createProblemCard(problem)).join('');
+        }
+        
+        function updatePaginationControls(totalPages, totalItems) {
+            const paginationControls = document.getElementById('paginationControls');
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const paginationInfo = document.getElementById('paginationInfo');
+            
+            if (itemsPerPage === 'all' || totalPages <= 1) {
+                paginationControls.classList.add('hidden');
+                return;
+            }
+            
+            paginationControls.classList.remove('hidden');
+            
+            // Update buttons
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+            
+            // Update info
+            paginationInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+        
+        function changeItemsPerPage() {
+            const select = document.getElementById('itemsPerPageSelect');
+            itemsPerPage = select.value;
+            currentPage = 1;
+            updateResults();
+        }
+        
+        function changePage(newPage) {
+            const totalPages = Math.ceil(filteredProblems.length / parseInt(itemsPerPage));
+            if (newPage >= 1 && newPage <= totalPages) {
+                currentPage = newPage;
+                updateResults();
+                
+                // Scroll to top of results
+                document.getElementById('problemsList').scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        
+        function setupPullToRefresh() {
+            const problemsList = document.getElementById('problemsList');
+            const pullRefresh = document.getElementById('pullRefresh');
+            let pullStartY = 0;
+            let isPulling = false;
+            
+            problemsList.addEventListener('touchstart', function(e) {
+                if (problemsList.scrollTop === 0) {
+                    pullStartY = e.touches[0].clientY;
+                }
+            });
+            
+            problemsList.addEventListener('touchmove', function(e) {
+                if (pullStartY > 0) {
+                    const pullDistance = e.touches[0].clientY - pullStartY;
+                    
+                    if (pullDistance > 0 && pullDistance < 100) {
+                        isPulling = true;
+                        pullRefresh.style.top = `${pullDistance - 60}px`;
+                        
+                        if (pullDistance > 50) {
+                            pullRefresh.textContent = '↑ Release to refresh';
+                            pullRefresh.classList.add('show');
+                        } else {
+                            pullRefresh.textContent = '↓ Pull to refresh';
+                            pullRefresh.classList.remove('show');
+                        }
+                    }
+                }
+            });
+            
+            problemsList.addEventListener('touchend', function(e) {
+                if (isPulling && pullRefresh.classList.contains('show')) {
+                    refreshData();
+                }
+                pullStartY = 0;
+                isPulling = false;
+                pullRefresh.style.top = '-60px';
+                pullRefresh.classList.remove('show');
+            });
+        }
+        
+        async function refreshData() {
+            console.log('🔄 Refreshing data...');
+            const pullRefresh = document.getElementById('pullRefresh');
+            pullRefresh.innerHTML = '<div style="font-size: 0.8rem;">🔄 Refreshing...</div>';
+            
+            try {
+                if (currentDataset === 'current') {
+                    await loadProblemsData();
+                } else {
+                    await loadLegacyData();
+                }
+            } catch (error) {
+                console.error('Refresh failed:', error);
+            }
+            
+            setTimeout(() => {
+                pullRefresh.innerHTML = '↓ Pull to refresh';
+            }, 1000);
         }
         
         function openProblemDetails(internalId) {
