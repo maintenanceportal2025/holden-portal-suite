@@ -416,17 +416,24 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(248, 250, 252, 0.95);
-            z-index: 1000;
+            background: rgba(248, 250, 252, 0.98);
+            z-index: 9999;
             display: flex;
             align-items: center;
             justify-content: center;
+        }
+        
+        .loading-overlay.hidden {
+            display: none;
         }
         
         .loading-content {
             text-align: center;
             padding: 40px;
             max-width: 400px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
         }
         
         .loading-spinner-large {
