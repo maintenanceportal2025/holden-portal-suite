@@ -49,20 +49,6 @@
             font-weight: 700;
         }
         
-        .back-btn {
-            background: rgba(255,255,255,0.2);
-            border: none;
-            color: white;
-            width: 44px;
-            height: 44px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            cursor: pointer;
-        }
-        
         .dataset-toggle {
             background: rgba(255,255,255,0.2);
             border-radius: 8px;
@@ -150,8 +136,6 @@
             border-radius: 8px;
             font-size: 16px; /* Prevents zoom on iOS */
             background: white;
-            min: "2020-01-01";
-            max: "2030-12-31";
         }
         
         .apply-btn {
@@ -179,7 +163,7 @@
         
         .quick-filters {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1fr;
             gap: 8px;
         }
         
@@ -245,6 +229,7 @@
             padding-bottom: calc(16px + env(safe-area-inset-bottom));
         }
         
+        /* Card Layout - Based on your screenshot */
         .problem-card {
             background: white;
             border: 1px solid #e2e8f0;
@@ -264,136 +249,66 @@
             background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
         }
         
+        /* Header: PID and Unit/Zone */
         .problem-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         
         .problem-id {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #667eea;
-            font-size: 1.1rem;
+            margin-bottom: 4px;
         }
         
         .problem-unit {
-            color: #64748b;
             font-size: 0.9rem;
-            text-align: right;
+            color: #64748b;
         }
         
+        /* Badges: Priority and Status side by side */
         .problem-badges {
             display: flex;
-            gap: 6px;
-            margin-bottom: 8px;
-            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 12px;
         }
         
         .badge {
-            padding: 4px 8px;
+            padding: 4px 12px;
             border-radius: 12px;
             font-size: 0.75rem;
             font-weight: 600;
+            white-space: nowrap;
         }
         
+        /* Priority Badge Colors */
         .priority-urgent { background: #fecaca; color: #991b1b; }
         .priority-high { background: #fed7aa; color: #9a3412; }
         .priority-medium { background: #fde68a; color: #92400e; }
         .priority-low { background: #d1fae5; color: #065f46; }
         
+        /* Status Badge Colors */
         .status-reported { background: #dbeafe; color: #1e40af; }
         .status-in-progress { background: #fed7aa; color: #9a3412; }
         .status-on-hold { background: #fef3c7; color: #92400e; }
         .status-completed { background: #d1fae5; color: #065f46; }
         .status-cancelled { background: #f3f4f6; color: #6b7280; }
         
+        /* Description */
         .problem-description {
             color: #374151;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
             line-height: 1.4;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
         }
         
+        /* Footer: Date and Category */
         .problem-footer {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             color: #64748b;
-        }
-        
-        /* Detail View */
-        .detail-view {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #f8fafc;
-            z-index: 100;
-            transform: translateX(100%);
-            transition: transform 0.3s ease;
-            overflow-y: auto;
-        }
-        
-        .detail-view.show {
-            transform: translateX(0);
-        }
-        
-        .detail-content {
-            padding-bottom: calc(20px + env(safe-area-inset-bottom));
-        }
-        
-        .detail-section {
-            background: white;
-            margin: 16px;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-        
-        .section-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 16px;
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .detail-grid {
-            padding: 16px;
-            display: grid;
-            gap: 16px;
-        }
-        
-        .detail-field {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: #374151;
-            font-size: 0.9rem;
-        }
-        
-        .detail-value {
-            padding: 12px;
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            color: #1f2937;
-            font-size: 0.95rem;
-            word-wrap: break-word;
-        }
-        
-        .contact-link {
-            color: #2563eb;
-            text-decoration: none;
         }
         
         /* Loading States */
@@ -465,12 +380,9 @@
             </div>
             
             <input type="text" class="search-input" id="searchInput" 
-                   placeholder="🔍 Search PID, Unit 1, Zone 1, description...">
+                   placeholder="🔍 Search PID, Unit, description...">
             
             <div class="quick-filters">
-                <select class="filter-select" id="statusFilter">
-                    <option value="">All Status</option>
-                </select>
                 <select class="filter-select" id="priorityFilter">
                     <option value="">All Priority</option>
                 </select>
@@ -495,68 +407,6 @@
         </div>
     </div>
     
-    <!-- Detail View -->
-    <div class="detail-view" id="detailView">
-        <div class="header">
-            <div class="header-content">
-                <button class="back-btn" id="backToList">←</button>
-                <h1 id="detailTitle">Problem Details</h1>
-                <div></div>
-            </div>
-        </div>
-        
-        <div class="detail-content">
-            <div class="detail-section">
-                <div class="section-header">📋 Problem Details</div>
-                <div class="detail-grid">
-                    <div class="detail-field">
-                        <div class="detail-label">Problem ID</div>
-                        <div class="detail-value" id="detailProblemId">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Unit Number</div>
-                        <div class="detail-value" id="detailUnitNumber">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Zone</div>
-                        <div class="detail-value" id="detailZone">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Reported Date</div>
-                        <div class="detail-value" id="detailReportedDate">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Status</div>
-                        <div class="detail-value" id="detailStatus">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Priority</div>
-                        <div class="detail-value" id="detailPriority">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Description</div>
-                        <div class="detail-value" id="detailDescription">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Assigned To</div>
-                        <div class="detail-value" id="detailAssignedTo">-</div>
-                    </div>
-                    <div class="detail-field">
-                        <div class="detail-label">Comments</div>
-                        <div class="detail-value" id="detailComments">-</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="detail-section">
-                <div class="section-header">👥 Contact Info</div>
-                <div class="detail-grid" id="contactDetails">
-                    <!-- Populated dynamically -->
-                </div>
-            </div>
-        </div>
-    </div>
-    
     <script>
         // Configuration
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
@@ -564,24 +414,14 @@
         // Global State
         let allProblems = [];
         let filteredProblems = [];
-        let currentProblem = null;
         let currentDataset = 'current';
         let sortDirection = 'asc'; // 'asc' = oldest first, 'desc' = newest first
-        let dynamicDropdownData = {
-            categories: [],
-            subCategories: [],
-            assignedTo: [],
-            priorities: [],
-            statuses: []
-        };
         
         // Initialize app
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📱 Mobile Problem Explorer - Starting...');
             setupEventListeners();
-            loadDynamicDropdowns().then(() => {
-                loadProblemsData();
-            });
+            loadProblemsData();
         });
         
         function setupEventListeners() {
@@ -592,13 +432,9 @@
             // Filters
             document.getElementById('applyDateBtn').addEventListener('click', applyFilters);
             document.getElementById('searchInput').addEventListener('input', debounce(applyFilters, 300));
-            document.getElementById('statusFilter').addEventListener('change', applyFilters);
             document.getElementById('priorityFilter').addEventListener('change', applyFilters);
             document.getElementById('clearBtn').addEventListener('click', clearAllFilters);
             document.getElementById('sortBtn').addEventListener('click', toggleSort);
-            
-            // Detail view
-            document.getElementById('backToList').addEventListener('click', hideDetailView);
         }
         
         function toggleSort() {
@@ -609,41 +445,7 @@
         
         function updateSortButton() {
             const sortBtn = document.getElementById('sortBtn');
-            if (currentDataset === 'legacy') {
-                sortBtn.textContent = sortDirection === 'asc' ? '🔢 PID ↑' : '🔢 PID ↓';
-            } else {
-                sortBtn.textContent = sortDirection === 'asc' ? '📅 Date ↑' : '📅 Date ↓';
-            }
-        }
-        
-        async function loadDynamicDropdowns() {
-            try {
-                console.log('📋 Loading dynamic dropdown options...');
-                const response = await makeRequest('getDropdownOptions');
-                
-                if (response && response.success && response.data) {
-                    dynamicDropdownData = {
-                        categories: response.data.categories || [],
-                        subCategories: response.data.subCategories || [],
-                        assignedTo: response.data.assignedTo || [],
-                        priorities: response.data.priorities || [],
-                        statuses: response.data.statuses || []
-                    };
-                    console.log('✅ Dynamic dropdowns loaded from Categories tab');
-                } else {
-                    throw new Error('No dropdown data received');
-                }
-            } catch (error) {
-                console.warn('⚠️ Dropdown loading failed, using fallbacks:', error);
-                // Set fallback data
-                dynamicDropdownData = {
-                    categories: ['Aircon', 'Doors', 'Electrical', 'Plumbing', 'General'],
-                    subCategories: ['General', 'Repair', 'Maintenance', 'Installation'],
-                    assignedTo: ['Ben', 'Jade', 'David', 'Gardening Club', 'External'],
-                    priorities: ['Low', 'Medium', 'High', 'Urgent'],
-                    statuses: ['Reported', 'In Progress', 'On Hold', 'Completed', 'Cancelled']
-                };
-            }
+            sortBtn.textContent = sortDirection === 'asc' ? '📅 Date ↑' : '📅 Date ↓';
         }
         
         async function switchDataset(dataset) {
@@ -653,9 +455,6 @@
             // Update UI
             document.getElementById('currentBtn').classList.toggle('active', dataset === 'current');
             document.getElementById('legacyBtn').classList.toggle('active', dataset === 'legacy');
-            
-            // Update sort button text based on dataset
-            updateSortButton();
             
             // Load data
             if (dataset === 'current') {
@@ -706,22 +505,8 @@
         }
         
         function buildFilterOptions() {
-            // Build status filter options - DYNAMIC
-            const statuses = dynamicDropdownData.statuses.length > 0 
-                ? dynamicDropdownData.statuses 
-                : [...new Set(allProblems.map(p => p.problemStatus).filter(Boolean))].sort();
-            
-            const statusFilter = document.getElementById('statusFilter');
-            statusFilter.innerHTML = '<option value="">All Status</option>';
-            statuses.forEach(status => {
-                statusFilter.innerHTML += `<option value="${status}">${status}</option>`;
-            });
-            
-            // Build priority filter options - DYNAMIC
-            const priorities = dynamicDropdownData.priorities.length > 0 
-                ? dynamicDropdownData.priorities 
-                : [...new Set(allProblems.map(p => p.problemPriority).filter(Boolean))].sort();
-            
+            // Build priority filter options (only show priority for filtering)
+            const priorities = [...new Set(allProblems.map(p => p.problemPriority).filter(Boolean))].sort();
             const priorityFilter = document.getElementById('priorityFilter');
             priorityFilter.innerHTML = '<option value="">All Priority</option>';
             priorities.forEach(priority => {
@@ -773,66 +558,34 @@
                 });
             }
             
-            // Apply status filter
-            const statusFilter = document.getElementById('statusFilter').value;
-            if (statusFilter) {
-                filtered = filtered.filter(problem => problem.problemStatus === statusFilter);
-            }
-            
             // Apply priority filter
             const priorityFilter = document.getElementById('priorityFilter').value;
             if (priorityFilter) {
                 filtered = filtered.filter(problem => problem.problemPriority === priorityFilter);
             }
             
-            // Sort based on dataset type
-            if (currentDataset === 'legacy') {
-                // Legacy data: Sort by PID number (PID 1, PID 2, PID 3...)
-                filtered.sort((a, b) => {
-                    const pidA = extractLegacyPIDNumber(a.internalId);
-                    const pidB = extractLegacyPIDNumber(b.internalId);
-                    
-                    return sortDirection === 'asc' ? (pidA - pidB) : (pidB - pidA);
-                });
-            } else {
-                // Current data: Sort by date (existing logic - don't touch!)
-                filtered.sort((a, b) => {
-                    const dateA = parseDate(a.timestamp);
-                    const dateB = parseDate(b.timestamp);
-                    
-                    // Handle invalid dates
-                    if (!dateA && !dateB) return 0;
-                    if (!dateA) return 1;
-                    if (!dateB) return -1;
-                    
-                    return sortDirection === 'desc' ? (dateB - dateA) : (dateA - dateB);
-                });
-            }
+            // Sort by date - fixed DD/MM/YYYY parsing for legacy data
+            filtered.sort((a, b) => {
+                const dateA = parseDate(a.timestamp);
+                const dateB = parseDate(b.timestamp);
+                
+                // Handle invalid dates
+                if (!dateA && !dateB) return 0;
+                if (!dateA) return 1;
+                if (!dateB) return -1;
+                
+                return sortDirection === 'asc' ? (dateA - dateB) : (dateB - dateA);
+            });
             
             filteredProblems = filtered;
             updateStats();
             updateResults();
         }
         
-        function extractLegacyPIDNumber(internalId) {
-            if (!internalId) return 0;
-            
-            // Handle legacy format "PID 1", "PID 283" etc.
-            if (internalId.startsWith('PID ')) {
-                const pidNumber = parseInt(internalId.replace('PID ', ''));
-                return pidNumber || 0;
-            }
-            
-            // Fallback: try to extract any number
-            const match = internalId.match(/\d+/);
-            return match ? parseInt(match[0]) : 0;
-        }
-        
         function clearAllFilters() {
             document.getElementById('startDate').value = '';
             document.getElementById('endDate').value = '';
             document.getElementById('searchInput').value = '';
-            document.getElementById('statusFilter').value = '';
             document.getElementById('priorityFilter').value = '';
             applyFilters();
         }
@@ -848,11 +601,11 @@
                 if (typeof dateString === 'string') {
                     const cleanString = dateString.trim();
                     
-                    // Handle M/D/YYYY or MM/DD/YYYY format (your legacy data format)
+                    // Handle MM/DD/YYYY format (what backend actually reads from status bar)
                     if (cleanString.includes('/')) {
                         const parts = cleanString.split('/');
                         if (parts.length === 3) {
-                            const month = parseInt(parts[0]) - 1; // Month is 0-indexed
+                            const month = parseInt(parts[0]) - 1; // Month is 0-indexed  
                             const day = parseInt(parts[1]);
                             const year = parseInt(parts[2]);
                             
@@ -886,7 +639,7 @@
                 } else if (typeof dateString === 'string') {
                     const cleanString = dateString.trim();
                     
-                    // Handle M/D/YYYY or MM/DD/YYYY format (your legacy data)
+                    // Handle MM/DD/YYYY format (backend reads from status bar)
                     if (cleanString.includes('/')) {
                         const parts = cleanString.split('/');
                         if (parts.length === 3) {
@@ -909,6 +662,7 @@
                     return 'Invalid Date';
                 }
                 
+                // Always display in Australian DD/MM/YYYY format for user
                 return date.toLocaleDateString('en-AU', {
                     day: '2-digit',
                     month: '2-digit',
@@ -964,12 +718,10 @@
             const truncatedDescription = description.length > 80 ? description.substring(0, 80) + '...' : description;
             
             return `
-                <div class="${cardClass}" onclick="openProblemDetails('${problem.internalId}')">
+                <div class="${cardClass}">
                     <div class="problem-header">
-                        <div>
-                            <div class="problem-id">${pidPrefix}${friendlyPID}</div>
-                            <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'No Zone'}</div>
-                        </div>
+                        <div class="problem-id">${pidPrefix}${friendlyPID}</div>
+                        <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-badges">
                         <span class="badge priority-${priority.toLowerCase()}">${priority}</span>
@@ -982,87 +734,6 @@
                     </div>
                 </div>
             `;
-        }
-        
-        function openProblemDetails(internalId) {
-            currentProblem = allProblems.find(p => p.internalId === internalId);
-            if (!currentProblem) return;
-            
-            populateDetailView(currentProblem);
-            showDetailView();
-        }
-        
-        function populateDetailView(problem) {
-            const friendlyPID = getFriendlyPID(problem.internalId);
-            
-            // Update header
-            document.getElementById('detailTitle').textContent = friendlyPID;
-            
-            // Populate details
-            document.getElementById('detailProblemId').textContent = friendlyPID;
-            document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
-            document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
-            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
-            document.getElementById('detailStatus').textContent = problem.problemStatus || 'Not assigned';
-            document.getElementById('detailPriority').textContent = problem.problemPriority || 'Not assigned';
-            document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description available';
-            document.getElementById('detailAssignedTo').textContent = problem.assignedTo || 'Not assigned';
-            document.getElementById('detailComments').textContent = problem.comments || 'No comments';
-            
-            // Populate contact details
-            populateContactDetails(problem);
-        }
-        
-        function populateContactDetails(problem) {
-            const container = document.getElementById('contactDetails');
-            
-            let contactHTML = `
-                <div class="detail-field">
-                    <div class="detail-label">Reported By</div>
-                    <div class="detail-value">${problem.reportedBy || 'Unknown'}</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Reporter Email</div>
-                    <div class="detail-value">
-                        ${problem.reporterEmail ? 
-                            `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 
-                            'Not available'
-                        }
-                    </div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Unit Primary Name</div>
-                    <div class="detail-value">${problem.unitPrimaryName || 'Not available'}</div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Unit Primary Email</div>
-                    <div class="detail-value">
-                        ${problem.unitPrimaryEmail ? 
-                            `<a href="mailto:${problem.unitPrimaryEmail}" class="contact-link">${problem.unitPrimaryEmail}</a>` : 
-                            'Not available'
-                        }
-                    </div>
-                </div>
-                <div class="detail-field">
-                    <div class="detail-label">Unit Primary Phone</div>
-                    <div class="detail-value">
-                        ${problem.unitPrimaryPhone ? 
-                            `<a href="tel:${problem.unitPrimaryPhone.replace(/\s/g, '')}" class="contact-link">${problem.unitPrimaryPhone}</a>` : 
-                            'Not available'
-                        }
-                    </div>
-                </div>
-            `;
-            
-            container.innerHTML = contactHTML;
-        }
-        
-        function showDetailView() {
-            document.getElementById('detailView').classList.add('show');
-        }
-        
-        function hideDetailView() {
-            document.getElementById('detailView').classList.remove('show');
         }
         
         function showLoading() {
@@ -1087,12 +758,13 @@
         function getFriendlyPID(internalId) {
             if (!internalId) return 'PID Unknown';
             
-            // For legacy data, internalId is already "PID 1", "PID 2" etc.
-            if (internalId.startsWith('PID ')) {
-                return internalId;
+            // For legacy data with format "LEGACY-1", "LEGACY-2" etc.
+            if (internalId.startsWith('LEGACY-')) {
+                const pidNumber = internalId.replace('LEGACY-', '');
+                return `PID ${pidNumber}`;
             }
             
-            // For current data, extract from timestamp format "20250715-075811"
+            // For current data with timestamp format "20250715-075811"
             const parts = internalId.split('-');
             return parts.length === 2 ? `PID ${parts[1]}` : `PID ${internalId}`;
         }
