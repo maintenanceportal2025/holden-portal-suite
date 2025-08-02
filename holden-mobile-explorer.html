@@ -249,8 +249,11 @@
             background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
         }
         
-        /* Header: PID and Unit/Zone */
+        /* Header: PID with Unit/Zone on same line */
         .problem-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 12px;
         }
         
@@ -258,12 +261,12 @@
             font-size: 1.1rem;
             font-weight: 700;
             color: #667eea;
-            margin-bottom: 4px;
         }
         
         .problem-unit {
             font-size: 0.9rem;
             color: #64748b;
+            text-align: right;
         }
         
         /* Badges: Priority and Status side by side */
@@ -721,7 +724,7 @@
                 <div class="${cardClass}">
                     <div class="problem-header">
                         <div class="problem-id">${pidPrefix}${friendlyPID}</div>
-                        <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'Zone Unknown'}</div>
+                        <div class="problem-unit">Unit ${problem.unitNumber} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-badges">
                         <span class="badge priority-${priority.toLowerCase()}">${priority}</span>
