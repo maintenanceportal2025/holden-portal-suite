@@ -434,19 +434,32 @@
             border-radius: 2px;
             overflow: hidden;
             margin-bottom: 16px;
+            position: relative;
         }
         
         .progress-bar {
             height: 100%;
-            background: linear-gradient(90deg, #60a5fa, #3b82f6);
+            background: linear-gradient(90deg, #60a5fa, #3b82f6, #1d4ed8);
             border-radius: 2px;
             transition: width 0.3s ease;
-            animation: loading-pulse 1.5s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
         }
         
-        @keyframes loading-pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
         }
         
         /* Pull to Refresh */
@@ -802,6 +815,11 @@
                 }
             } catch (error) {
                 console.error('Error loading current data:', error);
+                // Clear any progress bar animation
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar && progressBar.dataset.interval) {
+                    clearInterval(progressBar.dataset.interval);
+                }
                 showError('Failed to load current data. Please try again.');
             }
         }
@@ -822,6 +840,11 @@
                 }
             } catch (error) {
                 console.error('Error loading legacy data:', error);
+                // Clear any progress bar animation
+                const progressBar = document.getElementById('progressBar');
+                if (progressBar && progressBar.dataset.interval) {
+                    clearInterval(progressBar.dataset.interval);
+                }
                 showError('Failed to load legacy data. Please try again.');
             }
         }
@@ -1045,6 +1068,18 @@
             document.getElementById('totalProblems').textContent = total;
             document.getElementById('activeProblems').textContent = active;
             document.getElementById('urgentCount').textContent = urgent;
+            
+            // Update stat labels based on dataset
+            const statLabels = document.querySelectorAll('.stat-label');
+            if (currentDataset === 'legacy') {
+                statLabels[0].textContent = 'Total';
+                statLabels[1].textContent = 'Archive';
+                statLabels[2].textContent = 'Urgent';
+            } else {
+                statLabels[0].textContent = 'Total';
+                statLabels[1].textContent = 'Active';
+                statLabels[2].textContent = 'Urgent';
+            }
         }
         
         function updateResults() {
@@ -1074,6 +1109,16 @@
             
             // Update pagination controls
             updatePaginationControls(totalPages, totalItems);
+            
+            // Clear progress bar if it exists
+            const progressBar = document.getElementById('progressBar');
+            if (progressBar && progressBar.dataset.interval) {
+                clearInterval(progressBar.dataset.interval);
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    // Progress bar completes, results show
+                }, 200);
+            }
             
             if (paginatedProblems.length === 0) {
                 container.innerHTML = `
@@ -1131,6 +1176,9 @@
         function setupPullToRefresh() {
             const problemsList = document.getElementById('problemsList');
             const pullRefresh = document.getElementById('pullRefresh');
+            
+            if (!problemsList || !pullRefresh) return;
+            
             let pullStartY = 0;
             let isPulling = false;
             
