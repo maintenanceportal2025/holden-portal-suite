@@ -344,34 +344,40 @@
         }
         
         function buildFilters() {
-            const units = [...new Set(allProblems.map(p => String(p.unitNumber || '')).filter(Boolean))].sort((a, b) => {
-                const numA = parseInt(a.replace(/\D/g, '') || '0') || 0;
-                const numB = parseInt(b.replace(/\D/g, '') || '0') || 0;
-                return numA - numB;
-            });
-            buildCheckboxSection('unitFilters', units, 'unit');
-            
-            const statuses = [...new Set(allProblems.map(p => String(p.problemStatus || '')).filter(Boolean))].sort();
-            buildCheckboxSection('statusFilters', statuses, 'status');
-            
-            const priorities = ['Urgent', 'High', 'Medium', 'Low'];
-            buildCheckboxSection('priorityFilters', priorities, 'priority');
-            
-            // NEW: Use dynamic categories if available
-            const categories = dynamicDropdowns.categories && dynamicDropdowns.categories.length > 0 
-                ? dynamicDropdowns.categories 
-                : [...new Set(allProblems.map(p => String(p.category || '')).filter(Boolean))].sort();
-            buildCheckboxSection('categoryFilters', categories, 'category');
-            
-            const zones = [...new Set(allProblems.map(p => String(p.zone || '')).filter(Boolean))].sort();
-            buildCheckboxSection('zoneFilters', zones, 'zone');
-            
-            // NEW: Use dynamic assignedTo if available
-            const assignedTo = dynamicDropdowns.assignedTo && dynamicDropdowns.assignedTo.length > 0
-                ? dynamicDropdowns.assignedTo
-                : [...new Set(allProblems.map(p => String(p.assignedTo || '')).filter(Boolean))].sort();
-            buildCheckboxSection('assignedToFilters', assignedTo, 'assignedTo');
-        }
+    const units = [...new Set(allProblems.map(p => String(p.unitNumber || '')).filter(Boolean))].sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, '') || '0') || 0;
+        const numB = parseInt(b.replace(/\D/g, '') || '0') || 0;
+        return numA - numB;
+    });
+    buildCheckboxSection('unitFilters', units, 'unit');
+    
+    const statuses = [...new Set(allProblems.map(p => String(p.problemStatus || '')).filter(Boolean))].sort();
+    buildCheckboxSection('statusFilters', statuses, 'status');
+    
+    const priorities = ['Urgent', 'High', 'Medium', 'Low'];
+    buildCheckboxSection('priorityFilters', priorities, 'priority');
+    
+    // Use dynamic categories if available
+    const categories = dynamicDropdowns.categories && dynamicDropdowns.categories.length > 0 
+        ? dynamicDropdowns.categories 
+        : [...new Set(allProblems.map(p => String(p.category || '')).filter(Boolean))].sort();
+    buildCheckboxSection('categoryFilters', categories, 'category');
+    
+    // NEW: Use dynamic sub-categories if available
+    const subCategories = dynamicDropdowns.subCategories && dynamicDropdowns.subCategories.length > 0
+        ? dynamicDropdowns.subCategories
+        : [...new Set(allProblems.map(p => String(p.subCategory || '')).filter(Boolean))].sort();
+    buildCheckboxSection('subCategoryFilters', subCategories, 'subCategory');
+    
+    const zones = [...new Set(allProblems.map(p => String(p.zone || '')).filter(Boolean))].sort();
+    buildCheckboxSection('zoneFilters', zones, 'zone');
+    
+    // Use dynamic assignedTo if available
+    const assignedTo = dynamicDropdowns.assignedTo && dynamicDropdowns.assignedTo.length > 0
+        ? dynamicDropdowns.assignedTo
+        : [...new Set(allProblems.map(p => String(p.assignedTo || '')).filter(Boolean))].sort();
+    buildCheckboxSection('assignedToFilters', assignedTo, 'assignedTo');
+}
         
         function buildCheckboxSection(containerId, items, filterType) {
             const container = document.getElementById(containerId);
