@@ -1005,6 +1005,63 @@ END OF REPORT`;
             document.querySelectorAll('#statusFilters input').forEach(cb => cb.checked = false);
             applyFilters();
         }
+
+// Priority buttons
+function selectAllPriorities() {
+    document.querySelectorAll('#priorityFilters input').forEach(cb => cb.checked = true);
+    applyFilters();
+}
+
+function clearPriorities() {
+    document.querySelectorAll('#priorityFilters input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+
+// Category buttons  
+function selectAllCategories() {
+    document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = true);
+    applyFilters();
+}
+
+function clearCategories() {
+    document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+
+// Sub-Category buttons
+function selectAllSubCategories() {
+    document.querySelectorAll('#subCategoryFilters input').forEach(cb => cb.checked = true);
+    applyFilters();
+}
+
+function clearSubCategories() {
+    document.querySelectorAll('#subCategoryFilters input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+        
+// Zone buttons
+function selectAllZones() {
+    document.querySelectorAll('#zoneFilters input').forEach(cb => cb.checked = true);
+    applyFilters();
+}
+
+function clearZones() {
+    document.querySelectorAll('#zoneFilters input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+
+// Assigned To buttons
+function selectAllAssigned() {
+    document.querySelectorAll('#assignedToFilters input').forEach(cb => cb.checked = true);
+    applyFilters();
+}
+
+function clearAssigned() {
+    document.querySelectorAll('#assignedToFilters input').forEach(cb => cb.checked = false);
+    applyFilters();
+}
+
+        
         
         function showError(message) {
             const problemsGrid = document.getElementById('problemsGrid');
