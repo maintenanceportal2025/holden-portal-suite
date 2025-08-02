@@ -424,7 +424,7 @@
                 }
             }
             
-            ['unit', 'status', 'priority', 'category', 'zone', 'assignedTo'].forEach(filterType => {
+            ['unit', 'status', 'priority', 'category', 'subCategory', 'zone', 'assignedTo'].forEach(filterType => {
                 const checked = Array.from(document.querySelectorAll(`#${filterType}Filters input:checked`)).map(cb => cb.value);
                 const all = Array.from(document.querySelectorAll(`#${filterType}Filters input`)).map(cb => cb.value);
                 if (checked.length < all.length && checked.length > 0) {
