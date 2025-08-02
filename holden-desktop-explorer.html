@@ -155,10 +155,10 @@
                 <div class="checkbox-list" id="assignedToFilters"></div>
             </div>
             
-            <!-- Clear All Filters Button -->
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
-                <button onclick="clearAllFilters()" style="width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">🗑️ Clear All Filters</button>
-            </div>
+            <!-- Toggle All Filters Button -->
+<div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
+    <button id="toggleAllFiltersBtn" onclick="toggleAllFilters()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">✅ Check All Filters</button>
+</div>
         </div>
         <div class="main-content">
             <div class="results-header">
@@ -424,34 +424,45 @@
             updateResults();
         }
         
-        // NEW: Clear all filters function
-        function clearAllFilters() {
-            // Clear date filters
-            currentDateFilter = null;
-            customDateRange = null;
-            clearCustomDateInputs();
-            updateDateRangeDisplay('all');
-            
-            // Clear search
-            document.getElementById('searchInput').value = '';
-            
-            // Check all checkboxes
-            document.querySelectorAll('.checkbox-list input[type="checkbox"]').forEach(cb => {
-                cb.checked = false;
-            });
-            
-            // Reset button styles
-            document.querySelectorAll('.filter-section button').forEach(btn => {
-                btn.style.background = '#f1f5f9';
-                btn.style.borderColor = '#e2e8f0';
-            });
-            
-            // Reset pagination
-            currentPage = 1;
-            
-            // Apply filters
-            applyFilters();
-        }
+        function toggleAllFilters() {
+    // Check if any filters are currently unchecked
+    const allCheckboxes = document.querySelectorAll('.checkbox-list input[type="checkbox"]');
+    const uncheckedCount = Array.from(allCheckboxes).filter(cb => !cb.checked).length;
+    
+    // If any are unchecked, check all. If all are checked, uncheck all
+    const shouldCheck = uncheckedCount > 0;
+    
+    // Clear date filters and search
+    currentDateFilter = null;
+    customDateRange = null;
+    clearCustomDateInputs();
+    updateDateRangeDisplay('all');
+    document.getElementById('searchInput').value = '';
+    
+    // Toggle all checkboxes
+    allCheckboxes.forEach(cb => {
+        cb.checked = shouldCheck;
+    });
+    
+    // Reset button styles
+    document.querySelectorAll('.filter-section button').forEach(btn => {
+        btn.style.background = '#f1f5f9';
+        btn.style.borderColor = '#e2e8f0';
+    });
+    
+    // Update button text and color
+    const btn = document.getElementById('toggleAllFiltersBtn');
+    if (shouldCheck) {
+        btn.innerHTML = '🗑️ Clear All Filters';
+        btn.style.background = '#ef4444';
+    } else {
+        btn.innerHTML = '✅ Check All Filters';
+        btn.style.background = '#10b981';
+    }
+    
+    currentPage = 1;
+    applyFilters();
+}
         
         function applyCustomDateFilter(problems) {
             if (!customDateRange) return problems;
