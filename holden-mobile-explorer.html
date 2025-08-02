@@ -409,6 +409,79 @@
             text-decoration: none;
         }
         
+        /* Loading Overlay - Like Maintenance Portal */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(248, 250, 252, 0.95);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .loading-content {
+            text-align: center;
+            padding: 40px;
+            max-width: 400px;
+        }
+        
+        .loading-spinner-large {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+        
+        .loading-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #334155;
+            margin-bottom: 24px;
+        }
+        
+        .progress-container-large {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 16px;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .progress-bar-large {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 6px;
+            transition: width 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .progress-bar-large::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+            animation: shimmer 1.5s infinite;
+        }
+        
+        .loading-subtitle {
+            font-size: 1rem;
+            color: #64748b;
+            margin-top: 8px;
+        }
+        
         /* Pagination Controls */
         .pagination-controls {
             display: flex;
@@ -549,6 +622,18 @@
                     <button class="dataset-btn active" id="currentBtn">Current</button>
                     <button class="dataset-btn" id="legacyBtn">Legacy</button>
                 </div>
+            </div>
+        </div>
+        
+        <!-- Loading Overlay (like Maintenance Portal) -->
+        <div class="loading-overlay hidden" id="loadingOverlay">
+            <div class="loading-content">
+                <div class="loading-spinner-large"></div>
+                <div class="loading-title">Loading problems data...</div>
+                <div class="progress-container-large">
+                    <div class="progress-bar-large" id="progressBarLarge" style="width: 0%"></div>
+                </div>
+                <div class="loading-subtitle">Retrieving maintenance requests from database</div>
             </div>
         </div>
         
@@ -833,10 +918,14 @@
             } catch (error) {
                 console.error('Error loading current data:', error);
                 // Clear any progress bar animation
-                const progressBar = document.getElementById('progressBar');
+                const progressBar = document.getElementById('progressBarLarge');
                 if (progressBar && progressBar.dataset.interval) {
                     clearInterval(progressBar.dataset.interval);
                 }
+                
+                // Hide loading overlay
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.classList.add('hidden');
                 showError('Failed to load current data. Please try again.');
             }
         }
@@ -858,10 +947,14 @@
             } catch (error) {
                 console.error('Error loading legacy data:', error);
                 // Clear any progress bar animation
-                const progressBar = document.getElementById('progressBar');
+                const progressBar = document.getElementById('progressBarLarge');
                 if (progressBar && progressBar.dataset.interval) {
                     clearInterval(progressBar.dataset.interval);
                 }
+                
+                // Hide loading overlay
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.classList.add('hidden');
                 showError('Failed to load legacy data. Please try again.');
             }
         }
@@ -1128,13 +1221,16 @@
             updatePaginationControls(totalPages, totalItems);
             
             // Clear progress bar if it exists
-            const progressBar = document.getElementById('progressBar');
+            const progressBar = document.getElementById('progressBarLarge');
             if (progressBar && progressBar.dataset.interval) {
                 clearInterval(progressBar.dataset.interval);
                 progressBar.style.width = '100%';
+                
+                // Hide loading overlay after completion
                 setTimeout(() => {
-                    // Progress bar completes, results show
-                }, 200);
+                    const overlay = document.getElementById('loadingOverlay');
+                    overlay.classList.add('hidden');
+                }, 300);
             }
             
             if (paginatedProblems.length === 0) {
