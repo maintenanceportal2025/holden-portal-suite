@@ -46,12 +46,14 @@
         .problem-card.medium { border-left-color: #eab308; }
         .problem-card.low { border-left-color: #22c55e; }
         .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .card-top-line { display: flex; align-items: center; gap: 8px; }
         .card-pid { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
         .card-unit { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+        .card-zone { background: #e0f2fe; color: #0369a1; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
         .card-body { margin-bottom: 12px; }
         .card-description { color: #64748b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-        .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b; }
-        .card-footer { display: flex; justify-content: space-between; align-items: center; }
+        .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b; margin-bottom: 12px; }
+        .card-footer { display: flex; gap: 8px; align-items: center; }
         .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
         .status-reported { background: #dbeafe; color: #1d4ed8; }
         .status-in-progress { background: #fef3c7; color: #d97706; }
@@ -66,7 +68,7 @@
         .loading-spinner { width: 40px; height: 40px; border: 3px solid #e2e8f0; border-top: 3px solid #3b82f6; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 16px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-content { background: white; border-radius: 12px; width: 90%; max-width: 800px; max-height: 90%; overflow: hidden; display: flex; flex-direction: column; }
+        .modal-content { background: white; border-radius: 12px; width: 90%; max-width: 900px; max-height: 90%; overflow: hidden; display: flex; flex-direction: column; }
         .modal-header { padding: 20px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
         .modal-title { font-size: 1.25rem; font-weight: 600; color: #1e293b; }
         .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #64748b; }
@@ -78,6 +80,14 @@
         .report-btn.green { background: #059669; }
         .report-btn.secondary { background: #6b7280; }
         .date-range-display { font-size: 0.75rem; color: #64748b; text-align: center; padding: 4px; background: #f8fafc; border-radius: 4px; margin-bottom: 8px; }
+        .filter-buttons { display: flex; gap: 4px; margin-bottom: 8px; }
+        .filter-btn { background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; }
+        .filter-btn:hover { background: #f1f5f9; }
+        .clear-all-btn { width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600; margin-top: 20px; }
+        .clear-all-btn:hover { background: #dc2626; }
+        .items-per-page { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0; }
+        .items-per-page label { font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500; display: block; }
+        .items-per-page select { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem; }
     </style>
 </head>
 <body>
@@ -97,69 +107,101 @@
             <div class="sidebar-header">
                 <span class="sidebar-title">🎛️ Data Slicers</span>
             </div>
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description...">
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description, zone...">
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">📅 Date Range</div></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
-                    <button onclick="setDateRange('1M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 1M</button>
-                    <button onclick="setDateRange('3M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 3M</button>
-                    <button onclick="setDateRange('6M')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 6M</button>
-                    <button onclick="setDateRange('1Y')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📅 1Y</button>
+                    <button onclick="setDateRange('1M')" class="filter-btn">📅 1M</button>
+                    <button onclick="setDateRange('3M')" class="filter-btn">📅 3M</button>
+                    <button onclick="setDateRange('6M')" class="filter-btn">📅 6M</button>
+                    <button onclick="setDateRange('1Y')" class="filter-btn">📅 1Y</button>
                 </div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
-                    <button onclick="setDateRange('2023')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2023</button>
-                    <button onclick="setDateRange('2024')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2024</button>
-                    <button onclick="setDateRange('2025')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2025</button>
-                    <button onclick="clearDateFilter()" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🗓️ All</button>
+                    <button onclick="setDateRange('2023')" class="filter-btn">📊 2023</button>
+                    <button onclick="setDateRange('2024')" class="filter-btn">📊 2024</button>
+                    <button onclick="setDateRange('2025')" class="filter-btn">📊 2025</button>
+                    <button onclick="clearDateFilter()" style="background: #fef3c7; border-color: #f59e0b;" class="filter-btn">🗓️ All</button>
                 </div>
                 <div style="border-top: 1px solid #e2e8f0; margin: 12px 0; padding-top: 12px;">
                     <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
                     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-                        <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="Start">
-                        <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="End">
+                        <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;">
+                        <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;">
                     </div>
                     <button onclick="applyCustomDateRange()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
                 </div>
                 <div id="dateRangeDisplay" class="date-range-display">All dates</div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">🏠 Units</div></div>
-                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
-                    <button onclick="selectAllUnits()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
-                    <button onclick="clearUnits()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                <div class="filter-buttons">
+                    <button onclick="selectAllUnits()" class="filter-btn">All</button>
+                    <button onclick="clearUnits()" class="filter-btn">Clear</button>
                 </div>
                 <div class="checkbox-list" id="unitFilters"></div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">📋 Status</div></div>
-                <div style="display: flex; gap: 4px; margin-bottom: 8px;">
-                    <button onclick="selectAllStatuses()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
-                    <button onclick="clearStatuses()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+                <div class="filter-buttons">
+                    <button onclick="selectAllStatuses()" class="filter-btn">All</button>
+                    <button onclick="clearStatuses()" class="filter-btn">Clear</button>
                 </div>
                 <div class="checkbox-list" id="statusFilters"></div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">⚡ Priority</div></div>
+                <div class="filter-buttons">
+                    <button onclick="selectAllPriorities()" class="filter-btn">All</button>
+                    <button onclick="clearPriorities()" class="filter-btn">Clear</button>
+                </div>
                 <div class="checkbox-list" id="priorityFilters"></div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">📂 Category</div></div>
+                <div class="filter-buttons">
+                    <button onclick="selectAllCategories()" class="filter-btn">All</button>
+                    <button onclick="clearCategories()" class="filter-btn">Clear</button>
+                </div>
                 <div class="checkbox-list" id="categoryFilters"></div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">🏘️ Zone</div></div>
+                <div class="filter-buttons">
+                    <button onclick="selectAllZones()" class="filter-btn">All</button>
+                    <button onclick="clearZones()" class="filter-btn">Clear</button>
+                </div>
                 <div class="checkbox-list" id="zoneFilters"></div>
             </div>
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">👷 Assigned To</div></div>
+                <div class="filter-buttons">
+                    <button onclick="selectAllAssigned()" class="filter-btn">All</button>
+                    <button onclick="clearAssigned()" class="filter-btn">Clear</button>
+                </div>
                 <div class="checkbox-list" id="assignedToFilters"></div>
             </div>
             
-            <!-- Clear All Filters Button -->
-            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #e2e8f0;">
-                <button onclick="clearAllFilters()" style="width: 100%; background: #ef4444; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">🗑️ Clear All Filters</button>
+            <button id="clearAllFiltersBtn" class="clear-all-btn">🗑️ Clear All Filters</button>
+            
+            <div class="items-per-page">
+                <label for="itemsPerPageSelect">📄 Items Per Page:</label>
+                <select id="itemsPerPageSelect">
+                    <option value="10">10 per page</option>
+                    <option value="20" selected>20 per page</option>
+                    <option value="50">50 per page</option>
+                    <option value="100">100 per page</option>
+                    <option value="all">Show all</option>
+                </select>
             </div>
         </div>
+        
         <div class="main-content">
             <div class="results-header">
                 <div class="results-info" id="resultsInfo">Loading...</div>
@@ -177,20 +219,16 @@
         </div>
     </div>
 
-    <!-- Problem Detail Modal -->
     <div class="modal hidden" id="problemModal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="modalTitle">Problem Details</div>
                 <button class="close-btn" id="closeProblemModal">×</button>
             </div>
-            <div class="modal-body" id="modalBody">
-                <!-- Problem details will be populated dynamically -->
-            </div>
+            <div class="modal-body" id="modalBody"></div>
         </div>
     </div>
 
-    <!-- Report Modal -->
     <div class="modal hidden" id="reportModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -205,17 +243,12 @@
     </div>
 
     <script>
-        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBs9ouC5v8kD7k';
         let allProblems = [], filteredProblems = [], currentProblem = null, currentDataset = 'current';
-        let currentDateFilter = null;
-        let customDateRange = null;
-        let sortDirection = 'desc'; // NEW: Track sort direction
-        let dynamicDropdowns = {}; // NEW: Store dynamic dropdown data
-        let currentPage = 1;
-        const ITEMS_PER_PAGE = 20; // NEW: Pagination support
+        let currentDateFilter = null, customDateRange = null, sortDirection = 'desc';
+        let dynamicDropdowns = {}, currentPage = 1, ITEMS_PER_PAGE = 20;
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🖥️ Problem Data Explorer - Starting...');
             document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
             document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
             document.getElementById('searchInput').addEventListener('input', () => setTimeout(applyFilters, 300));
@@ -224,44 +257,41 @@
             document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
             document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
             document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-            
+            document.getElementById('clearAllFiltersBtn').addEventListener('click', clearAllFilters);
+            document.getElementById('itemsPerPageSelect').addEventListener('change', changeItemsPerPage);
             loadProblemsData();
-            loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
+            loadDynamicDropdowns();
         });
 
-        // NEW: Load dynamic dropdown options from Categories tab
         async function loadDynamicDropdowns() {
             try {
-                console.log('🎛️ Loading dynamic dropdown options...');
                 const response = await makeRequest('getDropdownOptions');
-                
                 if (response && response.success) {
                     dynamicDropdowns = response.data || {};
-                    console.log('✅ Dynamic dropdowns loaded:', Object.keys(dynamicDropdowns));
                 } else {
-                    console.log('⚠️ Failed to load dynamic dropdowns, using fallback');
                     dynamicDropdowns = {
-                        categories: ['Aircon', 'Doors', 'Electrical', 'Plumbing', 'Structural'],
-                        subCategories: ['General', 'Leaking Tap', 'Lighting', 'Repair'],
+                        categories: ['Aircon', 'Doors', 'Electrical', 'Plumbing'],
                         assignedTo: ['Ben', 'Jade', 'David', 'Gardening Club']
                     };
                 }
             } catch (error) {
-                console.error('Error loading dynamic dropdowns:', error);
                 dynamicDropdowns = {};
             }
         }
+
+        function changeItemsPerPage() {
+            const value = document.getElementById('itemsPerPageSelect').value;
+            ITEMS_PER_PAGE = value === 'all' ? filteredProblems.length || 1000 : parseInt(value);
+            currentPage = 1;
+            updateResults();
+        }
         
         async function switchDataset(dataset) {
-            console.log(`🔄 Switching to ${dataset} dataset...`);
             currentDataset = dataset;
             document.getElementById('currentBtn').classList.toggle('active', dataset === 'current');
             document.getElementById('legacyBtn').classList.toggle('active', dataset === 'legacy');
             document.querySelector('.access-badge').textContent = dataset === 'current' ? 'Live Data' : 'Legacy Data';
-            
-            // Reset pagination when switching datasets
             currentPage = 1;
-            
             if (dataset === 'current') { 
                 await loadProblemsData(); 
             } else { 
@@ -271,43 +301,34 @@
         
         async function loadLegacyData() {
             try {
-                console.log('📚 Loading legacy data...');
                 const response = await makeRequest('getLegacyLogData');
                 if (response && response.success) {
                     allProblems = response.data || [];
-                    console.log('Loaded', allProblems.length, 'legacy problems');
-                    
-                    // Clear date filters when switching to legacy data
                     currentDateFilter = null;
                     customDateRange = null;
                     clearCustomDateInputs();
                     updateDateRangeDisplay('all');
-                    
                     buildFilters(); 
                     applyFilters();
                 } else { 
                     throw new Error('Failed to load legacy data'); 
                 }
             } catch (error) {
-                console.error('Error loading legacy data:', error);
                 showError('Failed to load legacy data');
             }
         }
         
         async function loadProblemsData() {
             try {
-                console.log('Loading current data...');
                 const response = await makeRequest('getFaultLogData');
                 if (response && response.success) {
                     allProblems = response.data || [];
-                    console.log('Loaded', allProblems.length, 'problems');
                     buildFilters(); 
                     applyFilters();
                 } else { 
                     throw new Error('Failed to load data'); 
                 }
             } catch (error) {
-                console.error('Error loading data:', error);
                 showError('Failed to load data');
             }
         }
@@ -318,67 +339,58 @@
                 const numB = parseInt(b.replace(/\D/g, '') || '0') || 0;
                 return numA - numB;
             });
-            buildCheckboxSection('unitFilters', units, 'unit');
+            buildCheckboxSection('unitFilters', units);
             
             const statuses = [...new Set(allProblems.map(p => String(p.problemStatus || '')).filter(Boolean))].sort();
-            buildCheckboxSection('statusFilters', statuses, 'status');
+            buildCheckboxSection('statusFilters', statuses);
             
             const priorities = ['Urgent', 'High', 'Medium', 'Low'];
-            buildCheckboxSection('priorityFilters', priorities, 'priority');
+            buildCheckboxSection('priorityFilters', priorities);
             
-            // NEW: Use dynamic categories if available
             const categories = dynamicDropdowns.categories && dynamicDropdowns.categories.length > 0 
                 ? dynamicDropdowns.categories 
                 : [...new Set(allProblems.map(p => String(p.category || '')).filter(Boolean))].sort();
-            buildCheckboxSection('categoryFilters', categories, 'category');
+            buildCheckboxSection('categoryFilters', categories);
             
             const zones = [...new Set(allProblems.map(p => String(p.zone || '')).filter(Boolean))].sort();
-            buildCheckboxSection('zoneFilters', zones, 'zone');
+            buildCheckboxSection('zoneFilters', zones);
             
-            // NEW: Use dynamic assignedTo if available
             const assignedTo = dynamicDropdowns.assignedTo && dynamicDropdowns.assignedTo.length > 0
                 ? dynamicDropdowns.assignedTo
                 : [...new Set(allProblems.map(p => String(p.assignedTo || '')).filter(Boolean))].sort();
-            buildCheckboxSection('assignedToFilters', assignedTo, 'assignedTo');
+            buildCheckboxSection('assignedToFilters', assignedTo);
         }
         
-        function buildCheckboxSection(containerId, items, filterType) {
+        function buildCheckboxSection(containerId, items) {
             const container = document.getElementById(containerId);
             container.innerHTML = '';
             
             items.forEach(item => {
                 if (!item) return;
-                
                 const div = document.createElement('div');
                 div.className = 'checkbox-item';
-                
                 const input = document.createElement('input');
                 input.type = 'checkbox';
                 input.value = item;
                 input.checked = true;
                 input.addEventListener('change', applyFilters);
-                
                 const label = document.createElement('label');
                 label.textContent = item;
-                
                 div.appendChild(input);
                 div.appendChild(label);
                 container.appendChild(div);
             });
         }
 
-        // NEW: Toggle sort direction function
         function toggleSort() {
             sortDirection = sortDirection === 'desc' ? 'asc' : 'desc';
-            const btn = document.getElementById('sortToggleBtn');
-            btn.textContent = sortDirection === 'desc' ? '📅 Newest First' : '📅 Oldest First';
+            document.getElementById('sortToggleBtn').textContent = sortDirection === 'desc' ? '📅 Newest First' : '📅 Oldest First';
             applyFilters();
         }
         
         function applyFilters() {
             let filtered = [...allProblems];
             
-            // Apply date filter first
             if (currentDateFilter || customDateRange) {
                 if (customDateRange) {
                     filtered = applyCustomDateFilter(filtered);
@@ -398,67 +410,53 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
             if (searchTerm) {
                 filtered = filtered.filter(problem => {
-                    const searchText = [getFriendlyPID(problem.internalId), problem.unitNumber, problem.problemDescription, problem.reportedBy].filter(Boolean).join(' ').toLowerCase();
+                    const searchText = [
+                        getFriendlyPID(problem.internalId), 
+                        problem.unitNumber, 
+                        problem.problemDescription, 
+                        problem.reportedBy,
+                        problem.zone
+                    ].filter(Boolean).join(' ').toLowerCase();
                     return searchText.includes(searchTerm);
                 });
             }
             
-            // NEW: Apply sort direction
             filtered.sort((a, b) => {
                 const dateA = parseDate(a.timestamp);
                 const dateB = parseDate(b.timestamp);
                 
                 if (sortDirection === 'desc') {
                     if (dateB !== dateA) return dateB - dateA;
-                    // Same date - sort by PID number
                     return getFriendlyPID(b.internalId).localeCompare(getFriendlyPID(a.internalId));
                 } else {
                     if (dateA !== dateB) return dateA - dateB;
-                    // Same date - sort by PID number
                     return getFriendlyPID(a.internalId).localeCompare(getFriendlyPID(b.internalId));
                 }
             });
             
             filteredProblems = filtered;
-            currentPage = 1; // Reset to first page when filters change
+            currentPage = 1;
             updateResults();
         }
         
-        // NEW: Clear all filters function
         function clearAllFilters() {
-            // Clear date filters
             currentDateFilter = null;
             customDateRange = null;
             clearCustomDateInputs();
             updateDateRangeDisplay('all');
-            
-            // Clear search
             document.getElementById('searchInput').value = '';
-            
-            // Check all checkboxes
-            document.querySelectorAll('.checkbox-list input[type="checkbox"]').forEach(cb => {
-                cb.checked = true;
-            });
-            
-            // Reset button styles
-            document.querySelectorAll('.filter-section button').forEach(btn => {
-                btn.style.background = '#f1f5f9';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.style.background = '#f8fafc';
                 btn.style.borderColor = '#e2e8f0';
             });
-            
-            // Reset pagination
             currentPage = 1;
-            
-            // Apply filters
             applyFilters();
         }
         
         function applyCustomDateFilter(problems) {
             if (!customDateRange) return problems;
-            
             const startTime = customDateRange.start.getTime();
             const endTime = customDateRange.end.getTime();
-            
             return problems.filter(problem => {
                 const problemDate = parseDate(problem.timestamp);
                 return problemDate >= startTime && problemDate <= endTime;
@@ -470,36 +468,14 @@
             let startDate, endDate;
             
             switch (range) {
-                case '1M':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-                    endDate = now;
-                    break;
-                case '3M':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate());
-                    endDate = now;
-                    break;
-                case '6M':
-                    startDate = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate());
-                    endDate = now;
-                    break;
-                case '1Y':
-                    startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate());
-                    endDate = now;
-                    break;
-                case '2023':
-                    startDate = new Date(2023, 0, 1);
-                    endDate = new Date(2023, 11, 31);
-                    break;
-                case '2024':
-                    startDate = new Date(2024, 0, 1);
-                    endDate = new Date(2024, 11, 31);
-                    break;
-                case '2025':
-                    startDate = new Date(2025, 0, 1);
-                    endDate = new Date(2025, 11, 31);
-                    break;
-                default:
-                    return problems;
+                case '1M': startDate = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate()); endDate = now; break;
+                case '3M': startDate = new Date(now.getFullYear(), now.getMonth() - 3, now.getDate()); endDate = now; break;
+                case '6M': startDate = new Date(now.getFullYear(), now.getMonth() - 6, now.getDate()); endDate = now; break;
+                case '1Y': startDate = new Date(now.getFullYear() - 1, now.getMonth(), now.getDate()); endDate = now; break;
+                case '2023': startDate = new Date(2023, 0, 1); endDate = new Date(2023, 11, 31); break;
+                case '2024': startDate = new Date(2024, 0, 1); endDate = new Date(2024, 11, 31); break;
+                case '2025': startDate = new Date(2025, 0, 1); endDate = new Date(2025, 11, 31); break;
+                default: return problems;
             }
             
             return problems.filter(problem => {
@@ -515,9 +491,8 @@
             updateDateRangeDisplay(range);
             applyFilters();
             
-            // Visual feedback for button press
-            document.querySelectorAll('.filter-section button').forEach(btn => {
-                btn.style.background = '#f1f5f9';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.style.background = '#f8fafc';
                 btn.style.borderColor = '#e2e8f0';
             });
             
@@ -532,9 +507,8 @@
             updateDateRangeDisplay('all');
             applyFilters();
             
-            // Reset all button styles
-            document.querySelectorAll('.filter-section button').forEach(btn => {
-                btn.style.background = '#f1f5f9';
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.style.background = '#f8fafc';
                 btn.style.borderColor = '#e2e8f0';
             });
         }
@@ -577,36 +551,20 @@
                 text = `Custom: ${start} - ${end}`;
             } else {
                 switch (range) {
-                    case '1M':
-                        text = 'Last 1 month';
-                        break;
-                    case '3M':
-                        text = 'Last 3 months';
-                        break;
-                    case '6M':
-                        text = 'Last 6 months';
-                        break;
-                    case '1Y':
-                        text = 'Last 1 year';
-                        break;
-                    case '2023':
-                        text = 'Year 2023 (1 Jan - 31 Dec)';
-                        break;
-                    case '2024':
-                        text = 'Year 2024 (1 Jan - 31 Dec)';
-                        break;
-                    case '2025':
-                        text = 'Year 2025 (1 Jan - 31 Dec)';
-                        break;
-                    default:
-                        text = 'All dates';
+                    case '1M': text = 'Last 1 month'; break;
+                    case '3M': text = 'Last 3 months'; break;
+                    case '6M': text = 'Last 6 months'; break;
+                    case '1Y': text = 'Last 1 year'; break;
+                    case '2023': text = 'Year 2023 (1 Jan - 31 Dec)'; break;
+                    case '2024': text = 'Year 2024 (1 Jan - 31 Dec)'; break;
+                    case '2025': text = 'Year 2025 (1 Jan - 31 Dec)'; break;
+                    default: text = 'All dates';
                 }
             }
             
             display.textContent = text;
         }
         
-        // FIXED: MM/DD date parsing (from mobile solution)
         function parseDate(dateString) {
             if (!dateString) return 0;
             try {
@@ -614,7 +572,6 @@
                 if (typeof dateString === 'string' && dateString.includes('/')) {
                     const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
-                        // FIXED: MM/DD format instead of DD/MM
                         const month = parseInt(parts[0]) - 1;
                         const day = parseInt(parts[1]);
                         const year = parseInt(parts[2]);
@@ -638,7 +595,6 @@
                 } else if (typeof dateString === 'string' && dateString.includes('/')) {
                     const parts = dateString.trim().split('/');
                     if (parts.length === 3) {
-                        // FIXED: MM/DD parsing but DD/MM display
                         const month = parseInt(parts[0]) - 1;
                         const day = parseInt(parts[1]);
                         const year = parseInt(parts[2]);
@@ -687,20 +643,14 @@
             const resultsInfo = document.getElementById('resultsInfo');
             const problemsGrid = document.getElementById('problemsGrid');
             
-            // Calculate pagination
             const totalItems = filteredProblems.length;
-            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+            const itemsPerPage = document.getElementById('itemsPerPageSelect').value === 'all' ? totalItems : ITEMS_PER_PAGE;
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            const startIndex = (currentPage - 1) * itemsPerPage;
+            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
             const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
             
-            // Update results info with pagination
-            resultsInfo.innerHTML = `
-                <div>
-                    ${totalItems} problems found
-                    ${totalPages > 1 ? `<span style="color: #64748b; font-weight: normal;"> (Page ${currentPage} of ${totalPages})</span>` : ''}
-                </div>
-            `;
+            resultsInfo.innerHTML = `<div>${totalItems} problems found${totalPages > 1 ? ` <span style="color: #64748b; font-weight: normal;">(Page ${currentPage} of ${totalPages})</span>` : ''}</div>`;
             
             if (filteredProblems.length === 0) {
                 problemsGrid.innerHTML = '<div class="loading">No problems found matching current filters</div>';
@@ -709,12 +659,10 @@
             
             problemsGrid.innerHTML = '';
             
-            // Add pagination controls if needed
             if (totalPages > 1) {
                 const paginationContainer = document.createElement('div');
                 paginationContainer.style.cssText = 'display: flex; justify-content: center; align-items: center; gap: 10px; margin-bottom: 20px; padding: 20px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);';
                 
-                // Previous button
                 const prevBtn = document.createElement('button');
                 prevBtn.textContent = '← Previous';
                 prevBtn.disabled = currentPage === 1;
@@ -726,12 +674,10 @@
                     }
                 };
                 
-                // Page info
                 const pageInfo = document.createElement('span');
                 pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
                 pageInfo.style.cssText = 'font-weight: 600; color: #374151;';
                 
-                // Next button
                 const nextBtn = document.createElement('button');
                 nextBtn.textContent = 'Next →';
                 nextBtn.disabled = currentPage === totalPages;
@@ -749,13 +695,11 @@
                 problemsGrid.appendChild(paginationContainer);
             }
             
-            // Add problem cards
             paginatedProblems.forEach(problem => {
                 const card = createProblemCard(problem);
                 problemsGrid.appendChild(card);
             });
             
-            // Add pagination controls at bottom too if more than one page
             if (totalPages > 1) {
                 const bottomPagination = problemsGrid.firstChild.cloneNode(true);
                 problemsGrid.appendChild(bottomPagination);
@@ -772,8 +716,11 @@
             
             card.innerHTML = `
                 <div class="card-header">
-                    <div class="card-pid">${getFriendlyPID(problem.internalId)}</div>
-                    <div class="card-unit">${problem.unitNumber || 'No Unit'}</div>
+                    <div class="card-top-line">
+                        <div class="card-pid">${getFriendlyPID(problem.internalId)}</div>
+                        <div class="card-unit">${problem.unitNumber || 'No Unit'}</div>
+                        ${problem.zone ? `<div class="card-zone">${problem.zone}</div>` : ''}
+                    </div>
                 </div>
                 <div class="card-body">
                     <div class="card-description">${problem.problemDescription || 'No description'}</div>
@@ -797,49 +744,64 @@
             const title = document.getElementById('modalTitle');
             const body = document.getElementById('modalBody');
             
-            title.textContent = `${getFriendlyPID(problem.internalId)} - ${problem.unitNumber}`;
+            title.textContent = getFriendlyPID(problem.internalId) + ' - ' + (problem.unitNumber || 'No Unit');
             
-            body.innerHTML = `
-                <div class="detail-section">
-                    <div class="detail-label">Problem Details</div>
-                    <div class="detail-value">
-                        <strong>Unit:</strong> ${problem.unitNumber || 'Not specified'}<br>
-                        <strong>Reported Date:</strong> ${formatDate(problem.timestamp)}<br>
-                        <strong>Reported By:</strong> ${problem.reportedBy || 'Unknown'}<br>
-                        <strong>Zone:</strong> ${problem.zone || 'Not specified'}
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">Description</div>
-                    <div class="detail-value">${problem.problemDescription || 'No description provided'}</div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">Management Information</div>
-                    <div class="detail-value">
-                        <strong>Status:</strong> ${problem.problemStatus || 'Reported'}<br>
-                        <strong>Priority:</strong> ${problem.problemPriority || 'Medium'}<br>
-                        <strong>Category:</strong> ${problem.category || 'Not categorized'}<br>
-                        <strong>Assigned To:</strong> ${problem.assignedTo || 'Unassigned'}
-                    </div>
-                </div>
-                ${problem.comments ? `
-                <div class="detail-section">
-                    <div class="detail-label">Comments</div>
-                    <div class="detail-value" style="white-space: pre-wrap;">${problem.comments}</div>
-                </div>
-                ` : ''}
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button class="report-btn" onclick="showReport()">📄 Generate Report</button>
-                    <button class="report-btn secondary" onclick="closeModal()">✖️ Close</button>
-                </div>
-            `;
+            let modalContent = '';
+            modalContent += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">';
+            modalContent += '<div class="detail-section"><div class="detail-label">📋 Problem Information</div><div class="detail-value">';
+            modalContent += '<strong>Problem ID:</strong> ' + getFriendlyPID(problem.internalId) + '<br>';
+            modalContent += '<strong>Unit:</strong> ' + (problem.unitNumber || 'Not specified') + '<br>';
+            modalContent += '<strong>Zone:</strong> ' + (problem.zone || 'Not specified') + '<br>';
+            modalContent += '<strong>Reported Date:</strong> ' + formatDate(problem.timestamp);
+            modalContent += '</div></div>';
+            modalContent += '<div class="detail-section"><div class="detail-label">👤 Reporter Information</div><div class="detail-value">';
+            modalContent += '<strong>Reported By:</strong> ' + (problem.reportedBy || 'Unknown') + '<br>';
+            modalContent += '<strong>Reporter Email:</strong> ' + (problem.reporterEmail || 'Not provided') + '<br>';
+            modalContent += '<strong>Unit Owner:</strong> ' + (problem.residentName || 'Not specified') + '<br>';
+            modalContent += '<strong>Unit Contact:</strong> ' + (problem.residentMobile || 'Not provided');
+            modalContent += '</div></div></div>';
             
+            modalContent += '<div class="detail-section"><div class="detail-label">📝 Problem Description</div>';
+            modalContent += '<div class="detail-value" style="background: #f8fafc; padding: 12px; border-radius: 6px; border-left: 3px solid #3b82f6;">';
+            modalContent += (problem.problemDescription || 'No description provided');
+            modalContent += '</div></div>';
+            
+            modalContent += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0;">';
+            modalContent += '<div class="detail-section"><div class="detail-label">⚙️ Management Status</div><div class="detail-value">';
+            
+            const statusClass = 'status-' + (problem.problemStatus || 'reported').toLowerCase().replace(/\s+/g, '-');
+            const priorityClass = 'priority-' + (problem.problemPriority || 'medium').toLowerCase();
+            
+            modalContent += '<strong>Status:</strong> <span class="status-badge ' + statusClass + '">' + (problem.problemStatus || 'Reported') + '</span><br><br>';
+            modalContent += '<strong>Priority:</strong> <span class="priority-badge ' + priorityClass + '">' + (problem.problemPriority || 'Medium') + '</span><br><br>';
+            modalContent += '<strong>Category:</strong> ' + (problem.category || 'Not categorized') + '<br>';
+            modalContent += '<strong>Sub-Category:</strong> ' + (problem.subCategory || 'Not specified');
+            modalContent += '</div></div>';
+            modalContent += '<div class="detail-section"><div class="detail-label">👷 Assignment & Completion</div><div class="detail-value">';
+            modalContent += '<strong>Assigned To:</strong> ' + (problem.assignedTo || 'Unassigned') + '<br><br>';
+            modalContent += '<strong>Completion Date:</strong> ' + (problem.completionDate ? formatDate(problem.completionDate) : 'Not completed') + '<br><br>';
+            modalContent += '<strong>Last Updated:</strong> ' + (problem.lastUpdated ? formatDate(problem.lastUpdated) : 'Not updated');
+            modalContent += '</div></div></div>';
+            
+            if (problem.comments) {
+                modalContent += '<div class="detail-section"><div class="detail-label">💬 Comments & Notes</div>';
+                modalContent += '<div class="detail-value" style="background: #fffbeb; padding: 12px; border-radius: 6px; border-left: 3px solid #f59e0b; white-space: pre-wrap; max-height: 200px; overflow-y: auto;">';
+                modalContent += problem.comments;
+                modalContent += '</div></div>';
+            }
+            
+            modalContent += '<div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; padding-top: 20px; border-top: 1px solid #e2e8f0;">';
+            modalContent += '<button class="report-btn" onclick="showReport()">📄 Generate Report</button>';
+            modalContent += '<button class="report-btn green" onclick="exportSingleProblemCSV()">📊 Export CSV</button>';
+            modalContent += '<button class="report-btn secondary" onclick="closeModal()">✖️ Close</button>';
+            modalContent += '</div>';
+            
+            body.innerHTML = modalContent;
             modal.classList.remove('hidden');
         }
         
         function showReport() {
             if (!currentProblem) return;
-            
             const report = generateSingleProblemReport(currentProblem);
             document.getElementById('reportText').textContent = report;
             document.getElementById('reportModal').classList.remove('hidden');
@@ -848,7 +810,7 @@
         function generateSingleProblemReport(problem) {
             const now = new Date();
             return `MAINTENANCE PROBLEM REPORT
-${'-'.repeat(50)}
+${'='.repeat(50)}
 
 Generated: ${now.toLocaleDateString('en-AU')} at ${now.toLocaleTimeString('en-AU')}
 Report Type: Individual Problem Analysis
@@ -885,6 +847,24 @@ ${problem.comments}` : ''}
 END OF REPORT`;
         }
         
+        function exportSingleProblemCSV() {
+            if (!currentProblem) return;
+            const headers = ['PID', 'Unit', 'Zone', 'Reported Date', 'Reported By', 'Reporter Email', 'Description', 'Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To', 'Completion Date', 'Comments'];
+            const problem = currentProblem;
+            const csvData = [[getFriendlyPID(problem.internalId), problem.unitNumber || '', problem.zone || '', formatDate(problem.timestamp), problem.reportedBy || '', problem.reporterEmail || '', (problem.problemDescription || '').replace(/"/g, '""'), problem.problemStatus || '', problem.problemPriority || '', problem.category || '', problem.subCategory || '', problem.assignedTo || '', problem.completionDate ? formatDate(problem.completionDate) : '', (problem.comments || '').replace(/"/g, '""')]];
+            const csv = [headers, ...csvData].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = `problem_${getFriendlyPID(problem.internalId).replace(' ', '_')}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            document.body.removeChild(a);
+        }
+        
         function closeModal() {
             document.getElementById('problemModal').classList.add('hidden');
             document.getElementById('reportModal').classList.add('hidden');
@@ -896,42 +876,15 @@ END OF REPORT`;
                 const btn = document.getElementById('copyReportFromModal');
                 const originalText = btn.textContent;
                 btn.textContent = '✅ Copied!';
-                setTimeout(() => {
-                    btn.textContent = originalText;
-                }, 2000);
+                setTimeout(() => { btn.textContent = originalText; }, 2000);
             });
         }
         
         function exportToCSV() {
-            if (filteredProblems.length === 0) {
-                alert('No problems to export');
-                return;
-            }
-            
-            const headers = [
-                'PID', 'Unit', 'Zone', 'Reported Date', 'Reported By', 'Description',
-                'Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To', 'Comments'
-            ];
-            
-            const csvData = filteredProblems.map(problem => [
-                getFriendlyPID(problem.internalId),
-                problem.unitNumber || '',
-                problem.zone || '',
-                formatDate(problem.timestamp),
-                problem.reportedBy || '',
-                (problem.problemDescription || '').replace(/"/g, '""'),
-                problem.problemStatus || '',
-                problem.problemPriority || '',
-                problem.category || '',
-                problem.subCategory || '',
-                problem.assignedTo || '',
-                (problem.comments || '').replace(/"/g, '""')
-            ]);
-            
-            const csv = [headers, ...csvData]
-                .map(row => row.map(field => `"${field}"`).join(','))
-                .join('\n');
-            
+            if (filteredProblems.length === 0) { alert('No problems to export'); return; }
+            const headers = ['PID', 'Unit', 'Zone', 'Reported Date', 'Reported By', 'Description', 'Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To', 'Comments'];
+            const csvData = filteredProblems.map(problem => [getFriendlyPID(problem.internalId), problem.unitNumber || '', problem.zone || '', formatDate(problem.timestamp), problem.reportedBy || '', (problem.problemDescription || '').replace(/"/g, '""'), problem.problemStatus || '', problem.problemPriority || '', problem.category || '', problem.subCategory || '', problem.assignedTo || '', (problem.comments || '').replace(/"/g, '""')]);
+            const csv = [headers, ...csvData].map(row => row.map(field => `"${field}"`).join(',')).join('\n');
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -944,33 +897,23 @@ END OF REPORT`;
             document.body.removeChild(a);
         }
         
-        // Filter helper functions
-        function selectAllUnits() {
-            document.querySelectorAll('#unitFilters input').forEach(cb => cb.checked = true);
-            applyFilters();
-        }
-        
-        function clearUnits() {
-            document.querySelectorAll('#unitFilters input').forEach(cb => cb.checked = false);
-            applyFilters();
-        }
-        
-        function selectAllStatuses() {
-            document.querySelectorAll('#statusFilters input').forEach(cb => cb.checked = true);
-            applyFilters();
-        }
-        
-        function clearStatuses() {
-            document.querySelectorAll('#statusFilters input').forEach(cb => cb.checked = false);
-            applyFilters();
-        }
+        function selectAllUnits() { document.querySelectorAll('#unitFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearUnits() { document.querySelectorAll('#unitFilters input').forEach(cb => cb.checked = false); applyFilters(); }
+        function selectAllStatuses() { document.querySelectorAll('#statusFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearStatuses() { document.querySelectorAll('#statusFilters input').forEach(cb => cb.checked = false); applyFilters(); }
+        function selectAllPriorities() { document.querySelectorAll('#priorityFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearPriorities() { document.querySelectorAll('#priorityFilters input').forEach(cb => cb.checked = false); applyFilters(); }
+        function selectAllCategories() { document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearCategories() { document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false); applyFilters(); }
+        function selectAllZones() { document.querySelectorAll('#zoneFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearZones() { document.querySelectorAll('#zoneFilters input').forEach(cb => cb.checked = false); applyFilters(); }
+        function selectAllAssigned() { document.querySelectorAll('#assignedToFilters input').forEach(cb => cb.checked = true); applyFilters(); }
+        function clearAssigned() { document.querySelectorAll('#assignedToFilters input').forEach(cb => cb.checked = false); applyFilters(); }
         
         function showError(message) {
-            const problemsGrid = document.getElementById('problemsGrid');
-            problemsGrid.innerHTML = `<div class="loading">❌ Error: ${message}</div>`;
+            document.getElementById('problemsGrid').innerHTML = `<div class="loading">❌ Error: ${message}</div>`;
         }
         
-        // API helper function
         async function makeRequest(action, params = {}) {
             return new Promise((resolve, reject) => {
                 const callbackName = 'callback_' + Math.random().toString(36).substr(2, 9);
