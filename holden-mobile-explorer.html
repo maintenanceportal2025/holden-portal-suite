@@ -314,6 +314,93 @@
             color: #64748b;
         }
         
+        /* Detail View */
+        .detail-view {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #f8fafc;
+            z-index: 100;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            overflow-y: auto;
+        }
+        
+        .detail-view.show {
+            transform: translateX(0);
+        }
+        
+        .detail-content {
+            padding-bottom: calc(20px + env(safe-area-inset-bottom));
+        }
+        
+        .detail-section {
+            background: white;
+            margin: 16px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .detail-grid {
+            padding: 16px;
+            display: grid;
+            gap: 16px;
+        }
+        
+        .detail-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .detail-label {
+            font-weight: 600;
+            color: #374151;
+            font-size: 0.9rem;
+        }
+        
+        .detail-value {
+            padding: 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            color: #1f2937;
+            font-size: 0.95rem;
+            word-wrap: break-word;
+        }
+        
+        .contact-link {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 44px;
+            height: 44px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+        }
+        
         /* Loading States */
         .loading, .empty-state {
             display: flex;
@@ -410,6 +497,76 @@
         </div>
     </div>
     
+    <!-- Detail View -->
+    <div class="detail-view" id="detailView">
+        <div class="header">
+            <div class="header-content">
+                <button class="back-btn" id="backToList">←</button>
+                <h1 id="detailTitle">Problem Details</h1>
+                <div></div>
+            </div>
+        </div>
+        
+        <div class="detail-content">
+            <div class="detail-section">
+                <div class="section-header">📋 Problem Details</div>
+                <div class="detail-grid">
+                    <div class="detail-field">
+                        <div class="detail-label">Problem ID</div>
+                        <div class="detail-value" id="detailProblemId">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Unit Number</div>
+                        <div class="detail-value" id="detailUnitNumber">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Zone</div>
+                        <div class="detail-value" id="detailZone">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Reported Date</div>
+                        <div class="detail-value" id="detailReportedDate">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Status</div>
+                        <div class="detail-value" id="detailStatus">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Priority</div>
+                        <div class="detail-value" id="detailPriority">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Description</div>
+                        <div class="detail-value" id="detailDescription">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Category</div>
+                        <div class="detail-value" id="detailCategory">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Sub-Category</div>
+                        <div class="detail-value" id="detailSubCategory">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Assigned To</div>
+                        <div class="detail-value" id="detailAssignedTo">-</div>
+                    </div>
+                    <div class="detail-field">
+                        <div class="detail-label">Comments</div>
+                        <div class="detail-value" id="detailComments">-</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="detail-section">
+                <div class="section-header">👥 Contact Info</div>
+                <div class="detail-grid" id="contactDetails">
+                    <!-- Populated dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <script>
         // Configuration
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
@@ -417,6 +574,7 @@
         // Global State
         let allProblems = [];
         let filteredProblems = [];
+        let currentProblem = null;
         let currentDataset = 'current';
         let sortDirection = 'asc'; // 'asc' = oldest first, 'desc' = newest first
         
@@ -438,6 +596,9 @@
             document.getElementById('priorityFilter').addEventListener('change', applyFilters);
             document.getElementById('clearBtn').addEventListener('click', clearAllFilters);
             document.getElementById('sortBtn').addEventListener('click', toggleSort);
+            
+            // Detail view
+            document.getElementById('backToList').addEventListener('click', hideDetailView);
         }
         
         function toggleSort() {
@@ -708,6 +869,89 @@
             container.innerHTML = filteredProblems.map(problem => createProblemCard(problem)).join('');
         }
         
+        function openProblemDetails(internalId) {
+            currentProblem = allProblems.find(p => p.internalId === internalId);
+            if (!currentProblem) return;
+            
+            populateDetailView(currentProblem);
+            showDetailView();
+        }
+        
+        function populateDetailView(problem) {
+            const friendlyPID = getFriendlyPID(problem.internalId);
+            
+            // Update header
+            document.getElementById('detailTitle').textContent = friendlyPID;
+            
+            // Populate details
+            document.getElementById('detailProblemId').textContent = friendlyPID;
+            document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
+            document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
+            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
+            document.getElementById('detailStatus').textContent = problem.problemStatus || 'Not assigned';
+            document.getElementById('detailPriority').textContent = problem.problemPriority || 'Not assigned';
+            document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description available';
+            document.getElementById('detailCategory').textContent = problem.category || 'No category';
+            document.getElementById('detailSubCategory').textContent = problem.subCategory || 'No sub-category';
+            document.getElementById('detailAssignedTo').textContent = problem.assignedTo || 'Not assigned';
+            document.getElementById('detailComments').textContent = problem.comments || 'No comments';
+            
+            // Populate contact details
+            populateContactDetails(problem);
+        }
+        
+        function populateContactDetails(problem) {
+            const container = document.getElementById('contactDetails');
+            
+            let contactHTML = `
+                <div class="detail-field">
+                    <div class="detail-label">Reported By</div>
+                    <div class="detail-value">${problem.reportedBy || 'Unknown'}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Reporter Email</div>
+                    <div class="detail-value">
+                        ${problem.reporterEmail ? 
+                            `<a href="mailto:${problem.reporterEmail}" class="contact-link">${problem.reporterEmail}</a>` : 
+                            'Not available'
+                        }
+                    </div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Unit Primary Name</div>
+                    <div class="detail-value">${problem.unitPrimaryName || 'Not available'}</div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Unit Primary Email</div>
+                    <div class="detail-value">
+                        ${problem.unitPrimaryEmail ? 
+                            `<a href="mailto:${problem.unitPrimaryEmail}" class="contact-link">${problem.unitPrimaryEmail}</a>` : 
+                            'Not available'
+                        }
+                    </div>
+                </div>
+                <div class="detail-field">
+                    <div class="detail-label">Unit Primary Phone</div>
+                    <div class="detail-value">
+                        ${problem.unitPrimaryPhone ? 
+                            `<a href="tel:${problem.unitPrimaryPhone.replace(/\s/g, '')}" class="contact-link">${problem.unitPrimaryPhone}</a>` : 
+                            'Not available'
+                        }
+                    </div>
+                </div>
+            `;
+            
+            container.innerHTML = contactHTML;
+        }
+        
+        function showDetailView() {
+            document.getElementById('detailView').classList.add('show');
+        }
+        
+        function hideDetailView() {
+            document.getElementById('detailView').classList.remove('show');
+        }
+        
         function createProblemCard(problem) {
             const friendlyPID = getFriendlyPID(problem.internalId);
             const reportedDate = formatDate(problem.timestamp);
@@ -721,10 +965,10 @@
             const truncatedDescription = description.length > 80 ? description.substring(0, 80) + '...' : description;
             
             return `
-                <div class="${cardClass}">
+                <div class="${cardClass}" onclick="openProblemDetails('${problem.internalId}')">
                     <div class="problem-header">
                         <div class="problem-id">${pidPrefix}${friendlyPID}</div>
-                        <div class="problem-unit">Unit ${problem.unitNumber} • ${problem.zone || 'Zone Unknown'}</div>
+                        <div class="problem-unit">${problem.unitNumber} • ${problem.zone || 'Zone Unknown'}</div>
                     </div>
                     <div class="problem-badges">
                         <span class="badge priority-${priority.toLowerCase()}">${priority}</span>
