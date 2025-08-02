@@ -795,7 +795,6 @@
                 if (response && response.success && response.data) {
                     allProblems = response.data;
                     console.log(`✅ Loaded ${allProblems.length} current problems`);
-                    hideLoading();
                     buildFilterOptions();
                     applyFilters();
                 } else {
@@ -816,7 +815,6 @@
                 if (response && response.success && response.data) {
                     allProblems = response.data;
                     console.log(`✅ Loaded ${allProblems.length} legacy problems`);
-                    hideLoading();
                     buildFilterOptions();
                     applyFilters();
                 } else {
