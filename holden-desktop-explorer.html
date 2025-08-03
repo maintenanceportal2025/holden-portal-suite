@@ -1245,6 +1245,10 @@ function clearAssigned() {
             });
         }
 function updateStatsDisplay() {
+
+console.log('📊 updateStatsDisplay called - filteredProblems length:', filteredProblems.length);
+    console.log('📊 allProblems length:', allProblems.length);
+    
     const total = filteredProblems.length;
     const active = filteredProblems.filter(p => !['Completed', 'Cancelled'].includes(p.problemStatus)).length;
     const urgent = filteredProblems.filter(p => ['Urgent', 'High'].includes(p.problemPriority)).length;
