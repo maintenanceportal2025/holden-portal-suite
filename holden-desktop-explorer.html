@@ -216,14 +216,27 @@
                     <button onclick="setDateRange('2025')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2025</button>
                     <button onclick="clearDateFilter()" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🗓️ All</button>
                 </div>
+
+                
                 <div style="border-top: 1px solid #e2e8f0; margin: 12px 0; padding-top: 12px;">
-                    <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-                        <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="Start">
-                        <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="End">
-                    </div>
-                    <button onclick="applyCustomDateRange()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
-                </div>
+    <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+        <div style="position: relative;">
+            <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; width: 100%;" placeholder="Start">
+            <label style="position: absolute; top: -8px; left: 6px; background: white; padding: 0 4px; font-size: 0.65rem; color: #64748b; font-weight: 500;">From</label>
+        </div>
+        <div style="position: relative;">
+            <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; width: 100%;" placeholder="End">
+            <label style="position: absolute; top: -8px; left: 6px; background: white; padding: 0 4px; font-size: 0.65rem; color: #64748b; font-weight: 500;">To</label>
+        </div>
+    </div>
+    <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px;">
+        <button onclick="applyCustomDateRange()" style="background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
+        <button onclick="clearCustomRange()" style="background: #6b7280; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">✕</button>
+    </div>
+</div>
+
+                
                 <div id="dateRangeDisplay" class="date-range-display">All dates</div>
             </div>
             <div class="filter-section">
@@ -254,13 +267,18 @@
 </div>
 
             
-            <div class="filter-section">
+           <div class="filter-section">
     <div class="filter-header"><div class="filter-label">📂 Category</div></div>
     <div style="display: flex; gap: 4px; margin-bottom: 8px;">
         <button onclick="selectAllCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
         <button onclick="clearCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
+        <button onclick="selectCommonCategories()" style="background: #e0f2fe; border: 1px solid #0284c7; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; color: #0369a1;">Common</button>
     </div>
     <div class="checkbox-list" id="categoryFilters"></div>
+    <div style="margin-top: 8px; padding: 6px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0;">
+        <div style="font-size: 0.65rem; color: #64748b; margin-bottom: 4px;">💡 Multi-select: Hold Ctrl+Click</div>
+        <div id="categorySelectionStatus" style="font-size: 0.7rem; color: #3b82f6; font-weight: 500;">All categories selected</div>
+    </div>
 </div>
 
             <div class="filter-section">
@@ -1209,11 +1227,13 @@ function clearPriorities() {
 // Category buttons  
 function selectAllCategories() {
     document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = true);
+    updateCategorySelectionStatus();
     applyFilters();
 }
 
 function clearCategories() {
     document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
+    updateCategorySelectionStatus();
     applyFilters();
 }
 
@@ -1360,6 +1380,101 @@ function changeItemsPerPage() {
     
     console.log('📊 Stats updated:', { total, active, urgent, completionRate, avgDays, thisWeek });
 }
+
+        // Enhanced date range functions
+function clearCustomRange() {
+    document.getElementById('startDate').value = '';
+    document.getElementById('endDate').value = '';
+    customDateRange = null;
+    currentDateFilter = null;
+    updateDateRangeDisplay('all');
+    applyFilters();
+}
+
+// Enhanced category selection
+function selectCommonCategories() {
+    // Define most common categories - adjust based on your data
+    const commonCategories = ['Electrical', 'Plumbing', 'Aircon', 'Doors'];
+    
+    // Clear all first
+    document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
+    
+    // Select only common ones
+    document.querySelectorAll('#categoryFilters input').forEach(cb => {
+        if (commonCategories.includes(cb.value)) {
+            cb.checked = true;
+        }
+    });
+    
+    updateCategorySelectionStatus();
+    applyFilters();
+}
+
+function updateCategorySelectionStatus() {
+    const allCategoryCheckboxes = document.querySelectorAll('#categoryFilters input');
+    const checkedCategories = document.querySelectorAll('#categoryFilters input:checked');
+    const statusElement = document.getElementById('categorySelectionStatus');
+    
+    if (checkedCategories.length === 0) {
+        statusElement.textContent = 'No categories selected';
+        statusElement.style.color = '#ef4444';
+    } else if (checkedCategories.length === allCategoryCheckboxes.length) {
+        statusElement.textContent = 'All categories selected';
+        statusElement.style.color = '#10b981';
+    } else {
+        statusElement.textContent = `${checkedCategories.length} of ${allCategoryCheckboxes.length} categories selected`;
+        statusElement.style.color = '#3b82f6';
+    }
+}
+
+// Enhanced multi-select category handling
+function buildCheckboxSection(containerId, items, filterType) {
+    const container = document.getElementById(containerId);
+    container.innerHTML = '';
+    
+    items.forEach(item => {
+        if (!item) return;
+        
+        const div = document.createElement('div');
+        div.className = 'checkbox-item';
+        
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.value = item;
+        input.checked = true;
+        input.addEventListener('change', () => {
+            applyFilters();
+            if (filterType === 'category') {
+                updateCategorySelectionStatus();
+            }
+        });
+        
+        // Enhanced multi-select for categories
+        if (filterType === 'category') {
+            div.addEventListener('click', (e) => {
+                if (e.target !== input && e.ctrlKey) {
+                    input.checked = !input.checked;
+                    applyFilters();
+                    updateCategorySelectionStatus();
+                    e.preventDefault();
+                }
+            });
+        }
+        
+        const label = document.createElement('label');
+        label.textContent = item;
+        
+        div.appendChild(input);
+        div.appendChild(label);
+        container.appendChild(div);
+    });
+    
+    // Update status for categories
+    if (filterType === 'category') {
+        setTimeout(updateCategorySelectionStatus, 100);
+    }
+}
+        
         
     </script>
 </body>
