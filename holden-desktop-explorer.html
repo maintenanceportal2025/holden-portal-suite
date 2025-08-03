@@ -202,6 +202,7 @@
                 <span class="sidebar-title">🎛️ Data Slicers</span>
             </div>
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description...">
+            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">📅 Date Range</div></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
@@ -272,14 +273,10 @@
     <div style="display: flex; gap: 4px; margin-bottom: 8px;">
         <button onclick="selectAllCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
         <button onclick="clearCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">Clear</button>
-        <button onclick="selectCommonCategories()" style="background: #e0f2fe; border: 1px solid #0284c7; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer; color: #0369a1;">Common</button>
     </div>
     <div class="checkbox-list" id="categoryFilters"></div>
-    <div style="margin-top: 8px; padding: 6px; background: #f8fafc; border-radius: 4px; border: 1px solid #e2e8f0;">
-        <div style="font-size: 0.65rem; color: #64748b; margin-bottom: 4px;">💡 Multi-select: Hold Ctrl+Click</div>
-        <div id="categorySelectionStatus" style="font-size: 0.7rem; color: #3b82f6; font-weight: 500;">All categories selected</div>
-    </div>
 </div>
+            
 
             <div class="filter-section">
     <div class="filter-header"><div class="filter-label">📂Sub-Category</div></div>
@@ -1391,89 +1388,10 @@ function clearCustomRange() {
     applyFilters();
 }
 
-// Enhanced category selection
-function selectCommonCategories() {
-    // Define most common categories - adjust based on your data
-    const commonCategories = ['Electrical', 'Plumbing', 'Aircon', 'Doors'];
-    
-    // Clear all first
-    document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
-    
-    // Select only common ones
-    document.querySelectorAll('#categoryFilters input').forEach(cb => {
-        if (commonCategories.includes(cb.value)) {
-            cb.checked = true;
-        }
-    });
-    
-    updateCategorySelectionStatus();
-    applyFilters();
-}
 
-function updateCategorySelectionStatus() {
-    const allCategoryCheckboxes = document.querySelectorAll('#categoryFilters input');
-    const checkedCategories = document.querySelectorAll('#categoryFilters input:checked');
-    const statusElement = document.getElementById('categorySelectionStatus');
-    
-    if (checkedCategories.length === 0) {
-        statusElement.textContent = 'No categories selected';
-        statusElement.style.color = '#ef4444';
-    } else if (checkedCategories.length === allCategoryCheckboxes.length) {
-        statusElement.textContent = 'All categories selected';
-        statusElement.style.color = '#10b981';
-    } else {
-        statusElement.textContent = `${checkedCategories.length} of ${allCategoryCheckboxes.length} categories selected`;
-        statusElement.style.color = '#3b82f6';
-    }
-}
 
-// Enhanced multi-select category handling
-function buildCheckboxSection(containerId, items, filterType) {
-    const container = document.getElementById(containerId);
-    container.innerHTML = '';
-    
-    items.forEach(item => {
-        if (!item) return;
-        
-        const div = document.createElement('div');
-        div.className = 'checkbox-item';
-        
-        const input = document.createElement('input');
-        input.type = 'checkbox';
-        input.value = item;
-        input.checked = true;
-        input.addEventListener('change', () => {
-            applyFilters();
-            if (filterType === 'category') {
-                updateCategorySelectionStatus();
-            }
-        });
-        
-        // Enhanced multi-select for categories
-        if (filterType === 'category') {
-            div.addEventListener('click', (e) => {
-                if (e.target !== input && e.ctrlKey) {
-                    input.checked = !input.checked;
-                    applyFilters();
-                    updateCategorySelectionStatus();
-                    e.preventDefault();
-                }
-            });
-        }
-        
-        const label = document.createElement('label');
-        label.textContent = item;
-        
-        div.appendChild(input);
-        div.appendChild(label);
-        container.appendChild(div);
-    });
-    
-    // Update status for categories
-    if (filterType === 'category') {
-        setTimeout(updateCategorySelectionStatus, 100);
-    }
-}
+
+
         
         
     </script>
