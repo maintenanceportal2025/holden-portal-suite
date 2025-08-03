@@ -866,53 +866,61 @@
 }
         
         function showProblemDetail(problem) {
-            currentProblem = problem;
-            const modal = document.getElementById('problemModal');
-            const title = document.getElementById('modalTitle');
-            const body = document.getElementById('modalBody');
-            
-            title.textContent = `${getFriendlyPID(problem.internalId)} - ${problem.unitNumber}`;
-            
-            body.innerHTML = `
-                <div class="detail-section">
-                    <div class="detail-label">Problem Details</div>
-                    <div class="detail-value">
-                        <strong>Unit:</strong> ${problem.unitNumber || 'Not specified'}<br>
-                        <strong>Reported Date:</strong> ${formatDate(problem.timestamp)}<br>
-                        <strong>Reported By:</strong> ${problem.reportedBy || 'Unknown'}<br>
-                        <strong>Zone:</strong> ${problem.zone || 'Not specified'}
-                    </div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">Description</div>
-                    <div class="detail-value">${problem.problemDescription || 'No description provided'}</div>
-                </div>
-                <div class="detail-section">
-                    <div class="detail-label">Management Information</div>
-                    
-                    <div class="detail-value">
-    <strong>Status:</strong> ${problem.problemStatus || 'Reported'}<br>
-    <strong>Priority:</strong> ${problem.problemPriority || 'Medium'}<br>
-    <strong>Category:</strong> ${problem.category || 'Not categorized'}<br>
-    <strong>Sub-Category:</strong> ${problem.subCategory || 'Not specified'}<br>
-    <strong>Assigned To:</strong> ${problem.assignedTo || 'Unassigned'}
-</div>
-                    
-                </div>
-                ${problem.comments ? `
-                <div class="detail-section">
-                    <div class="detail-label">Comments</div>
-                    <div class="detail-value" style="white-space: pre-wrap;">${problem.comments}</div>
-                </div>
-                ` : ''}
-                <div style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button class="report-btn" onclick="showReport()">📄 Generate Report</button>
-                    <button class="report-btn secondary" onclick="closeModal()">✖️ Close</button>
-                </div>
-            `;
-            
-            modal.classList.remove('hidden');
-        }
+    currentProblem = problem;
+    const modal = document.getElementById('problemModal');
+    const title = document.getElementById('modalTitle');
+    const body = document.getElementById('modalBody');
+    
+    title.textContent = getFriendlyPID(problem.internalId) + ' - ' + (problem.unitNumber || 'No Unit');
+    
+    // Build comprehensive modal content like mobile version
+    let modalContent = '';
+    
+    // Section 1: Problem Details
+    modalContent += '<div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden;">';
+    modalContent += '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; font-weight: 600; font-size: 16px;">📋 Problem Details</div>';
+    modalContent += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px;">';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Problem ID</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + getFriendlyPID(problem.internalId) + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Unit Number</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.unitNumber || 'Not specified') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Reported Date</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + formatDate(problem.timestamp) + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Zone</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.zone || 'Not specified') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Status</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.problemStatus || 'Not assigned') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Priority</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.problemPriority || 'Not assigned') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Category</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.category || 'Not assigned') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Sub-Category</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.subCategory || 'Not assigned') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Assigned To</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.assignedTo || 'Not assigned') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Completion Date</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.completionDate ? formatDate(problem.completionDate) : 'Not completed') + '</div></div>';
+    
+    // Problem Description (full width)
+    modalContent += '<div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Problem Description</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.problemDescription || 'No description available') + '</div></div>';
+    
+    // Comments (full width if exists)
+    if (problem.comments) {
+        modalContent += '<div style="grid-column: 1 / -1; display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Comments</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center; white-space: pre-wrap;">' + problem.comments + '</div></div>';
+    }
+    modalContent += '</div></div>';
+    
+    // Section 2: Contact Info
+    modalContent += '<div style="background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; overflow: hidden;">';
+    modalContent += '<div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 15px 20px; font-weight: 600; font-size: 16px;">👥 Contact Info</div>';
+    modalContent += '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 20px;">';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Reported By</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.reportedBy || 'Unknown') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Reporter Email</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.reporterEmail || 'Not provided') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Unit Owner</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.residentName || 'Not provided') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Unit Contact</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.residentMobile || 'Not provided') + '</div></div>';
+    modalContent += '<div style="display: flex; flex-direction: column; gap: 6px;"><div style="font-weight: 600; color: #374151; font-size: 14px;">Unit Email</div><div style="padding: 10px 12px; background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 6px; color: #6b7280; font-size: 14px; min-height: 38px; display: flex; align-items: center;">' + (problem.residentEmail || 'Not provided') + '</div></div>';
+    modalContent += '</div></div>';
+    
+    // Action buttons
+    modalContent += '<div style="margin-top: 30px; display: flex; gap: 10px; justify-content: center; padding-top: 20px; border-top: 1px solid #e2e8f0;">';
+    modalContent += '<button class="report-btn" onclick="showReport()">📄 Generate Report</button>';
+    modalContent += '<button class="report-btn green" onclick="exportSingleProblemCSV()">📊 Export CSV</button>';
+    modalContent += '<button class="report-btn secondary" onclick="closeModal()">✖️ Close</button>';
+    modalContent += '</div>';
+    
+    body.innerHTML = modalContent;
+    modal.classList.remove('hidden');
+}
         
         function showReport() {
             if (!currentProblem) return;
