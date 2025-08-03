@@ -99,64 +99,6 @@
     gap: 8px; 
     align-items: center; 
 }
-
-        /* Stats Dashboard - Streamlined Version */
-.stats-dashboard {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    margin-bottom: 16px;
-    padding: 16px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.stat-card {
-    text-align: center;
-    padding: 12px 8px;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.stat-number {
-    font-size: 1.6em;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 2px;
-    line-height: 1;
-}
-
-.stat-label {
-    font-weight: 600;
-    color: #475569;
-    font-size: 0.8rem;
-    margin-bottom: 1px;
-}
-
-.stat-sublabel {
-    font-size: 0.7rem;
-    color: #64748b;
-    font-weight: 500;
-}
-
-/* Specific stat card colors */
-.stat-card:nth-child(1) .stat-number { color: #3b82f6; }
-.stat-card:nth-child(2) .stat-number { color: #f59e0b; }
-.stat-card:nth-child(3) .stat-number { color: #ef4444; }
-.stat-card:nth-child(4) .stat-number { color: #10b981; }
-.stat-card:nth-child(5) .stat-number { color: #8b5cf6; }
-.stat-card:nth-child(6) .stat-number { color: #06b6d4; }
     
     </style>
 </head>
@@ -271,47 +213,7 @@
     <button id="toggleAllFiltersBtn" onclick="toggleAllFilters()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">✅ Check All Filters</button>
 </div>
         </div>
-      
-
-<div class="main-content">
-    <!-- Stats Dashboard -->
-    <div class="stats-dashboard">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalProblemsCount">-</div>
-                <div class="stat-label">Total Problems</div>
-                <div class="stat-sublabel" id="totalProblemsSub">Filtered results</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="activeProblemsCount">-</div>
-                <div class="stat-label">Active Problems</div>
-                <div class="stat-sublabel" id="activeProblemsSub">Not completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="urgentProblemsCount">-</div>
-                <div class="stat-label">Urgent + High</div>
-                <div class="stat-sublabel" id="urgentProblemsSub">Priority issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="completionRate">-</div>
-                <div class="stat-label">Completion Rate</div>
-                <div class="stat-sublabel" id="completionRateSub">Overall %</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="avgResolutionDays">-</div>
-                <div class="stat-label">Avg Resolution</div>
-                <div class="stat-sublabel" id="avgResolutionSub">Days to complete</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="thisWeekCount">-</div>
-                <div class="stat-label">This Week</div>
-                <div class="stat-sublabel" id="thisWeekSub">New reports</div>
-            </div>
-        </div>
-    </div>
-    
-
-            
+        <div class="main-content">
             <div class="results-header">
                 <div class="results-info" id="resultsInfo">Loading...</div>
                 <div class="results-actions">
@@ -929,10 +831,6 @@
                 const bottomPagination = problemsGrid.firstChild.cloneNode(true);
                 problemsGrid.appendChild(bottomPagination);
             }
-            if (totalPages > 1) {
-    const bottomPagination = problemsGrid.firstChild.cloneNode(true);
-    problemsGrid.appendChild(bottomPagination);
-}
         }
         
        function createProblemCard(problem) {
@@ -1244,63 +1142,6 @@ function clearAssigned() {
                 }, 10000);
             });
         }
-function updateStatsDisplay() {
-
-console.log('📊 updateStatsDisplay called - filteredProblems length:', filteredProblems.length);
-    console.log('📊 allProblems length:', allProblems.length);
-    
-    const total = filteredProblems.length;
-    const active = filteredProblems.filter(p => !['Completed', 'Cancelled'].includes(p.problemStatus)).length;
-    const urgent = filteredProblems.filter(p => ['Urgent', 'High'].includes(p.problemPriority)).length;
-    const completed = filteredProblems.filter(p => p.problemStatus === 'Completed').length;
-    
-    // Calculate completion rate
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    // Calculate average resolution time for completed problems
-    const completedWithDates = filteredProblems.filter(p => 
-        p.problemStatus === 'Completed' && p.completionDate && p.timestamp
-    );
-    
-    let avgDays = '-';
-    if (completedWithDates.length > 0) {
-        const totalDays = completedWithDates.reduce((sum, problem) => {
-            const reportedDate = parseDate(problem.timestamp);
-            const completedDate = parseDate(problem.completionDate);
-            const days = Math.ceil((completedDate - reportedDate) / (1000 * 60 * 60 * 24));
-            return sum + (days > 0 ? days : 0);
-        }, 0);
-        avgDays = Math.round(totalDays / completedWithDates.length);
-    }
-    
-    // Calculate this week's problems (last 7 days)
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const thisWeek = filteredProblems.filter(p => {
-        const problemDate = parseDate(p.timestamp);
-        return problemDate >= oneWeekAgo.getTime();
-    }).length;
-    
-    // Update the display
-    document.getElementById('totalProblemsCount').textContent = total.toLocaleString();
-    document.getElementById('activeProblemsCount').textContent = active.toLocaleString();
-    document.getElementById('urgentProblemsCount').textContent = urgent.toLocaleString();
-    document.getElementById('completionRate').textContent = `${completionRate}%`;
-    document.getElementById('avgResolutionDays').textContent = avgDays === '-' ? '-' : `${avgDays}d`;
-    document.getElementById('thisWeekCount').textContent = thisWeek.toLocaleString();
-    
-    // Update sublabels with contextual info
-    document.getElementById('totalProblemsSub').textContent = currentDataset === 'current' ? 'Live data' : 'Legacy data';
-    document.getElementById('activeProblemsSub').textContent = `${total - active} completed`;
-    document.getElementById('urgentProblemsSub').textContent = urgent > 0 ? 'Need attention' : 'All normal';
-    document.getElementById('completionRateSub').textContent = `${completed}/${total} problems`;
-    document.getElementById('avgResolutionSub').textContent = avgDays === '-' ? 'No data' : 'Average days';
-    document.getElementById('thisWeekSub').textContent = thisWeek > 0 ? 'Recent activity' : 'No new reports';
-    
-    console.log('📊 Stats updated:', { total, active, urgent, completionRate, avgDays, thisWeek });
-}
-
-        
     </script>
 </body>
 </html>
