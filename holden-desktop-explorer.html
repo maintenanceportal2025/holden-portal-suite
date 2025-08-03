@@ -78,6 +78,28 @@
         .report-btn.green { background: #059669; }
         .report-btn.secondary { background: #6b7280; }
         .date-range-display { font-size: 0.75rem; color: #64748b; text-align: center; padding: 4px; background: #f8fafc; border-radius: 4px; margin-bottom: 8px; }
+   
+    .card-top-line { 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.card-zone { 
+    background: #e0f2fe; 
+    color: #0369a1; 
+    padding: 4px 8px; 
+    border-radius: 6px; 
+    font-size: 0.8rem; 
+    font-weight: 600; 
+}
+
+.card-footer { 
+    display: flex; 
+    gap: 8px; 
+    align-items: center; 
+}
+    
     </style>
 </head>
 <body>
@@ -811,34 +833,37 @@
             }
         }
         
-        function createProblemCard(problem) {
-            const card = document.createElement('div');
-            card.className = `problem-card ${(problem.problemPriority || 'medium').toLowerCase()}`;
-            card.onclick = () => showProblemDetail(problem);
-            
-            const priorityClass = `priority-${(problem.problemPriority || 'medium').toLowerCase()}`;
-            const statusClass = `status-${(problem.problemStatus || 'reported').toLowerCase().replace(/\s+/g, '-')}`;
-            
-            card.innerHTML = `
-                <div class="card-header">
-                    <div class="card-pid">${getFriendlyPID(problem.internalId)}</div>
-                    <div class="card-unit">${problem.unitNumber || 'No Unit'}</div>
-                </div>
-                <div class="card-body">
-                    <div class="card-description">${problem.problemDescription || 'No description'}</div>
-                    <div class="card-meta">
-                        <span>📅 ${formatDate(problem.timestamp)}</span>
-                        <span>👤 ${problem.reportedBy || 'Unknown'}</span>
-                    </div>
-                </div>
-                <div class="card-footer">
-                    <span class="status-badge ${statusClass}">${problem.problemStatus || 'Reported'}</span>
-                    <span class="priority-badge ${priorityClass}">${problem.problemPriority || 'Medium'}</span>
-                </div>
-            `;
-            
-            return card;
-        }
+       function createProblemCard(problem) {
+    const card = document.createElement('div');
+    card.className = `problem-card ${(problem.problemPriority || 'medium').toLowerCase()}`;
+    card.onclick = () => showProblemDetail(problem);
+    
+    const priorityClass = `priority-${(problem.problemPriority || 'medium').toLowerCase()}`;
+    const statusClass = `status-${(problem.problemStatus || 'reported').toLowerCase().replace(/\s+/g, '-')}`;
+    
+    card.innerHTML = `
+        <div class="card-header">
+            <div class="card-top-line">
+                <div class="card-pid">${getFriendlyPID(problem.internalId)}</div>
+                <div class="card-unit">${problem.unitNumber || 'No Unit'}</div>
+                ${problem.zone ? `<div class="card-zone">${problem.zone}</div>` : ''}
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="card-description">${problem.problemDescription || 'No description'}</div>
+            <div class="card-meta">
+                <span>📅 ${formatDate(problem.timestamp)}</span>
+                <span>👤 ${problem.reportedBy || 'Unknown'}</span>
+            </div>
+        </div>
+        <div class="card-footer">
+            <span class="status-badge ${statusClass}">${problem.problemStatus || 'Reported'}</span>
+            <span class="priority-badge ${priorityClass}">${problem.problemPriority || 'Medium'}</span>
+        </div>
+    `;
+    
+    return card;
+}
         
         function showProblemDetail(problem) {
             currentProblem = problem;
