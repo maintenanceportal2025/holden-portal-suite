@@ -964,10 +964,32 @@ const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
             });
             
             // Add pagination controls at bottom too if more than one page
-            if (totalPages > 1) {
-                const bottomPagination = problemsGrid.firstChild.cloneNode(true);
-                problemsGrid.appendChild(bottomPagination);
-            }
+if (totalPages > 1) {
+    const bottomPagination = problemsGrid.firstChild.cloneNode(true);
+    
+    // Re-attach event listeners to the cloned buttons
+    const bottomButtons = bottomPagination.querySelectorAll('button');
+    
+    // Previous button (first button)
+    bottomButtons[0].onclick = () => {
+        if (currentPage > 1) {
+            currentPage--;
+            updateResults();
+        }
+    };
+    
+    // Next button (last button) 
+    bottomButtons[1].onclick = () => {
+        if (currentPage < totalPages) {
+            currentPage++;
+            updateResults();
+        }
+    };
+    
+    problemsGrid.appendChild(bottomPagination);
+}
+
+            
             // Add this line at the very end of the function:
     updateStatsDisplay();
         }
