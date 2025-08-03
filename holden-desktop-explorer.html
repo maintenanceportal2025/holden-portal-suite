@@ -433,7 +433,10 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100, 'All']; // Available options
     document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
     document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
     document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-    
+
+document.getElementById('scrollTopBtn').addEventListener('click', () => document.documentElement.scrollTop = 0);
+document.getElementById('scrollBottomBtn').addEventListener('click', () => document.documentElement.scrollTop = document.documentElement.scrollHeight);
+            
     // Load saved items per page preference
     const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
     if (savedItemsPerPage) {
@@ -1420,10 +1423,10 @@ window.scrollToBottom = function() {
 
     <!-- Scroll Navigation Buttons -->
 <div class="scroll-buttons">
-    <button class="scroll-btn" onclick="document.documentElement.scrollTop = 0" title="Scroll to top">
+    <button id="scrollTopBtn" class="scroll-btn" title="Scroll to top">
         ↑ Top
     </button>
-    <button class="scroll-btn" onclick="document.documentElement.scrollTop = document.documentElement.scrollHeight" title="Scroll to bottom">
+    <button id="scrollBottomBtn" class="scroll-btn" title="Scroll to bottom">
         ↓ Bottom
     </button>
 </div>
