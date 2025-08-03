@@ -332,12 +332,22 @@
     </div>
     
     <div class="results-header">
-        <div class="results-info" id="resultsInfo">Loading...</div>
-        <div class="results-actions">
-                    <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()">📅 Newest First</button>
-                    <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
-                </div>
-            </div>
+    <div class="results-info" id="resultsInfo">Loading...</div>
+    <div class="results-actions">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <label style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Show:</label>
+            <select id="itemsPerPageSelect" onchange="changeItemsPerPage()" style="padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem; background: white; cursor: pointer;">
+                <option value="10">10</option>
+                <option value="20" selected>20</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+                <option value="all">Show All</option>
+            </select>
+        </div>
+        <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()">📅 Newest First</button>
+        <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
+    </div>
+</div>
             <div class="problems-grid" id="problemsGrid">
                 <div class="loading">
                     <div class="loading-spinner"></div>
@@ -382,7 +392,8 @@
         let sortDirection = 'desc'; // NEW: Track sort direction
         let dynamicDropdowns = {}; // NEW: Store dynamic dropdown data
         let currentPage = 1;
-        const ITEMS_PER_PAGE = 20; // NEW: Pagination support
+        let itemsPerPage = 20; // Changed from const to let - now user-selectable
+const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100, 'All']; // Available options
         
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🖥️ Problem Data Explorer - Starting...');
@@ -394,7 +405,12 @@
             document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
             document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
             document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-            
+            // Load saved items per page preference
+const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
+if (savedItemsPerPage) {
+    document.getElementById('itemsPerPageSelect').value = savedItemsPerPage;
+    changeItemsPerPage(); // Apply the saved preference
+}
             loadProblemsData();
             loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
         });
@@ -877,9 +893,11 @@
             
             // Calculate pagination
             const totalItems = filteredProblems.length;
-            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
-            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-            const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
+            const totalPages = itemsPerPage >= totalItems ? 1 : Math.ceil(totalItems / itemsPerPage);
+            
+            const startIndex = (currentPage - 1) * itemsPerPage;
+const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            
             const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
             
             // Update results info with pagination
@@ -1313,6 +1331,29 @@ function updateStatsDisplay() {
     
     console.log('📊 Stats updated:', { total, active, urgent, completionRate, avgDays, thisWeek });
 }
+function changeItemsPerPage() {
+    const select = document.getElementById('itemsPerPageSelect');
+    const value = select.value;
+    
+    if (value === 'all') {
+        itemsPerPage = filteredProblems.length || 9999; // Show all items
+    } else {
+        itemsPerPage = parseInt(value);
+    }
+    
+    // Reset to first page when changing items per page
+    currentPage = 1;
+    
+    // Save user preference
+    localStorage.setItem('explorerItemsPerPage', value);
+    
+    // Refresh display
+    updateResults();
+    
+    console.log(`📄 Items per page changed to: ${value}`);
+}
+        
+        
         
     </script>
 </body>
