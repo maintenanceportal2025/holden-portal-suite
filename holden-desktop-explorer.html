@@ -1416,7 +1416,14 @@ function changeItemsPerPage() {
 }
         // NEW: Zone Performance Function - ADD ENTIRE FUNCTION HERE
 function updateZonePerformance() {
+    console.log('🏘️ updateZonePerformance called');
+    console.log('📊 filteredProblems length:', filteredProblems.length);
+    
     const zoneGrid = document.getElementById('zoneGrid');
+    const zoneSummary = document.getElementById('zoneSummary');
+    
+    console.log('🎯 zoneGrid element:', zoneGrid);
+    console.log('🎯 zoneSummary element:', zoneSummary);
     // ... rest of the function I provided
 }
 
