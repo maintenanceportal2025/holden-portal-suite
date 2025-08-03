@@ -180,7 +180,35 @@
         font-size: 0.65rem;
     }
 }
-    
+/* Scroll Navigation Buttons */
+.scroll-buttons {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 100;
+}
+
+.scroll-btn {
+    background: #3b82f6;
+    color: white;
+    border: none;
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    transition: all 0.2s;
+}
+
+.scroll-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}    
     </style>
 </head>
 <body>
@@ -1376,9 +1404,27 @@ function changeItemsPerPage() {
     
     console.log(`📄 Items per page changed to: ${value}`);
 }
-        
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}        
         
         
     </script>
+
+    <!-- Scroll Navigation Buttons -->
+<div class="scroll-buttons">
+    <button id="scrollTopBtn" class="scroll-btn" onclick="scrollToTop()" title="Scroll to top">
+        ↑ Top
+    </button>
+    <button id="scrollBottomBtn" class="scroll-btn" onclick="scrollToBottom()" title="Scroll to bottom">
+        ↓ Bottom
+    </button>
+</div>
+
+
 </body>
 </html>
