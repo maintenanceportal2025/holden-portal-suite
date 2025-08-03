@@ -1404,13 +1404,16 @@ function changeItemsPerPage() {
     
     console.log(`📄 Items per page changed to: ${value}`);
 }
-function scrollToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-}
 
-function scrollToBottom() {
+        
+// Scroll functions - simple version
+window.scrollToTop = function() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.scrollToBottom = function() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
-}        
+};     
         
         
     </script>
