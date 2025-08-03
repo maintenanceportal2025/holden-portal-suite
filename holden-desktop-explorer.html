@@ -396,24 +396,26 @@
 const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100, 'All']; // Available options
         
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🖥️ Problem Data Explorer - Starting...');
-            document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
-            document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
-            document.getElementById('searchInput').addEventListener('input', () => setTimeout(applyFilters, 300));
-            document.getElementById('closeProblemModal').addEventListener('click', closeModal);
-            document.getElementById('closeReportModal').addEventListener('click', closeModal);
-            document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
-            document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-            document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-            // Load saved items per page preference
-const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
-if (savedItemsPerPage) {
-    document.getElementById('itemsPerPageSelect').value = savedItemsPerPage;
-    changeItemsPerPage(); // Apply the saved preference
-}
-            loadProblemsData();
-            loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
-        });
+    console.log('🖥️ Problem Data Explorer - Starting...');
+    document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
+    document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
+    document.getElementById('searchInput').addEventListener('input', () => setTimeout(applyFilters, 300));
+    document.getElementById('closeProblemModal').addEventListener('click', closeModal);
+    document.getElementById('closeReportModal').addEventListener('click', closeModal);
+    document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
+    document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+    document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+    
+    // Load saved items per page preference
+    const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
+    if (savedItemsPerPage) {
+        document.getElementById('itemsPerPageSelect').value = savedItemsPerPage;
+        changeItemsPerPage(); // Apply the saved preference
+    }
+    
+    loadProblemsData();
+    loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
+});
 
         // NEW: Load dynamic dropdown options from Categories tab
         async function loadDynamicDropdowns() {
