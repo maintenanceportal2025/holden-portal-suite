@@ -1420,10 +1420,10 @@ window.scrollToBottom = function() {
 
     <!-- Scroll Navigation Buttons -->
 <div class="scroll-buttons">
-    <button class="scroll-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Scroll to top">
+    <button class="scroll-btn" onclick="document.documentElement.scrollTop = 0" title="Scroll to top">
         ↑ Top
     </button>
-    <button class="scroll-btn" onclick="window.scrollTo({top: document.body.scrollHeight, behavior: 'smooth'})" title="Scroll to bottom">
+    <button class="scroll-btn" onclick="document.documentElement.scrollTop = document.documentElement.scrollHeight" title="Scroll to bottom">
         ↓ Bottom
     </button>
 </div>
