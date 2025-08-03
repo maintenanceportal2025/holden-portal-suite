@@ -1424,6 +1424,13 @@ function updateZonePerformance() {
     
     console.log('🎯 zoneGrid element:', zoneGrid);
     console.log('🎯 zoneSummary element:', zoneSummary);
+    
+    // Group problems by zone
+    const zoneData = {};
+    
+    console.log('🔄 Starting to group problems by zone...');  // ← ADD THIS LINE
+    
+    filteredProblems.forEach(problem => {
     // ... rest of the function I provided
 }
 
