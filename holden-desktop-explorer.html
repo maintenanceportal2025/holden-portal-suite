@@ -180,7 +180,26 @@
     .stat-sublabel {
         font-size: 0.65rem;
     }
-}        
+}  
+        /* Zone Performance Dashboard */
+.zone-performance-dashboard {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-bottom: 16px;
+    padding: 16px;
+}
+
+.zone-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+/* ... etc (all the zone CSS but NO @media section) */
     
     </style>
 </head>
@@ -348,7 +367,23 @@
                 <div class="stat-sublabel" id="thisWeekSub">New reports</div>
             </div>
         </div>
-    </div>            
+    </div>  
+            
+<!-- NEW: Zone Performance Section - ADD THIS ENTIRE BLOCK -->
+<div class="zone-performance-dashboard">
+    <div class="zone-header">
+        <h3>🏘️ Zone Performance Analysis</h3>
+        <div class="zone-summary" id="zoneSummary">-</div>
+    </div>
+    <div class="zone-grid" id="zoneGrid">
+        <div class="loading">Calculating zone metrics...</div>
+    </div>
+</div>
+
+<div class="results-header">
+    <div class="results-info" id="resultsInfo">Loading...</div>
+
+            
             <div class="results-header">
     <div class="results-info" id="resultsInfo">Loading...</div>
     <div class="results-actions">
@@ -991,6 +1026,8 @@
             }
             // NEW: Update stats dashboard
             updateStatsDisplay();
+            // NEW: Update zone performance
+            updateZonePerformance();
         }
         
        function createProblemCard(problem) {
@@ -1376,6 +1413,11 @@ function changeItemsPerPage() {
     document.getElementById('thisWeekSub').textContent = thisWeek > 0 ? 'Recent activity' : 'No new reports';
     
     console.log('📊 Stats updated:', { total, active, urgent, completionRate, avgDays, thisWeek });
+}
+        // NEW: Zone Performance Function - ADD ENTIRE FUNCTION HERE
+function updateZonePerformance() {
+    const zoneGrid = document.getElementById('zoneGrid');
+    // ... rest of the function I provided
 }
 
         // Enhanced date range functions
