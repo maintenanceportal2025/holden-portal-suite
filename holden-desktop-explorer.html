@@ -49,7 +49,7 @@
         .card-pid { font-weight: 700; color: #1e293b; font-size: 1.1rem; }
         .card-unit { background: #f1f5f9; color: #475569; padding: 4px 8px; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
         .card-body { margin-bottom: 12px; }
-        .card-description { color: #64748b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .card-description { color: #64748b; font-size: 0.9rem; line-height: 1.4; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
         .card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: #64748b; }
         .card-footer { display: flex; justify-content: space-between; align-items: center; }
         .status-badge { padding: 4px 8px; border-radius: 6px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
@@ -99,91 +99,6 @@
     gap: 8px; 
     align-items: center; 
 }
-        
-/* Enhanced Stats Dashboard - COMPACT VERSION */
-.stats-dashboard {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-    margin-bottom: 16px;
-    padding: 16px;
-}
-
-.stats-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-}
-
-.stat-card {
-    text-align: center;
-    padding: 12px 8px;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-    border-radius: 8px;
-    border: 1px solid #e2e8f0;
-    transition: all 0.2s;
-}
-
-.stat-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.stat-number {
-    font-size: 1.6em;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 2px;
-    line-height: 1;
-}
-
-.stat-label {
-    font-weight: 600;
-    color: #475569;
-    font-size: 0.8rem;
-    margin-bottom: 1px;
-}
-
-.stat-sublabel {
-    font-size: 0.7rem;
-    color: #64748b;
-    font-weight: 500;
-}
-
-/* Specific stat card colors */
-.stat-card:nth-child(1) .stat-number { color: #3b82f6; }
-.stat-card:nth-child(2) .stat-number { color: #f59e0b; }
-.stat-card:nth-child(3) .stat-number { color: #ef4444; }
-.stat-card:nth-child(4) .stat-number { color: #10b981; }
-.stat-card:nth-child(5) .stat-number { color: #8b5cf6; }
-.stat-card:nth-child(6) .stat-number { color: #06b6d4; }
-
-/* Mobile responsive */
-@media (max-width: 768px) {
-    .stats-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 8px;
-    }
-    
-    .stat-card {
-        padding: 8px 6px;
-    }
-    
-    .stat-number {
-        font-size: 1.4em;
-    }
-    
-    .stat-label {
-        font-size: 0.75rem;
-    }
-    
-    .stat-sublabel {
-        font-size: 0.65rem;
-    }
-}  
-        
-
-/* ... etc (all the zone CSS but NO @media section) */
     
     </style>
 </head>
@@ -205,7 +120,6 @@
                 <span class="sidebar-title">🎛️ Data Slicers</span>
             </div>
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search PID, unit, description...">
-            
             <div class="filter-section">
                 <div class="filter-header"><div class="filter-label">📅 Date Range</div></div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 12px;">
@@ -220,27 +134,14 @@
                     <button onclick="setDateRange('2025')" style="background: #f1f5f9; border: 1px solid #e2e8f0; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">📊 2025</button>
                     <button onclick="clearDateFilter()" style="background: #fef3c7; border: 1px solid #f59e0b; padding: 6px 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🗓️ All</button>
                 </div>
-
-                
                 <div style="border-top: 1px solid #e2e8f0; margin: 12px 0; padding-top: 12px;">
-    <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
-    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
-        <div style="position: relative;">
-            <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; width: 100%;" placeholder="Start">
-            <label style="position: absolute; top: -8px; left: 6px; background: white; padding: 0 4px; font-size: 0.65rem; color: #64748b; font-weight: 500;">From</label>
-        </div>
-        <div style="position: relative;">
-            <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem; width: 100%;" placeholder="End">
-            <label style="position: absolute; top: -8px; left: 6px; background: white; padding: 0 4px; font-size: 0.65rem; color: #64748b; font-weight: 500;">To</label>
-        </div>
-    </div>
-    <div style="display: grid; grid-template-columns: 1fr auto; gap: 6px;">
-        <button onclick="applyCustomDateRange()" style="background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
-        <button onclick="clearCustomRange()" style="background: #6b7280; color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">✕</button>
-    </div>
-</div>
-
-                
+                    <div style="font-size: 0.8rem; color: #64748b; margin-bottom: 8px; font-weight: 500;">📅 Custom Range:</div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 8px;">
+                        <input type="date" id="startDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="Start">
+                        <input type="date" id="endDate" style="padding: 6px; border: 1px solid #d1d5db; border-radius: 4px; font-size: 0.75rem;" placeholder="End">
+                    </div>
+                    <button onclick="applyCustomDateRange()" style="width: 100%; background: #3b82f6; color: white; border: none; padding: 8px; border-radius: 6px; font-size: 0.75rem; cursor: pointer; font-weight: 500;">🎯 Apply Range</button>
+                </div>
                 <div id="dateRangeDisplay" class="date-range-display">All dates</div>
             </div>
             <div class="filter-section">
@@ -271,7 +172,7 @@
 </div>
 
             
-           <div class="filter-section">
+            <div class="filter-section">
     <div class="filter-header"><div class="filter-label">📂 Category</div></div>
     <div style="display: flex; gap: 4px; margin-bottom: 8px;">
         <button onclick="selectAllCategories()" style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 3px 8px; border-radius: 4px; font-size: 0.7rem; cursor: pointer;">All</button>
@@ -279,7 +180,6 @@
     </div>
     <div class="checkbox-list" id="categoryFilters"></div>
 </div>
-            
 
             <div class="filter-section">
     <div class="filter-header"><div class="filter-label">📂Sub-Category</div></div>
@@ -313,71 +213,14 @@
     <button id="toggleAllFiltersBtn" onclick="toggleAllFilters()" style="width: 100%; background: #10b981; color: white; border: none; padding: 12px; border-radius: 8px; font-size: 0.9rem; cursor: pointer; font-weight: 600;">✅ Check All Filters</button>
 </div>
         </div>
-
-        
         <div class="main-content">
-
-<!-- NEW: Enhanced Stats Dashboard -->
-    <div class="stats-dashboard">
-        <div class="stats-grid">
-            <div class="stat-card">
-                <div class="stat-number" id="totalProblemsCount">-</div>
-                <div class="stat-label">Total Problems</div>
-                <div class="stat-sublabel" id="totalProblemsSub">Filtered results</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="activeProblemsCount">-</div>
-                <div class="stat-label">Active Problems</div>
-                <div class="stat-sublabel" id="activeProblemsSub">Not completed</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="urgentProblemsCount">-</div>
-                <div class="stat-label">Urgent + High</div>
-                <div class="stat-sublabel" id="urgentProblemsSub">Priority issues</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="completionRate">-</div>
-                <div class="stat-label">Completion Rate</div>
-                <div class="stat-sublabel" id="completionRateSub">Overall %</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="avgResolutionDays">-</div>
-                <div class="stat-label">Avg Resolution</div>
-                <div class="stat-sublabel" id="avgResolutionSub">Days to complete</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-number" id="thisWeekCount">-</div>
-                <div class="stat-label">This Week</div>
-                <div class="stat-sublabel" id="thisWeekSub">New reports</div>
-            </div>
-        </div>
-    </div>  
-            
-
-
-<div class="results-header">
-    <div class="results-info" id="resultsInfo">Loading...</div>
-
-            
             <div class="results-header">
-    <div class="results-info" id="resultsInfo">Loading...</div>
-    <div class="results-actions">
-        <div style="display: flex; align-items: center; gap: 8px;">
-            <label style="font-size: 0.85rem; color: #64748b; font-weight: 500;">Show:</label>
-            <select id="itemsPerPageSelect" onchange="changeItemsPerPage()" style="padding: 6px 8px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.85rem; background: white; cursor: pointer;">
-                <option value="10">10</option>
-                <option value="20" selected>20</option>
-                <option value="50">50</option>
-                <option value="100">100</option>
-                <option value="all">Show All</option>
-            </select>
-        </div>
-        <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()">📅 Newest First</button>
-        <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
-    </div>
-</div>
-
-            
+                <div class="results-info" id="resultsInfo">Loading...</div>
+                <div class="results-actions">
+                    <button class="sort-btn" id="sortToggleBtn" onclick="toggleSort()">📅 Newest First</button>
+                    <button class="export-btn" onclick="exportToCSV()">📊 Export CSV</button>
+                </div>
+            </div>
             <div class="problems-grid" id="problemsGrid">
                 <div class="loading">
                     <div class="loading-spinner"></div>
@@ -422,30 +265,22 @@
         let sortDirection = 'desc'; // NEW: Track sort direction
         let dynamicDropdowns = {}; // NEW: Store dynamic dropdown data
         let currentPage = 1;
-        let itemsPerPage = 20; // Changed from const to let - now user-selectable
-        const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100, 'All']; // Available options
+        const ITEMS_PER_PAGE = 20; // NEW: Pagination support
         
         document.addEventListener('DOMContentLoaded', function() {
-    console.log('🖥️ Problem Data Explorer - Starting...');
-    document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
-    document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
-    document.getElementById('searchInput').addEventListener('input', () => setTimeout(applyFilters, 300));
-    document.getElementById('closeProblemModal').addEventListener('click', closeModal);
-    document.getElementById('closeReportModal').addEventListener('click', closeModal);
-    document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
-    document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-    document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
-    
-    // Load saved items per page preference
-    const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
-    if (savedItemsPerPage) {
-        document.getElementById('itemsPerPageSelect').value = savedItemsPerPage;
-        changeItemsPerPage(); // Apply the saved preference
-    }
-    
-    loadProblemsData();
-    loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
-});
+            console.log('🖥️ Problem Data Explorer - Starting...');
+            document.getElementById('currentBtn').addEventListener('click', () => switchDataset('current'));
+            document.getElementById('legacyBtn').addEventListener('click', () => switchDataset('legacy'));
+            document.getElementById('searchInput').addEventListener('input', () => setTimeout(applyFilters, 300));
+            document.getElementById('closeProblemModal').addEventListener('click', closeModal);
+            document.getElementById('closeReportModal').addEventListener('click', closeModal);
+            document.getElementById('copyReportFromModal').addEventListener('click', copyFromModal);
+            document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+            document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
+            
+            loadProblemsData();
+            loadDynamicDropdowns(); // NEW: Load dynamic dropdown data
+        });
 
         // NEW: Load dynamic dropdown options from Categories tab
         async function loadDynamicDropdowns() {
@@ -925,12 +760,9 @@
             
             // Calculate pagination
             const totalItems = filteredProblems.length;
-            
-            const totalPages = itemsPerPage >= totalItems ? 1 : Math.ceil(totalItems / itemsPerPage);
-            
-            const startIndex = (currentPage - 1) * itemsPerPage;
-            const endIndex = Math.min(startIndex + itemsPerPage, totalItems);
-            
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = Math.min(startIndex + ITEMS_PER_PAGE, totalItems);
             const paginatedProblems = filteredProblems.slice(startIndex, endIndex);
             
             // Update results info with pagination
@@ -999,9 +831,6 @@
                 const bottomPagination = problemsGrid.firstChild.cloneNode(true);
                 problemsGrid.appendChild(bottomPagination);
             }
-            // NEW: Update stats dashboard
-            updateStatsDisplay();
-            
         }
         
        function createProblemCard(problem) {
@@ -1235,13 +1064,11 @@ function clearPriorities() {
 // Category buttons  
 function selectAllCategories() {
     document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = true);
-    updateCategorySelectionStatus();
     applyFilters();
 }
 
 function clearCategories() {
     document.querySelectorAll('#categoryFilters input').forEach(cb => cb.checked = false);
-    updateCategorySelectionStatus();
     applyFilters();
 }
 
@@ -1315,97 +1142,6 @@ function clearAssigned() {
                 }, 10000);
             });
         }
-
-function changeItemsPerPage() {
-    const select = document.getElementById('itemsPerPageSelect');
-    const value = select.value;
-    
-    if (value === 'all') {
-        itemsPerPage = filteredProblems.length || 9999; // Show all items
-    } else {
-        itemsPerPage = parseInt(value);
-    }
-    
-    // Reset to first page when changing items per page
-    currentPage = 1;
-    
-    // Save user preference
-    localStorage.setItem('explorerItemsPerPage', value);
-    
-    // Refresh display
-    updateResults();
-    
-    console.log(`📄 Items per page changed to: ${value}`);
-}
-        function updateStatsDisplay() {
-    const total = filteredProblems.length;
-    const active = filteredProblems.filter(p => !['Completed', 'Cancelled'].includes(p.problemStatus)).length;
-    const urgent = filteredProblems.filter(p => ['Urgent', 'High'].includes(p.problemPriority)).length;
-    const completed = filteredProblems.filter(p => p.problemStatus === 'Completed').length;
-    
-    // Calculate completion rate
-    const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-    
-    // Calculate average resolution time for completed problems
-    const completedWithDates = filteredProblems.filter(p => 
-        p.problemStatus === 'Completed' && p.completionDate && p.timestamp
-    );
-    
-    let avgDays = '-';
-    if (completedWithDates.length > 0) {
-        const totalDays = completedWithDates.reduce((sum, problem) => {
-            const reportedDate = parseDate(problem.timestamp);
-            const completedDate = parseDate(problem.completionDate);
-            const days = Math.ceil((completedDate - reportedDate) / (1000 * 60 * 60 * 24));
-            return sum + (days > 0 ? days : 0);
-        }, 0);
-        avgDays = Math.round(totalDays / completedWithDates.length);
-    }
-    
-    // Calculate this week's problems (last 7 days)
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const thisWeek = filteredProblems.filter(p => {
-        const problemDate = parseDate(p.timestamp);
-        return problemDate >= oneWeekAgo.getTime();
-    }).length;
-    
-    // Update the display
-    document.getElementById('totalProblemsCount').textContent = total.toLocaleString();
-    document.getElementById('activeProblemsCount').textContent = active.toLocaleString();
-    document.getElementById('urgentProblemsCount').textContent = urgent.toLocaleString();
-    document.getElementById('completionRate').textContent = `${completionRate}%`;
-    document.getElementById('avgResolutionDays').textContent = avgDays === '-' ? '-' : `${avgDays}d`;
-    document.getElementById('thisWeekCount').textContent = thisWeek.toLocaleString();
-    
-    // Update sublabels with contextual info
-    document.getElementById('totalProblemsSub').textContent = currentDataset === 'current' ? 'Live data' : 'Legacy data';
-    document.getElementById('activeProblemsSub').textContent = `${total - active} completed`;
-    document.getElementById('urgentProblemsSub').textContent = urgent > 0 ? 'Need attention' : 'All normal';
-    document.getElementById('completionRateSub').textContent = `${completed}/${total} problems`;
-    document.getElementById('avgResolutionSub').textContent = avgDays === '-' ? 'No data' : 'Average days';
-    document.getElementById('thisWeekSub').textContent = thisWeek > 0 ? 'Recent activity' : 'No new reports';
-    
-    console.log('📊 Stats updated:', { total, active, urgent, completionRate, avgDays, thisWeek });
-}
-
-
-        // Enhanced date range functions
-function clearCustomRange() {
-    document.getElementById('startDate').value = '';
-    document.getElementById('endDate').value = '';
-    customDateRange = null;
-    currentDateFilter = null;
-    updateDateRangeDisplay('all');
-    applyFilters();
-}
-
-
-
-
-
-        
-        
     </script>
 </body>
 </html>
