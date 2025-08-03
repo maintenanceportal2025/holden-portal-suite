@@ -434,8 +434,7 @@ const ITEMS_PER_PAGE_OPTIONS = [10, 20, 50, 100, 'All']; // Available options
     document.getElementById('problemModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
     document.getElementById('reportModal').addEventListener('click', (e) => { if (e.target === e.currentTarget) closeModal(); });
 
-document.getElementById('scrollTopBtn').addEventListener('click', () => document.documentElement.scrollTop = 0);
-document.getElementById('scrollBottomBtn').addEventListener('click', () => document.documentElement.scrollTop = document.documentElement.scrollHeight);
+
             
     // Load saved items per page preference
     const savedItemsPerPage = localStorage.getItem('explorerItemsPerPage');
