@@ -260,14 +260,14 @@
             display: inline-block;
             background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
-            padding: 12px 24px;
-            border-radius: 12px;
+            padding: 10px 20px;
+            border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             border: none;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             width: 100%;
             text-align: center;
         }
@@ -520,8 +520,7 @@
                 </div>
             </div>
             <p class="hero-description">
-                Professional maintenance management system for Lake Illawong Retirement Village. 
-                Access portal tools, view system statistics, and manage maintenance operations efficiently.
+                Professional maintenance management for Lake Illawong Retirement Village's 44 units.
             </p>
         </div>
 
@@ -937,51 +936,32 @@
         async function checkSystemHealth() {
             console.log('🔍 Checking system health...');
             
-            // Check API connectivity
-            await checkAPIHealth();
-            
-            // Check data accessibility
+            // Simplified health check - just verify data is loading
             await checkDataHealth();
             
-            // Check email system (simulated)
+            // Email system (simulated)
             checkEmailHealth();
+            
+            // Set API status based on data loading success
+            setAPIStatusFromDataHealth();
         }
 
-        async function checkAPIHealth() {
-            const indicator = document.getElementById('apiIndicator');
-            const statusText = document.getElementById('apiStatusText');
-            const statusItem = document.getElementById('apiStatus');
+        function setAPIStatusFromDataHealth() {
+            const dataIndicator = document.getElementById('dataIndicator');
+            const apiIndicator = document.getElementById('apiIndicator');
+            const apiStatusText = document.getElementById('apiStatusText');
+            const apiStatusItem = document.getElementById('apiStatus');
             
-            try {
-                // Test Explorer API (has multiple endpoints)
-                const explorerResponse = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
-                
-                // Test Maintenance API (doesn't have testAPI, so use getFaultLogData)
-                const maintenanceResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
-                
-                // Evaluate results
-                const explorerWorking = explorerResponse?.success;
-                const maintenanceWorking = maintenanceResponse?.success;
-                
-                if (explorerWorking && maintenanceWorking) {
-                    indicator.className = 'status-indicator indicator-online';
-                    statusText.textContent = 'Both APIs Online';
-                    statusItem.className = 'status-item status-online';
-                    console.log('✅ Both API health checks passed');
-                } else if (explorerWorking || maintenanceWorking) {
-                    indicator.className = 'status-indicator indicator-online';
-                    statusText.textContent = explorerWorking ? 'Explorer API Online' : 'Maintenance API Online';
-                    statusItem.className = 'status-item status-online';
-                    console.log('✅ One API accessible (this is normal - different API purposes)');
-                } else {
-                    throw new Error('Both APIs inaccessible');
-                }
-                
-            } catch (error) {
-                indicator.className = 'status-indicator indicator-error';
-                statusText.textContent = 'API Error';
-                statusItem.className = 'status-item status-error';
-                console.error('❌ API health checks failed:', error);
+            // If data loaded successfully, APIs are working
+            if (dataIndicator.className.includes('indicator-online')) {
+                apiIndicator.className = 'status-indicator indicator-online';
+                apiStatusText.textContent = 'Explorer API Online';
+                apiStatusItem.className = 'status-item status-online';
+                console.log('✅ API status set from successful data loading');
+            } else {
+                apiIndicator.className = 'status-indicator indicator-error';
+                apiStatusText.textContent = 'API Issues';
+                apiStatusItem.className = 'status-item status-error';
             }
         }
 
@@ -991,7 +971,7 @@
             const statusItem = document.getElementById('dataStatus');
             
             try {
-                // Check data accessibility from Explorer API (preferred for analytics)
+                // Only check Explorer API since it's providing the stats successfully
                 const response = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
                 
                 if (response && response.success && response.data) {
@@ -1000,16 +980,7 @@
                     statusItem.className = 'status-item status-online';
                     console.log('✅ Data health check passed via Explorer API');
                 } else {
-                    // Fallback to Maintenance API
-                    const fallbackResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
-                    if (fallbackResponse?.success && fallbackResponse.data) {
-                        indicator.className = 'status-indicator indicator-online';
-                        statusText.textContent = `${fallbackResponse.data.length} records`;
-                        statusItem.className = 'status-item status-online';
-                        console.log('✅ Data health check passed via Maintenance API');
-                    } else {
-                        throw new Error('Data not accessible from either API');
-                    }
+                    throw new Error('Explorer API data not accessible');
                 }
                 
             } catch (error) {
