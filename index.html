@@ -714,6 +714,9 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🏠 Lake Illawong Dashboard - Initializing...');
             
+            // Set up device-aware portal links
+            setupDeviceAwareLinks();
+            
             // Load live system statistics
             loadSystemStats();
             
@@ -725,6 +728,41 @@
             
             console.log('✅ Dashboard initialization complete');
         });
+
+        // =================================================================
+        // DEVICE DETECTION & SMART PORTAL ROUTING
+        // =================================================================
+        
+        function setupDeviceAwareLinks() {
+            const isMobile = detectMobileDevice();
+            console.log('📱 Device detection:', isMobile ? 'Mobile' : 'Desktop');
+            
+            // Update Explorer portal link based on device
+            const explorerLinks = document.querySelectorAll('a[href="holden-desktop-explorer.html"]');
+            explorerLinks.forEach(link => {
+                if (isMobile) {
+                    link.href = 'holden-mobile-explorer.html';
+                    console.log('📱 Explorer link updated for mobile user');
+                }
+            });
+            
+            // Update portal card description for mobile users
+            if (isMobile) {
+                const explorerCard = document.querySelector('.portal-card:nth-child(2) .portal-subtitle');
+                if (explorerCard) {
+                    explorerCard.textContent = 'Mobile Analytics & Reporting';
+                }
+            }
+        }
+
+        function detectMobileDevice() {
+            // Check screen width AND user agent for comprehensive mobile detection
+            const screenWidth = window.innerWidth <= 768;
+            const userAgentMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            return screenWidth || userAgentMobile || touchDevice;
+        }
 
         // =================================================================
         // LIVE STATISTICS LOADING
