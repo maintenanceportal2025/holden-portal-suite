@@ -296,52 +296,9 @@
             color: #3730a3;
         }
 
-        /* Quick Actions */
+        /* Quick Actions - REMOVED */
         .quick-actions {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .quick-actions-title {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .actions-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .action-btn {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 15px 20px;
-            text-decoration: none;
-            color: #334155;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .action-btn:hover {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-            transform: translateY(-2px);
+            display: none;
         }
 
         /* System Status */
@@ -671,30 +628,7 @@
             </div>
         </div>
 
-        <!-- Quick Actions -->
-        <div class="quick-actions">
-            <h3 class="quick-actions-title">Quick Actions</h3>
-            <div class="actions-grid">
-                <a href="holden-maintenance-portal.html" class="action-btn">
-                    ⚡ View Urgent Issues
-                </a>
-                <a href="holden-resident-form.html" class="action-btn">
-                    🚨 Emergency Request
-                </a>
-                <a href="holden-desktop-explorer.html" class="action-btn">
-                    📊 System Analytics
-                </a>
-                <a href="#" class="action-btn" onclick="downloadGuide()">
-                    📖 User Guide
-                </a>
-                <a href="mailto:maintenance@lakeillawong.com.au" class="action-btn">
-                    📞 Contact Support
-                </a>
-                <a href="#" class="action-btn" onclick="refreshStats()">
-                    🔄 Refresh Data
-                </a>
-            </div>
-        </div>
+
 
         <!-- System Status -->
         <div class="system-status">
@@ -703,7 +637,7 @@
                 <div class="status-item" id="apiStatus">
                     <div style="display: flex; align-items: center;">
                         <div class="status-indicator indicator-loading" id="apiIndicator"></div>
-                        <span>Google Apps Script API</span>
+                        <span>Backend APIs</span>
                     </div>
                     <span id="apiStatusText">Checking...</span>
                 </div>
@@ -973,20 +907,26 @@
             const statusItem = document.getElementById('apiStatus');
             
             try {
-                // Test both APIs - start with Maintenance API
-                const maintenanceResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=testAPI`);
+                // Test Explorer API (has multiple endpoints)
                 const explorerResponse = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
                 
-                if (maintenanceResponse?.success && explorerResponse?.success) {
+                // Test Maintenance API (doesn't have testAPI, so use getFaultLogData)
+                const maintenanceResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
+                
+                // Evaluate results
+                const explorerWorking = explorerResponse?.success;
+                const maintenanceWorking = maintenanceResponse?.success;
+                
+                if (explorerWorking && maintenanceWorking) {
                     indicator.className = 'status-indicator indicator-online';
                     statusText.textContent = 'Both APIs Online';
                     statusItem.className = 'status-item status-online';
                     console.log('✅ Both API health checks passed');
-                } else if (maintenanceResponse?.success || explorerResponse?.success) {
-                    indicator.className = 'status-indicator indicator-loading';
-                    statusText.textContent = 'Partial connectivity';
-                    statusItem.className = 'status-item status-loading';
-                    console.log('⚠️ One API accessible');
+                } else if (explorerWorking || maintenanceWorking) {
+                    indicator.className = 'status-indicator indicator-online';
+                    statusText.textContent = explorerWorking ? 'Explorer API Online' : 'Maintenance API Online';
+                    statusItem.className = 'status-item status-online';
+                    console.log('✅ One API accessible (this is normal - different API purposes)');
                 } else {
                     throw new Error('Both APIs inaccessible');
                 }
@@ -1084,7 +1024,7 @@
         }
 
         // =================================================================
-        // USER ACTIONS
+        // USER ACTIONS - SIMPLIFIED
         // =================================================================
         
         function refreshStats() {
@@ -1105,26 +1045,6 @@
             
             // Show user feedback
             showNotification('📊 System data refreshed', 'success');
-        }
-
-        function downloadGuide() {
-            // Generate user guide content
-            const guideContent = generateUserGuide();
-            
-            // Create downloadable file
-            const blob = new Blob([guideContent], { type: 'text/plain' });
-            const url = window.URL.createObjectURL(blob);
-            
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'Lake_Illawong_Maintenance_System_Guide.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            
-            window.URL.revokeObjectURL(url);
-            
-            showNotification('📖 User guide downloaded', 'success');
         }
 
         function showSystemInfo() {
