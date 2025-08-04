@@ -85,57 +85,57 @@
             margin-right: auto;
         }
 
-        /* Live Stats Dashboard - Streamlined */
+        /* Live Stats Dashboard - Much More Compact */
         .stats-section {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
         }
 
         .stat-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
-            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 12px 8px;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
         }
 
         .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .stat-icon {
-            font-size: 2rem;
-            margin-bottom: 8px;
-        }
-
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
+            font-size: 1.5rem;
             margin-bottom: 4px;
         }
 
+        .stat-number {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
         .stat-label {
-            font-size: 0.85rem;
+            font-size: 0.7rem;
             color: #64748b;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.3px;
             font-weight: 500;
         }
 
         .stat-trend {
-            font-size: 0.75rem;
-            margin-top: 6px;
-            padding: 3px 6px;
-            border-radius: 10px;
+            font-size: 0.65rem;
+            margin-top: 3px;
+            padding: 2px 4px;
+            border-radius: 6px;
             display: inline-block;
         }
 
@@ -174,13 +174,24 @@
             gap: 25px;
         }
 
+        /* Portal Cards - Much More Compact */
+        .portals-section {
+            margin-bottom: 20px;
+        }
+
+        .portals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
         .portal-card {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 1px solid #e2e8f0;
+            transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
         }
@@ -196,46 +207,46 @@
         }
 
         .portal-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
         }
 
         .portal-icon {
-            font-size: 2.5rem;
-            margin-bottom: 12px;
+            font-size: 2rem;
+            margin-bottom: 8px;
             display: block;
         }
 
         .portal-title {
-            font-size: 1.3rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #1e293b;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .portal-subtitle {
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #64748b;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             font-weight: 500;
         }
 
         .portal-description {
             color: #475569;
-            margin-bottom: 15px;
-            line-height: 1.5;
-            font-size: 0.9rem;
+            margin-bottom: 10px;
+            line-height: 1.4;
+            font-size: 0.85rem;
         }
 
         .portal-features {
             list-style: none;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .portal-features li {
-            padding: 3px 0;
+            padding: 2px 0;
             color: #64748b;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
         }
 
         .portal-features li::before {
