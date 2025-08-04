@@ -194,6 +194,9 @@
             transition: all 0.2s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-height: 320px;
         }
 
         .portal-card::before {
@@ -241,6 +244,7 @@
         .portal-features {
             list-style: none;
             margin-bottom: 15px;
+            flex-grow: 1;
         }
 
         .portal-features li {
@@ -270,6 +274,7 @@
             font-size: 0.9rem;
             width: 100%;
             text-align: center;
+            margin-top: auto;
         }
 
         .portal-btn:hover {
