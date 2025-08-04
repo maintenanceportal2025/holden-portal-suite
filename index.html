@@ -798,36 +798,50 @@
         
         async function loadSystemStats() {
             console.log('📊 Loading live system statistics...');
+            console.log('🔍 Using same approach as working Explorer portal...');
             
             try {
-                // Use Explorer API for detailed analytics (preferred source)
-                const response = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getExplorerStats`);
+                // Use the SAME approach as the working Explorer portal:
+                // Load data first, then calculate stats locally
+                console.log('📊 Loading problems data from Explorer API...');
+                const response = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
+                console.log('📊 Explorer API response:', response);
                 
-                if (response && response.success) {
-                    updateStatsDisplay(response.data);
-                    console.log('✅ Stats loaded from Explorer API:', response.data);
+                if (response && response.success && response.data) {
+                    // Calculate stats exactly like the working Explorer portal
+                    const calculatedStats = calculateStatsFromData(response.data);
+                    updateStatsDisplay(calculatedStats);
+                    console.log('✅ Stats calculated from Explorer data:', calculatedStats);
+                    return; // Success - exit here
                 } else {
-                    // Fallback to Maintenance API for basic stats
-                    console.log('📊 Falling back to Maintenance API for basic stats...');
-                    const fallbackResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
-                    
-                    if (fallbackResponse && fallbackResponse.success) {
-                        const basicStats = calculateBasicStats(fallbackResponse.data);
-                        updateStatsDisplay(basicStats);
-                        console.log('✅ Basic stats calculated from Maintenance API');
-                    } else {
-                        console.warn('⚠️ Using sample statistics');
-                        updateStatsDisplay(getFallbackStats());
-                    }
+                    console.log('⚠️ Explorer API failed, trying Maintenance API...');
+                }
+                
+                // Fallback to Maintenance API
+                console.log('📊 Fallback to Maintenance API...');
+                const maintenanceResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
+                console.log('📊 Maintenance API response:', maintenanceResponse);
+                
+                if (maintenanceResponse && maintenanceResponse.success && maintenanceResponse.data) {
+                    const calculatedStats = calculateStatsFromData(maintenanceResponse.data);
+                    updateStatsDisplay(calculatedStats);
+                    console.log('✅ Stats calculated from Maintenance API');
+                } else {
+                    console.warn('⚠️ Both APIs failed - using sample statistics');
+                    updateStatsDisplay(getFallbackStats());
                 }
                 
             } catch (error) {
                 console.error('❌ Error loading stats:', error);
+                console.log('🔍 Error details:', error.message);
                 updateStatsDisplay(getFallbackStats());
             }
         }
 
-        function calculateBasicStats(problems) {
+        function calculateStatsFromData(problems) {
+            console.log('🧮 Calculating stats from problems data:', problems.length);
+            
+            // Calculate stats exactly like the working Explorer portal
             const total = problems.length;
             const active = problems.filter(p => 
                 p.problemStatus !== 'Completed' && p.problemStatus !== 'Cancelled'
@@ -841,11 +855,15 @@
             oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
             const thisWeekNew = problems.filter(p => {
                 if (!p.timestamp) return false;
-                const problemDate = new Date(p.timestamp);
-                return problemDate >= oneWeekAgo;
+                try {
+                    const problemDate = new Date(p.timestamp);
+                    return problemDate >= oneWeekAgo;
+                } catch {
+                    return false;
+                }
             }).length;
             
-            return {
+            const calculatedStats = {
                 totalProblems: total,
                 activeProblems: active,
                 urgentProblems: urgent,
@@ -853,33 +871,47 @@
                 thisWeekNew: thisWeekNew,
                 trends: {
                     total: 'Live data',
-                    active: 'Live data',
+                    active: 'Live data', 
                     urgent: 'Live data',
                     completion: 'Live data'
                 }
             };
+            
+            console.log('✅ Stats calculated:', calculatedStats);
+            return calculatedStats;
         }
 
         function updateStatsDisplay(stats) {
-            // Update total problems
-            document.getElementById('totalProblems').textContent = stats.totalProblems || '--';
+            console.log('🔍 Stats object received:', stats);
             
-            // Update active problems
-            document.getElementById('activeProblems').textContent = stats.activeProblems || '--';
+            // Handle Explorer API format (stats.summary object) vs simple format
+            const summary = stats.summary || stats;
+            
+            // Update total problems
+            document.getElementById('totalProblems').textContent = summary.totalProblems || '--';
+            
+            // Update active problems  
+            document.getElementById('activeProblems').textContent = summary.activeProblems || '--';
             
             // Update urgent problems
-            document.getElementById('urgentProblems').textContent = stats.urgentProblems || '--';
+            document.getElementById('urgentProblems').textContent = summary.urgentProblems || '--';
             
-            // Update completion rate
-            document.getElementById('completionRate').textContent = `${stats.completionRate || 0}%`;
+            // Update completion rate - check both possible sources
+            const completionRate = summary.completionRate || stats.trends?.completionRate || 0;
+            document.getElementById('completionRate').textContent = `${completionRate}%`;
             
             // Update this week's new submissions
-            document.getElementById('thisWeekNew').textContent = stats.thisWeekNew || '--';
+            document.getElementById('thisWeekNew').textContent = summary.thisWeekNew || '--';
             
             // Update trend indicators
             updateTrendIndicators(stats);
             
-            console.log('📈 Stats display updated');
+            console.log('📈 Stats display updated with:', {
+                total: summary.totalProblems,
+                active: summary.activeProblems,
+                urgent: summary.urgentProblems,
+                completion: completionRate
+            });
         }
 
         function updateTrendIndicators(stats) {
