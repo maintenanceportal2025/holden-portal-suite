@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Holden Admin Portal - Enhanced UX</title>
     <style>
-        /* Your existing styles remain exactly the same - I'm only adding enhancements */
-        
         * {
             box-sizing: border-box;
             margin: 0;
@@ -25,8 +23,6 @@
             display: none !important;
         }
 
-        /* All your existing styles here... (keeping them exactly as they are) */
-        
         /* Login Screen */
         .login-container {
             min-height: 100vh;
@@ -247,10 +243,31 @@
             font-size: 14px;
             cursor: pointer;
             transition: background-color 0.3s ease;
+            position: relative;
         }
 
         .add-btn:hover {
             background: rgba(255,255,255,0.3);
+        }
+
+        /* Simple button loading state */
+        .add-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .add-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            margin: -6px 0 0 -6px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         .dropdown-list {
@@ -292,6 +309,7 @@
             font-size: 12px;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .edit-btn {
@@ -310,6 +328,43 @@
 
         .delete-btn:hover {
             background: #dc2626;
+        }
+
+        /* Button loading states */
+        .action-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .action-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            margin: -4px 0 0 -4px;
+            border: 1px solid transparent;
+            border-top: 1px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Item operation states */
+        .dropdown-item.updating {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+        }
+
+        .dropdown-item.deleting {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+            opacity: 0.6;
+        }
+
+        .dropdown-item.success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
         }
 
         /* Modal Styles */
@@ -392,6 +447,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
+            position: relative;
         }
 
         .modal-btn.primary {
@@ -410,6 +466,25 @@
 
         .modal-btn.secondary:hover {
             background: #e2e8f0;
+        }
+
+        .modal-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .modal-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            margin: -7px 0 0 -7px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
         }
 
         /* Loading States */
@@ -454,116 +529,7 @@
             border: 1px solid #ef4444;
         }
 
-        /* ===============================================
-           🆕 ENHANCED UX ADDITIONS 
-           =============================================== */
-
-        /* 1. PROMINENT OPERATION OVERLAY */
-        .operation-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(4px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            opacity: 0;
-            animation: fadeIn 0.2s ease forwards;
-        }
-
-        .operation-content {
-            background: white;
-            border-radius: 16px;
-            padding: 40px;
-            text-align: center;
-            min-width: 400px;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            transform: scale(0.9);
-            animation: scaleIn 0.3s ease forwards;
-        }
-
-        .operation-icon {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        .operation-title {
-            font-size: 24px;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .operation-subtitle {
-            color: #64748b;
-            font-size: 16px;
-            margin-bottom: 30px;
-        }
-
-        .operation-progress {
-            width: 100%;
-            height: 8px;
-            background: #f1f5f9;
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .operation-progress-bar {
-            height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
-            border-radius: 4px;
-            width: 0%;
-            transition: width 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .operation-progress-bar::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.6), transparent);
-            animation: shimmer 1.5s infinite;
-        }
-
-        .operation-status {
-            font-size: 14px;
-            color: #64748b;
-            font-weight: 500;
-        }
-
-        /* 2. ENHANCED BUTTON STATES */
-        .btn-processing {
-            position: relative;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .btn-processing::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 16px;
-            height: 16px;
-            margin: -8px 0 0 -8px;
-            border: 2px solid transparent;
-            border-top: 2px solid currentColor;
-            border-radius: 50%;
-            animation: buttonSpin 0.8s linear infinite;
-        }
-
-        /* 3. TOAST NOTIFICATIONS */
+        /* Simple Toast Notifications */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -577,23 +543,27 @@
 
         .toast {
             background: white;
-            border-radius: 12px;
-            padding: 16px 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
             border-left: 4px solid #10b981;
             display: flex;
-            align-items: flex-start;
+            align-items: center;
             gap: 12px;
             transform: translateX(100%);
-            animation: slideIn 0.3s ease forwards;
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
         }
 
         .toast.error {
             border-left-color: #ef4444;
         }
 
-        .toast.processing {
-            border-left-color: #3b82f6;
+        .toast.warning {
+            border-left-color: #f59e0b;
         }
 
         .toast-icon {
@@ -608,13 +578,13 @@
         .toast-title {
             font-weight: 600;
             color: #1e293b;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+            font-size: 14px;
         }
 
         .toast-message {
-            font-size: 14px;
             color: #64748b;
-            line-height: 1.4;
+            font-size: 13px;
         }
 
         .toast-close {
@@ -622,69 +592,13 @@
             border: none;
             color: #9ca3af;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 16px;
             padding: 0;
-            line-height: 1;
-            flex-shrink: 0;
-        }
-
-        /* 4. ITEM OPERATION STATES */
-        .item-deleting {
-            opacity: 0.5;
-            pointer-events: none;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .item-deleting::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(239, 68, 68, 0.1), transparent);
-            animation: deleteProgress 2s ease-in-out infinite;
-        }
-
-        .item-updating {
-            opacity: 0.7;
-            pointer-events: none;
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        /* 5. ANIMATIONS */
-        @keyframes fadeIn {
-            to { opacity: 1; }
-        }
-
-        @keyframes scaleIn {
-            to { transform: scale(1); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        @keyframes shimmer {
-            0% { transform: translateX(-100%); }
-            100% { transform: translateX(100%); }
-        }
-
-        @keyframes buttonSpin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        @keyframes slideIn {
-            to { transform: translateX(0); }
-        }
-
-        @keyframes deleteProgress {
-            0%, 100% { left: -100%; }
-            50% { left: 100%; }
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Responsive Design */
@@ -699,11 +613,6 @@
 
             .admin-container {
                 padding: 12px;
-            }
-
-            .operation-content {
-                min-width: 300px;
-                padding: 30px;
             }
 
             .toast-container {
@@ -895,48 +804,29 @@
         </div>
     </div>
 
-    <!-- 🆕 ENHANCED UX: Operation Overlay -->
-    <div id="operationOverlay" class="operation-overlay hidden">
-        <div class="operation-content">
-            <div class="operation-icon" id="operationIcon">⏳</div>
-            <div class="operation-title" id="operationTitle">Processing...</div>
-            <div class="operation-subtitle" id="operationSubtitle">Please wait while we process your request</div>
-            <div class="operation-progress">
-                <div class="operation-progress-bar" id="operationProgressBar"></div>
-            </div>
-            <div class="operation-status" id="operationStatus">Initializing...</div>
-        </div>
-    </div>
-
-    <!-- 🆕 ENHANCED UX: Toast Container -->
+    <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
     <script>
-        // Configuration - SAME AS YOUR ORIGINAL
+        // Configuration
         const ADMIN_PASSWORD = 'maint2025';
         
-        // Current backend URLs - SAME AS YOUR ORIGINAL
+        // Current backend URLs
         const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbwWJBbvxEfSeOJ7Ozsu1-xOa7G5cC030P88Do_yO64LVN7_74ubnbTcrD7oUv2vKVVy/exec';
         const RESIDENT_API_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
         
-        // Global state - SAME AS YOUR ORIGINAL
+        // Global state
         let isAuthenticated = false;
         let currentTab = 'categories';
         let currentEditItem = null;
         let dropdownData = {};
 
-        // 🆕 ENHANCED UX: Operation tracking
-        let currentOperation = null;
-
-        // Initialize - SAME AS YOUR ORIGINAL
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             console.log('👑 Enhanced Admin Portal - Initializing...');
             setupEventListeners();
             checkAuthentication();
         });
-
-        // ALL YOUR EXISTING FUNCTIONS REMAIN EXACTLY THE SAME
-        // I'm only adding the enhanced UX functions and modifying the operation functions
 
         function setupEventListeners() {
             // Login
@@ -954,122 +844,20 @@
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
-
-            // 🆕 ENHANCED UX: Operation overlay click to close (for very long operations)
-            document.getElementById('operationOverlay').addEventListener('click', function(e) {
-                if (e.target === this && currentOperation && currentOperation.canCancel) {
-                    cancelCurrentOperation();
-                }
-            });
         }
 
         // =================================================================
-        // 🆕 ENHANCED UX FUNCTIONS
+        // SIMPLE, RELIABLE VISUAL FEEDBACK FUNCTIONS
         // =================================================================
 
-        // Show prominent operation overlay with progress
-        function showOperationOverlay(type, title, subtitle) {
-            currentOperation = {
-                type,
-                title,
-                subtitle,
-                startTime: Date.now(),
-                progress: 0,
-                canCancel: false
-            };
-
-            const overlay = document.getElementById('operationOverlay');
-            const icon = document.getElementById('operationIcon');
-            const titleEl = document.getElementById('operationTitle');
-            const subtitleEl = document.getElementById('operationSubtitle');
-            const progressBar = document.getElementById('operationProgressBar');
-            const status = document.getElementById('operationStatus');
-
-            // Set content
-            icon.textContent = getOperationIcon(type);
-            titleEl.textContent = title;
-            subtitleEl.textContent = subtitle;
-            progressBar.style.width = '0%';
-            status.textContent = 'Connecting to Google Sheets...';
-
-            // Show overlay
-            overlay.classList.remove('hidden');
-
-            // Start progress simulation
-            simulateProgress();
-        }
-
-        // Hide operation overlay
-        function hideOperationOverlay() {
-            const overlay = document.getElementById('operationOverlay');
-            overlay.classList.add('hidden');
-            currentOperation = null;
-        }
-
-        // Simulate realistic progress for Google Sheets operations
-        function simulateProgress() {
-            if (!currentOperation) return;
-
-            const progressSteps = [
-                { progress: 15, status: 'Authenticating with Google Sheets...', delay: 400 },
-                { progress: 35, status: 'Validating request permissions...', delay: 600 },
-                { progress: 55, status: `${currentOperation.type === 'delete' ? 'Removing' : currentOperation.type === 'add' ? 'Adding' : 'Updating'} item...`, delay: 800 },
-                { progress: 75, status: 'Updating dropdown cache...', delay: 500 },
-                { progress: 90, status: 'Finalizing changes...', delay: 400 }
-            ];
-
-            let currentStep = 0;
-
-            function nextStep() {
-                if (!currentOperation || currentStep >= progressSteps.length) return;
-
-                const step = progressSteps[currentStep];
-                updateProgress(step.progress, step.status);
-                
-                currentStep++;
-                setTimeout(nextStep, step.delay);
-            }
-
-            nextStep();
-        }
-
-        // Update progress bar and status
-        function updateProgress(progress, status) {
-            if (!currentOperation) return;
-
-            currentOperation.progress = progress;
-            
-            const progressBar = document.getElementById('operationProgressBar');
-            const statusEl = document.getElementById('operationStatus');
-            
-            if (progressBar) progressBar.style.width = `${progress}%`;
-            if (statusEl) statusEl.textContent = status;
-        }
-
-        // Complete operation with success/error
-        function completeOperation(success, message) {
-            if (!currentOperation) return;
-
-            updateProgress(100, success ? 'Operation completed successfully!' : 'Operation failed');
-
-            setTimeout(() => {
-                hideOperationOverlay();
-                showToast(
-                    success ? 'success' : 'error',
-                    success ? 'Success' : 'Error',
-                    message
-                );
-            }, success ? 800 : 1200);
-        }
-
-        // Show toast notification
+        // Show simple toast notification
         function showToast(type, title, message, duration = 5000) {
             const container = document.getElementById('toastContainer');
             
             const toast = document.createElement('div');
             toast.className = `toast ${type}`;
             
-            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⏳';
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️';
             
             toast.innerHTML = `
                 <div class="toast-icon">${icon}</div>
@@ -1082,7 +870,10 @@
 
             container.appendChild(toast);
 
-            // Auto-remove after duration (except for errors)
+            // Show with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Auto-remove (except errors)
             if (type !== 'error') {
                 setTimeout(() => removeToast(toast), duration);
             }
@@ -1091,8 +882,7 @@
         // Remove toast notification
         function removeToast(toast) {
             if (toast && toast.parentNode) {
-                toast.style.transform = 'translateX(100%)';
-                toast.style.opacity = '0';
+                toast.classList.remove('show');
                 setTimeout(() => {
                     if (toast.parentNode) {
                         toast.parentNode.removeChild(toast);
@@ -1101,33 +891,62 @@
             }
         }
 
-        // Get operation icon
-        function getOperationIcon(type) {
-            const icons = {
-                'add': '➕',
-                'delete': '🗑️',
-                'update': '✏️'
-            };
-            return icons[type] || '⚙️';
+        // Set button loading state
+        function setButtonLoading(button, isLoading, loadingText = null) {
+            if (isLoading) {
+                button.dataset.originalText = button.textContent;
+                if (loadingText) button.textContent = loadingText;
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                if (button.dataset.originalText) {
+                    button.textContent = button.dataset.originalText;
+                }
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        // Set item visual state
+        function setItemState(type, value, state) {
+            const itemElements = document.querySelectorAll('.dropdown-item');
+            
+            itemElements.forEach(element => {
+                const itemValue = element.querySelector('.item-value');
+                if (itemValue && itemValue.textContent.trim() === value) {
+                    // Remove all state classes
+                    element.classList.remove('updating', 'deleting', 'success');
+                    
+                    // Add new state if specified
+                    if (state) {
+                        element.classList.add(state);
+                    }
+                }
+            });
         }
 
         // =================================================================
-        // ENHANCED OPERATION FUNCTIONS (Replace your existing ones)
+        // ENHANCED OPERATION FUNCTIONS WITH SIMPLE FEEDBACK
         // =================================================================
 
         // Enhanced Add Item Function
         async function addItem(type, value) {
-            console.log('👑 Enhanced Adding item:', type, value);
+            console.log('👑 Adding item:', type, value);
             
-            // Show immediate visual feedback
-            showOperationOverlay('add', 'Adding Item', `Adding "${value}" to ${type}`);
-            
-            // Disable add button to prevent duplicate operations
+            // Find the add button for this section
             const addButtons = document.querySelectorAll('.add-btn');
+            let targetButton = null;
+            
             addButtons.forEach(btn => {
-                btn.classList.add('btn-processing');
-                btn.disabled = true;
+                if (btn.textContent.includes('Add')) {
+                    targetButton = btn;
+                }
             });
+            
+            // Show loading state
+            if (targetButton) {
+                setButtonLoading(targetButton, true, '⏳ Adding...');
+            }
             
             try {
                 // Determine which backend to use
@@ -1141,48 +960,33 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    completeOperation(true, `Successfully added "${value}" to ${type}`);
+                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
                     
                     // Refresh data after successful operation
                     setTimeout(() => {
                         loadAllData();
-                    }, 1000);
+                    }, 500);
                 } else {
                     throw new Error(response.message || 'Failed to add item');
                 }
                 
             } catch (error) {
                 console.error('❌ Error adding item:', error);
-                completeOperation(false, `Failed to add "${value}": ${error.message}`);
+                showToast('error', 'Add Failed', `Failed to add "${value}": ${error.message}`);
             } finally {
-                // Re-enable add buttons
-                setTimeout(() => {
-                    addButtons.forEach(btn => {
-                        btn.classList.remove('btn-processing');
-                        btn.disabled = false;
-                    });
-                }, 1500);
+                // Remove loading state
+                if (targetButton) {
+                    setButtonLoading(targetButton, false);
+                }
             }
         }
 
         // Enhanced Update Item Function
         async function updateItem(type, oldValue, newValue) {
-            console.log('👑 Enhanced Updating item:', type, oldValue, '->', newValue);
+            console.log('👑 Updating item:', type, oldValue, '->', newValue);
             
-            // Show immediate visual feedback
-            showOperationOverlay('update', 'Updating Item', `Changing "${oldValue}" to "${newValue}"`);
-            
-            // Find and mark the item being updated
-            const itemElements = document.querySelectorAll('.dropdown-item');
-            let targetElement = null;
-            
-            itemElements.forEach(element => {
-                const itemValue = element.querySelector('.item-value');
-                if (itemValue && itemValue.textContent.trim() === oldValue) {
-                    targetElement = element;
-                    element.classList.add('item-updating');
-                }
-            });
+            // Show visual feedback on the item
+            setItemState(type, oldValue, 'updating');
             
             try {
                 // Determine which backend to use
@@ -1200,36 +1004,25 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    completeOperation(true, `Successfully updated "${oldValue}" to "${newValue}"`);
+                    showToast('success', 'Item Updated', `Successfully changed "${oldValue}" to "${newValue}"`);
                     
-                    // Update the item visually before full refresh
-                    if (targetElement) {
-                        const valueEl = targetElement.querySelector('.item-value');
-                        if (valueEl) {
-                            valueEl.textContent = newValue;
-                            targetElement.style.background = '#d1fae5';
-                            setTimeout(() => {
-                                targetElement.style.background = '';
-                            }, 2000);
-                        }
-                    }
+                    // Show success state briefly
+                    setItemState(type, oldValue, 'success');
                     
                     // Refresh data after successful operation
                     setTimeout(() => {
                         loadAllData();
-                    }, 1000);
+                    }, 500);
                 } else {
                     throw new Error(response.message || 'Failed to update item');
                 }
                 
             } catch (error) {
                 console.error('❌ Error updating item:', error);
-                completeOperation(false, `Failed to update "${oldValue}": ${error.message}`);
-            } finally {
-                // Remove updating state
-                if (targetElement) {
-                    targetElement.classList.remove('item-updating');
-                }
+                showToast('error', 'Update Failed', `Failed to update "${oldValue}": ${error.message}`);
+                
+                // Remove updating state on error
+                setItemState(type, oldValue, null);
             }
         }
 
@@ -1239,20 +1032,23 @@
                 return;
             }
             
-            console.log('👑 Enhanced Deleting item:', type, value);
+            console.log('👑 Deleting item:', type, value);
             
-            // Show immediate visual feedback
-            showOperationOverlay('delete', 'Deleting Item', `Removing "${value}" from ${type}`);
+            // Show visual feedback on the item
+            setItemState(type, value, 'deleting');
             
-            // Find and mark the item being deleted
+            // Find and disable the delete button
             const itemElements = document.querySelectorAll('.dropdown-item');
-            let targetElement = null;
+            let targetDeleteButton = null;
             
             itemElements.forEach(element => {
                 const itemValue = element.querySelector('.item-value');
                 if (itemValue && itemValue.textContent.trim() === value) {
-                    targetElement = element;
-                    element.classList.add('item-deleting');
+                    const deleteBtn = element.querySelector('.delete-btn');
+                    if (deleteBtn) {
+                        targetDeleteButton = deleteBtn;
+                        setButtonLoading(deleteBtn, true, 'Deleting...');
+                    }
                 }
             });
             
@@ -1268,43 +1064,30 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    completeOperation(true, `Successfully deleted "${value}" from ${type}`);
-                    
-                    // Animate item removal
-                    if (targetElement) {
-                        targetElement.style.transition = 'all 0.5s ease';
-                        targetElement.style.opacity = '0';
-                        targetElement.style.transform = 'translateX(-100px) scale(0.8)';
-                        targetElement.style.background = '#fee2e2';
-                        
-                        setTimeout(() => {
-                            if (targetElement.parentNode) {
-                                targetElement.parentNode.removeChild(targetElement);
-                            }
-                        }, 500);
-                    }
+                    showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
                     
                     // Refresh data after successful operation
                     setTimeout(() => {
                         loadAllData();
-                    }, 1000);
+                    }, 500);
                 } else {
                     throw new Error(response.message || 'Failed to delete item');
                 }
                 
             } catch (error) {
                 console.error('❌ Error deleting item:', error);
-                completeOperation(false, `Failed to delete "${value}": ${error.message}`);
+                showToast('error', 'Delete Failed', `Failed to delete "${value}": ${error.message}`);
                 
-                // Remove deleting state on error
-                if (targetElement) {
-                    targetElement.classList.remove('item-deleting');
+                // Remove deleting state and re-enable button on error
+                setItemState(type, value, null);
+                if (targetDeleteButton) {
+                    setButtonLoading(targetDeleteButton, false);
                 }
             }
         }
 
         // =================================================================
-        // YOUR EXISTING FUNCTIONS (keeping them exactly the same)
+        // CORE ADMIN FUNCTIONS (Unchanged from original)
         // =================================================================
 
         async function handleLogin(e) {
@@ -1527,8 +1310,8 @@
                 return;
             }
             
-            submitBtn.disabled = true;
-            submitBtn.classList.add('btn-processing');
+            // Show loading state on submit button
+            setButtonLoading(submitBtn, true, action === 'add' ? 'Adding...' : 'Updating...');
             
             try {
                 if (action === 'add') {
@@ -1543,8 +1326,7 @@
                 console.error('❌ Error in modal submit:', error);
                 showToast('error', 'Operation Failed', error.message);
             } finally {
-                submitBtn.disabled = false;
-                submitBtn.classList.remove('btn-processing');
+                setButtonLoading(submitBtn, false);
             }
         }
 
@@ -1586,8 +1368,8 @@
         }
 
         console.log('👑 Enhanced Holden Admin Portal - Ready!');
-        console.log('🆕 Enhanced UX: Full-screen overlays, progress tracking, and toast notifications');
-        console.log('🔧 Same backend APIs, dramatically improved user experience');
+        console.log('✨ Simple, reliable visual feedback with proper error handling');
+        console.log('🔧 All original functionality preserved');
     </script>
 </body>
 </html>
