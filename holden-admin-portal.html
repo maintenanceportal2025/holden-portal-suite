@@ -929,65 +929,91 @@
         }
 
         async function addItem(type, value) {
-            console.log('👑 Adding item:', type, value);
-            
-            // Determine which backend to use
-            const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
-            const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
-            
-            // For current backends, we'll simulate the add (since admin endpoints don't exist yet)
-            console.log('⚠️ TESTING MODE: Simulating add operation');
-            console.log('Would call:', apiUrl, 'addDropdownItem', { type, value });
-            
-            // Simulate success
-            await new Promise(resolve => setTimeout(resolve, 500));
-            showMessage(`Successfully added "${value}" to ${type}`, 'success');
+    console.log('👑 Adding item:', type, value);
+    
+    try {
+        // Determine which backend to use
+        const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+        const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+        
+        console.log('📤 Calling backend:', apiUrl, 'addDropdownItem');
+        
+        const response = await makeRequest(apiUrl, 'addDropdownItem', { type, value });
+        
+        console.log('📥 Backend response:', response);
+        
+        if (response && response.success) {
+            showMessage(response.message || `Successfully added "${value}" to ${type}`, 'success');
+        } else {
+            throw new Error(response.message || 'Failed to add item');
         }
+        
+    } catch (error) {
+        console.error('❌ Error adding item:', error);
+        throw error;
+    }
+}
 
         async function updateItem(type, oldValue, newValue) {
-            console.log('👑 Updating item:', type, oldValue, '->', newValue);
-            
-            // Determine which backend to use
-            const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
-            const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
-            
-            // For current backends, we'll simulate the update
-            console.log('⚠️ TESTING MODE: Simulating update operation');
-            console.log('Would call:', apiUrl, 'updateDropdownItem', { type, oldValue, newValue });
-            
-            // Simulate success
-            await new Promise(resolve => setTimeout(resolve, 500));
-            showMessage(`Successfully updated "${oldValue}" to "${newValue}"`, 'success');
+    console.log('👑 Updating item:', type, oldValue, '->', newValue);
+    
+    try {
+        // Determine which backend to use
+        const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+        const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+        
+        console.log('📤 Calling backend:', apiUrl, 'updateDropdownItem');
+        
+        const response = await makeRequest(apiUrl, 'updateDropdownItem', { 
+            type, 
+            oldValue, 
+            newValue 
+        });
+        
+        console.log('📥 Backend response:', response);
+        
+        if (response && response.success) {
+            showMessage(response.message || `Successfully updated "${oldValue}" to "${newValue}"`, 'success');
+        } else {
+            throw new Error(response.message || 'Failed to update item');
         }
+        
+    } catch (error) {
+        console.error('❌ Error updating item:', error);
+        throw error;
+    }
+}
 
         async function deleteItem(type, value) {
-            if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
-                return;
-            }
-            
-            console.log('👑 Deleting item:', type, value);
-            
-            try {
-                // Determine which backend to use
-                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
-                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
-                
-                // For current backends, we'll simulate the delete
-                console.log('⚠️ TESTING MODE: Simulating delete operation');
-                console.log('Would call:', apiUrl, 'deleteDropdownItem', { type, value });
-                
-                // Simulate success
-                await new Promise(resolve => setTimeout(resolve, 500));
-                showMessage(`Successfully deleted "${value}" from ${type}`, 'success');
-                
-                await loadAllData(); // Refresh the data
-                
-            } catch (error) {
-                console.error('❌ Error deleting item:', error);
-                showMessage('Delete failed: ' + error.message, 'error');
-            }
+    if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
+        return;
+    }
+    
+    console.log('👑 Deleting item:', type, value);
+    
+    try {
+        // Determine which backend to use
+        const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+        const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+        
+        console.log('📤 Calling backend:', apiUrl, 'deleteDropdownItem');
+        
+        const response = await makeRequest(apiUrl, 'deleteDropdownItem', { type, value });
+        
+        console.log('📥 Backend response:', response);
+        
+        if (response && response.success) {
+            showMessage(response.message || `Successfully deleted "${value}" from ${type}`, 'success');
+            await loadAllData(); // Refresh the data
+        } else {
+            throw new Error(response.message || 'Failed to delete item');
         }
-
+        
+    } catch (error) {
+        console.error('❌ Error deleting item:', error);
+        showMessage('Delete failed: ' + error.message, 'error');
+    }
+}
         function showMessage(text, type) {
             const container = document.getElementById('messageContainer');
             
