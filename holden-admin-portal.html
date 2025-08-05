@@ -891,6 +891,13 @@
             }
         }
 
+        // Remove all toast notifications
+        function removeAllToasts() {
+            const container = document.getElementById('toastContainer');
+            const toasts = container.querySelectorAll('.toast');
+            toasts.forEach(toast => removeToast(toast));
+        }
+
         // Set button loading state
         function setButtonLoading(button, isLoading, loadingText = null) {
             if (isLoading) {
@@ -960,10 +967,18 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    // First refresh the data
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Adding "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetButton) {
+                        setButtonLoading(targetButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    // Refresh the data
                     await loadAllData();
                     
-                    // Then show success message after the item appears
+                    // Remove processing toast and show success
+                    removeAllToasts();
                     showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
                 } else {
                     throw new Error(response.message || 'Failed to add item');
@@ -971,6 +986,7 @@
                 
             } catch (error) {
                 console.error('❌ Error adding item:', error);
+                removeAllToasts();
                 showToast('error', 'Add Failed', `Failed to add "${value}": ${error.message}`);
             } finally {
                 // Remove loading state
@@ -1003,11 +1019,17 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Updating "${oldValue}" - refreshing list...`, 15000);
+                    
                     // Show success state briefly
                     setItemState(type, oldValue, 'success');
                     
-                    // Refresh data first, then show success message
+                    // Refresh data
                     await loadAllData();
+                    
+                    // Remove processing toast and show success
+                    removeAllToasts();
                     showToast('success', 'Item Updated', `Successfully changed "${oldValue}" to "${newValue}"`);
                 } else {
                     throw new Error(response.message || 'Failed to update item');
@@ -1015,6 +1037,7 @@
                 
             } catch (error) {
                 console.error('❌ Error updating item:', error);
+                removeAllToasts();
                 showToast('error', 'Update Failed', `Failed to update "${oldValue}": ${error.message}`);
                 
                 // Remove updating state on error
@@ -1060,8 +1083,18 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    // Refresh data first, then show success message
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Deleting "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetDeleteButton) {
+                        setButtonLoading(targetDeleteButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    // Refresh data
                     await loadAllData();
+                    
+                    // Remove processing toast and show success
+                    removeAllToasts();
                     showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
                 } else {
                     throw new Error(response.message || 'Failed to delete item');
@@ -1069,6 +1102,7 @@
                 
             } catch (error) {
                 console.error('❌ Error deleting item:', error);
+                removeAllToasts();
                 showToast('error', 'Delete Failed', `Failed to delete "${value}": ${error.message}`);
                 
                 // Remove deleting state and re-enable button on error
