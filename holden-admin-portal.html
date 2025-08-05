@@ -78,6 +78,30 @@
             font-size: 16px;
             transition: border-color 0.3s ease;
             margin-bottom: 20px;
+            padding-right: 50px;
+        }
+
+        .password-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #6b7280;
         }
 
         .login-input:focus {
@@ -357,9 +381,14 @@
         }
 
         .dropdown-item.deleting {
-            background: rgba(239, 68, 68, 0.1);
+            background: rgba(239, 68, 68, 0.15);
             border-color: #ef4444;
-            opacity: 0.6;
+            opacity: 0.8;
+        }
+
+        .dropdown-item.deleting .item-value {
+            color: #dc2626;
+            font-weight: 600;
         }
 
         .dropdown-item.success {
@@ -628,7 +657,7 @@
     <div id="loginView" class="login-container">
         <div class="login-card">
             <div class="login-header">
-                <h1 class="login-title">👑 Admin Portal</h1>
+                <h1 class="login-title">⚙️ Admin Portal</h1>
                 <div class="version-badge">Enhanced UX</div>
                 <p class="login-subtitle">Holden System Administration</p>
             </div>
@@ -638,8 +667,11 @@
             </div>
 
             <form id="loginForm">
-                <input type="password" id="passwordInput" class="login-input" 
-                       placeholder="Enter admin password" required>
+                <div class="password-input-container">
+                    <input type="password" id="passwordInput" class="login-input" 
+                           placeholder="Enter admin password" required>
+                    <button type="button" class="password-toggle" id="passwordToggle">👁️</button>
+                </div>
                 <button type="submit" class="login-btn">🔓 Access Admin Portal</button>
             </form>
 
@@ -655,7 +687,7 @@
             <!-- Header -->
             <div class="admin-header">
                 <div class="header-top">
-                    <h1 class="admin-title">👑 Admin Portal</h1>
+                    <h1 class="admin-title">⚙️ Admin Portal</h1>
                     <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
                 </div>
                 <p class="admin-subtitle">Enhanced UX - Dropdown Management for Holden Maintenance System</p>
@@ -832,6 +864,9 @@
             // Login
             document.getElementById('loginForm').addEventListener('submit', handleLogin);
             
+            // Password toggle
+            document.getElementById('passwordToggle').addEventListener('click', togglePasswordVisibility);
+            
             // Logout
             document.getElementById('logoutBtn').addEventListener('click', logout);
             
@@ -849,6 +884,20 @@
         // =================================================================
         // SIMPLE, RELIABLE VISUAL FEEDBACK FUNCTIONS
         // =================================================================
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleButton = document.getElementById('passwordToggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        }
 
         // Show simple toast notification
         function showToast(type, title, message, duration = 5000) {
@@ -1394,7 +1443,7 @@
             });
         }
 
-        console.log('👑 Enhanced Holden Admin Portal - Ready!');
+        console.log('⚙️ Enhanced Holden Admin Portal - Ready!');
         console.log('✨ Simple, reliable visual feedback with proper error handling');
         console.log('🔧 All original functionality preserved');
     </script>
