@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Dropdown Management</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f8fafc;
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #3b82f6;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .back-btn {
+            background: #6b7280;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .back-btn:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+        }
+
+        /* Status Bar */
+        .status-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 4px solid #10b981;
+        }
+
+        .status-text {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .refresh-btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .refresh-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+
+        /* Tab System */
+        .tab-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .tab-btn {
+            background: #f1f5f9;
+            color: #64748b;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab-btn.active {
+            background: #3b82f6;
+            color: white;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-description {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .tab-description strong {
+            color: #1e293b;
+        }
+
+        /* Dropdown Grid */
+        .dropdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .dropdown-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .dropdown-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .dropdown-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .item-count {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* Add Form */
+        .add-form {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .add-input {
+            flex: 1;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+
+        .add-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .add-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .add-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+
+        /* Items Container */
+        .items-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .dropdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+            background: white;
+            transition: all 0.2s ease;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #374151;
+            flex: 1;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .edit-btn {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .edit-btn:hover {
+            background: #bfdbfe;
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #fecaca;
+            color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #fca5a5;
+            transform: translateY(-1px);
+        }
+
+        /* Loading and Empty States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e2e8f0;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .dropdown-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .add-form {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <h1 class="header-title">
+                    <span>🎛️</span>
+                    Dropdown Management
+                </h1>
+                <button class="back-btn" onclick="window.close()">
+                    <span>←</span>
+                    Back to Admin Portal
+                </button>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-text" id="statusText">Ready to manage dropdown options</div>
+            <button class="refresh-btn" onclick="refreshAllData()">
+                <span>🔄</span>
+                Refresh Data
+            </button>
+        </div>
+
+        <!-- Tab System -->
+        <div class="tab-section">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('resident')" id="residentTab">
+                    <span>📝</span>
+                    Resident Form Dropdowns
+                </button>
+                <button class="tab-btn" onclick="switchTab('maintenance')" id="maintenanceTab">
+                    <span>🔧</span>
+                    Maintenance Portal Dropdowns
+                </button>
+            </div>
+
+            <!-- Resident Form Tab -->
+            <div class="tab-content active" id="residentContent">
+                <div class="tab-description">
+                    <strong>Resident Form Dropdowns:</strong> These options appear in the public resident submission form. 
+                    Managed in the <strong>Categories</strong> tab. Changes affect what residents see when reporting problems.
+                </div>
+
+                <div class="dropdown-grid">
+                    <!-- Unit Numbers -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>🏠</span>
+                                Unit Numbers
+                            </div>
+                            <div class="item-count" id="unitCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="unitInput" placeholder="e.g., Unit 45">
+                            <button class="add-btn" onclick="addItem('Unit Number', 'unitInput')">Add Unit</button>
+                        </div>
+                        <div class="items-container" id="unitItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading unit numbers...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Resident Names -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>👤</span>
+                                Resident Names
+                            </div>
+                            <div class="item-count" id="residentCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="residentInput" placeholder="e.g., John Smith">
+                            <button class="add-btn" onclick="addItem('Reported By', 'residentInput')">Add Resident</button>
+                        </div>
+                        <div class="items-container" id="residentItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading resident names...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Maintenance Portal Tab -->
+            <div class="tab-content" id="maintenanceContent">
+                <div class="tab-description">
+                    <strong>Maintenance Portal Dropdowns:</strong> These options appear in the staff maintenance portal. 
+                    Managed in the <strong>Maintenance</strong> tab. Changes affect what staff see when updating problems.
+                </div>
+
+                <div class="dropdown-grid">
+                    <!-- Status Options -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>📋</span>
+                                Status Options
+                            </div>
+                            <div class="item-count" id="statusCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="statusInput" placeholder="e.g., In Progress">
+                            <button class="add-btn" onclick="addItem('Status', 'statusInput')">Add Status</button>
+                        </div>
+                        <div class="items-container" id="statusItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading status options...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Priority Levels -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>⚡</span>
+                                Priority Levels
+                            </div>
+                            <div class="item-count" id="priorityCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="priorityInput" placeholder="e.g., High">
+                            <button class="add-btn" onclick="addItem('Priority', 'priorityInput')">Add Priority</button>
+                        </div>
+                        <div class="items-container" id="priorityItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading priority levels...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Categories -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>📂</span>
+                                Categories
+                            </div>
+                            <div class="item-count" id="categoryCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="categoryInput" placeholder="e.g., Plumbing">
+                            <button class="add-btn" onclick="addItem('Category', 'categoryInput')">Add Category</button>
+                        </div>
+                        <div class="items-container" id="categoryItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading categories...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Sub-Categories -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>📁</span>
+                                Sub-Categories
+                            </div>
+                            <div class="item-count" id="subCategoryCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="subCategoryInput" placeholder="e.g., Tap Repair">
+                            <button class="add-btn" onclick="addItem('Sub-Category', 'subCategoryInput')">Add Sub-Category</button>
+                        </div>
+                        <div class="items-container" id="subCategoryItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading sub-categories...
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Staff Assignments -->
+                    <div class="dropdown-card">
+                        <div class="dropdown-header">
+                            <div class="dropdown-title">
+                                <span>👷</span>
+                                Staff Assignments
+                            </div>
+                            <div class="item-count" id="assignedCount">0 items</div>
+                        </div>
+                        <div class="add-form">
+                            <input type="text" class="add-input" id="assignedInput" placeholder="e.g., Ben">
+                            <button class="add-btn" onclick="addItem('Assigned To', 'assignedInput')">Add Staff</button>
+                        </div>
+                        <div class="items-container" id="assignedItems">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading staff assignments...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
+        const RESIDENT_API_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
+        
+        // Data storage
+        let dropdownData = {
+            resident: {},
+            maintenance: {}
+        };
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎛️ Dropdown Admin Manager - Initializing...');
+            loadAllDropdowns();
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + 'Content').classList.add('active');
+            
+            console.log(`📑 Switched to ${tabName} tab`);
+        }
+
+        // Load all dropdown data
+        async function loadAllDropdowns() {
+            try {
+                updateStatus('Loading dropdown data...');
+                
+                await Promise.all([
+                    loadResidentDropdowns(),
+                    loadMaintenanceDropdowns()
+                ]);
+                
+                updateStatus('All dropdown data loaded successfully');
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdowns:', error);
+                updateStatus('Error loading dropdown data');
+            }
+        }
+
+        // Load resident dropdowns
+        async function loadResidentDropdowns() {
+            try {
+                const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success) {
+                    dropdownData.resident = response.data || {};
+                    
+                    renderItems('unitItems', dropdownData.resident.unitNumbers || [], 'Unit Number');
+                    renderItems('residentItems', dropdownData.resident.reportedBy || [], 'Reported By');
+                    
+                    updateCount('unitCount', dropdownData.resident.unitNumbers?.length || 0);
+                    updateCount('residentCount', dropdownData.resident.reportedBy?.length || 0);
+                    
+                    console.log('✅ Resident dropdowns loaded');
+                } else {
+                    throw new Error('Failed to load resident dropdowns');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading resident dropdowns:', error);
+                showError('unitItems', 'Failed to load unit numbers');
+                showError('residentItems', 'Failed to load resident names');
+            }
+        }
+
+        // Load maintenance dropdowns
+        async function loadMaintenanceDropdowns() {
+            try {
+                const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success) {
+                    dropdownData.maintenance = response.data || {};
+                    
+                    renderItems('statusItems', dropdownData.maintenance.statuses || [], 'Status');
+                    renderItems('priorityItems', dropdownData.maintenance.priorities || [], 'Priority');
+                    renderItems('categoryItems', dropdownData.maintenance.categories || [], 'Category');
+                    renderItems('subCategoryItems', dropdownData.maintenance.subCategories || [], 'Sub-Category');
+                    renderItems('assignedItems', dropdownData.maintenance.assignedTo || [], 'Assigned To');
+                    
+                    updateCount('statusCount', dropdownData.maintenance.statuses?.length || 0);
+                    updateCount('priorityCount', dropdownData.maintenance.priorities?.length || 0);
+                    updateCount('categoryCount', dropdownData.maintenance.categories?.length || 0);
+                    updateCount('subCategoryCount', dropdownData.maintenance.subCategories?.length || 0);
+                    updateCount('assignedCount', dropdownData.maintenance.assignedTo?.length || 0);
+                    
+                    console.log('✅ Maintenance dropdowns loaded');
+                } else {
+                    throw new Error('Failed to load maintenance dropdowns');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading maintenance dropdowns:', error);
+                showError('statusItems', 'Failed to load status options');
+                showError('priorityItems', 'Failed to load priority levels');
+                showError('categoryItems', 'Failed to load categories');
+                showError('subCategoryItems', 'Failed to load sub-categories');
+                showError('assignedItems', 'Failed to load staff assignments');
+            }
+        }
+
+        // Render items with edit/delete buttons
+        function renderItems(containerId, items, itemType) {
+            const container = document.getElementById(containerId);
+            
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div class="empty-state">No items found</div>';
+                return;
+            }
+            
+            container.innerHTML = items.map(item => `
+                <div class="dropdown-item">
+                    <span class="item-name">${escapeHtml(item)}</span>
+                    <div class="item-actions">
+                        <button class="edit-btn" onclick="editItem('${escapeHtml(itemType)}', '${escapeHtml(item)}')">
+                            ✏️ Edit
+                        </button>
+                        <button class="delete-btn" onclick="deleteItem('${escapeHtml(itemType)}', '${escapeHtml(item)}')">
+                            🗑️ Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Add new item
+        async function addItem(itemType, inputId) {
+            const input = document.getElementById(inputId);
+            const newValue = input.value.trim();
+            
+            if (!newValue) {
+                alert('Please enter a value');
+                return;
+            }
+            
+            try {
+                updateStatus(`Adding "${newValue}" to ${itemType}...`);
+                
+                // Determine which API to use based on item type
+                const apiUrl = isResidentItem(itemType) ? RESIDENT_API_URL : MAINTENANCE_API_URL;
+                const tabType = isResidentItem(itemType) ? 'Categories' : 'Maintenance';
+                
+                const response = await makeRequest(apiUrl, 'addDropdownItem', {
+                    tabType: tabType,
+                    itemType: itemType,
+                    value: newValue
+                });
+                
+                if (response && response.success) {
+                    console.log(`✅ Added "${newValue}" to ${itemType}`);
+                    input.value = '';
+                    updateStatus(`Added "${newValue}" successfully`);
+                    showNotification(`✅ Added "${newValue}"`, 'success');
+                    
+                    // Refresh data
+                    setTimeout(loadAllDropdowns, 500);
+                } else {
+                    throw new Error(response?.message || 'Failed to add item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error adding item:', error);
+                updateStatus('Error adding item');
+                showNotification('❌ Failed to add item', 'error');
+            }
+        }
+
+        // Edit item
+        function editItem(itemType, currentValue) {
+            const newValue = prompt(`Edit ${itemType}:`, currentValue);
+            
+            if (newValue && newValue.trim() !== currentValue) {
+                updateItem(itemType, currentValue, newValue.trim());
+            }
+        }
+
+        // Update item
+        async function updateItem(itemType, oldValue, newValue) {
+            try {
+                updateStatus(`Updating "${oldValue}" to "${newValue}"...`);
+                
+                // Determine which API to use based on item type
+                const apiUrl = isResidentItem(itemType) ? RESIDENT_API_URL : MAINTENANCE_API_URL;
+                const tabType = isResidentItem(itemType) ? 'Categories' : 'Maintenance';
+                
+                const response = await makeRequest(apiUrl, 'updateDropdownItem', {
+                    tabType: tabType,
+                    itemType: itemType,
+                    oldValue: oldValue,
+                    newValue: newValue
+                });
+                
+                if (response && response.success) {
+                    console.log(`✅ Updated "${oldValue}" to "${newValue}" in ${itemType}`);
+                    updateStatus(`Updated "${newValue}" successfully`);
+                    showNotification(`✅ Updated to "${newValue}"`, 'success');
+                    
+                    // Refresh data
+                    setTimeout(loadAllDropdowns, 500);
+                } else {
+                    throw new Error(response?.message || 'Failed to update item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error updating item:', error);
+                updateStatus('Error updating item');
+                showNotification('❌ Failed to update item', 'error');
+            }
+        }
+
+        // Delete item
+        async function deleteItem(itemType, value) {
+            if (!confirm(`Are you sure you want to delete "${value}" from ${itemType}?`)) {
+                return;
+            }
+            
+            try {
+                updateStatus(`Deleting "${value}" from ${itemType}...`);
+                
+                // Determine which API to use based on item type
+                const apiUrl = isResidentItem(itemType) ? RESIDENT_API_URL : MAINTENANCE_API_URL;
+                const tabType = isResidentItem(itemType) ? 'Categories' : 'Maintenance';
+                
+                const response = await makeRequest(apiUrl, 'deleteDropdownItem', {
+                    tabType: tabType,
+                    itemType: itemType,
+                    value: value
+                });
+                
+                if (response && response.success) {
+                    console.log(`✅ Deleted "${value}" from ${itemType}`);
+                    updateStatus(`Deleted "${value}" successfully`);
+                    showNotification(`✅ Deleted "${value}"`, 'success');
+                    
+                    // Refresh data
+                    setTimeout(loadAllDropdowns, 500);
+                } else {
+                    throw new Error(response?.message || 'Failed to delete item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error deleting item:', error);
+                updateStatus('Error deleting item');
+                showNotification('❌ Failed to delete item', 'error');
+            }
+        }
+
+        // Helper function to determine if item belongs to resident form
+        function isResidentItem(itemType) {
+            return itemType === 'Unit Number' || itemType === 'Reported By';
+        }
+
+        // Refresh all data
+        async function refreshAllData() {
+            updateStatus('Refreshing all dropdown data...');
+            await loadAllDropdowns();
+            showNotification('✅ Dropdown data refreshed!', 'success');
+        }
+
+        // Update status
+        function updateStatus(message) {
+            const statusText = document.getElementById('statusText');
+            if (statusText) {
+                statusText.textContent = message;
+            }
+        }
+
+        // Update count
+        function updateCount(countId, count) {
+            const countElement = document.getElementById(countId);
+            if (countElement) {
+                countElement.textContent = `${count} items`;
+            }
+        }
+
+        // Show error
+        function showError(containerId, message) {
+            const container = document.getElementById(containerId);
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #ef4444; padding: 20px;">
+                        <div style="font-weight: 600; margin-bottom: 8px;">⚠️ Error</div>
+                        <div>${message}</div>
+                    </div>
+                `;
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                font-weight: 500;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (document.body.contains(notification)) {
+                        document.body.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Escape HTML to prevent XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        // API request helper
+        async function makeRequest(url, action, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                const queryParams = new URLSearchParams({
+                    action: action,
+                    callback: callbackName,
+                    ...params
+                });
+                
+                script.src = `${url}?${queryParams.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 10000);
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        console.log('🎛️ Dropdown Admin Manager v1.0 - Ready!');
+        console.log('📊 Managing dropdown options for both resident and maintenance portals');
+        console.log('🔗 Connected to Google Sheets backend');
+    </script>
+</body>
+</html>
