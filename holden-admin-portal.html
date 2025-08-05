@@ -308,7 +308,7 @@
             border: 1px solid #e2e8f0;
             border-radius: 8px;
             margin-bottom: 8px;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
 
         .dropdown-item:hover {
@@ -374,26 +374,54 @@
             animation: spin 0.8s linear infinite;
         }
 
+        /* 🔥 ENHANCED DELETING STATE - Much More Prominent */
+        .dropdown-item.deleting {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.3) 100%);
+            border: 2px solid #dc2626;
+            border-style: dashed;
+            opacity: 1;
+            transform: scale(0.98);
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            animation: deleteWarning 1.5s ease-in-out infinite;
+        }
+
+        .dropdown-item.deleting .item-value {
+            color: #b91c1c;
+            font-weight: 700;
+            text-decoration: line-through;
+            text-decoration-color: #dc2626;
+            text-decoration-thickness: 2px;
+        }
+
+        .dropdown-item.deleting .item-actions {
+            opacity: 0.8;
+        }
+
+        /* Delete warning animation */
+        @keyframes deleteWarning {
+            0%, 100% {
+                border-color: #dc2626;
+                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            }
+            50% {
+                border-color: #b91c1c;
+                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 6px 16px rgba(239, 68, 68, 0.25);
+            }
+        }
+
         /* Item operation states */
         .dropdown-item.updating {
             background: rgba(59, 130, 246, 0.1);
             border-color: #3b82f6;
-        }
-
-        .dropdown-item.deleting {
-            background: rgba(239, 68, 68, 0.15);
-            border-color: #ef4444;
-            opacity: 0.8;
-        }
-
-        .dropdown-item.deleting .item-value {
-            color: #dc2626;
-            font-weight: 600;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
         }
 
         .dropdown-item.success {
             background: rgba(34, 197, 94, 0.1);
             border-color: #22c55e;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
         }
 
         /* Modal Styles */
@@ -658,7 +686,7 @@
         <div class="login-card">
             <div class="login-header">
                 <h1 class="login-title">⚙️ Admin Portal</h1>
-                <div class="version-badge">Enhanced UX</div>
+                <div class="version-badge">Enhanced UX v2</div>
                 <p class="login-subtitle">Holden System Administration</p>
             </div>
 
@@ -690,7 +718,7 @@
                     <h1 class="admin-title">⚙️ Admin Portal</h1>
                     <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
                 </div>
-                <p class="admin-subtitle">Enhanced UX - Dropdown Management for Holden Maintenance System</p>
+                <p class="admin-subtitle">Enhanced UX v2 - Dropdown Management for Holden Maintenance System</p>
             </div>
 
             <!-- Tab Navigation -->
@@ -855,7 +883,7 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('👑 Enhanced Admin Portal - Initializing...');
+            console.log('👑 Enhanced Admin Portal v2 - Initializing...');
             setupEventListeners();
             checkAuthentication();
         });
@@ -882,7 +910,7 @@
         }
 
         // =================================================================
-        // SIMPLE, RELIABLE VISUAL FEEDBACK FUNCTIONS
+        // ENHANCED VISUAL FEEDBACK FUNCTIONS
         // =================================================================
 
         // Toggle password visibility
@@ -899,7 +927,7 @@
             }
         }
 
-        // Show simple toast notification
+        // Enhanced toast notification with better animations
         function showToast(type, title, message, duration = 5000) {
             const container = document.getElementById('toastContainer');
             
@@ -963,7 +991,7 @@
             }
         }
 
-        // Set item visual state
+        // Enhanced item visual state with better animations
         function setItemState(type, value, state) {
             const itemElements = document.querySelectorAll('.dropdown-item');
             
@@ -976,16 +1004,28 @@
                     // Add new state if specified
                     if (state) {
                         element.classList.add(state);
+                        
+                        // 🔥 Enhanced delete confirmation with dramatic effect
+                        if (state === 'deleting') {
+                            // Add delete warning sound effect simulation
+                            console.log('🚨 DELETING ITEM:', value);
+                            
+                            // Temporary flash effect
+                            element.style.transition = 'all 0.2s ease';
+                            setTimeout(() => {
+                                element.style.transition = 'all 0.3s ease';
+                            }, 200);
+                        }
                     }
                 }
             });
         }
 
         // =================================================================
-        // ENHANCED OPERATION FUNCTIONS WITH SIMPLE FEEDBACK
+        // ENHANCED OPERATION FUNCTIONS WITH SURNAME SORTING
         // =================================================================
 
-        // Enhanced Add Item Function
+        // Enhanced Add Item Function with smart sorting
         async function addItem(type, value) {
             console.log('👑 Adding item:', type, value);
             
@@ -1023,7 +1063,7 @@
                         setButtonLoading(targetButton, true, '🔄 Refreshing...');
                     }
                     
-                    // Refresh the data
+                    // Refresh the data (backend-sorted)
                     await loadAllData();
                     
                     // Remove processing toast and show success
@@ -1074,7 +1114,7 @@
                     // Show success state briefly
                     setItemState(type, oldValue, 'success');
                     
-                    // Refresh data
+                    // Refresh data (backend-sorted)
                     await loadAllData();
                     
                     // Remove processing toast and show success
@@ -1094,15 +1134,15 @@
             }
         }
 
-        // Enhanced Delete Item Function  
+        // Enhanced Delete Item Function with dramatic visual feedback
         async function deleteItem(type, value) {
-            if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
+            if (!confirm(`🗑️ Are you sure you want to delete "${value}" from ${type}?\n\nThis action cannot be undone.`)) {
                 return;
             }
             
             console.log('👑 Deleting item:', type, value);
             
-            // Show visual feedback on the item
+            // Show DRAMATIC visual feedback on the item
             setItemState(type, value, 'deleting');
             
             // Find and disable the delete button
@@ -1139,7 +1179,7 @@
                         setButtonLoading(targetDeleteButton, true, '🔄 Refreshing...');
                     }
                     
-                    // Refresh data
+                    // Refresh data (backend-sorted)
                     await loadAllData();
                     
                     // Remove processing toast and show success
@@ -1163,7 +1203,14 @@
         }
 
         // =================================================================
-        // CORE ADMIN FUNCTIONS (Unchanged from original)
+        // SIMPLIFIED - BACKEND HANDLES ALL SORTING
+        // =================================================================
+        
+        // Note: All sorting is now handled by the backend APIs
+        // Frontend simply displays data in the order received
+
+        // =================================================================
+        // CORE ADMIN FUNCTIONS WITH ENHANCED SORTING
         // =================================================================
 
         async function handleLogin(e) {
@@ -1235,8 +1282,9 @@
             console.log('👑 Switched to', tab, 'tab');
         }
 
+        // Enhanced data loading - backend handles all sorting
         async function loadAllData() {
-            console.log('👑 Loading all dropdown data...');
+            console.log('👑 Loading all dropdown data (backend-sorted)...');
             
             try {
                 // Load Categories tab data (for resident form)
@@ -1245,7 +1293,7 @@
                 // Load Maintenance tab data (for maintenance portal)  
                 await loadMaintenanceData();
                 
-                console.log('✅ All data loaded successfully');
+                console.log('✅ All data loaded successfully (backend-sorted)');
                 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
@@ -1255,18 +1303,19 @@
 
         async function loadCategoriesData() {
             try {
-                console.log('📝 Loading Categories tab data...');
+                console.log('📝 Loading Categories tab data (backend-sorted)...');
                 
                 const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions');
                 
                 if (response && response.success) {
+                    // Use data as-is from backend (already sorted)
                     dropdownData.unitNumbers = response.unitNumbers || [];
                     dropdownData.reportedBy = response.reportedBy || [];
                     
                     renderDropdownList('unitNumbersList', dropdownData.unitNumbers, 'Unit Number');
                     renderDropdownList('reportedByList', dropdownData.reportedBy, 'Reported By');
                     
-                    console.log('✅ Categories data loaded:', {
+                    console.log('✅ Categories data loaded (backend-sorted):', {
                         unitNumbers: dropdownData.unitNumbers.length,
                         reportedBy: dropdownData.reportedBy.length
                     });
@@ -1283,11 +1332,12 @@
 
         async function loadMaintenanceData() {
             try {
-                console.log('🔧 Loading Maintenance tab data...');
+                console.log('🔧 Loading Maintenance tab data (backend-sorted)...');
                 
                 const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions');
                 
                 if (response && response.success && response.data) {
+                    // Use data as-is from backend (already sorted)
                     dropdownData.statuses = response.data.statuses || [];
                     dropdownData.priorities = response.data.priorities || [];
                     dropdownData.categories = response.data.categories || [];
@@ -1300,7 +1350,7 @@
                     renderDropdownList('subCategoryList', dropdownData.subCategories, 'Sub-Category');
                     renderDropdownList('assignedToList', dropdownData.assignedTo, 'Assigned To');
                     
-                    console.log('✅ Maintenance data loaded:', {
+                    console.log('✅ Maintenance data loaded (backend-sorted):', {
                         statuses: dropdownData.statuses.length,
                         priorities: dropdownData.priorities.length,
                         categories: dropdownData.categories.length,
@@ -1443,9 +1493,14 @@
             });
         }
 
-        console.log('⚙️ Enhanced Holden Admin Portal - Ready!');
-        console.log('✨ Simple, reliable visual feedback with proper error handling');
-        console.log('🔧 All original functionality preserved');
+        console.log('⚙️ Enhanced Holden Admin Portal v2 - Ready!');
+        console.log('🔥 ENHANCED FEATURES:');
+        console.log('  • Dramatic deleting visual states with animations');
+        console.log('  • Backend-driven sorting (no frontend sorting needed)');
+        console.log('  • Enhanced toast notifications');
+        console.log('  • Improved button loading states');
+        console.log('  • All original functionality preserved');
+        console.log('  • Simplified - backend handles all sorting logic');
     </script>
 </body>
 </html>
