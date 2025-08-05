@@ -960,12 +960,11 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
+                    // First refresh the data
+                    await loadAllData();
                     
-                    // Refresh data after successful operation
-                    setTimeout(() => {
-                        loadAllData();
-                    }, 500);
+                    // Then show success message after the item appears
+                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
                 } else {
                     throw new Error(response.message || 'Failed to add item');
                 }
@@ -1004,15 +1003,12 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
-                    showToast('success', 'Item Updated', `Successfully changed "${oldValue}" to "${newValue}"`);
-                    
                     // Show success state briefly
                     setItemState(type, oldValue, 'success');
                     
-                    // Refresh data after successful operation
-                    setTimeout(() => {
-                        loadAllData();
-                    }, 500);
+                    // Refresh data first, then show success message
+                    await loadAllData();
+                    showToast('success', 'Item Updated', `Successfully changed "${oldValue}" to "${newValue}"`);
                 } else {
                     throw new Error(response.message || 'Failed to update item');
                 }
@@ -1064,12 +1060,9 @@
                 console.log('📥 Backend response:', response);
                 
                 if (response && response.success) {
+                    // Refresh data first, then show success message
+                    await loadAllData();
                     showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
-                    
-                    // Refresh data after successful operation
-                    setTimeout(() => {
-                        loadAllData();
-                    }, 500);
                 } else {
                     throw new Error(response.message || 'Failed to delete item');
                 }
