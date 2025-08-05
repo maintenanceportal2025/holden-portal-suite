@@ -984,12 +984,36 @@
     }
 }
 
-        async function deleteItem(type, value) {
+        // ENHANCED UX: Replace the deleteItem function in your admin portal
+
+async function deleteItem(type, value) {
     if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
         return;
     }
     
     console.log('👑 Deleting item:', type, value);
+    
+    // 🆕 IMMEDIATE UX: Find and dim the item being deleted
+    const itemElements = document.querySelectorAll('.dropdown-item');
+    let targetElement = null;
+    
+    itemElements.forEach(element => {
+        const itemValue = element.querySelector('.item-value');
+        if (itemValue && itemValue.textContent.trim() === value) {
+            targetElement = element;
+        }
+    });
+    
+    // 🆕 VISUAL FEEDBACK: Dim the item and show "Deleting..." status
+    if (targetElement) {
+        targetElement.style.opacity = '0.5';
+        targetElement.style.pointerEvents = 'none';
+        
+        const actionButtons = targetElement.querySelector('.item-actions');
+        if (actionButtons) {
+            actionButtons.innerHTML = '<span style="color: #ef4444; font-size: 12px; font-weight: 600;">🗑️ Deleting...</span>';
+        }
+    }
     
     try {
         // Determine which backend to use
@@ -1003,33 +1027,86 @@
         console.log('📥 Backend response:', response);
         
         if (response && response.success) {
+            // 🆕 SUCCESS FEEDBACK: Fade out the item smoothly before removing
+            if (targetElement) {
+                targetElement.style.transition = 'all 0.3s ease';
+                targetElement.style.opacity = '0';
+                targetElement.style.transform = 'translateX(-20px)';
+                
+                // Remove after animation
+                setTimeout(() => {
+                    if (targetElement.parentNode) {
+                        targetElement.parentNode.removeChild(targetElement);
+                    }
+                }, 300);
+            }
+            
             showMessage(response.message || `Successfully deleted "${value}" from ${type}`, 'success');
-            await loadAllData(); // Refresh the data
+            
+            // 🆕 DELAYED REFRESH: Still refresh data but after visual feedback
+            setTimeout(() => {
+                loadAllData(); // Refresh the data to sync with backend
+            }, 500);
+            
         } else {
             throw new Error(response.message || 'Failed to delete item');
         }
         
     } catch (error) {
         console.error('❌ Error deleting item:', error);
+        
+        // 🆕 ERROR RECOVERY: Restore the item if delete failed
+        if (targetElement) {
+            targetElement.style.opacity = '1';
+            targetElement.style.pointerEvents = 'auto';
+            
+            const actionButtons = targetElement.querySelector('.item-actions');
+            if (actionButtons) {
+                actionButtons.innerHTML = `
+                    <button class="action-btn edit-btn" onclick="openEditModal('${type}', '${value}')">Edit</button>
+                    <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${value}')">Delete</button>
+                `;
+            }
+        }
+        
         showMessage('Delete failed: ' + error.message, 'error');
     }
 }
-        function showMessage(text, type) {
-            const container = document.getElementById('messageContainer');
-            
-            const messageDiv = document.createElement('div');
-            messageDiv.className = `message ${type}`;
-            messageDiv.textContent = text;
-            
-            container.appendChild(messageDiv);
-            
-            // Auto-remove after 5 seconds
-            setTimeout(() => {
-                if (messageDiv.parentNode) {
-                    messageDiv.parentNode.removeChild(messageDiv);
-                }
-            }, 5000);
-        }
+
+        
+        f// 🆕 ENHANCED MESSAGE FUNCTION with better timing
+function showMessage(text, type) {
+    const container = document.getElementById('messageContainer');
+    
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${type}`;
+    messageDiv.textContent = text;
+    
+    // Add fade-in animation
+    messageDiv.style.opacity = '0';
+    messageDiv.style.transform = 'translateY(-10px)';
+    messageDiv.style.transition = 'all 0.3s ease';
+    
+    container.appendChild(messageDiv);
+    
+    // Trigger fade-in
+    setTimeout(() => {
+        messageDiv.style.opacity = '1';
+        messageDiv.style.transform = 'translateY(0)';
+    }, 10);
+    
+    // Auto-remove with fade-out after 4 seconds
+    setTimeout(() => {
+        messageDiv.style.opacity = '0';
+        messageDiv.style.transform = 'translateY(-10px)';
+        
+        setTimeout(() => {
+            if (messageDiv.parentNode) {
+                messageDiv.parentNode.removeChild(messageDiv);
+            }
+        }, 300);
+    }, 4000);
+}
 
         async function makeRequest(url, action, additionalParams = {}) {
             return new Promise((resolve, reject) => {
