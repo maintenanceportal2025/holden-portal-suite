@@ -3,34 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lake Illawong - Admin Portal</title>
+    <title>Admin Portal</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            color: #1e293b;
-            line-height: 1.6;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Login Screen */
-        .login-screen {
             display: flex;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
             padding: 20px;
         }
 
@@ -40,775 +27,223 @@
             padding: 40px;
             max-width: 450px;
             width: 100%;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
         }
 
-        .login-logo {
-            width: 80px;
-            height: 80px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            margin: 0 auto 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
         }
 
         .login-title {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .version-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
         }
 
         .login-subtitle {
-            color: #64748b;
-            margin-bottom: 30px;
-            font-size: 1.1rem;
-        }
-
-        .login-form {
-            margin-bottom: 20px;
-        }
-
-        .login-input {
-            width: 100%;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
+            color: #6b7280;
             font-size: 16px;
-            margin-bottom: 20px;
-            transition: all 0.3s ease;
+            margin: 0;
         }
 
-        .login-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        .warning-box {
+            background: #fef3cd;
+            border: 1px solid #f59e0b;
+            color: #92400e;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        .warning-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .warning-title {
+            font-weight: 600;
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            font-size: 16px;
+            margin-bottom: 8px;
+        }
+
+        .password-container {
+            position: relative;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 50px 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 18px;
         }
 
         .login-btn {
             width: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #667eea;
             color: white;
             border: none;
-            padding: 15px 20px;
-            border-radius: 12px;
-            font-size: 16px;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 18px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .login-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #9ca3af;
+            font-size: 14px;
         }
 
-        .login-btn:disabled {
-            opacity: 0.7;
-            cursor: not-allowed;
-            transform: none;
+        .hidden {
+            display: none !important;
         }
 
-        .login-error {
-            background: #fef2f2;
-            color: #dc2626;
-            padding: 10px 15px;
+        .error-message {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 12px;
             border-radius: 8px;
             margin-bottom: 20px;
             font-size: 14px;
-            display: none;
-        }
-
-        /* Admin Dashboard */
-        .admin-dashboard {
-            display: none;
-        }
-
-        .admin-dashboard.active {
-            display: block;
-        }
-
-        .dashboard-header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 25px;
-            margin-bottom: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .admin-logo {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .header-text h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 5px;
-        }
-
-        .header-text p {
-            color: #64748b;
-            font-size: 1rem;
-        }
-
-        .header-actions {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .header-btn {
-            background: #f1f5f9;
-            color: #64748b;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .header-btn:hover {
-            background: #e2e8f0;
-            transform: translateY(-1px);
-        }
-
-        .logout-btn {
-            background: #ef4444 !important;
-            color: white !important;
-        }
-
-        .logout-btn:hover {
-            background: #dc2626 !important;
-        }
-
-        /* Admin Cards Grid */
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-            margin-bottom: 30px;
-        }
-
-        .admin-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .admin-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
-        }
-
-        .admin-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
-        }
-
-        .card-icon {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            display: block;
-        }
-
-        .card-title {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: #1e293b;
-            margin-bottom: 8px;
-        }
-
-        .card-description {
-            color: #64748b;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .card-features {
-            list-style: none;
-            margin-bottom: 25px;
-        }
-
-        .card-features li {
-            color: #64748b;
-            margin-bottom: 6px;
-            padding-left: 15px;
-            position: relative;
-            font-size: 0.9rem;
-        }
-
-        .card-features li::before {
-            content: '✓';
-            position: absolute;
-            left: 0;
-            color: #10b981;
-            font-weight: bold;
-        }
-
-        .admin-card-btn {
-            width: 100%;
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .admin-card-btn:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        /* Status Section */
-        .status-section {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 16px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .status-title {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .status-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-        }
-
-        .status-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px;
-            background: #f8fafc;
-            border-radius: 10px;
-            border-left: 4px solid #e2e8f0;
-        }
-
-        .status-online {
-            border-left-color: #10b981;
-        }
-
-        .status-warning {
-            border-left-color: #f59e0b;
-        }
-
-        .status-error {
-            border-left-color: #ef4444;
-        }
-
-        .status-text {
-            font-weight: 600;
-            color: #374151;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-left: 10px;
-        }
-
-        .indicator-online {
-            background: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-
-        .indicator-warning {
-            background: #f59e0b;
-            animation: pulse 2s infinite;
-        }
-
-        .indicator-error {
-            background: #ef4444;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-
-            .header-content {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .admin-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .status-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* Utilities */
-        .hidden {
-            display: none !important;
         }
     </style>
 </head>
 <body>
-    <!-- Login Screen -->
-    <div id="loginScreen" class="login-screen">
-        <div class="login-card">
-            <div class="login-logo">🔧</div>
+    <div class="login-card">
+        <div class="login-header">
             <h1 class="login-title">Admin Portal</h1>
-            <p class="login-subtitle">Lake Illawong Maintenance System</p>
-            
-            <div id="loginError" class="login-error">
-                Invalid password. Please try again.
+            <div class="version-badge">v1.0</div>
+            <p class="login-subtitle">Smart Priority Management System</p>
+        </div>
+        
+        <!-- Authorized Personnel Warning -->
+        <div class="warning-box">
+            <div class="warning-content">
+                <span style="font-size: 18px; margin-top: 2px;">⚠️</span>
+                <div>
+                    <div class="warning-title">Authorized Personnel Only</div>
+                    <div style="line-height: 1.5;">
+                        This system contains sensitive maintenance data.<br/>
+                        Unauthorized access is prohibited.
+                    </div>
+                </div>
             </div>
-            
-            <form id="loginForm" class="login-form">
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Password</label>
+            <div class="password-container">
                 <input 
                     type="password" 
                     id="passwordInput" 
-                    class="login-input" 
+                    class="form-input" 
                     placeholder="Enter admin password"
-                    required
                 >
-                <button type="submit" id="loginBtn" class="login-btn">
-                    🔐 Access Admin Portal
-                </button>
-            </form>
-            
-            <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 0.9rem;">
-                Administrative access required
+                <button type="button" id="togglePassword" class="password-toggle">👁️</button>
             </div>
         </div>
-    </div>
-
-    <!-- Admin Dashboard -->
-    <div id="adminDashboard" class="admin-dashboard">
-        <div class="container">
-            <!-- Header -->
-            <div class="dashboard-header">
-                <div class="header-content">
-                    <div class="header-left">
-                        <div class="admin-logo">⚙️</div>
-                        <div class="header-text">
-                            <h1>Admin Portal</h1>
-                            <p>System Administration & Management</p>
-                        </div>
-                    </div>
-                    <div class="header-actions">
-                        <button class="header-btn" onclick="refreshDashboard()">
-                            <span>🔄</span>
-                            Refresh
-                        </button>
-                        <button class="header-btn logout-btn" onclick="logout()">
-                            <span>🚪</span>
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Admin Cards Grid -->
-            <div class="admin-grid">
-                <!-- Dropdown Management -->
-                <div class="admin-card">
-                    <span class="card-icon">🎛️</span>
-                    <h3 class="card-title">Manage Dropdowns</h3>
-                    <p class="card-description">
-                        Configure dropdown options for both resident and maintenance portals
-                    </p>
-                    <ul class="card-features">
-                        <li>Unit numbers and resident names</li>
-                        <li>Status and priority options</li>
-                        <li>Categories and assignments</li>
-                        <li>Real-time sync with portals</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openDropdownManager()">
-                        <span class="card-icon">🎛️</span>
-                        Manage Dropdowns
-                    </button>
-                </div>
-
-                <!-- Email Lists -->
-                <div class="admin-card">
-                    <span class="card-icon">📧</span>
-                    <h3 class="card-title">Manage Email Lists</h3>
-                    <p class="card-description">
-                        Configure email addresses for notifications and zone representatives
-                    </p>
-                    <ul class="card-features">
-                        <li>Zone representative emails</li>
-                        <li>Maintenance team contacts</li>
-                        <li>Notification preferences</li>
-                        <li>Email validation tools</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openEmailManager()">
-                        <span class="card-icon">📧</span>
-                        Manage Email Lists
-                    </button>
-                </div>
-
-                <!-- User Management -->
-                <div class="admin-card">
-                    <span class="card-icon">👥</span>
-                    <h3 class="card-title">User Management</h3>
-                    <p class="card-description">
-                        Manage resident information and unit assignments
-                    </p>
-                    <ul class="card-features">
-                        <li>Resident profiles and contacts</li>
-                        <li>Unit ownership details</li>
-                        <li>Contact information updates</li>
-                        <li>Data validation and cleanup</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openUserManager()">
-                        <span class="card-icon">👥</span>
-                        User Management
-                    </button>
-                </div>
-
-                <!-- System Settings -->
-                <div class="admin-card">
-                    <span class="card-icon">⚙️</span>
-                    <h3 class="card-title">System Settings</h3>
-                    <p class="card-description">
-                        Configure system preferences and portal settings
-                    </p>
-                    <ul class="card-features">
-                        <li>Password management</li>
-                        <li>API configuration</li>
-                        <li>System preferences</li>
-                        <li>Security settings</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openSystemSettings()">
-                        <span class="card-icon">⚙️</span>
-                        System Settings
-                    </button>
-                </div>
-
-                <!-- Reports & Analytics -->
-                <div class="admin-card">
-                    <span class="card-icon">📊</span>
-                    <h3 class="card-title">Reports & Analytics</h3>
-                    <p class="card-description">
-                        Advanced reporting and system analytics
-                    </p>
-                    <ul class="card-features">
-                        <li>Usage statistics</li>
-                        <li>Performance metrics</li>
-                        <li>Data export tools</li>
-                        <li>System health reports</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openReportsManager()">
-                        <span class="card-icon">📊</span>
-                        Reports & Analytics
-                    </button>
-                </div>
-
-                <!-- Backup & Restore -->
-                <div class="admin-card">
-                    <span class="card-icon">💾</span>
-                    <h3 class="card-title">Backup & Restore</h3>
-                    <p class="card-description">
-                        Data backup and system recovery tools
-                    </p>
-                    <ul class="card-features">
-                        <li>Automated backups</li>
-                        <li>Data export/import</li>
-                        <li>System restore points</li>
-                        <li>Archive management</li>
-                    </ul>
-                    <button class="admin-card-btn" onclick="openBackupRestore()">
-                        <span class="card-icon">💾</span>
-                        Backup & Restore
-                    </button>
-                </div>
-            </div>
-
-            <!-- System Status -->
-            <div class="status-section">
-                <h3 class="status-title">System Status</h3>
-                <div class="status-grid">
-                    <div class="status-item status-online">
-                        <span class="status-text">Google Sheets API</span>
-                        <div class="status-indicator indicator-online"></div>
-                    </div>
-                    <div class="status-item status-online">
-                        <span class="status-text">Email Notifications</span>
-                        <div class="status-indicator indicator-online"></div>
-                    </div>
-                    <div class="status-item status-online">
-                        <span class="status-text">Portal Sync</span>
-                        <div class="status-indicator indicator-online"></div>
-                    </div>
-                    <div class="status-item status-online">
-                        <span class="status-text">Data Integrity</span>
-                        <div class="status-indicator indicator-online"></div>
-                    </div>
-                </div>
-            </div>
+        
+        <div id="loginError" class="error-message hidden">
+            ❌ Invalid password. Please try again.
+        </div>
+        
+        <button id="loginBtn" class="login-btn">
+            🔐 Access Admin Portal
+        </button>
+        
+        <div class="login-footer">
+            Lake Illawong Maintenance System
         </div>
     </div>
 
     <script>
-        // Configuration
-        const ADMIN_PASSWORD = 'maint2025';
-        
-        // State
-        let isAuthenticated = false;
-        
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Admin Portal - Initializing...');
-            setupEventListeners();
-            showLogin();
+        const ADMIN_PASSWORD = 'admin2025';
+
+        document.getElementById('loginBtn').addEventListener('click', handleLogin);
+        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') handleLogin();
         });
+        document.getElementById('togglePassword').addEventListener('click', togglePassword);
 
-        // Event Listeners
-        function setupEventListeners() {
-            const loginForm = document.getElementById('loginForm');
-            const passwordInput = document.getElementById('passwordInput');
-            
-            if (loginForm) {
-                loginForm.addEventListener('submit', handleLogin);
-            }
-            
-            if (passwordInput) {
-                passwordInput.addEventListener('input', clearLoginError);
-                passwordInput.focus();
-            }
-        }
-
-        // Authentication
-        async function handleLogin(e) {
-            e.preventDefault();
-            
-            const passwordInput = document.getElementById('passwordInput');
+        function handleLogin() {
+            const password = document.getElementById('passwordInput').value;
             const loginBtn = document.getElementById('loginBtn');
-            const password = passwordInput.value.trim();
-            
-            if (!password) {
-                showLoginError('Please enter a password');
-                return;
-            }
-            
-            // Disable form during login
+            const errorDiv = document.getElementById('loginError');
+
             loginBtn.disabled = true;
-            loginBtn.textContent = '🔄 Authenticating...';
-            
-            try {
-                // Simulate authentication delay
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
+            loginBtn.innerHTML = '⏳ Authenticating...';
+            errorDiv.classList.add('hidden');
+
+            setTimeout(() => {
                 if (password === ADMIN_PASSWORD) {
-                    isAuthenticated = true;
-                    showDashboard();
-                    console.log('✅ Admin authentication successful');
+                    alert('Login successful! This would redirect to the admin panel.');
+                    // In real implementation: window.location.href = 'admin-panel.html';
                 } else {
-                    showLoginError('Invalid password. Please try again.');
-                    passwordInput.value = '';
-                    passwordInput.focus();
+                    errorDiv.classList.remove('hidden');
+                    document.getElementById('passwordInput').value = '';
                 }
-                
-            } catch (error) {
-                console.error('❌ Authentication error:', error);
-                showLoginError('Authentication failed. Please try again.');
-            } finally {
                 loginBtn.disabled = false;
-                loginBtn.textContent = '🔐 Access Admin Portal';
-            }
+                loginBtn.innerHTML = '🔐 Access Admin Portal';
+            }, 1000);
         }
 
-        // UI Navigation
-        function showLogin() {
-            document.getElementById('loginScreen').classList.remove('hidden');
-            document.getElementById('adminDashboard').classList.remove('active');
-            
-            // Clear password field
+        function togglePassword() {
             const passwordInput = document.getElementById('passwordInput');
-            if (passwordInput) {
-                passwordInput.value = '';
-                passwordInput.focus();
-            }
+            const toggleBtn = document.getElementById('togglePassword');
             
-            clearLoginError();
-        }
-
-        function showDashboard() {
-            document.getElementById('loginScreen').classList.add('hidden');
-            document.getElementById('adminDashboard').classList.add('active');
-            
-            // Show success notification
-            showNotification('✅ Welcome to Admin Portal!', 'success');
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                isAuthenticated = false;
-                showLogin();
-                console.log('👋 Admin logged out');
-                showNotification('👋 Logged out successfully', 'info');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
             }
         }
-
-        // Admin Module Navigation
-        function openDropdownManager() {
-    console.log('🎛️ Opening Dropdown Manager...');
-    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/admin-dropdowns.html';
-}
-        
-        function openEmailManager() {
-            console.log('📧 Opening Email Manager...');
-            window.open('admin-email-lists.html', '_blank', 'width=1400,height=900');
-        }
-        
-        function openUserManager() {
-            console.log('👥 Opening User Manager...');
-            window.open('admin-users.html', '_blank', 'width=1400,height=900');
-        }
-        
-        function openSystemSettings() {
-            console.log('⚙️ Opening System Settings...');
-            window.open('admin-settings.html', '_blank', 'width=1400,height=900');
-        }
-        
-        function openReportsManager() {
-            console.log('📊 Opening Reports Manager...');
-            window.open('admin-reports.html', '_blank', 'width=1400,height=900');
-        }
-        
-        function openBackupRestore() {
-            console.log('💾 Opening Backup & Restore...');
-            window.open('admin-backup.html', '_blank', 'width=1400,height=900');
-        }
-
-        // Utility Functions
-        function refreshDashboard() {
-            console.log('🔄 Refreshing admin dashboard...');
-            showNotification('🔄 Dashboard refreshed!', 'success');
-        }
-
-        function showLoginError(message) {
-            const errorElement = document.getElementById('loginError');
-            if (errorElement) {
-                errorElement.textContent = message;
-                errorElement.style.display = 'block';
-            }
-        }
-
-        function clearLoginError() {
-            const errorElement = document.getElementById('loginError');
-            if (errorElement) {
-                errorElement.style.display = 'none';
-            }
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
-                color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                z-index: 10000;
-                font-weight: 500;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                max-width: 300px;
-            `;
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Animate out and remove
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (document.body.contains(notification)) {
-                        document.body.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        console.log('🏠 Lake Illawong Admin Portal v1.0 - Ready!');
-        console.log('🚀 Central hub for all administrative functions');
-        console.log('🔗 Links to dedicated admin modules for focused management');
     </script>
 </body>
 </html>
