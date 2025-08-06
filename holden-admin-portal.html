@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Portal</title>
+    <title>Admin Panel - Lake Illawong Maintenance System</title>
     <style>
         * {
             margin: 0;
@@ -14,6 +14,17 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login Screen Styles */
+        .login-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -37,9 +48,9 @@
 
         .login-title {
             color: #667eea;
-            font-size: 32px;
+            font-size: 2rem;
             margin-bottom: 10px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         .version-badge {
@@ -59,6 +70,17 @@
             margin: 0;
         }
 
+        .status-box {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
         .warning-box {
             background: #fef3cd;
             border: 1px solid #f59e0b;
@@ -76,7 +98,7 @@
 
         .warning-title {
             font-weight: 600;
-            font-size: 18px;
+            font-size: 16px;
             margin-bottom: 8px;
         }
 
@@ -92,44 +114,51 @@
             margin-bottom: 8px;
         }
 
-        .password-container {
-            position: relative;
-        }
-
         .form-input {
             width: 100%;
-            padding: 14px 50px 14px 16px;
+            padding: 14px 16px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 16px;
+            transition: border-color 0.3s ease;
         }
 
-        .password-toggle {
-            position: absolute;
-            right: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: none;
-            border: none;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 18px;
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 2px solid #fecaca;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
         }
 
         .login-btn {
             width: 100%;
-            background: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 16px 20px;
-            border-radius: 8px;
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 600;
+            border-radius: 8px;
             cursor: pointer;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 10px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-1px);
         }
 
         .login-footer {
@@ -139,393 +168,475 @@
             font-size: 14px;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .error-message {
-            background: #fecaca;
-            color: #991b1b;
-            padding: 12px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        /* Admin Panel Styles */
-        .admin-container {
+        /* Dashboard Styles */
+        .dashboard-container {
             min-height: 100vh;
             padding: 20px;
-            align-items: flex-start;
         }
 
-        .admin-header {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-            margin-bottom: 20px;
-        }
-
-        .admin-title {
-            color: #1e293b;
-            font-size: 1.8rem;
-            font-weight: 600;
-            margin-bottom: 4px;
-        }
-
-        .admin-subtitle {
-            color: #64748b;
-            font-size: 1rem;
-        }
-
-        .header-buttons {
-            display: flex;
-            gap: 12px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .btn-back {
-            background: #10b981;
-            color: white;
-        }
-
-        .btn-logout {
-            background: #ef4444;
-            color: white;
-        }
-
-        .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 20px;
-            max-width: 1200px;
+        .dashboard-content {
+            max-width: 1400px;
             margin: 0 auto;
         }
 
-        .section-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        .dashboard-header {
+            background: rgba(255,255,255,0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            backdrop-filter: blur(10px);
         }
 
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #e2e8f0;
-        }
-
-        .section-title {
+        .dashboard-title {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
             color: #1e293b;
-            font-size: 1.2rem;
-            font-weight: 600;
+            font-weight: 700;
         }
 
-        .btn-add {
-            background: #10b981;
+        .dashboard-subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .logout-btn {
+            background: #dc2626;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .items-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .item-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 12px;
-            margin: 8px 0;
-            background: #f8fafc;
+            padding: 10px 20px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
         }
 
-        .item-name {
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .module-card {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            border: 1px solid rgba(255,255,255,0.8);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .module-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .module-card.inactive {
+            opacity: 0.7;
+            cursor: default;
+        }
+
+        .module-card.inactive:hover {
+            transform: none;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+        }
+
+        .status-badge {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active { background: #10b981; }
+        .status-planned { background: #f59e0b; }
+        .status-future { background: #8b5cf6; }
+
+        .module-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .module-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .module-description {
+            color: #64748b;
+            line-height: 1.5;
+            font-size: 0.95rem;
+            margin-bottom: 20px;
+        }
+
+        .features-title {
+            font-size: 0.9rem;
+            font-weight: 600;
             color: #374151;
-            font-weight: 500;
+            margin-bottom: 12px;
         }
 
-        .item-actions {
+        .features-list {
+            margin: 0;
+            padding-left: 0;
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .features-list li {
+            margin-bottom: 6px;
+            font-size: 0.85rem;
+            color: #64748b;
             display: flex;
+            align-items: center;
             gap: 8px;
         }
 
-        .btn-edit {
-            background: #3b82f6;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
+        .feature-check {
+            color: #10b981;
+            font-weight: 600;
         }
 
-        .btn-delete {
-            background: #ef4444;
+        .action-button {
+            text-align: center;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .btn-launch {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            cursor: pointer;
+        }
+
+        .btn-development {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .btn-future {
+            background: #f3f4f6;
+            color: #6b7280;
+        }
+
+        .system-info {
+            background: rgba(255,255,255,0.95);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .system-info h4 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .info-item strong {
+            color: #374151;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .modules-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-header {
+                padding: 20px;
+            }
+            
+            .dashboard-title {
+                font-size: 2rem;
+            }
+            
+            .quick-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="loginView" class="login-card">
-        <div class="login-header">
-            <h1 class="login-title">Admin Portal</h1>
-            <div class="version-badge">v1.0</div>
-            <p class="login-subtitle">Smart Priority Management System</p>
-        </div>
-        
-        <!-- Authorized Personnel Warning -->
-        <div class="warning-box">
-            <div class="warning-content">
-                <span style="font-size: 18px; margin-top: 2px;">⚠️</span>
-                <div>
-                    <div class="warning-title">Authorized Personnel Only</div>
-                    <div style="line-height: 1.5;">
-                        This system contains sensitive maintenance data.<br/>
-                        Unauthorized access is prohibited.
+    <div id="loginView" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">🛠️ Admin Panel</h1>
+                <div class="version-badge">v2.3 - Multi-Module Dashboard</div>
+                <p class="login-subtitle">Advanced system administration and configuration</p>
+            </div>
+            
+            <div class="status-box">
+                🟢 System Ready - All Admin Modules Available
+            </div>
+            
+            <div id="loginError" class="error-message hidden">
+                ❌ Invalid admin password
+            </div>
+            
+            <div class="warning-box">
+                <div class="warning-content">
+                    <span style="font-size: 18px; margin-top: 2px;">⚠️</span>
+                    <div>
+                        <div class="warning-title">Administrator Access Only</div>
+                        <div style="line-height: 1.5; font-size: 14px;">
+                            This panel provides full system administration capabilities.<br/>
+                            Unauthorized access is strictly prohibited.
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        
-        <div class="form-group">
-            <label class="form-label">Password</label>
-            <div class="password-container">
+            
+            <div class="form-group">
+                <label class="form-label">Administrator Password</label>
                 <input 
                     type="password" 
                     id="passwordInput" 
                     class="form-input" 
                     placeholder="Enter admin password"
                 >
-                <button type="button" id="togglePassword" class="password-toggle">👁️</button>
             </div>
-        </div>
-        
-        <div id="loginError" class="error-message hidden">
-            ❌ Invalid password. Please try again.
-        </div>
-        
-        <button id="loginBtn" class="login-btn">
-            🔐 Access Admin Portal
-        </button>
-        
-        <div class="login-footer">
-            Lake Illawong Maintenance System
+            
+            <button id="loginBtn" class="login-btn">
+                🔐 Access Admin Dashboard
+            </button>
+            
+            <div class="login-footer">
+                Lake Illawong Maintenance System
+            </div>
         </div>
     </div>
 
-    <!-- Admin Panel -->
-    <div id="adminView" class="admin-container hidden">
-        <div class="admin-header">
-            <div>
-                <h1 class="admin-title">Admin Portal</h1>
-                <p class="admin-subtitle">Manage dropdown options and system settings</p>
-            </div>
-            <div class="header-buttons">
-                <button id="backBtn" class="btn btn-back">🏠 Back to Portal</button>
-                <button id="logoutBtn" class="btn btn-logout">🚪 Logout</button>
-            </div>
-        </div>
-
-        <div class="admin-grid">
-            <!-- Priority Levels -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">Priority Levels</h3>
-                    <button class="btn-add">+ Add Priority</button>
-                </div>
-                <div class="items-list" id="priorityList">
-                    <div class="item-row">
-                        <span class="item-name">Low</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+    <!-- Admin Dashboard -->
+    <div id="dashboardView" class="dashboard-container hidden">
+        <div class="dashboard-content">
+            
+            <!-- Header -->
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">🛠️ System Administration</h1>
+                <p class="dashboard-subtitle">Comprehensive maintenance system management dashboard</p>
+                
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #10b981;">2</div>
+                        <div class="stat-label">Active Modules</div>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Medium</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #f59e0b;">2</div>
+                        <div class="stat-label">In Development</div>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">High</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #8b5cf6;">2</div>
+                        <div class="stat-label">Future Features</div>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Urgent</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="stat-item">
+                        <div class="stat-number" style="color: #3b82f6;">6</div>
+                        <div class="stat-label">Total Modules</div>
                     </div>
                 </div>
+                
+                <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
             </div>
 
-            <!-- Categories -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">Categories</h3>
-                    <button class="btn-add">+ Add Category</button>
+            <!-- Admin Module Cards -->
+            <div class="modules-grid">
+                
+                <!-- Dynamic Dropdowns Module -->
+                <div class="module-card" onclick="openModule('dropdowns')">
+                    <div class="status-badge status-active">Active</div>
+                    <div class="module-icon">🎛️</div>
+                    <h3 class="module-title">Dynamic Dropdowns</h3>
+                    <p class="module-description">
+                        Manage Categories, Sub-categories, Priorities, Status options, and Assigned To lists
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>Add/Edit/Delete dropdown options</li>
+                            <li><span class="feature-check">✓</span>Live sync to all portals</li>
+                            <li><span class="feature-check">✓</span>Validation and sorting</li>
+                            <li><span class="feature-check">✓</span>Bulk management tools</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-launch">🚀 Launch Module</div>
                 </div>
-                <div class="items-list">
-                    <div class="item-row">
-                        <span class="item-name">Aircon</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+
+                <!-- Email Lists Module -->
+                <div class="module-card" onclick="openModule('emails')">
+                    <div class="status-badge status-active">Active</div>
+                    <div class="module-icon">📧</div>
+                    <h3 class="module-title">Email Lists</h3>
+                    <p class="module-description">
+                        Manage maintenance team and zone representative email lists for notifications
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>Maintenance team management</li>
+                            <li><span class="feature-check">✓</span>Zone representative lists</li>
+                            <li><span class="feature-check">✓</span>Enable/disable notifications</li>
+                            <li><span class="feature-check">✓</span>Temporary coverage setup</li>
+                        </ul>
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Electrical</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Plumbing</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">General</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
+                    <div class="action-button btn-launch">🚀 Launch Module</div>
                 </div>
+
+                <!-- User Management Module -->
+                <div class="module-card inactive">
+                    <div class="status-badge status-planned">Planned</div>
+                    <div class="module-icon">👥</div>
+                    <h3 class="module-title">User Management</h3>
+                    <p class="module-description">
+                        Manage user accounts, passwords, and access levels for the maintenance system
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>User account creation</li>
+                            <li><span class="feature-check">✓</span>Password management</li>
+                            <li><span class="feature-check">✓</span>Role-based access control</li>
+                            <li><span class="feature-check">✓</span>Login activity tracking</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-development">🚧 In Development</div>
+                </div>
+
+                <!-- Email Templates Module -->
+                <div class="module-card inactive">
+                    <div class="status-badge status-planned">Planned</div>
+                    <div class="module-icon">📝</div>
+                    <h3 class="module-title">Email Templates</h3>
+                    <p class="module-description">
+                        Customize email notification templates for different maintenance scenarios
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>Template editor with variables</li>
+                            <li><span class="feature-check">✓</span>Preview and testing</li>
+                            <li><span class="feature-check">✓</span>Multi-scenario templates</li>
+                            <li><span class="feature-check">✓</span>Professional formatting</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-development">🚧 In Development</div>
+                </div>
+
+                <!-- Team Notes Module -->
+                <div class="module-card inactive">
+                    <div class="status-badge status-future">Future</div>
+                    <div class="module-icon">📋</div>
+                    <h3 class="module-title">Team Notes</h3>
+                    <p class="module-description">
+                        Shared notes and collaboration tools for the maintenance team
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>Shared team messages</li>
+                            <li><span class="feature-check">✓</span>Task assignments</li>
+                            <li><span class="feature-check">✓</span>Important announcements</li>
+                            <li><span class="feature-check">✓</span>Knowledge base</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-future">📋 Future Release</div>
+                </div>
+
+                <!-- System Settings Module -->
+                <div class="module-card inactive">
+                    <div class="status-badge status-future">Future</div>
+                    <div class="module-icon">⚙️</div>
+                    <h3 class="module-title">System Settings</h3>
+                    <p class="module-description">
+                        Global system configuration, backup, and maintenance mode controls
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>System configuration</li>
+                            <li><span class="feature-check">✓</span>Backup and restore</li>
+                            <li><span class="feature-check">✓</span>Maintenance mode</li>
+                            <li><span class="feature-check">✓</span>Performance monitoring</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-future">📋 Future Release</div>
+                </div>
+
             </div>
 
-            <!-- Sub-Categories -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">Sub-Categories</h3>
-                    <button class="btn-add">+ Add Sub-Category</button>
-                </div>
-                <div class="items-list">
-                    <div class="item-row">
-                        <span class="item-name">Air Conditioning</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+            <!-- System Information Footer -->
+            <div class="system-info">
+                <h4>🏗️ Admin Panel Architecture</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Backend:</strong><br/>
+                        Google Apps Script V2.3
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Lighting</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="info-item">
+                        <strong>Database:</strong><br/>
+                        Google Sheets + Named Ranges
                     </div>
-                    <div class="item-row">
-                        <span class="item-name">Faucet/Tap</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="info-item">
+                        <strong>Architecture:</strong><br/>
+                        Modular Card-Based System
                     </div>
-                </div>
-            </div>
-
-            <!-- Assigned To -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">Assigned To</h3>
-                    <button class="btn-add">+ Add Assigned</button>
-                </div>
-                <div class="items-list">
-                    <div class="item-row">
-                        <span class="item-name">Ben</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">David</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Jade</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Statuses -->
-            <div class="section-card">
-                <div class="section-header">
-                    <h3 class="section-title">Statuses</h3>
-                    <button class="btn-add">+ Add Status</button>
-                </div>
-                <div class="items-list">
-                    <div class="item-row">
-                        <span class="item-name">Reported</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">In Progress</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
-                    </div>
-                    <div class="item-row">
-                        <span class="item-name">Completed</span>
-                        <div class="item-actions">
-                            <button class="btn-edit">Edit</button>
-                            <button class="btn-delete">Delete</button>
-                        </div>
+                    <div class="info-item">
+                        <strong>Access:</strong><br/>
+                        Password-Protected Admin Panel
                     </div>
                 </div>
             </div>
@@ -535,22 +646,18 @@
     <script>
         const ADMIN_PASSWORD = 'admin2025';
 
-        document.getElementById('loginBtn').addEventListener('click', handleLogin);
-        document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') handleLogin();
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
         });
-        document.getElementById('togglePassword').addEventListener('click', togglePassword);
-        
-        // Admin panel event listeners
-        document.getElementById('logoutBtn').addEventListener('click', function() {
-            document.getElementById('passwordInput').value = '';
-            document.getElementById('loginError').classList.add('hidden');
-            showLoginScreen();
-        });
-        
-        document.getElementById('backBtn').addEventListener('click', function() {
-            alert('This would navigate back to the main portal');
-        });
+
+        function setupEventListeners() {
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        }
 
         function handleLogin() {
             const password = document.getElementById('passwordInput').value;
@@ -563,38 +670,42 @@
 
             setTimeout(() => {
                 if (password === ADMIN_PASSWORD) {
-                    showAdminPanel();
+                    showDashboard();
                 } else {
                     errorDiv.classList.remove('hidden');
                     document.getElementById('passwordInput').value = '';
                 }
                 loginBtn.disabled = false;
-                loginBtn.innerHTML = '🔐 Access Admin Portal';
+                loginBtn.innerHTML = '🔐 Access Admin Dashboard';
             }, 1000);
         }
 
-        function showAdminPanel() {
-            document.getElementById('loginView').classList.add('hidden');
-            document.getElementById('adminView').classList.remove('hidden');
-            document.body.style.alignItems = 'flex-start';
+        function handleLogout() {
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            showLogin();
         }
 
-        function showLoginScreen() {
+        function showLogin() {
             document.getElementById('loginView').classList.remove('hidden');
-            document.getElementById('adminView').classList.add('hidden');
-            document.body.style.alignItems = 'center';
+            document.getElementById('dashboardView').classList.add('hidden');
         }
 
-        function togglePassword() {
-            const passwordInput = document.getElementById('passwordInput');
-            const toggleBtn = document.getElementById('togglePassword');
-            
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                toggleBtn.textContent = '🙈';
-            } else {
-                passwordInput.type = 'password';
-                toggleBtn.textContent = '👁️';
+        function showDashboard() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('dashboardView').classList.remove('hidden');
+        }
+
+        function openModule(moduleType) {
+            switch(moduleType) {
+                case 'dropdowns':
+                    alert('🎛️ This would open the Dynamic Dropdowns Manager\n\n(Your existing dropdown manager interface)');
+                    break;
+                case 'emails':
+                    alert('📧 This would open the Email Lists Manager\n\n(New module for managing maintenance team and zone rep emails)');
+                    break;
+                default:
+                    alert('🚧 This module is not yet implemented');
             }
         }
     </script>
