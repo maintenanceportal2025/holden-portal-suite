@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Holden Admin Portal - Enhanced UX</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Login Screen */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .login-title {
+            color: #667eea;
+            font-size: 32px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+
+        .version-badge {
+            background: #e0e7ff;
+            color: #3730a3;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .login-subtitle {
+            color: #6b7280;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+            margin-bottom: 20px;
+            padding-right: 50px;
+        }
+
+        .password-input-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 4px;
+            transition: color 0.3s ease;
+        }
+
+        .password-toggle:hover {
+            color: #6b7280;
+        }
+
+        .login-input:focus {
+            border-color: #2563eb;
+            outline: none;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 16px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #5a67d8;
+        }
+
+        .error-message {
+            background: #fecaca;
+            color: #991b1b;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        /* Main Admin Interface */
+        .admin-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .logout-btn {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background: #b91c1c;
+        }
+
+        .admin-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+        /* Tab Navigation */
+        .tab-navigation {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 8px;
+            background: #f8fafc;
+            padding: 4px;
+            border-radius: 8px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #64748b;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+            box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+        }
+
+        .tab-info {
+            margin-top: 16px;
+            padding: 12px 16px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            font-size: 14px;
+            color: #475569;
+        }
+
+        /* Main Content Grid */
+        .admin-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+
+        /* Dropdown Sections */
+        .dropdown-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 16px 20px;
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .add-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            position: relative;
+        }
+
+        .add-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Simple button loading state */
+        .add-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .add-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 12px;
+            height: 12px;
+            margin: -6px 0 0 -6px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        .dropdown-list {
+            padding: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .dropdown-item:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        .item-value {
+            font-weight: 500;
+            color: #1e293b;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .action-btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .edit-btn {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #2563eb;
+        }
+
+        .delete-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Button loading states */
+        .action-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .action-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 8px;
+            height: 8px;
+            margin: -4px 0 0 -4px;
+            border: 1px solid transparent;
+            border-top: 1px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* 🔥 ENHANCED DELETING STATE - Much More Prominent */
+        .dropdown-item.deleting {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.3) 100%);
+            border: 2px solid #dc2626;
+            border-style: dashed;
+            opacity: 1;
+            transform: scale(0.98);
+            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            animation: deleteWarning 1.5s ease-in-out infinite;
+        }
+
+        .dropdown-item.deleting .item-value {
+            color: #b91c1c;
+            font-weight: 700;
+            text-decoration: line-through;
+            text-decoration-color: #dc2626;
+            text-decoration-thickness: 2px;
+        }
+
+        .dropdown-item.deleting .item-actions {
+            opacity: 0.8;
+        }
+
+        /* Delete warning animation */
+        @keyframes deleteWarning {
+            0%, 100% {
+                border-color: #dc2626;
+                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            }
+            50% {
+                border-color: #b91c1c;
+                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 6px 16px rgba(239, 68, 68, 0.25);
+            }
+        }
+
+        /* Item operation states */
+        .dropdown-item.updating {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: #3b82f6;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+        }
+
+        .dropdown-item.success {
+            background: rgba(34, 197, 94, 0.1);
+            border-color: #22c55e;
+            transform: scale(1.02);
+            box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+
+        .modal-header {
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .modal-subtitle {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #2563eb;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .modal-btn.primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .modal-btn.primary:hover {
+            background: #5a67d8;
+        }
+
+        .modal-btn.secondary {
+            background: #f1f5f9;
+            color: #475569;
+        }
+
+        .modal-btn.secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .modal-btn.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .modal-btn.loading::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 14px;
+            height: 14px;
+            margin: -7px 0 0 -7px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success/Error Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #22c55e;
+        }
+
+        .message.error {
+            background: #fecaca;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        /* Simple Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10000;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border-left: 4px solid #10b981;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast.warning {
+            border-left-color: #f59e0b;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 2px;
+            font-size: 14px;
+        }
+
+        .toast-message {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 0;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .admin-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .tab-buttons {
+                flex-direction: column;
+            }
+
+            .admin-container {
+                padding: 12px;
+            }
+
+            .toast-container {
+                left: 20px;
+                right: 20px;
+                max-width: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginView" class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <h1 class="login-title">⚙️ Admin Portal</h1>
+                <div class="version-badge">Enhanced UX v2</div>
+                <p class="login-subtitle">Holden System Administration</p>
+            </div>
+
+            <div id="loginError" class="error-message hidden">
+                Invalid password. Please try again.
+            </div>
+
+            <form id="loginForm">
+                <div class="password-input-container">
+                    <input type="password" id="passwordInput" class="login-input" 
+                           placeholder="Enter admin password" required>
+                    <button type="button" class="password-toggle" id="passwordToggle">👁️</button>
+                </div>
+                <button type="submit" class="login-btn">🔓 Access Admin Portal</button>
+            </form>
+
+            <div style="text-align: center; margin-top: 20px; color: #9ca3af; font-size: 14px;">
+                Authorized Personnel Only
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Admin Interface -->
+    <div id="adminView" class="hidden">
+        <div class="admin-container">
+            <!-- Header -->
+            <div class="admin-header">
+                <div class="header-top">
+                    <h1 class="admin-title">⚙️ Admin Portal</h1>
+                    <button id="logoutBtn" class="logout-btn">🚪 Logout</button>
+                </div>
+                <p class="admin-subtitle">Enhanced UX v2 - Dropdown Management for Holden Maintenance System</p>
+            </div>
+
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" id="categoriesTabBtn">
+                        📝 Categories Tab (Resident Form)
+                    </button>
+                    <button class="tab-btn" id="maintenanceTabBtn">
+                        🔧 Maintenance Tab (Staff Portal)
+                    </button>
+                </div>
+                <div class="tab-info" id="tabInfo">
+                    <strong>Categories Tab:</strong> Manages Unit Numbers and Reported By names for the Resident Submission Form
+                </div>
+            </div>
+
+            <!-- Success/Error Messages -->
+            <div id="messageContainer"></div>
+
+            <!-- Main Content -->
+            <div class="admin-grid">
+                <!-- Categories Tab Content -->
+                <div id="categoriesContent">
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            🏠 Unit Numbers
+                            <button class="add-btn" onclick="openAddModal('Unit Number')">+ Add Unit</button>
+                        </div>
+                        <div class="dropdown-list" id="unitNumbersList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading unit numbers...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            👤 Reported By Names
+                            <button class="add-btn" onclick="openAddModal('Reported By')">+ Add Name</button>
+                        </div>
+                        <div class="dropdown-list" id="reportedByList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading names...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Tab Content -->
+                <div id="maintenanceContent" class="hidden">
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            📋 Status Options
+                            <button class="add-btn" onclick="openAddModal('Status')">+ Add Status</button>
+                        </div>
+                        <div class="dropdown-list" id="statusList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading statuses...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            ⚡ Priority Levels
+                            <button class="add-btn" onclick="openAddModal('Priority')">+ Add Priority</button>
+                        </div>
+                        <div class="dropdown-list" id="priorityList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading priorities...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            📂 Categories
+                            <button class="add-btn" onclick="openAddModal('Category')">+ Add Category</button>
+                        </div>
+                        <div class="dropdown-list" id="categoryList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading categories...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            📑 Sub-Categories
+                            <button class="add-btn" onclick="openAddModal('Sub-Category')">+ Add Sub-Category</button>
+                        </div>
+                        <div class="dropdown-list" id="subCategoryList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading sub-categories...
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="dropdown-section">
+                        <div class="section-header">
+                            👷 Assigned To
+                            <button class="add-btn" onclick="openAddModal('Assigned To')">+ Add Person</button>
+                        </div>
+                        <div class="dropdown-list" id="assignedToList">
+                            <div class="loading">
+                                <div class="loading-spinner"></div>
+                                Loading assignments...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="modalTitle">Add New Item</h3>
+                <p class="modal-subtitle" id="modalSubtitle">Enter the details below</p>
+            </div>
+
+            <form id="modalForm">
+                <div class="form-group">
+                    <label class="form-label" for="itemValue">Value</label>
+                    <input type="text" id="itemValue" class="form-input" 
+                           placeholder="Enter the value" required>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="modal-btn primary" id="modalSubmitBtn">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // Configuration
+        const ADMIN_PASSWORD = 'maint2025';
+        
+        // Current backend URLs
+        const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbwWJBbvxEfSeOJ7Ozsu1-xOa7G5cC030P88Do_yO64LVN7_74ubnbTcrD7oUv2vKVVy/exec';
+        const RESIDENT_API_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
+        
+        // Global state
+        let isAuthenticated = false;
+        let currentTab = 'categories';
+        let currentEditItem = null;
+        let dropdownData = {};
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('👑 Enhanced Admin Portal v2 - Initializing...');
+            setupEventListeners();
+            checkAuthentication();
+        });
+
+        function setupEventListeners() {
+            // Login
+            document.getElementById('loginForm').addEventListener('submit', handleLogin);
+            
+            // Password toggle
+            document.getElementById('passwordToggle').addEventListener('click', togglePasswordVisibility);
+            
+            // Logout
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            
+            // Tab switching
+            document.getElementById('categoriesTabBtn').addEventListener('click', () => switchTab('categories'));
+            document.getElementById('maintenanceTabBtn').addEventListener('click', () => switchTab('maintenance'));
+            
+            // Modal
+            document.getElementById('modalForm').addEventListener('submit', handleModalSubmit);
+            document.getElementById('modal').addEventListener('click', function(e) {
+                if (e.target === this) closeModal();
+            });
+        }
+
+        // =================================================================
+        // ENHANCED VISUAL FEEDBACK FUNCTIONS
+        // =================================================================
+
+        // Toggle password visibility
+        function togglePasswordVisibility() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleButton = document.getElementById('passwordToggle');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleButton.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleButton.textContent = '👁️';
+            }
+        }
+
+        // Enhanced toast notification with better animations
+        function showToast(type, title, message, duration = 5000) {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+                <button class="toast-close" onclick="removeToast(this.parentNode)">×</button>
+            `;
+
+            container.appendChild(toast);
+
+            // Show with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+
+            // Auto-remove (except errors)
+            if (type !== 'error') {
+                setTimeout(() => removeToast(toast), duration);
+            }
+        }
+
+        // Remove toast notification
+        function removeToast(toast) {
+            if (toast && toast.parentNode) {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }
+        }
+
+        // Remove all toast notifications
+        function removeAllToasts() {
+            const container = document.getElementById('toastContainer');
+            const toasts = container.querySelectorAll('.toast');
+            toasts.forEach(toast => removeToast(toast));
+        }
+
+        // Set button loading state
+        function setButtonLoading(button, isLoading, loadingText = null) {
+            if (isLoading) {
+                button.dataset.originalText = button.textContent;
+                if (loadingText) button.textContent = loadingText;
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                if (button.dataset.originalText) {
+                    button.textContent = button.dataset.originalText;
+                }
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        // Enhanced item visual state with better animations
+        function setItemState(type, value, state) {
+            const itemElements = document.querySelectorAll('.dropdown-item');
+            
+            itemElements.forEach(element => {
+                const itemValue = element.querySelector('.item-value');
+                if (itemValue && itemValue.textContent.trim() === value) {
+                    // Remove all state classes
+                    element.classList.remove('updating', 'deleting', 'success');
+                    
+                    // Add new state if specified
+                    if (state) {
+                        element.classList.add(state);
+                        
+                        // 🔥 Enhanced delete confirmation with dramatic effect
+                        if (state === 'deleting') {
+                            // Add delete warning sound effect simulation
+                            console.log('🚨 DELETING ITEM:', value);
+                            
+                            // Temporary flash effect
+                            element.style.transition = 'all 0.2s ease';
+                            setTimeout(() => {
+                                element.style.transition = 'all 0.3s ease';
+                            }, 200);
+                        }
+                    }
+                }
+            });
+        }
+
+        // =================================================================
+        // ENHANCED OPERATION FUNCTIONS WITH SURNAME SORTING
+        // =================================================================
+
+        // Enhanced Add Item Function with smart sorting
+        async function addItem(type, value) {
+            console.log('👑 Adding item:', type, value);
+            
+            // Find the add button for this section
+            const addButtons = document.querySelectorAll('.add-btn');
+            let targetButton = null;
+            
+            addButtons.forEach(btn => {
+                if (btn.textContent.includes('Add')) {
+                    targetButton = btn;
+                }
+            });
+            
+            // Show loading state
+            if (targetButton) {
+                setButtonLoading(targetButton, true, '⏳ Adding...');
+            }
+            
+            try {
+                // Determine which backend to use
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'addDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'addDropdownItem', { type, value });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Adding "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetButton) {
+                        setButtonLoading(targetButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    // Refresh the data (backend-sorted)
+                    await loadAllData();
+                    
+                    // Remove processing toast and show success
+                    removeAllToasts();
+                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
+                } else {
+                    throw new Error(response.message || 'Failed to add item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error adding item:', error);
+                removeAllToasts();
+                showToast('error', 'Add Failed', `Failed to add "${value}": ${error.message}`);
+            } finally {
+                // Remove loading state
+                if (targetButton) {
+                    setButtonLoading(targetButton, false);
+                }
+            }
+        }
+
+        // Enhanced Update Item Function
+        async function updateItem(type, oldValue, newValue) {
+            console.log('👑 Updating item:', type, oldValue, '->', newValue);
+            
+            // Show visual feedback on the item
+            setItemState(type, oldValue, 'updating');
+            
+            try {
+                // Determine which backend to use
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'updateDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'updateDropdownItem', { 
+                    type, 
+                    oldValue, 
+                    newValue 
+                });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Updating "${oldValue}" - refreshing list...`, 15000);
+                    
+                    // Show success state briefly
+                    setItemState(type, oldValue, 'success');
+                    
+                    // Refresh data (backend-sorted)
+                    await loadAllData();
+                    
+                    // Remove processing toast and show success
+                    removeAllToasts();
+                    showToast('success', 'Item Updated', `Successfully changed "${oldValue}" to "${newValue}"`);
+                } else {
+                    throw new Error(response.message || 'Failed to update item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error updating item:', error);
+                removeAllToasts();
+                showToast('error', 'Update Failed', `Failed to update "${oldValue}": ${error.message}`);
+                
+                // Remove updating state on error
+                setItemState(type, oldValue, null);
+            }
+        }
+
+        // Enhanced Delete Item Function with dramatic visual feedback
+        async function deleteItem(type, value) {
+            if (!confirm(`🗑️ Are you sure you want to delete "${value}" from ${type}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+            
+            console.log('👑 Deleting item:', type, value);
+            
+            // Show DRAMATIC visual feedback on the item
+            setItemState(type, value, 'deleting');
+            
+            // Find and disable the delete button
+            const itemElements = document.querySelectorAll('.dropdown-item');
+            let targetDeleteButton = null;
+            
+            itemElements.forEach(element => {
+                const itemValue = element.querySelector('.item-value');
+                if (itemValue && itemValue.textContent.trim() === value) {
+                    const deleteBtn = element.querySelector('.delete-btn');
+                    if (deleteBtn) {
+                        targetDeleteButton = deleteBtn;
+                        setButtonLoading(deleteBtn, true, 'Deleting...');
+                    }
+                }
+            });
+            
+            try {
+                // Determine which backend to use
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'deleteDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'deleteDropdownItem', { type, value });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    // Show processing toast while refreshing
+                    showToast('warning', 'Processing...', `Deleting "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetDeleteButton) {
+                        setButtonLoading(targetDeleteButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    // Refresh data (backend-sorted)
+                    await loadAllData();
+                    
+                    // Remove processing toast and show success
+                    removeAllToasts();
+                    showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
+                } else {
+                    throw new Error(response.message || 'Failed to delete item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error deleting item:', error);
+                removeAllToasts();
+                showToast('error', 'Delete Failed', `Failed to delete "${value}": ${error.message}`);
+                
+                // Remove deleting state and re-enable button on error
+                setItemState(type, value, null);
+                if (targetDeleteButton) {
+                    setButtonLoading(targetDeleteButton, false);
+                }
+            }
+        }
+
+        // =================================================================
+        // SIMPLIFIED - BACKEND HANDLES ALL SORTING
+        // =================================================================
+        
+        // Note: All sorting is now handled by the backend APIs
+        // Frontend simply displays data in the order received
+
+        // =================================================================
+        // CORE ADMIN FUNCTIONS WITH ENHANCED SORTING
+        // =================================================================
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('passwordInput').value;
+            const errorDiv = document.getElementById('loginError');
+            
+            if (password === ADMIN_PASSWORD) {
+                isAuthenticated = true;
+                showAdminInterface();
+                await loadAllData();
+            } else {
+                errorDiv.classList.remove('hidden');
+                document.getElementById('passwordInput').value = '';
+                setTimeout(() => {
+                    errorDiv.classList.add('hidden');
+                }, 3000);
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                isAuthenticated = false;
+                dropdownData = {};
+                currentTab = 'categories';
+                
+                document.getElementById('loginView').classList.remove('hidden');
+                document.getElementById('adminView').classList.add('hidden');
+                document.getElementById('passwordInput').value = '';
+                
+                console.log('👑 Admin logged out');
+            }
+        }
+
+        function checkAuthentication() {
+            if (isAuthenticated) {
+                showAdminInterface();
+            } else {
+                document.getElementById('loginView').classList.remove('hidden');
+                document.getElementById('adminView').classList.add('hidden');
+            }
+        }
+
+        function showAdminInterface() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+        }
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.getElementById('categoriesTabBtn').classList.toggle('active', tab === 'categories');
+            document.getElementById('maintenanceTabBtn').classList.toggle('active', tab === 'maintenance');
+            
+            // Update content
+            document.getElementById('categoriesContent').classList.toggle('hidden', tab !== 'categories');
+            document.getElementById('maintenanceContent').classList.toggle('hidden', tab !== 'maintenance');
+            
+            // Update tab info
+            const tabInfo = document.getElementById('tabInfo');
+            if (tab === 'categories') {
+                tabInfo.innerHTML = '<strong>Categories Tab:</strong> Manages Unit Numbers and Reported By names for the Resident Submission Form';
+            } else {
+                tabInfo.innerHTML = '<strong>Maintenance Tab:</strong> Manages Status, Priority, Category, Sub-Category, and Assigned To options for the Maintenance Portal';
+            }
+            
+            console.log('👑 Switched to', tab, 'tab');
+        }
+
+        // Enhanced data loading - backend handles all sorting
+        async function loadAllData() {
+            console.log('👑 Loading all dropdown data (backend-sorted)...');
+            
+            try {
+                // Load Categories tab data (for resident form)
+                await loadCategoriesData();
+                
+                // Load Maintenance tab data (for maintenance portal)  
+                await loadMaintenanceData();
+                
+                console.log('✅ All data loaded successfully (backend-sorted)');
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                showToast('error', 'Data Loading Error', error.message);
+            }
+        }
+
+        async function loadCategoriesData() {
+            try {
+                console.log('📝 Loading Categories tab data (backend-sorted)...');
+                
+                const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success) {
+                    // Use data as-is from backend (already sorted)
+                    dropdownData.unitNumbers = response.unitNumbers || [];
+                    dropdownData.reportedBy = response.reportedBy || [];
+                    
+                    renderDropdownList('unitNumbersList', dropdownData.unitNumbers, 'Unit Number');
+                    renderDropdownList('reportedByList', dropdownData.reportedBy, 'Reported By');
+                    
+                    console.log('✅ Categories data loaded (backend-sorted):', {
+                        unitNumbers: dropdownData.unitNumbers.length,
+                        reportedBy: dropdownData.reportedBy.length
+                    });
+                } else {
+                    throw new Error('Failed to load categories data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading categories data:', error);
+                document.getElementById('unitNumbersList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                document.getElementById('reportedByList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+            }
+        }
+
+        async function loadMaintenanceData() {
+            try {
+                console.log('🔧 Loading Maintenance tab data (backend-sorted)...');
+                
+                const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success && response.data) {
+                    // Use data as-is from backend (already sorted)
+                    dropdownData.statuses = response.data.statuses || [];
+                    dropdownData.priorities = response.data.priorities || [];
+                    dropdownData.categories = response.data.categories || [];
+                    dropdownData.subCategories = response.data.subCategories || [];
+                    dropdownData.assignedTo = response.data.assignedTo || [];
+                    
+                    renderDropdownList('statusList', dropdownData.statuses, 'Status');
+                    renderDropdownList('priorityList', dropdownData.priorities, 'Priority');
+                    renderDropdownList('categoryList', dropdownData.categories, 'Category');
+                    renderDropdownList('subCategoryList', dropdownData.subCategories, 'Sub-Category');
+                    renderDropdownList('assignedToList', dropdownData.assignedTo, 'Assigned To');
+                    
+                    console.log('✅ Maintenance data loaded (backend-sorted):', {
+                        statuses: dropdownData.statuses.length,
+                        priorities: dropdownData.priorities.length,
+                        categories: dropdownData.categories.length,
+                        subCategories: dropdownData.subCategories.length,
+                        assignedTo: dropdownData.assignedTo.length
+                    });
+                } else {
+                    throw new Error('Failed to load maintenance data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading maintenance data:', error);
+                ['statusList', 'priorityList', 'categoryList', 'subCategoryList', 'assignedToList'].forEach(listId => {
+                    document.getElementById(listId).innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                });
+            }
+        }
+
+        function renderDropdownList(containerId, items, type) {
+            const container = document.getElementById(containerId);
+            
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No items found</div>';
+                return;
+            }
+            
+            const html = items.map(item => `
+                <div class="dropdown-item">
+                    <span class="item-value">${item}</span>
+                    <div class="item-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('${type}', '${item}')">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function openAddModal(type) {
+            currentEditItem = null;
+            
+            document.getElementById('modalTitle').textContent = `Add New ${type}`;
+            document.getElementById('modalSubtitle').textContent = `Add a new ${type.toLowerCase()} option`;
+            document.getElementById('itemValue').value = '';
+            document.getElementById('modalSubmitBtn').textContent = 'Add Item';
+            document.getElementById('modalSubmitBtn').dataset.type = type;
+            document.getElementById('modalSubmitBtn').dataset.action = 'add';
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('itemValue').focus();
+        }
+
+        function openEditModal(type, value) {
+            currentEditItem = { type, value };
+            
+            document.getElementById('modalTitle').textContent = `Edit ${type}`;
+            document.getElementById('modalSubtitle').textContent = `Update the ${type.toLowerCase()} value`;
+            document.getElementById('itemValue').value = value;
+            document.getElementById('modalSubmitBtn').textContent = 'Update Item';
+            document.getElementById('modalSubmitBtn').dataset.type = type;
+            document.getElementById('modalSubmitBtn').dataset.action = 'edit';
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('itemValue').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            currentEditItem = null;
+        }
+
+        async function handleModalSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            const type = submitBtn.dataset.type;
+            const action = submitBtn.dataset.action;
+            const value = document.getElementById('itemValue').value.trim();
+            
+            if (!value) {
+                showToast('error', 'Invalid Input', 'Please enter a value');
+                return;
+            }
+            
+            // Show loading state on submit button
+            setButtonLoading(submitBtn, true, action === 'add' ? 'Adding...' : 'Updating...');
+            
+            try {
+                if (action === 'add') {
+                    await addItem(type, value);
+                } else {
+                    await updateItem(type, currentEditItem.value, value);
+                }
+                
+                closeModal();
+                
+            } catch (error) {
+                console.error('❌ Error in modal submit:', error);
+                showToast('error', 'Operation Failed', error.message);
+            } finally {
+                setButtonLoading(submitBtn, false);
+            }
+        }
+
+        async function makeRequest(url, action, additionalParams = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                
+                const params = new URLSearchParams({
+                    action: action,
+                    callback: callbackName,
+                    ...additionalParams
+                });
+                
+                script.src = `${url}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 10000);
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        console.log('⚙️ Enhanced Holden Admin Portal v2 - Ready!');
+        console.log('🔥 ENHANCED FEATURES:');
+        console.log('  • Dramatic deleting visual states with animations');
+        console.log('  • Backend-driven sorting (no frontend sorting needed)');
+        console.log('  • Enhanced toast notifications');
+        console.log('  • Improved button loading states');
+        console.log('  • All original functionality preserved');
+        console.log('  • Simplified - backend handles all sorting logic');
+    </script>
+</body>
+</html>
