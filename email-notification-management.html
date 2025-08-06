@@ -48,7 +48,7 @@
             background: white;
             border-radius: 12px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            margin-bottom: 10px;
             overflow: hidden;
         }
 
@@ -172,28 +172,6 @@
             margin-right: 6px;
         }
 
-        .submit-btn {
-            background: #48bb78;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            margin: 16px 20px;
-            display: none;
-            transition: all 0.2s;
-        }
-
-        .submit-btn.show {
-            display: inline-block;
-        }
-
-        .submit-btn:hover {
-            background: #38a169;
-        }
-
         /* Inactive Contacts Section */
         .inactive-section {
             background: #fef5e7;
@@ -245,6 +223,27 @@
             color: #718096;
         }
 
+        .loading-state {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+        }
+
+        .loading-spinner {
+            width: 32px;
+            height: 32px;
+            border: 3px solid #e2e8f0;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -271,7 +270,7 @@
                 <div class="section-title">
                     🔧 Maintenance Team
                 </div>
-                <button class="add-btn" onclick="showAddModal('maintenance')">+ Add New Person</button>
+                <button class="add-btn" onclick="addNewRow('maintenance')">+ Add New Person</button>
             </div>
             <div class="table-container">
                 <table class="email-table">
@@ -282,21 +281,17 @@
                         </tr>
                     </thead>
                     <tbody id="maintenanceTableBody">
-                        <!-- Data will be loaded from Google Sheets -->
                         <tr>
-                            <td colspan="2" style="text-align: center; padding: 40px; color: #718096;">
-                                <div style="margin-bottom: 10px;">📡 Loading maintenance team from Google Sheets...</div>
-                                <div style="font-size: 0.8rem;">If this persists, check your connection to MtceTeamEmailList</div>
+                            <td colspan="2" class="loading-state">
+                                <div class="loading-spinner"></div>
+                                Loading maintenance team from Google Sheets...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            </div>
-            <button class="submit-btn" id="maintenanceSubmitBtn" onclick="submitMaintenanceChanges()">💾 Save Changes</button>
         </div>
         
-        <!-- Sync note for Maintenance Team - outside section -->
         <div class="sync-note">
             <span class="icon">ℹ️</span>Syncs with MtceTeamEmailList Named Range • Remove email to exclude from notifications
         </div>
@@ -307,7 +302,7 @@
                 <div class="section-title">
                     🏠 Zone Representatives
                 </div>
-                <button class="add-btn green">+ Add New Zone Rep</button>
+                <button class="add-btn green" onclick="addNewRow('zone')">+ Add New Zone Rep</button>
             </div>
             <div class="table-container">
                 <table class="email-table">
@@ -319,22 +314,19 @@
                         </tr>
                     </thead>
                     <tbody id="zoneRepsTableBody">
-                        <!-- Data will be loaded from Google Sheets -->
                         <tr>
-                            <td colspan="3" style="text-align: center; padding: 40px; color: #718096;">
-                                <div style="margin-bottom: 10px;">📡 Loading zone representatives from Google Sheets...</div>
-                                <div style="font-size: 0.8rem;">If this persists, check your connection to MtceTeamEmailList</div>
+                            <td colspan="3" class="loading-state">
+                                <div class="loading-spinner"></div>
+                                Loading zone representatives from Google Sheets...
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            </div>
+        </div>
         
-        <!-- Sync note for Zone Reps - outside section -->
         <div class="sync-note">
             <span class="icon">ℹ️</span>Syncs with ZoneRepsEmailList Named Range (Zone | Name | Email) • Remove email to exclude from notifications
-        </div>
         </div>
 
         <!-- Inactive Contacts Section -->
@@ -357,113 +349,130 @@
                     </thead>
                     <tbody id="inactiveTableBody">
                         <tr>
-                            <td>John Smith</td>
-                            <td>john.smith@example.com</td>
-                            <td>Maintenance</td>
-                            <td class="date-removed">2024-01-15</td>
-                            <td>
-                                <button class="action-btn restore-btn" onclick="restoreContact(1)">↩️ Restore</button>
-                                <button class="action-btn delete-btn" onclick="deleteContact(1)">🗑️ Delete</button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Mary Johnson<br><small>Zone Rep</small></td>
-                            <td>mary.johnson@example.com</td>
-                            <td>Zone Rep</td>
-                            <td class="date-removed">2024-02-01</td>
-                            <td>
-                                <button class="action-btn restore-btn" onclick="restoreContact(2)">↩️ Restore</button>
-                                <button class="action-btn delete-btn" onclick="deleteContact(2)">🗑️ Delete</button>
+                            <td colspan="5" style="text-align: center; padding: 20px; color: #718096;">
+                                No inactive contacts
                             </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
-            <button class="submit-btn" id="zoneSubmitBtn" onclick="submitZoneChanges()">💾 Save Changes</button>
         </div>
     </div>
 
     <script>
+        // Configuration
+        const API_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
+        
         // Data storage
-        let maintenanceTeam = [
-            { id: 1, name: 'Ben Blanks', email: 'sir_tony_barnett@icloud.com' },
-            { id: 2, name: 'Sue Campbell', email: 'ircresidentscommittee@gmail.com' },
-            { id: 3, name: 'Tony', email: 'abarnett0@me.com' }
-        ];
+        let maintenanceTeam = [];
+        let zoneReps = [];
+        let inactiveContacts = [];
 
-        let zoneReps = [
-            { id: 1, zone: 'Zone 1', name: 'David Zaz', email: 'june.barnett@icloud.com' },
-            { id: 2, zone: 'Zone 1', name: 'Bill Treloar', email: 'minutes.learned-98@icloud.com' },
-            { id: 3, zone: 'Zone 2', name: 'Tony Barnett', email: 'sir_tony_barnett@icloud.com' },
-            { id: 4, zone: 'Zone 3', name: 'Anne Fenollar', email: 'shook_equines_9f@icloud.com' },
-            { id: 5, zone: 'Zone 4', name: 'Louise Castle', email: 'stick-junkier.0q@icloud.com' },
-            { id: 6, zone: 'Zone 5', name: 'Lesley Newcombe', email: 'spouts-acre.0x@icloud.com' },
-            { id: 7, zone: 'Zone 5', name: 'Jennifer Gardner', email: 'solar.carets71@icloud.com' }
-        ];
-
-        let inactiveContacts = [
-            { id: 1, name: 'John Smith', email: 'john.smith@example.com', type: 'Maintenance', removed: '2024-01-15' },
-            { id: 2, name: 'Mary Johnson', email: 'mary.johnson@example.com', type: 'Zone Rep', zone: 'Zone 2', removed: '2024-02-01' }
-        ];
-
-        // Initialize - Load data from Google Sheets
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             console.log('📧 Email Notification Management - Initializing...');
             loadMaintenanceTeam();
             loadZoneRepresentatives();
-            loadInactiveContacts();
         });
+
+        // API helper function - Real integration
+        async function makeRequest(action, data = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                const params = new URLSearchParams({ action, callback: callbackName, ...data });
+                
+                script.src = `${API_URL}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 10000);
+            });
+        }
 
         // Load maintenance team from Google Sheets
         async function loadMaintenanceTeam() {
             try {
                 console.log('📡 Loading maintenance team from MtceTeamEmailList...');
-                // const response = await makeRequest('getMtceTeamEmailList');
-                // Simulate loading for now
-                setTimeout(() => {
+                const response = await makeRequest('getNamedRangeData', { rangeName: 'MtceTeamEmailList' });
+                
+                if (response.success && response.data) {
+                    maintenanceTeam = response.data.map(item => ({
+                        id: item.rowIndex + 1,
+                        name: item.name,
+                        email: item.email
+                    }));
+                    console.log('✅ Loaded maintenance team:', maintenanceTeam.length, 'members');
                     renderMaintenanceTable();
-                }, 1000);
+                } else {
+                    throw new Error(response.error || 'Failed to load maintenance team');
+                }
             } catch (error) {
                 console.error('❌ Error loading maintenance team:', error);
-                showError('maintenance', 'Failed to load maintenance team from Google Sheets');
+                showError('maintenance', 'Failed to load maintenance team: ' + error.message);
             }
         }
 
         // Load zone representatives from Google Sheets  
         async function loadZoneRepresentatives() {
             try {
-                console.log('📡 Loading zone representatives from ZoneRepsEmailList...');
-                // const response = await makeRequest('getZoneRepsEmailList');
-                // Simulate loading for now
-                setTimeout(() => {
+                console.log('📡 Loading zone representatives from ZoneRepEmailList...');
+                const response = await makeRequest('getNamedRangeData', { rangeName: 'ZoneRepEmailList' });
+                
+                if (response.success && response.data) {
+                    zoneReps = response.data.map(item => ({
+                        id: item.rowIndex + 1,
+                        zone: item.zone,
+                        name: item.name,
+                        email: item.email
+                    }));
+                    console.log('✅ Loaded zone representatives:', zoneReps.length, 'reps');
                     renderZoneRepsTable();
-                }, 1200);
+                } else {
+                    throw new Error(response.error || 'Failed to load zone representatives');
+                }
             } catch (error) {
                 console.error('❌ Error loading zone representatives:', error);
-                showError('zone', 'Failed to load zone representatives from Google Sheets');
+                showError('zone', 'Failed to load zone representatives: ' + error.message);
             }
         }
 
-        // Load inactive contacts from Google Sheets
-        async function loadInactiveContacts() {
-            try {
-                console.log('📡 Loading inactive contacts...');
-                // Implementation for loading inactive contacts
-                setTimeout(() => {
-                    renderInactiveTable();
-                }, 800);
-            } catch (error) {
-                console.error('❌ Error loading inactive contacts:', error);
-            }
-        }
-
-        // Render maintenance table with actual/sample data
+        // Render maintenance team table
         function renderMaintenanceTable() {
             const tbody = document.getElementById('maintenanceTableBody');
-            tbody.innerHTML = maintenanceTeam.map((person, index) => `
+            
+            if (maintenanceTeam.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td class="editable placeholder" onclick="editCell(this, 'maintenance', -1, 'name')">Enter name...</td>
+                        <td class="editable placeholder" onclick="editCell(this, 'maintenance', -1, 'email')">Enter email address...</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = maintenanceTeam.map(person => `
                 <tr>
-                    <td class="editable" onclick="editCell(this, 'maintenance', ${person.id}, 'name')">${person.name}</td>
-                    <td class="editable" onclick="editCell(this, 'maintenance', ${person.id}, 'email')">${person.email}</td>
+                    <td class="editable" onclick="editCell(this, 'maintenance', ${person.id}, 'name')">${person.name || '<em>Enter name...</em>'}</td>
+                    <td class="editable" onclick="editCell(this, 'maintenance', ${person.id}, 'email')">${person.email || '<em>Enter email...</em>'}</td>
                 </tr>
             `).join('') + `
                 <tr>
@@ -473,59 +482,28 @@
             `;
         }
 
-        // Render zone reps table with actual/sample data
+        // Render zone representatives table
         function renderZoneRepsTable() {
             const tbody = document.getElementById('zoneRepsTableBody');
-            tbody.innerHTML = zoneReps.map((rep, index) => `
-                <tr>
-                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'zone')">${rep.zone}</td>
-                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'name')">${rep.name}</td>
-                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'email')">${rep.email}</td>
-                </tr>
-            `).join('');
-        }
-
-        // Render inactive table
-        function renderInactiveTable() {
-            const tbody = document.getElementById('inactiveTableBody');
-            if (inactiveContacts.length === 0) {
+            
+            if (zoneReps.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 20px; color: #718096;">
-                            No inactive contacts
-                        </td>
+                        <td class="editable" onclick="editCell(this, 'zone', -1, 'zone')">Zone 1</td>
+                        <td class="editable placeholder" onclick="editCell(this, 'zone', -1, 'name')">Enter name...</td>
+                        <td class="editable placeholder" onclick="editCell(this, 'zone', -1, 'email')">Enter email address...</td>
                     </tr>
                 `;
-            } else {
-                tbody.innerHTML = inactiveContacts.map(contact => `
-                    <tr>
-                        <td>${contact.name}${contact.type === 'Zone Rep' ? '<br><small>Zone Rep</small>' : ''}</td>
-                        <td>${contact.email}</td>
-                        <td>${contact.type}</td>
-                        <td class="date-removed">${contact.removed}</td>
-                        <td>
-                            <button class="action-btn restore-btn" onclick="restoreContact(${contact.id})">↩️ Restore</button>
-                            <button class="action-btn delete-btn" onclick="deleteContact(${contact.id})">🗑️ Delete</button>
-                        </td>
-                    </tr>
-                `).join('');
+                return;
             }
-        }
 
-        // Show submit button when changes are made
-        function showSubmitButton(type) {
-            const submitBtn = document.getElementById(`${type}SubmitBtn`);
-            if (submitBtn) {
-                submitBtn.classList.add('show');
-            }
-        }
-
-        // Hide submit button after successful save
-        function hideSubmitButton(type) {
-            const submitBtn = document.getElementById(`${type}SubmitBtn`);
-            if (submitBtn) {
-                submitBtn.classList.remove('show');
-            }
+            tbody.innerHTML = zoneReps.map(rep => `
+                <tr>
+                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'zone')">${rep.zone}</td>
+                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'name')">${rep.name || '<em>Enter name...</em>'}</td>
+                    <td class="editable" onclick="editCell(this, 'zone', ${rep.id}, 'email')">${rep.email || '<em>Enter email...</em>'}</td>
+                </tr>
+            `).join('');
         }
 
         // Edit cell function
@@ -535,6 +513,8 @@
             }
 
             const currentValue = cell.textContent.trim();
+            const isPlaceholder = cell.classList.contains('placeholder') || currentValue.includes('Enter ') || currentValue.includes('<em>');
+            
             cell.classList.add('editing');
             cell.classList.remove('placeholder');
             
@@ -553,7 +533,7 @@
                 input = document.createElement('input');
                 input.type = field === 'email' ? 'email' : 'text';
                 input.className = 'edit-input';
-                input.value = currentValue === 'Enter name...' || currentValue === 'Enter email address...' ? '' : currentValue;
+                input.value = isPlaceholder ? '' : currentValue;
             }
 
             cell.innerHTML = '';
@@ -561,25 +541,33 @@
             input.focus();
 
             // Save on blur or enter
-            const saveEdit = () => {
+            const saveEdit = async () => {
                 const newValue = input.value.trim();
                 cell.classList.remove('editing');
                 
                 if (newValue) {
                     cell.textContent = newValue;
-                    // Show submit button when changes are made
-                    showSubmitButton(type);
                     
-                    // Here you would save to backend
-                    console.log(`Modified ${type} ${id} ${field}: ${newValue}`);
+                    // Save to Google Sheets
+                    if (id === -1) {
+                        // Adding new row
+                        await addNewContactToSheets(type, field, newValue, cell);
+                    } else {
+                        // Updating existing row
+                        await saveCellToBackend(type, id, field, newValue);
+                    }
                 } else {
                     // Restore placeholder if empty
-                    if (field === 'name') {
-                        cell.textContent = 'Enter name...';
-                        cell.classList.add('placeholder');
-                    } else if (field === 'email') {
-                        cell.textContent = 'Enter email address...';
-                        cell.classList.add('placeholder');
+                    if (isPlaceholder) {
+                        if (field === 'name') {
+                            cell.innerHTML = '<em>Enter name...</em>';
+                            cell.classList.add('placeholder');
+                        } else if (field === 'email') {
+                            cell.innerHTML = '<em>Enter email...</em>';
+                            cell.classList.add('placeholder');
+                        } else {
+                            cell.textContent = currentValue;
+                        }
                     } else {
                         cell.textContent = currentValue;
                     }
@@ -589,7 +577,12 @@
             // Cancel on escape
             const cancelEdit = () => {
                 cell.classList.remove('editing');
-                cell.textContent = currentValue;
+                if (isPlaceholder) {
+                    cell.innerHTML = currentValue.includes('Enter ') ? currentValue : `<em>${currentValue}</em>`;
+                    cell.classList.add('placeholder');
+                } else {
+                    cell.textContent = currentValue;
+                }
             };
 
             input.addEventListener('blur', saveEdit);
@@ -604,86 +597,132 @@
             });
         }
 
-        // Show add modal function
-        function showAddModal(type) {
-            console.log(`Add new ${type} contact`);
-            // Implementation for modal would go here
-            alert(`Add new ${type} contact - Modal would open here`);
-        }
-
-        // Restore contact function
-        function restoreContact(id) {
-            const contact = inactiveContacts.find(c => c.id === id);
-            if (contact && confirm(`Restore ${contact.name} to active ${contact.type.toLowerCase()} list?`)) {
-                console.log(`Restoring contact ${id}:`, contact);
+        // Save individual cell changes to Google Sheets
+        async function saveCellToBackend(type, id, field, value) {
+            try {
+                console.log(`💾 Saving ${type} ${field} for ID ${id} to Google Sheets...`);
                 
-                // Move back to appropriate active list
-                if (contact.type === 'Maintenance') {
-                    maintenanceTeam.push({
-                        id: Date.now(),
-                        name: contact.name,
-                        email: contact.email
-                    });
-                } else {
-                    zoneReps.push({
-                        id: Date.now(),
-                        zone: contact.zone || 'Zone 1',
-                        name: contact.name,
-                        email: contact.email
-                    });
+                const rangeName = type === 'maintenance' ? 'MtceTeamEmailList' : 'ZoneRepEmailList';
+                const rowIndex = id - 1; // Convert to 0-based index
+                
+                let colIndex;
+                if (type === 'maintenance') {
+                    colIndex = field === 'name' ? 0 : 1; // name=0, email=1
+                } else { // zone reps
+                    if (field === 'zone') colIndex = 0;
+                    else if (field === 'name') colIndex = 1;
+                    else if (field === 'email') colIndex = 2;
                 }
                 
-                // Remove from inactive
-                inactiveContacts = inactiveContacts.filter(c => c.id !== id);
+                const response = await makeRequest('updateNamedRangeCell', {
+                    rangeName: rangeName,
+                    row: rowIndex,
+                    col: colIndex,
+                    value: value
+                });
                 
-                // Refresh displays
-                renderTables();
-                alert(`${contact.name} restored successfully!`);
-            }
-        }
-
-        // Delete contact permanently
-        function deleteContact(id) {
-            const contact = inactiveContacts.find(c => c.id === id);
-            if (contact && confirm(`Permanently delete ${contact.name}? This cannot be undone.`)) {
-                inactiveContacts = inactiveContacts.filter(c => c.id !== id);
-                renderTables();
-                console.log(`Permanently deleted contact ${id}`);
-            }
-        }
-
-        // Submit functions for saving changes
-        async function submitMaintenanceChanges() {
-            try {
-                console.log('💾 Saving maintenance team changes to Google Sheets...');
-                // await saveMaintenanceTeam();
-                hideSubmitButton('maintenance');
-                alert('Maintenance team changes saved successfully!');
+                if (response.success) {
+                    console.log(`✅ Successfully saved ${type} ${field} to Google Sheets`);
+                    
+                    // Update local data
+                    if (type === 'maintenance') {
+                        const person = maintenanceTeam.find(p => p.id === id);
+                        if (person) person[field] = value;
+                    } else {
+                        const rep = zoneReps.find(r => r.id === id);
+                        if (rep) rep[field] = value;
+                    }
+                } else {
+                    throw new Error(response.error || 'Failed to save to Google Sheets');
+                }
+                
             } catch (error) {
-                console.error('❌ Error saving maintenance changes:', error);
-                alert('Failed to save changes. Please try again.');
+                console.error('❌ Error saving to Google Sheets:', error);
+                alert(`Failed to save ${field}. Please try again.`);
             }
         }
 
-        async function submitZoneChanges() {
+        // Add new contact to Google Sheets
+        async function addNewContactToSheets(type, field, value, cell) {
             try {
-                console.log('💾 Saving zone representative changes to Google Sheets...');
-                // await saveZoneRepresentatives();
-                hideSubmitButton('zone');
-                alert('Zone representative changes saved successfully!');
+                console.log(`➕ Adding new ${type} contact to Google Sheets...`);
+                
+                // Create a new contact object
+                const newContact = type === 'maintenance' 
+                    ? { name: '', email: '' }
+                    : { zone: 'Zone 1', name: '', email: '' };
+                
+                newContact[field] = value;
+                
+                const rangeName = type === 'maintenance' ? 'MtceTeamEmailList' : 'ZoneRepEmailList';
+                
+                const response = await makeRequest('addNamedRangeRow', {
+                    rangeName: rangeName,
+                    name: newContact.name,
+                    email: newContact.email,
+                    zone: newContact.zone
+                });
+                
+                if (response.success) {
+                    console.log(`✅ Successfully added new ${type} contact to Google Sheets`);
+                    
+                    // Reload data to get fresh IDs
+                    if (type === 'maintenance') {
+                        await loadMaintenanceTeam();
+                    } else {
+                        await loadZoneRepresentatives();
+                    }
+                } else {
+                    throw new Error(response.error || 'Failed to add to Google Sheets');
+                }
+                
             } catch (error) {
-                console.error('❌ Error saving zone changes:', error);
-                alert('Failed to save changes. Please try again.');
+                console.error('❌ Error adding to Google Sheets:', error);
+                alert(`Failed to add new ${type} contact. Please try again.`);
             }
         }
 
-        // Show error function
+        // Add new row function
+        function addNewRow(type) {
+            console.log(`Adding new ${type} row...`);
+            // The placeholder rows already exist in the render functions
+            // Just focus on the first empty field
+            const tbody = type === 'maintenance' ? 
+                document.getElementById('maintenanceTableBody') : 
+                document.getElementById('zoneRepsTableBody');
+            
+            const placeholderRow = tbody.querySelector('tr:last-child');
+            if (placeholderRow) {
+                const firstCell = placeholderRow.querySelector('td.placeholder');
+                if (firstCell) {
+                    firstCell.click();
+                }
+            }
+        }
+
+        // Show error message
         function showError(type, message) {
             console.error(`❌ ${type} error:`, message);
-            alert(`Error: ${message}`);
+            
+            const tbody = type === 'maintenance' ? 
+                document.getElementById('maintenanceTableBody') : 
+                document.getElementById('zoneRepsTableBody');
+            
+            const colspan = type === 'maintenance' ? 2 : 3;
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="${colspan}" style="text-align: center; padding: 20px; color: #dc2626;">
+                        ❌ ${message}
+                        <br><br>
+                        <button onclick="location.reload()" style="background: #4299e1; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+                            Retry
+                        </button>
+                    </td>
+                </tr>
+            `;
         }
 
-        console.log('📧 Email Notification Management - 3-Section Layout Ready!');
+        console.log('📧 Email Notification Management - Ready with Google Sheets Integration!');
     </script>
 </body>
 </html>
