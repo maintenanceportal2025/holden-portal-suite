@@ -151,10 +151,156 @@
             margin-bottom: 20px;
             font-size: 14px;
         }
+
+        /* Admin Panel Styles */
+        .admin-container {
+            min-height: 100vh;
+            padding: 20px;
+            align-items: flex-start;
+        }
+
+        .admin-header {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-bottom: 20px;
+        }
+
+        .admin-title {
+            color: #1e293b;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .admin-subtitle {
+            color: #64748b;
+            font-size: 1rem;
+        }
+
+        .header-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .btn-back {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-logout {
+            background: #ef4444;
+            color: white;
+        }
+
+        .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-title {
+            color: #1e293b;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .btn-add {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .items-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            margin: 8px 0;
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .item-name {
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-edit {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
+
+        .btn-delete {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
-    <div class="login-card">
+    <!-- Login Screen -->
+    <div id="loginView" class="login-card">
         <div class="login-header">
             <h1 class="login-title">Admin Portal</h1>
             <div class="version-badge">v1.0</div>
@@ -201,6 +347,191 @@
         </div>
     </div>
 
+    <!-- Admin Panel -->
+    <div id="adminView" class="admin-container hidden">
+        <div class="admin-header">
+            <div>
+                <h1 class="admin-title">Admin Portal</h1>
+                <p class="admin-subtitle">Manage dropdown options and system settings</p>
+            </div>
+            <div class="header-buttons">
+                <button id="backBtn" class="btn btn-back">🏠 Back to Portal</button>
+                <button id="logoutBtn" class="btn btn-logout">🚪 Logout</button>
+            </div>
+        </div>
+
+        <div class="admin-grid">
+            <!-- Priority Levels -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Priority Levels</h3>
+                    <button class="btn-add">+ Add Priority</button>
+                </div>
+                <div class="items-list" id="priorityList">
+                    <div class="item-row">
+                        <span class="item-name">Low</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Medium</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">High</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Urgent</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Categories</h3>
+                    <button class="btn-add">+ Add Category</button>
+                </div>
+                <div class="items-list">
+                    <div class="item-row">
+                        <span class="item-name">Aircon</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Electrical</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Plumbing</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">General</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sub-Categories -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Sub-Categories</h3>
+                    <button class="btn-add">+ Add Sub-Category</button>
+                </div>
+                <div class="items-list">
+                    <div class="item-row">
+                        <span class="item-name">Air Conditioning</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Lighting</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Faucet/Tap</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Assigned To -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Assigned To</h3>
+                    <button class="btn-add">+ Add Assigned</button>
+                </div>
+                <div class="items-list">
+                    <div class="item-row">
+                        <span class="item-name">Ben</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">David</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Jade</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statuses -->
+            <div class="section-card">
+                <div class="section-header">
+                    <h3 class="section-title">Statuses</h3>
+                    <button class="btn-add">+ Add Status</button>
+                </div>
+                <div class="items-list">
+                    <div class="item-row">
+                        <span class="item-name">Reported</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">In Progress</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                    <div class="item-row">
+                        <span class="item-name">Completed</span>
+                        <div class="item-actions">
+                            <button class="btn-edit">Edit</button>
+                            <button class="btn-delete">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
         const ADMIN_PASSWORD = 'admin2025';
 
@@ -209,6 +540,17 @@
             if (e.key === 'Enter') handleLogin();
         });
         document.getElementById('togglePassword').addEventListener('click', togglePassword);
+        
+        // Admin panel event listeners
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('passwordInput').value = '';
+            document.getElementById('loginError').classList.add('hidden');
+            showLoginScreen();
+        });
+        
+        document.getElementById('backBtn').addEventListener('click', function() {
+            alert('This would navigate back to the main portal');
+        });
 
         function handleLogin() {
             const password = document.getElementById('passwordInput').value;
@@ -221,8 +563,7 @@
 
             setTimeout(() => {
                 if (password === ADMIN_PASSWORD) {
-                    alert('Login successful! This would redirect to the admin panel.');
-                    // In real implementation: window.location.href = 'admin-panel.html';
+                    showAdminPanel();
                 } else {
                     errorDiv.classList.remove('hidden');
                     document.getElementById('passwordInput').value = '';
@@ -230,6 +571,18 @@
                 loginBtn.disabled = false;
                 loginBtn.innerHTML = '🔐 Access Admin Portal';
             }, 1000);
+        }
+
+        function showAdminPanel() {
+            document.getElementById('loginView').classList.add('hidden');
+            document.getElementById('adminView').classList.remove('hidden');
+            document.body.style.alignItems = 'flex-start';
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginView').classList.remove('hidden');
+            document.getElementById('adminView').classList.add('hidden');
+            document.body.style.alignItems = 'center';
         }
 
         function togglePassword() {
