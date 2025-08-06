@@ -265,38 +265,40 @@
             animation: spin 0.8s linear infinite;
         }
 
-        /* 🔥 ENHANCED DELETING STATE - Much More Prominent */
+        /* 🔥 IMPROVED DELETING STATE - Professional & Readable */
         .dropdown-item.deleting {
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.3) 100%);
-            border: 2px solid #dc2626;
-            border-style: dashed;
-            opacity: 1;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            border: 2px solid #f87171;
+            border-style: solid; /* Removed dashed - more professional */
+            opacity: 0.9;
             transform: scale(0.98);
-            box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
-            animation: deleteWarning 1.5s ease-in-out infinite;
+            box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            animation: deleteWarning 2s ease-in-out infinite;
         }
 
         .dropdown-item.deleting .item-value {
-            color: #b91c1c;
+            color: #dc2626; /* Dark red - much more readable */
             font-weight: 700;
             text-decoration: line-through;
             text-decoration-color: #dc2626;
             text-decoration-thickness: 2px;
+            /* Added text shadow for better readability */
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
         }
 
         .dropdown-item.deleting .item-actions {
             opacity: 0.8;
         }
 
-        /* Delete warning animation */
+        /* Improved delete warning animation - more subtle */
         @keyframes deleteWarning {
             0%, 100% {
-                border-color: #dc2626;
-                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+                border-color: #f87171;
+                box-shadow: 0 0 0 3px rgba(248, 113, 113, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
             }
             50% {
-                border-color: #b91c1c;
-                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 6px 16px rgba(239, 68, 68, 0.25);
+                border-color: #dc2626;
+                box-shadow: 0 0 0 4px rgba(248, 113, 113, 0.3), 0 6px 16px rgba(239, 68, 68, 0.2);
             }
         }
 
