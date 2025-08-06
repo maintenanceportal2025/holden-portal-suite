@@ -1249,25 +1249,42 @@
                 
                 script.src = `${url}?${params.toString()}`;
                 
+                // 🔥 FIXED: Improved callback cleanup timing
                 window[callbackName] = function(response) {
-                    document.head.removeChild(script);
-                    delete window[callbackName];
+                    // Use setTimeout to ensure callback executes before cleanup
+                    setTimeout(() => {
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                    }, 100);
                     resolve(response);
                 };
                 
                 script.onerror = function() {
-                    document.head.removeChild(script);
-                    delete window[callbackName];
+                    setTimeout(() => {
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                    }, 100);
                     reject(new Error('Network request failed'));
                 };
                 
+                // Longer timeout for better reliability
                 setTimeout(() => {
                     if (window[callbackName]) {
-                        document.head.removeChild(script);
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
                         delete window[callbackName];
                         reject(new Error('Request timeout'));
                     }
-                }, 10000);
+                }, 15000); // Increased from 10s to 15s
                 
                 document.head.appendChild(script);
             });
