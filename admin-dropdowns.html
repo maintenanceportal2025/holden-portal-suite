@@ -23,14 +23,14 @@
             display: none !important;
         }
 
-        .container {
+        /* Main Admin Interface */
+        .admin-container {
             max-width: 1400px;
             margin: 0 auto;
             padding: 20px;
         }
 
-        /* Header */
-        .header {
+        .admin-header {
             background: white;
             border-radius: 16px;
             padding: 24px;
@@ -45,7 +45,7 @@
             margin-bottom: 16px;
         }
 
-        .title {
+        .admin-title {
             font-size: 2rem;
             font-weight: 700;
             color: #1e293b;
@@ -72,7 +72,7 @@
             background: #4b5563;
         }
 
-        .subtitle {
+        .admin-subtitle {
             color: #64748b;
             font-size: 1rem;
             margin: 0;
@@ -124,7 +124,7 @@
         }
 
         /* Main Content Grid */
-        .content-grid {
+        .admin-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 24px;
@@ -165,6 +165,7 @@
             background: rgba(255,255,255,0.3);
         }
 
+        /* Simple button loading state */
         .add-btn.loading {
             opacity: 0.7;
             pointer-events: none;
@@ -244,6 +245,7 @@
             background: #dc2626;
         }
 
+        /* Button loading states */
         .action-btn.loading {
             opacity: 0.7;
             pointer-events: none;
@@ -263,7 +265,7 @@
             animation: spin 0.8s linear infinite;
         }
 
-        /* Enhanced Item States */
+        /* 🔥 ENHANCED DELETING STATE - Much More Prominent */
         .dropdown-item.deleting {
             background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.3) 100%);
             border: 2px solid #dc2626;
@@ -282,6 +284,23 @@
             text-decoration-thickness: 2px;
         }
 
+        .dropdown-item.deleting .item-actions {
+            opacity: 0.8;
+        }
+
+        /* Delete warning animation */
+        @keyframes deleteWarning {
+            0%, 100% {
+                border-color: #dc2626;
+                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
+            }
+            50% {
+                border-color: #b91c1c;
+                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 6px 16px rgba(239, 68, 68, 0.25);
+            }
+        }
+
+        /* Item operation states */
         .dropdown-item.updating {
             background: rgba(59, 130, 246, 0.1);
             border-color: #3b82f6;
@@ -294,17 +313,6 @@
             border-color: #22c55e;
             transform: scale(1.02);
             box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.2);
-        }
-
-        @keyframes deleteWarning {
-            0%, 100% {
-                border-color: #dc2626;
-                box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2), 0 4px 12px rgba(239, 68, 68, 0.15);
-            }
-            50% {
-                border-color: #b91c1c;
-                box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.35), 0 6px 16px rgba(239, 68, 68, 0.25);
-            }
         }
 
         /* Modal Styles */
@@ -449,7 +457,27 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Toast Notifications */
+        /* Success/Error Messages */
+        .message {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .message.success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #22c55e;
+        }
+
+        .message.error {
+            background: #fecaca;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+
+        /* Simple Toast Notifications */
         .toast-container {
             position: fixed;
             top: 20px;
@@ -523,7 +551,7 @@
 
         /* Responsive Design */
         @media (max-width: 768px) {
-            .content-grid {
+            .admin-grid {
                 grid-template-columns: 1fr;
             }
 
@@ -531,7 +559,7 @@
                 flex-direction: column;
             }
 
-            .container {
+            .admin-container {
                 padding: 12px;
             }
 
@@ -544,14 +572,15 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <!-- Main Admin Interface - NO LOGIN REQUIRED -->
+    <div class="admin-container">
         <!-- Header -->
-        <div class="header">
+        <div class="admin-header">
             <div class="header-top">
-                <h1 class="title">🎛️ Dropdown Manager</h1>
+                <h1 class="admin-title">🎛️ Dropdown Manager</h1>
                 <a href="holden-admin-portal.html" class="back-btn">← Back to Admin Portal</a>
             </div>
-            <p class="subtitle">Manage dropdown options for Holden Maintenance System</p>
+            <p class="admin-subtitle">Enhanced UX v2 - Dropdown Management for Holden Maintenance System</p>
         </div>
 
         <!-- Tab Navigation -->
@@ -569,8 +598,11 @@
             </div>
         </div>
 
+        <!-- Success/Error Messages -->
+        <div id="messageContainer"></div>
+
         <!-- Main Content -->
-        <div class="content-grid">
+        <div class="admin-grid">
             <!-- Categories Tab Content -->
             <div id="categoriesContent">
                 <div class="dropdown-section">
@@ -697,20 +729,20 @@
     <div id="toastContainer" class="toast-container"></div>
 
     <script>
-        // 🔥 FIXED: Using correct API URLs from working version
+        // 🔥 EXACT WORKING CONFIGURATION FROM THIS MORNING
         const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
         const RESIDENT_API_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
         
-        // Global state
+        // Global state - AUTHENTICATION REMOVED
         let currentTab = 'categories';
         let currentEditItem = null;
         let dropdownData = {};
 
-        // Initialize
+        // Initialize - SKIP LOGIN, GO STRAIGHT TO FUNCTIONALITY
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎛️ Dropdown Manager - Starting with FIXED data parsing...');
+            console.log('🎛️ Standalone Dropdown Manager - Starting (No Login Required)...');
             setupEventListeners();
-            loadAllData();
+            loadAllData(); // Start immediately - no authentication check
         });
 
         function setupEventListeners() {
@@ -725,151 +757,9 @@
             });
         }
 
-        function switchTab(tab) {
-            currentTab = tab;
-            
-            // Update tab buttons
-            document.getElementById('categoriesTabBtn').classList.toggle('active', tab === 'categories');
-            document.getElementById('maintenanceTabBtn').classList.toggle('active', tab === 'maintenance');
-            
-            // Update content
-            document.getElementById('categoriesContent').classList.toggle('hidden', tab !== 'categories');
-            document.getElementById('maintenanceContent').classList.toggle('hidden', tab !== 'maintenance');
-            
-            // Update tab info
-            const tabInfo = document.getElementById('tabInfo');
-            if (tab === 'categories') {
-                tabInfo.innerHTML = '<strong>Categories Tab:</strong> Manages Unit Numbers and Reported By names for the Resident Submission Form';
-            } else {
-                tabInfo.innerHTML = '<strong>Maintenance Tab:</strong> Manages Status, Priority, Category, Sub-Category, and Assigned To options for the Maintenance Portal';
-            }
-            
-            console.log('🎛️ Switched to', tab, 'tab');
-        }
-
-        async function loadAllData() {
-            console.log('🎛️ Loading all dropdown data with FIXED parsing...');
-            
-            try {
-                // Load Categories tab data (for resident form)
-                await loadCategoriesData();
-                
-                // Load Maintenance tab data (for maintenance portal)  
-                await loadMaintenanceData();
-                
-                console.log('✅ All data loaded successfully with FIXED parsing');
-                
-            } catch (error) {
-                console.error('❌ Error loading data:', error);
-                showToast('error', 'Data Loading Error', error.message);
-            }
-        }
-
-        // 🔥 FIXED: Categories data parsing - using working pattern from your code
-        async function loadCategoriesData() {
-            try {
-                console.log('📝 Loading Categories tab data with FIXED parsing...');
-                
-                const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions');
-                console.log('📝 Categories API Response:', response);
-                
-                if (response && response.success) {
-                    // 🔥 FIXED: Direct access pattern from working code
-                    dropdownData.unitNumbers = response.unitNumbers || [];
-                    dropdownData.reportedBy = response.reportedBy || [];
-                    
-                    console.log('🔥 FIXED: Parsed Categories data:', {
-                        unitNumbers: dropdownData.unitNumbers,
-                        reportedBy: dropdownData.reportedBy
-                    });
-                    
-                    renderDropdownList('unitNumbersList', dropdownData.unitNumbers, 'Unit Number');
-                    renderDropdownList('reportedByList', dropdownData.reportedBy, 'Reported By');
-                    
-                    console.log('✅ Categories data rendered:', {
-                        unitNumbers: dropdownData.unitNumbers.length,
-                        reportedBy: dropdownData.reportedBy.length
-                    });
-                } else {
-                    throw new Error('Failed to load categories data');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading categories data:', error);
-                document.getElementById('unitNumbersList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
-                document.getElementById('reportedByList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
-            }
-        }
-
-        // 🔥 FIXED: Maintenance data parsing - using working pattern from your code
-        async function loadMaintenanceData() {
-            try {
-                console.log('🔧 Loading Maintenance tab data with FIXED parsing...');
-                
-                const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions');
-                console.log('🔧 Maintenance API Response:', response);
-                
-                if (response && response.success && response.data) {
-                    // 🔥 FIXED: Nested access pattern from working code
-                    dropdownData.statuses = response.data.statuses || [];
-                    dropdownData.priorities = response.data.priorities || [];
-                    dropdownData.categories = response.data.categories || [];
-                    dropdownData.subCategories = response.data.subCategories || [];
-                    dropdownData.assignedTo = response.data.assignedTo || [];
-                    
-                    console.log('🔥 FIXED: Parsed Maintenance data:', {
-                        statuses: dropdownData.statuses,
-                        priorities: dropdownData.priorities,
-                        categories: dropdownData.categories,
-                        subCategories: dropdownData.subCategories,
-                        assignedTo: dropdownData.assignedTo
-                    });
-                    
-                    renderDropdownList('statusList', dropdownData.statuses, 'Status');
-                    renderDropdownList('priorityList', dropdownData.priorities, 'Priority');
-                    renderDropdownList('categoryList', dropdownData.categories, 'Category');
-                    renderDropdownList('subCategoryList', dropdownData.subCategories, 'Sub-Category');
-                    renderDropdownList('assignedToList', dropdownData.assignedTo, 'Assigned To');
-                    
-                    console.log('✅ Maintenance data rendered:', {
-                        statuses: dropdownData.statuses.length,
-                        priorities: dropdownData.priorities.length,
-                        categories: dropdownData.categories.length,
-                        subCategories: dropdownData.subCategories.length,
-                        assignedTo: dropdownData.assignedTo.length
-                    });
-                } else {
-                    throw new Error('Failed to load maintenance data or missing data structure');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading maintenance data:', error);
-                ['statusList', 'priorityList', 'categoryList', 'subCategoryList', 'assignedToList'].forEach(listId => {
-                    document.getElementById(listId).innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
-                });
-            }
-        }
-
-        function renderDropdownList(containerId, items, type) {
-            const container = document.getElementById(containerId);
-            
-            if (!items || items.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No items found</div>';
-                return;
-            }
-            
-            const html = items.map(item => `
-                <div class="dropdown-item">
-                    <span class="item-value">${item}</span>
-                    <div class="item-actions">
-                        <button class="action-btn edit-btn" onclick="openEditModal('${type}', '${item}')">Edit</button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
-                    </div>
-                </div>
-            `).join('');
-            
-            container.innerHTML = html;
-        }
+        // =================================================================
+        // PRESERVED ENHANCED VISUAL FEEDBACK FUNCTIONS FROM WORKING CODE
+        // =================================================================
 
         // Enhanced toast notification with better animations
         function showToast(type, title, message, duration = 5000) {
@@ -949,16 +839,27 @@
                     if (state) {
                         element.classList.add(state);
                         
-                        // Enhanced delete confirmation with dramatic effect
+                        // 🔥 Enhanced delete confirmation with dramatic effect
                         if (state === 'deleting') {
+                            // Add delete warning sound effect simulation
                             console.log('🚨 DELETING ITEM:', value);
+                            
+                            // Temporary flash effect
+                            element.style.transition = 'all 0.2s ease';
+                            setTimeout(() => {
+                                element.style.transition = 'all 0.3s ease';
+                            }, 200);
                         }
                     }
                 }
             });
         }
 
-        // Enhanced Add Item Function
+        // =================================================================
+        // PRESERVED ENHANCED OPERATION FUNCTIONS FROM WORKING CODE
+        // =================================================================
+
+        // Enhanced Add Item Function with smart sorting
         async function addItem(type, value) {
             console.log('🎛️ Adding item:', type, value);
             
@@ -1135,6 +1036,140 @@
             }
         }
 
+        // =================================================================
+        // PRESERVED CORE ADMIN FUNCTIONS FROM WORKING CODE
+        // =================================================================
+
+        function switchTab(tab) {
+            currentTab = tab;
+            
+            // Update tab buttons
+            document.getElementById('categoriesTabBtn').classList.toggle('active', tab === 'categories');
+            document.getElementById('maintenanceTabBtn').classList.toggle('active', tab === 'maintenance');
+            
+            // Update content
+            document.getElementById('categoriesContent').classList.toggle('hidden', tab !== 'categories');
+            document.getElementById('maintenanceContent').classList.toggle('hidden', tab !== 'maintenance');
+            
+            // Update tab info
+            const tabInfo = document.getElementById('tabInfo');
+            if (tab === 'categories') {
+                tabInfo.innerHTML = '<strong>Categories Tab:</strong> Manages Unit Numbers and Reported By names for the Resident Submission Form';
+            } else {
+                tabInfo.innerHTML = '<strong>Maintenance Tab:</strong> Manages Status, Priority, Category, Sub-Category, and Assigned To options for the Maintenance Portal';
+            }
+            
+            console.log('🎛️ Switched to', tab, 'tab');
+        }
+
+        // Enhanced data loading - backend handles all sorting
+        async function loadAllData() {
+            console.log('🎛️ Loading all dropdown data (backend-sorted)...');
+            
+            try {
+                // Load Categories tab data (for resident form)
+                await loadCategoriesData();
+                
+                // Load Maintenance tab data (for maintenance portal)  
+                await loadMaintenanceData();
+                
+                console.log('✅ All data loaded successfully (backend-sorted)');
+                
+            } catch (error) {
+                console.error('❌ Error loading data:', error);
+                showToast('error', 'Data Loading Error', error.message);
+            }
+        }
+
+        async function loadCategoriesData() {
+            try {
+                console.log('📝 Loading Categories tab data (backend-sorted)...');
+                
+                const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success) {
+                    // Use data as-is from backend (already sorted)
+                    dropdownData.unitNumbers = response.unitNumbers || [];
+                    dropdownData.reportedBy = response.reportedBy || [];
+                    
+                    renderDropdownList('unitNumbersList', dropdownData.unitNumbers, 'Unit Number');
+                    renderDropdownList('reportedByList', dropdownData.reportedBy, 'Reported By');
+                    
+                    console.log('✅ Categories data loaded (backend-sorted):', {
+                        unitNumbers: dropdownData.unitNumbers.length,
+                        reportedBy: dropdownData.reportedBy.length
+                    });
+                } else {
+                    throw new Error('Failed to load categories data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading categories data:', error);
+                document.getElementById('unitNumbersList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                document.getElementById('reportedByList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+            }
+        }
+
+        async function loadMaintenanceData() {
+            try {
+                console.log('🔧 Loading Maintenance tab data (backend-sorted)...');
+                
+                const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions');
+                
+                if (response && response.success && response.data) {
+                    // Use data as-is from backend (already sorted)
+                    dropdownData.statuses = response.data.statuses || [];
+                    dropdownData.priorities = response.data.priorities || [];
+                    dropdownData.categories = response.data.categories || [];
+                    dropdownData.subCategories = response.data.subCategories || [];
+                    dropdownData.assignedTo = response.data.assignedTo || [];
+                    
+                    renderDropdownList('statusList', dropdownData.statuses, 'Status');
+                    renderDropdownList('priorityList', dropdownData.priorities, 'Priority');
+                    renderDropdownList('categoryList', dropdownData.categories, 'Category');
+                    renderDropdownList('subCategoryList', dropdownData.subCategories, 'Sub-Category');
+                    renderDropdownList('assignedToList', dropdownData.assignedTo, 'Assigned To');
+                    
+                    console.log('✅ Maintenance data loaded (backend-sorted):', {
+                        statuses: dropdownData.statuses.length,
+                        priorities: dropdownData.priorities.length,
+                        categories: dropdownData.categories.length,
+                        subCategories: dropdownData.subCategories.length,
+                        assignedTo: dropdownData.assignedTo.length
+                    });
+                } else {
+                    throw new Error('Failed to load maintenance data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading maintenance data:', error);
+                ['statusList', 'priorityList', 'categoryList', 'subCategoryList', 'assignedToList'].forEach(listId => {
+                    document.getElementById(listId).innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                });
+            }
+        }
+
+        function renderDropdownList(containerId, items, type) {
+            const container = document.getElementById(containerId);
+            
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No items found</div>';
+                return;
+            }
+            
+            const html = items.map(item => `
+                <div class="dropdown-item">
+                    <span class="item-value">${item}</span>
+                    <div class="item-actions">
+                        <button class="action-btn edit-btn" onclick="openEditModal('${type}', '${item}')">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
         function openAddModal(type) {
             currentEditItem = null;
             
@@ -1238,13 +1273,15 @@
             });
         }
 
-        console.log('🎛️ FIXED Dropdown Manager - Ready!');
-        console.log('🔥 FIXED FEATURES:');
-        console.log('  • Categories data: Direct access (response.unitNumbers)');
-        console.log('  • Maintenance data: Nested access (response.data.statuses)');
+        console.log('🎛️ Standalone Dropdown Manager - Ready!');
+        console.log('🔥 PRESERVED FEATURES FROM WORKING VERSION:');
+        console.log('  • All CRUD operations exactly as they worked this morning');
         console.log('  • Enhanced visual feedback and animations');
-        console.log('  • Toast notifications with auto-removal');
-        console.log('  • All CRUD operations functional');
+        console.log('  • Backend-driven sorting (no frontend sorting needed)');
+        console.log('  • Enhanced toast notifications');
+        console.log('  • Improved button loading states');
+        console.log('  • Authentication removed - ready for admin portal integration');
+        console.log('  • Same API URLs and endpoints that worked this morning');
     </script>
 </body>
 </html>
