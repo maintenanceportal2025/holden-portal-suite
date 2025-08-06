@@ -435,31 +435,39 @@
                 showLoading(true);
                 
                 // Load maintenance team
-                console.log('📋 Loading maintenance team...');
-                const maintenanceResponse = await makeRequest('getNamedRangeData', { rangeName: 'MtceTeamEmailList' });
-                
-                if (maintenanceResponse.success) {
-                    maintenanceTeam = maintenanceResponse.data.map((item, index) => ({
-                        id: index + 1,
-                        name: item.name || '',
-                        email: item.email || ''
-                    }));
-                    console.log('✅ Maintenance team loaded:', maintenanceTeam.length, 'people');
-                }
-                
-                // Load zone representatives
-                console.log('📋 Loading zone representatives...');
-                const zoneResponse = await makeRequest('getNamedRangeData', { rangeName: 'ZoneRepEmailList' });
-                
-                if (zoneResponse.success) {
-                    zoneReps = zoneResponse.data.map((item, index) => ({
-                        id: index + 1,
-                        zone: item.zone || '',
-                        name: item.name || '',
-                        email: item.email || ''
-                    }));
-                    console.log('✅ Zone representatives loaded:', zoneReps.length, 'zones');
-                }
+console.log('📋 Loading maintenance team...');
+const maintenanceResponse = await makeRequest('getNamedRangeData', { rangeName: 'MtceTeamEmailList' });
+
+// ADD DEBUG HERE:
+console.log('🔍 RAW maintenance response:', maintenanceResponse);
+
+if (maintenanceResponse.success) {
+    console.log('🔍 Maintenance data structure:', maintenanceResponse.data);
+    maintenanceTeam = maintenanceResponse.data.map((item, index) => ({
+        id: index + 1,
+        name: item.name || '',
+        email: item.email || ''
+    }));
+    console.log('✅ Maintenance team loaded:', maintenanceTeam.length, 'people');
+}
+
+// Load zone representatives
+console.log('📋 Loading zone representatives...');
+const zoneResponse = await makeRequest('getNamedRangeData', { rangeName: 'ZoneRepEmailList' });
+
+// ADD DEBUG HERE TOO:
+console.log('🔍 RAW zone response:', zoneResponse);
+
+if (zoneResponse.success) {
+    console.log('🔍 Zone data structure:', zoneResponse.data);
+    zoneReps = zoneResponse.data.map((item, index) => ({
+        id: index + 1,
+        zone: item.zone || '',
+        name: item.name || '',
+        email: item.email || ''
+    }));
+    console.log('✅ Zone representatives loaded:', zoneReps.length, 'zones');
+}
                 
                 // Initialize with some sample inactive contacts for demo
                 inactiveContacts = [
