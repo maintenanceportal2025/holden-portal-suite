@@ -114,9 +114,25 @@
             margin-bottom: 8px;
         }
 
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #6b7280;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
         .form-input {
             width: 100%;
-            padding: 14px 16px;
+            padding: 14px 50px 14px 16px;
             border: 2px solid #e5e7eb;
             border-radius: 8px;
             font-size: 16px;
@@ -443,12 +459,15 @@
             
             <div class="form-group">
                 <label class="form-label">Administrator Password</label>
-                <input 
-                    type="password" 
-                    id="passwordInput" 
-                    class="form-input" 
-                    placeholder="Enter admin password"
-                >
+                <div class="password-container">
+                    <input 
+                        type="password" 
+                        id="passwordInput" 
+                        class="form-input" 
+                        placeholder="Enter admin password"
+                    >
+                    <button type="button" id="togglePassword" class="password-toggle">👁️</button>
+                </div>
             </div>
             
             <button id="loginBtn" class="login-btn">
@@ -656,7 +675,21 @@
             document.getElementById('passwordInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') handleLogin();
             });
+            document.getElementById('togglePassword').addEventListener('click', togglePassword);
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+        }
+
+        function togglePassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const toggleBtn = document.getElementById('togglePassword');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleBtn.textContent = '🙈';
+            } else {
+                passwordInput.type = 'password';
+                toggleBtn.textContent = '👁️';
+            }
         }
 
         function handleLogin() {
