@@ -866,48 +866,39 @@ function removeFromInactive(index) {
         // Save to backend
 
         
-        async function saveToBackend(type, id) {
+       async function saveToBackend(type, id) {
     try {
         const rangeName = type === 'maintenance' ? 'MtceTeamEmailList' : 'ZoneRepEmailList';
         console.log(`💾 Saving ${type} ${id} to ${rangeName}`);
         
-        // Get current item data
         let itemData;
         if (type === 'maintenance') {
             const person = maintenanceTeam.find(p => p.id === id);
-            if (!person) throw new Error('Maintenance person not found');
-            
             itemData = {
                 rangeName: rangeName,
-                row: id - 1, // Convert to 0-based index
+                row: id - 1,
                 name: person.name || '',
                 email: person.email || ''
             };
         } else {
             const rep = zoneReps.find(r => r.id === id);
-            if (!rep) throw new Error('Zone rep not found');
-            
             itemData = {
                 rangeName: rangeName,
-                row: id - 1, // Convert to 0-based index
-                zone: rep.zone || '',
-                name: rep.name || '',
-                email: rep.email || ''
+                row: id - 1,
+                zone: rep.zone || '',     // ← Zone goes first
+                name: rep.name || '',     // ← Name goes second  
+                email: rep.email || ''    // ← Email goes third
             };
         }
         
         console.log('Sending to backend:', itemData);
-        
-        // Call V2.3 backend
         const response = await makeRequest('updateNamedRangeRow', itemData);
         
         if (!response.success) {
             throw new Error(response.error || 'Backend save failed');
         }
         
-        console.log('✅ Successfully saved to backend');
         return response;
-        
     } catch (error) {
         console.error('❌ Error in saveToBackend:', error);
         throw error;
