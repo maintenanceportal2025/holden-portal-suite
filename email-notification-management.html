@@ -708,58 +708,160 @@
         }
         
         // Add new maintenance person
-        function addMaintenancePerson() {
-            const newId = Math.max(...maintenanceTeam.map(p => p.id), 0) + 1;
-            maintenanceTeam.push({ id: newId, name: '', email: '' });
-            renderMaintenanceTeam();
-            
-            // Focus on name field
+        
+        async function addMaintenancePerson() {
+    try {
+        console.log('➕ Adding new maintenance person...');
+        
+        // Call backend to add new row
+        const response = await makeRequest('addNamedRangeRow', {
+            rangeName: 'MtceTeamEmailList',
+            name: '',
+            email: ''
+        });
+        
+        if (!response.success) {
+            throw new Error(response.error || 'Failed to add person');
+        }
+        
+        // Reload data from backend to get accurate IDs
+        await loadEmailLists();
+        
+        // Focus on the last person's name field
+        const lastPerson = maintenanceTeam[maintenanceTeam.length - 1];
+        if (lastPerson) {
             setTimeout(() => {
-                editCell('maintenance', newId, 'name');
+                editCell('maintenance', lastPerson.id, 'name');
             }, 100);
         }
+        
+        showSaveStatus('✅ New person added', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error adding maintenance person:', error);
+        showSaveStatus('❌ Failed to add person: ' + error.message, 'error');
+    }
+}
+
         
         // Add new zone representative
-        function addZoneRep() {
-            const newId = Math.max(...zoneReps.map(r => r.id), 0) + 1;
-            zoneReps.push({ id: newId, zone: '', name: '', email: '' });
-            renderZoneReps();
-            
-            // Focus on zone field
+        
+        async function addZoneRep() {
+    try {
+        console.log('➕ Adding new zone representative...');
+        
+        // Call backend to add new row
+        const response = await makeRequest('addNamedRangeRow', {
+            rangeName: 'ZoneRepEmailList',
+            zone: '',
+            name: '',
+            email: ''
+        });
+        
+        if (!response.success) {
+            throw new Error(response.error || 'Failed to add zone rep');
+        }
+        
+        // Reload data from backend to get accurate IDs
+        await loadEmailLists();
+        
+        // Focus on the last rep's zone field
+        const lastRep = zoneReps[zoneReps.length - 1];
+        if (lastRep) {
             setTimeout(() => {
-                editCell('zoneRep', newId, 'zone');
+                editCell('zoneRep', lastRep.id, 'zone');
             }, 100);
         }
         
-        // Restore contact from inactive
-        function restoreContact(index) {
-            const contact = inactiveContacts[index];
+        showSaveStatus('✅ New zone rep added', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error adding zone rep:', error);
+        showSaveStatus('❌ Failed to add zone rep: ' + error.message, 'error');
+    }
+}
+
+
+        
+        // 4. FIXED: Restore contact - finds existing row instead of creating new one
+async function restoreContact(index) {
+    try {
+        const contact = inactiveContacts[index];
+        console.log('↩️ Restoring contact:', contact);
+        
+        if (contact.type === 'maintenance') {
+            // Find existing maintenance person with no email
+            const existingPerson = maintenanceTeam.find(p => 
+                p.name === contact.name && (!p.email || p.email.trim() === '')
+            );
             
-            if (contact.type === 'maintenance') {
-                const newId = Math.max(...maintenanceTeam.map(p => p.id), 0) + 1;
-                maintenanceTeam.push({ id: newId, name: contact.name, email: contact.email });
+            if (existingPerson) {
+                // Update existing person's email
+                existingPerson.email = contact.email;
+                await saveToBackend('maintenance', existingPerson.id);
             } else {
-                const newId = Math.max(...zoneReps.map(r => r.id), 0) + 1;
-                zoneReps.push({ 
-                    id: newId, 
-                    zone: contact.zone || contact.name, 
-                    name: contact.name, 
-                    email: contact.email 
-                });
+                // Create new person if no existing match found
+                await addMaintenancePerson();
+                const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
+                newPerson.name = contact.name;
+                newPerson.email = contact.email;
+                await saveToBackend('maintenance', newPerson.id);
             }
             
-            // Remove from inactive
-            inactiveContacts.splice(index, 1);
+        } else {
+            // Find existing zone rep with same zone and name but no email
+            const existingRep = zoneReps.find(r => 
+                r.zone === contact.zone && 
+                r.name === contact.name && 
+                (!r.email || r.email.trim() === '')
+            );
             
-            renderAllLists();
-            showSaveStatus('✅ Contact restored', 'success');
+            if (existingRep) {
+                // Update existing rep's email
+                existingRep.email = contact.email;
+                await saveToBackend('zoneRep', existingRep.id);
+            } else {
+                // If no exact match, find any rep in same zone with no email
+                const zoneRep = zoneReps.find(r => 
+                    r.zone === contact.zone && (!r.email || r.email.trim() === '')
+                );
+                
+                if (zoneRep) {
+                    // Update this rep
+                    zoneRep.name = contact.name;
+                    zoneRep.email = contact.email;
+                    await saveToBackend('zoneRep', zoneRep.id);
+                } else {
+                    // Create new rep
+                    await addZoneRep();
+                    const newRep = zoneReps[zoneReps.length - 1];
+                    newRep.zone = contact.zone;
+                    newRep.name = contact.name;
+                    newRep.email = contact.email;
+                    await saveToBackend('zoneRep', newRep.id);
+                }
+            }
         }
         
-        // Remove from inactive permanently
-        function removeFromInactive(index) {
-            inactiveContacts.splice(index, 1);
-            renderInactiveContacts();
-        }
+        // Remove from inactive list
+        inactiveContacts.splice(index, 1);
+        
+        // Reload fresh data from backend and re-render
+        await loadEmailLists();
+        
+        showSaveStatus('✅ Contact restored', 'success');
+        
+    } catch (error) {
+        console.error('❌ Error restoring contact:', error);
+        showSaveStatus('❌ Restore failed: ' + error.message, 'error');
+    }
+}
+
+// Remove from inactive permanently
+function removeFromInactive(index) {
+    inactiveContacts.splice(index, 1);
+    renderInactiveContacts();
+}
         
         // Save to backend
 
@@ -769,37 +871,42 @@
         const rangeName = type === 'maintenance' ? 'MtceTeamEmailList' : 'ZoneRepEmailList';
         console.log(`💾 Saving ${type} ${id} to ${rangeName}`);
         
-        // Get the current data for this item
+        // Get current item data
         let itemData;
         if (type === 'maintenance') {
             const person = maintenanceTeam.find(p => p.id === id);
-            itemData = { 
+            if (!person) throw new Error('Maintenance person not found');
+            
+            itemData = {
                 rangeName: rangeName,
                 row: id - 1, // Convert to 0-based index
-                name: person.name, 
-                email: person.email 
+                name: person.name || '',
+                email: person.email || ''
             };
         } else {
             const rep = zoneReps.find(r => r.id === id);
-            itemData = { 
+            if (!rep) throw new Error('Zone rep not found');
+            
+            itemData = {
                 rangeName: rangeName,
                 row: id - 1, // Convert to 0-based index
-                zone: rep.zone, 
-                name: rep.name, 
-                email: rep.email 
+                zone: rep.zone || '',
+                name: rep.name || '',
+                email: rep.email || ''
             };
         }
         
-        // Call V2.3 backend updateNamedRangeRow function
+        console.log('Sending to backend:', itemData);
+        
+        // Call V2.3 backend
         const response = await makeRequest('updateNamedRangeRow', itemData);
         
-        if (response.success) {
-            console.log('✅ Successfully saved to backend');
-            return response;
-        } else {
-            console.error('❌ Backend save failed:', response.error);
-            throw new Error(response.error || 'Save failed');
+        if (!response.success) {
+            throw new Error(response.error || 'Backend save failed');
         }
+        
+        console.log('✅ Successfully saved to backend');
+        return response;
         
     } catch (error) {
         console.error('❌ Error in saveToBackend:', error);
