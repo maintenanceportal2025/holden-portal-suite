@@ -628,6 +628,14 @@
             input.value = currentValue;
             input.placeholder = getPlaceholder(field);
             
+            // Set tab order for better UX
+            if (type === 'maintenance') {
+                input.tabIndex = field === 'name' ? 1 : 2;
+            } else {
+                // Zone rep: zone=1, name=2, email=3
+                input.tabIndex = field === 'zone' ? 1 : field === 'name' ? 2 : 3;
+            }
+            
             // Replace cell content
             cell.innerHTML = '';
             cell.appendChild(input);
@@ -637,10 +645,13 @@
             input.focus();
             input.select();
             
-            // Save on Enter or blur
+            // Save on Enter or blur, Tab to next field
             input.addEventListener('blur', () => finishEdit());
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
+                    finishEdit();
+                } else if (e.key === 'Tab') {
+                    // Let tab work naturally, but finish current edit
                     finishEdit();
                 } else if (e.key === 'Escape') {
                     cancelEdit();
@@ -722,12 +733,16 @@
             const actionBar = document.getElementById('actionBar');
             const deleteBtn = document.getElementById('deleteBtn');
             
-            if (hasChanges) {
-                indicator.classList.add('show');
+            if (hasChanges || selectedForDeletion.size > 0) {
                 actionBar.classList.remove('hidden');
             } else {
-                indicator.classList.remove('show');
                 actionBar.classList.add('hidden');
+            }
+            
+            if (hasChanges) {
+                indicator.classList.add('show');
+            } else {
+                indicator.classList.remove('show');
             }
             
             // Show/hide delete button based on selections
@@ -746,6 +761,7 @@
             } else {
                 selectedForDeletion.add(key);
             }
+            console.log('Selected for deletion:', Array.from(selectedForDeletion));
             updateChangesIndicator();
         }
 
@@ -818,19 +834,21 @@
                 for (const rep of zoneReps) {
                     if (rep.changed) {
                         if (rep.isNew) {
+                            console.log('Adding new zone rep:', rep);
                             await makeRequest('addNamedRangeRow', {
                                 rangeName: 'ZoneRepEmailList',
-                                zone: rep.zone,
-                                name: rep.name,
-                                email: rep.email
+                                zone: rep.zone || '',
+                                name: rep.name || '',
+                                email: rep.email || ''
                             });
                         } else {
+                            console.log('Updating zone rep:', rep);
                             await makeRequest('updateNamedRangeRow', {
                                 rangeName: 'ZoneRepEmailList',
                                 row: rep.id - 1,
-                                zone: rep.zone,
-                                name: rep.name,
-                                email: rep.email
+                                zone: rep.zone || '',
+                                name: rep.name || '',
+                                email: rep.email || ''
                             });
                         }
                     }
