@@ -1099,24 +1099,24 @@
             }, 5000);
         }
 
-        // Navigate back to admin portal
+        // Navigate back to admin dashboard
         function goBackToAdmin() {
             if (hasChanges) {
                 if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                    goBackToAdminMain();
+                    // Go back in history, but if it's the login screen, go back further
+                    if (document.referrer && document.referrer.includes('login')) {
+                        window.history.go(-2); // Skip login screen
+                    } else {
+                        window.history.back(); // Normal back
+                    }
                 }
             } else {
-                goBackToAdminMain();
-            }
-        }
-
-        // Smart navigation back to admin dashboard
-        function goBackToAdminMain() {
-            // Go back in history, but if it's the login screen, go back further
-            if (document.referrer && document.referrer.includes('login')) {
-                window.history.go(-2); // Skip login screen
-            } else {
-                window.history.back(); // Normal back
+                // Go back in history, but if it's the login screen, go back further
+                if (document.referrer && document.referrer.includes('login')) {
+                    window.history.go(-2); // Skip login screen
+                } else {
+                    window.history.back(); // Normal back
+                }
             }
         }
 
