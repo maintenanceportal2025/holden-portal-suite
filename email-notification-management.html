@@ -955,6 +955,26 @@
             }
         }
 
+        // Move contact to inactive when email cleared  
+        function moveToInactive(type, id, email) {
+            const contact = type === 'maintenance' 
+                ? maintenanceTeam.find(p => p.id === id)
+                : zoneReps.find(r => r.id === id);
+                
+            if (contact) {
+                const inactiveContact = {
+                    name: contact.name || (contact.zone || 'Unknown'),
+                    email: email,
+                    type: type,
+                    zone: contact.zone,
+                    removedDate: new Date().toISOString().split('T')[0]
+                };
+                
+                inactiveContacts.push(inactiveContact);
+                console.log('Moved to inactive:', inactiveContact);
+            }
+        }
+
         // Restore contact from inactive
         async function restoreContact(index) {
             try {
