@@ -53,7 +53,7 @@
         }
 
         .back-btn {
-            background: #3b82f6; /* UPDATED: Changed from gray to blue */
+            background: #3b82f6; /* UPDATED: Blue instead of gray */
             color: white;
             border: none;
             padding: 8px 16px;
@@ -70,7 +70,7 @@
 
         .back-btn:hover {
             background: #2563eb; /* UPDATED: Blue hover */
-            transform: translateY(-1px); /* UPDATED: Added subtle lift */
+            transform: translateY(-1px); /* UPDATED: Added lift effect */
         }
 
         .admin-subtitle {
@@ -110,7 +110,7 @@
         }
 
         .tab-btn.active {
-            background: #3b82f6; /* UPDATED: Changed from purple to blue */
+            background: #3b82f6; /* UPDATED: Blue instead of purple */
             color: white;
             box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2); /* UPDATED: Blue shadow */
         }
@@ -142,7 +142,7 @@
         }
 
         .section-header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); /* UPDATED: Blue gradient instead of purple */
+            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); /* UPDATED: Blue gradient */
             color: white;
             padding: 16px 20px;
             font-weight: 600;
@@ -160,7 +160,7 @@
             border-radius: 6px;
             font-size: 14px;
             cursor: pointer;
-            transition: all 0.3s ease; /* UPDATED: Enhanced transition */
+            transition: all 0.3s ease;
             position: relative;
         }
 
@@ -203,12 +203,12 @@
             border-radius: 8px;
             margin-bottom: 8px;
             transition: all 0.3s ease;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* UPDATED: Subtle gradient background */
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* UPDATED: Subtle gradient */
         }
 
         .dropdown-item:hover {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); /* UPDATED: Blue-tinted hover */
-            border-color: #3b82f6; /* UPDATED: Blue border on hover */
+            border-color: #3b82f6; /* UPDATED: Blue border */
             transform: translateY(-1px); /* UPDATED: Subtle lift */
             box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1); /* UPDATED: Blue shadow */
         }
@@ -231,7 +231,6 @@
             cursor: pointer;
             transition: all 0.2s ease;
             position: relative;
-            font-weight: 500; /* UPDATED: Slightly bolder */
         }
 
         .edit-btn {
@@ -320,7 +319,7 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            backdrop-filter: blur(8px); /* UPDATED: Added blur effect */
+            backdrop-filter: blur(8px); /* UPDATED: Added blur */
         }
 
         .modal-content {
@@ -330,7 +329,6 @@
             width: 90%;
             max-width: 500px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15); /* UPDATED: Enhanced shadow */
-            border: 1px solid rgba(59, 130, 246, 0.1); /* UPDATED: Subtle blue border */
         }
 
         .modal-header {
@@ -367,15 +365,15 @@
             border: 2px solid #e5e7eb;
             border-radius: 6px;
             font-size: 14px;
-            transition: all 0.3s ease; /* UPDATED: Enhanced transition */
+            transition: all 0.3s ease;
             background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* UPDATED: Subtle gradient */
         }
 
         .form-input:focus {
             outline: none;
             border-color: #3b82f6; /* UPDATED: Blue focus */
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* UPDATED: Blue focus shadow */
-            background: white; /* UPDATED: White on focus */
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); /* UPDATED: Blue shadow */
+            background: white;
         }
 
         .modal-actions {
@@ -402,9 +400,9 @@
         }
 
         .modal-btn.primary:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); /* UPDATED: Darker blue hover */
-            transform: translateY(-1px); /* UPDATED: Subtle lift */
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); /* UPDATED: Blue shadow */
+            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); /* UPDATED: Darker blue */
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
         }
 
         .modal-btn.secondary {
@@ -466,13 +464,13 @@
         }
 
         .message.success {
-            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); /* UPDATED: Gradient background */
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); /* UPDATED: Gradient */
             color: #065f46;
             border: 1px solid #22c55e;
         }
 
         .message.error {
-            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); /* UPDATED: Gradient background */
+            background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%); /* UPDATED: Gradient */
             color: #991b1b;
             border: 1px solid #ef4444;
         }
@@ -490,7 +488,7 @@
         }
 
         .toast {
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* UPDATED: Gradient background */
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); /* UPDATED: Gradient */
             border-radius: 8px;
             padding: 16px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15); /* UPDATED: Enhanced shadow */
@@ -509,12 +507,12 @@
 
         .toast.error {
             border-left-color: #ef4444;
-            border-color: rgba(239, 68, 68, 0.2); /* UPDATED: Error border */
+            border-color: rgba(239, 68, 68, 0.2);
         }
 
         .toast.warning {
             border-left-color: #f59e0b;
-            border-color: rgba(245, 158, 11, 0.2); /* UPDATED: Warning border */
+            border-color: rgba(245, 158, 11, 0.2);
         }
 
         .toast-icon {
@@ -701,7 +699,7 @@
             <form id="modalForm">
                 <div class="form-group">
                     <label class="form-label" id="modalLabel">Item Name</label>
-                    <input type="text" class="form-input" id="modalInput" placeholder="Enter value..." required>
+                    <input type="text" class="form-input" id="itemValue" placeholder="Enter value..." required>
                 </div>
                 <div class="modal-actions">
                     <button type="button" class="modal-btn secondary" onclick="closeModal()">Cancel</button>
@@ -726,60 +724,275 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎛️ Dropdown Manager - Starting...');
+            console.log('🎛️ Standalone Dropdown Manager - Starting...');
             setupEventListeners();
             loadAllData();
         });
 
         function setupEventListeners() {
-            // Tab switching
             document.getElementById('categoriesTabBtn').addEventListener('click', () => switchTab('categories'));
             document.getElementById('maintenanceTabBtn').addEventListener('click', () => switchTab('maintenance'));
             
-            // Modal
             document.getElementById('modalForm').addEventListener('submit', handleModalSubmit);
             document.getElementById('modal').addEventListener('click', function(e) {
                 if (e.target === this) closeModal();
             });
         }
 
-        // Tab switching
+        // Enhanced toast notification
+        function showToast(type, title, message, duration = 5000) {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'warning' ? '⚠️' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-content">
+                    <div class="toast-title">${title}</div>
+                    <div class="toast-message">${message}</div>
+                </div>
+            `;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    if (toast.parentNode) {
+                        toast.parentNode.removeChild(toast);
+                    }
+                }, 300);
+            }, duration);
+        }
+
+        function removeAllToasts() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            });
+        }
+
+        function setButtonLoading(button, loading, loadingText) {
+            if (loading) {
+                button.dataset.originalText = button.textContent;
+                if (loadingText) button.textContent = loadingText;
+                button.classList.add('loading');
+                button.disabled = true;
+            } else {
+                if (button.dataset.originalText) {
+                    button.textContent = button.dataset.originalText;
+                }
+                button.classList.remove('loading');
+                button.disabled = false;
+            }
+        }
+
+        function setItemState(type, value, state) {
+            const itemElements = document.querySelectorAll('.dropdown-item');
+            
+            itemElements.forEach(element => {
+                const itemValue = element.querySelector('.item-value');
+                if (itemValue && itemValue.textContent.trim() === value) {
+                    element.classList.remove('updating', 'deleting', 'success');
+                    
+                    if (state) {
+                        element.classList.add(state);
+                        
+                        if (state === 'deleting') {
+                            console.log('🚨 DELETING ITEM:', value);
+                            element.style.transition = 'all 0.2s ease';
+                            setTimeout(() => {
+                                element.style.transition = 'all 0.3s ease';
+                            }, 200);
+                        }
+                    }
+                }
+            });
+        }
+
+        // Enhanced Add Item Function
+        async function addItem(type, value) {
+            console.log('🎛️ Adding item:', type, value);
+            
+            const addButtons = document.querySelectorAll('.add-btn');
+            let targetButton = null;
+            
+            addButtons.forEach(btn => {
+                if (btn.textContent.includes('Add')) {
+                    targetButton = btn;
+                }
+            });
+            
+            if (targetButton) {
+                setButtonLoading(targetButton, true, '⏳ Adding...');
+            }
+            
+            try {
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'addDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'addDropdownItem', { type, value });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    showToast('warning', 'Processing...', `Adding "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetButton) {
+                        setButtonLoading(targetButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    await loadAllData();
+                    
+                    removeAllToasts();
+                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
+                } else {
+                    throw new Error(response.message || 'Failed to add item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error adding item:', error);
+                removeAllToasts();
+                showToast('error', 'Add Failed', `Failed to add "${value}": ${error.message}`);
+            } finally {
+                if (targetButton) {
+                    setButtonLoading(targetButton, false);
+                }
+            }
+        }
+
+        // Enhanced Update Item Function
+        async function updateItem(type, oldValue, newValue) {
+            console.log('✏️ Updating item:', type, oldValue, '→', newValue);
+            
+            try {
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'updateDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'updateDropdownItem', { 
+                    type, 
+                    oldValue, 
+                    newValue 
+                });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    showToast('warning', 'Processing...', `Updating "${oldValue}" to "${newValue}" - refreshing list...`, 15000);
+                    
+                    await loadAllData();
+                    
+                    removeAllToasts();
+                    showToast('success', 'Item Updated', `Successfully updated "${oldValue}" to "${newValue}"`);
+                } else {
+                    throw new Error(response.message || 'Failed to update item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error updating item:', error);
+                removeAllToasts();
+                showToast('error', 'Update Failed', `Failed to update "${oldValue}": ${error.message}`);
+            }
+        }
+
+        // Enhanced Delete Item Function
+        async function deleteItem(type, value) {
+            if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
+                return;
+            }
+            
+            console.log('🗑️ Deleting item:', type, value);
+            
+            setItemState(type, value, 'deleting');
+            
+            const itemElements = document.querySelectorAll('.dropdown-item');
+            let targetDeleteButton = null;
+            
+            itemElements.forEach(element => {
+                const itemValue = element.querySelector('.item-value');
+                if (itemValue && itemValue.textContent.trim() === value) {
+                    const deleteBtn = element.querySelector('.delete-btn');
+                    if (deleteBtn) {
+                        targetDeleteButton = deleteBtn;
+                        setButtonLoading(deleteBtn, true, 'Deleting...');
+                    }
+                }
+            });
+            
+            try {
+                const isMaintenanceType = ['Status', 'Priority', 'Category', 'Sub-Category', 'Assigned To'].includes(type);
+                const apiUrl = isMaintenanceType ? MAINTENANCE_API_URL : RESIDENT_API_URL;
+                
+                console.log('📤 Calling backend:', apiUrl, 'deleteDropdownItem');
+                
+                const response = await makeRequest(apiUrl, 'deleteDropdownItem', { type, value });
+                
+                console.log('📥 Backend response:', response);
+                
+                if (response && response.success) {
+                    showToast('warning', 'Processing...', `Deleting "${value}" - refreshing list...`, 15000);
+                    
+                    if (targetDeleteButton) {
+                        setButtonLoading(targetDeleteButton, true, '🔄 Refreshing...');
+                    }
+                    
+                    await loadAllData();
+                    
+                    removeAllToasts();
+                    showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
+                } else {
+                    throw new Error(response.message || 'Failed to delete item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error deleting item:', error);
+                removeAllToasts();
+                showToast('error', 'Delete Failed', `Failed to delete "${value}": ${error.message}`);
+                
+                setItemState(type, value, null);
+                if (targetDeleteButton) {
+                    setButtonLoading(targetDeleteButton, false);
+                }
+            }
+        }
+
         function switchTab(tab) {
-            console.log('📋 Switching to tab:', tab);
+            currentTab = tab;
             
-            // Update buttons
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById(`${tab}TabBtn`).classList.add('active');
+            document.getElementById('categoriesTabBtn').classList.toggle('active', tab === 'categories');
+            document.getElementById('maintenanceTabBtn').classList.toggle('active', tab === 'maintenance');
             
-            // Update content
             document.getElementById('categoriesContent').classList.toggle('hidden', tab !== 'categories');
             document.getElementById('maintenanceContent').classList.toggle('hidden', tab !== 'maintenance');
             
-            // Update info
             const info = tab === 'categories' 
                 ? '<strong>Categories Tab:</strong> Manages Unit Numbers and Reported By names for the Resident Submission Form'
                 : '<strong>Maintenance Tab:</strong> Manages Status, Priority, Categories, Sub-Categories, and Staff assignments for the Maintenance Portal';
             
             document.getElementById('tabInfo').innerHTML = info;
             
-            currentTab = tab;
+            console.log('📋 Switched to tab:', tab);
         }
 
-        // Load all data
         async function loadAllData() {
             try {
                 console.log('📊 Loading all dropdown data...');
                 
-                // Load Categories tab data
                 await loadCategoriesData();
-                
-                // Load Maintenance tab data  
                 await loadMaintenanceData();
                 
-                // Render all sections
-                renderAllSections();
-                
-                showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
+                console.log('✅ All data loaded successfully');
                 
             } catch (error) {
                 console.error('❌ Error loading data:', error);
@@ -789,70 +1002,223 @@
 
         async function loadCategoriesData() {
             try {
+                console.log('📝 Loading Categories tab data...');
+                
                 const response = await makeRequest(RESIDENT_API_URL, 'getDropdownOptions', {});
                 
-                if (response.success) {
-                    dropdownData.categories = response.options || {};
-                    console.log('✅ Categories data loaded');
+                if (response && response.success && response.options) {
+                    dropdownData.unitNumbers = response.options['Unit Number'] || [];
+                    dropdownData.reportedBy = response.options['Reported By'] || [];
+                    
+                    renderDropdownList('unitNumbersList', dropdownData.unitNumbers, 'Unit Number');
+                    renderDropdownList('reportedByList', dropdownData.reportedBy, 'Reported By');
+                    
+                    console.log('✅ Categories data loaded:', {
+                        unitNumbers: dropdownData.unitNumbers.length,
+                        reportedBy: dropdownData.reportedBy.length
+                    });
                 } else {
-                    throw new Error('Failed to load Categories data');
+                    throw new Error('Failed to load categories data');
                 }
+                
             } catch (error) {
-                console.error('❌ Categories data error:', error);
-                dropdownData.categories = {};
+                console.error('❌ Error loading categories data:', error);
+                document.getElementById('unitNumbersList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                document.getElementById('reportedByList').innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
             }
         }
 
         async function loadMaintenanceData() {
             try {
+                console.log('🔧 Loading Maintenance tab data...');
+                
                 const response = await makeRequest(MAINTENANCE_API_URL, 'getDropdownOptions', {});
                 
-                if (response.success) {
-                    dropdownData.maintenance = response.options || {};
-                    console.log('✅ Maintenance data loaded');
+                if (response && response.success && response.options) {
+                    dropdownData.statuses = response.options['Status'] || [];
+                    dropdownData.priorities = response.options['Priority'] || [];
+                    dropdownData.categories = response.options['Category'] || [];
+                    dropdownData.subCategories = response.options['Sub-Category'] || [];
+                    dropdownData.assignedTo = response.options['Assigned To'] || [];
+                    
+                    renderDropdownList('statusList', dropdownData.statuses, 'Status');
+                    renderDropdownList('priorityList', dropdownData.priorities, 'Priority');
+                    renderDropdownList('categoryList', dropdownData.categories, 'Category');
+                    renderDropdownList('subCategoryList', dropdownData.subCategories, 'Sub-Category');
+                    renderDropdownList('assignedToList', dropdownData.assignedTo, 'Assigned To');
+                    
+                    console.log('✅ Maintenance data loaded:', {
+                        statuses: dropdownData.statuses.length,
+                        priorities: dropdownData.priorities.length,
+                        categories: dropdownData.categories.length,
+                        subCategories: dropdownData.subCategories.length,
+                        assignedTo: dropdownData.assignedTo.length
+                    });
                 } else {
-                    throw new Error('Failed to load Maintenance data');
+                    throw new Error('Failed to load maintenance data');
                 }
+                
             } catch (error) {
-                console.error('❌ Maintenance data error:', error);
-                dropdownData.maintenance = {};
+                console.error('❌ Error loading maintenance data:', error);
+                ['statusList', 'priorityList', 'categoryList', 'subCategoryList', 'assignedToList'].forEach(listId => {
+                    document.getElementById(listId).innerHTML = '<div style="text-align: center; color: #ef4444; padding: 20px;">Error loading data</div>';
+                });
             }
         }
 
-        function renderAllSections() {
-            // Categories tab sections
-            renderDropdownSection('Unit Number', 'unitNumbersList', 'categories');
-            renderDropdownSection('Reported By', 'reportedByList', 'categories');
-            
-            // Maintenance tab sections
-            renderDropdownSection('Status', 'statusList', 'maintenance');
-            renderDropdownSection('Priority', 'priorityList', 'maintenance');
-            renderDropdownSection('Category', 'categoryList', 'maintenance');
-            renderDropdownSection('Sub-Category', 'subCategoryList', 'maintenance');
-            renderDropdownSection('Assigned To', 'assignedToList', 'maintenance');
-        }
-
-        function renderDropdownSection(type, containerId, dataSource) {
+        function renderDropdownList(containerId, items, type) {
             const container = document.getElementById(containerId);
-            if (!container) return;
             
-            const items = dropdownData[dataSource]?.[type] || [];
-            
-            if (items.length === 0) {
-                container.innerHTML = `
-                    <div class="loading">
-                        No ${type.toLowerCase()} items found
-                    </div>
-                `;
+            if (!items || items.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: #64748b; padding: 20px;">No items found</div>';
                 return;
             }
             
-            container.innerHTML = items.map(item => `
+            const html = items.map(item => `
                 <div class="dropdown-item">
-                    <div class="item-value">${item}</div>
+                    <span class="item-value">${item}</span>
                     <div class="item-actions">
-                        <button class="action-btn edit-btn" onclick="editItem('${type}', '${item}')">Edit</button>
+                        <button class="action-btn edit-btn" onclick="openEditModal('${type}', '${item}')">Edit</button>
                         <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
                     </div>
                 </div>
-            `
+            `).join('');
+            
+            container.innerHTML = html;
+        }
+
+        function openAddModal(type) {
+            currentEditItem = null;
+            
+            document.getElementById('modalTitle').textContent = `Add New ${type}`;
+            document.getElementById('modalSubtitle').textContent = `Add a new ${type.toLowerCase()} option`;
+            document.getElementById('itemValue').value = '';
+            document.getElementById('modalSubmitBtn').textContent = 'Add Item';
+            document.getElementById('modalSubmitBtn').dataset.type = type;
+            document.getElementById('modalSubmitBtn').dataset.action = 'add';
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('itemValue').focus();
+        }
+
+        function openEditModal(type, value) {
+            currentEditItem = { type, value };
+            
+            document.getElementById('modalTitle').textContent = `Edit ${type}`;
+            document.getElementById('modalSubtitle').textContent = `Update the ${type.toLowerCase()} value`;
+            document.getElementById('itemValue').value = value;
+            document.getElementById('modalSubmitBtn').textContent = 'Update Item';
+            document.getElementById('modalSubmitBtn').dataset.type = type;
+            document.getElementById('modalSubmitBtn').dataset.action = 'edit';
+            
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('itemValue').focus();
+        }
+
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+            currentEditItem = null;
+        }
+
+        async function handleModalSubmit(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('modalSubmitBtn');
+            const type = submitBtn.dataset.type;
+            const action = submitBtn.dataset.action;
+            const value = document.getElementById('itemValue').value.trim();
+            
+            if (!value) {
+                showToast('error', 'Invalid Input', 'Please enter a value');
+                return;
+            }
+            
+            setButtonLoading(submitBtn, true, action === 'add' ? 'Adding...' : 'Updating...');
+            
+            try {
+                if (action === 'add') {
+                    await addItem(type, value);
+                } else {
+                    await updateItem(type, currentEditItem.value, value);
+                }
+                
+                closeModal();
+                
+            } catch (error) {
+                console.error('❌ Error in modal submit:', error);
+                showToast('error', 'Operation Failed', error.message);
+            } finally {
+                setButtonLoading(submitBtn, false);
+            }
+        }
+
+        async function makeRequest(url, action, additionalParams = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                
+                const params = new URLSearchParams({
+                    action: action,
+                    callback: callbackName,
+                    ...additionalParams
+                });
+                
+                script.src = `${url}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    setTimeout(() => {
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                    }, 100);
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    setTimeout(() => {
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        if (window[callbackName]) {
+                            delete window[callbackName];
+                        }
+                    }, 100);
+                    reject(new Error('Network request failed'));
+                };
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        if (script && script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        function goBackToAdminMain() {
+            if (document.referrer && document.referrer.includes('login')) {
+                window.history.go(-2);
+            } else {
+                window.history.back();
+            }
+        }
+
+        console.log('🎛️ Dropdown Manager - Ready with enhanced color scheme!');
+        console.log('🎨 COLOR UPDATES APPLIED:');
+        console.log('  • Section headers: Purple → Blue gradient (#3b82f6 → #1d4ed8)');
+        console.log('  • Tab active: Purple → Blue (#3b82f6)');
+        console.log('  • Back button: Gray → Blue (#3b82f6)');
+        console.log('  • Enhanced shadows and hover effects');
+        console.log('  • Subtle gradient backgrounds on items');
+        console.log('  • All functionality preserved exactly as working version');
+    </script>
+</body>
+</html>
