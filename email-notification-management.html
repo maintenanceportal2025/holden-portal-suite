@@ -1103,10 +1103,10 @@
         function goBackToAdmin() {
             if (hasChanges) {
                 if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                    window.history.go(-2);
                 }
             } else {
-                window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                window.history.go(-2);
             }
         }
 
