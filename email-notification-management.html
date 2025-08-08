@@ -1101,23 +1101,12 @@
 
         // Navigate back to admin dashboard
         function goBackToAdmin() {
-            if (hasChanges) {
-                if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                    // Go back in history, but if it's the login screen, go back further
-                    if (document.referrer && document.referrer.includes('login')) {
-                        window.history.go(-2); // Skip login screen
-                    } else {
-                        window.history.back(); // Normal back
-                    }
-                }
-            } else {
-                // Go back in history, but if it's the login screen, go back further
-                if (document.referrer && document.referrer.includes('login')) {
-                    window.history.go(-2); // Skip login screen
-                } else {
-                    window.history.back(); // Normal back
-                }
+            if (hasChanges && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                return;
             }
+            
+            // Use simple history back - same as Dynamic Dropdowns
+            window.history.back();
         }
 
         // Make JSONP request to backend
