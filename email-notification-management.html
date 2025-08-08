@@ -645,11 +645,12 @@
             input.focus();
             input.select();
             
-            // Save on Enter or blur, Tab to next field
+            // Save on Enter (and move to next field), blur, Tab to next field
             input.addEventListener('blur', () => finishEdit());
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    finishEdit();
+                    e.preventDefault();
+                    finishEditAndMoveNext(type, id, field);
                 } else if (e.key === 'Tab') {
                     // Let tab work naturally, but finish current edit
                     finishEdit();
@@ -661,8 +662,32 @@
             editingCell = { type, id, field, input, cell, originalValue: currentValue };
         }
 
-        // Finish editing
-        function finishEdit() {
+        // Finish editing and move to next field
+        function finishEditAndMoveNext(type, id, currentField) {
+            if (!editingCell) return;
+            
+            // Finish current edit
+            finishEdit();
+            
+            // Determine next field
+            let nextField = null;
+            if (type === 'maintenance') {
+                if (currentField === 'name') nextField = 'email';
+                // If email, stay on email (last field)
+            } else {
+                // Zone rep
+                if (currentField === 'zone') nextField = 'name';
+                else if (currentField === 'name') nextField = 'email';
+                // If email, stay on email (last field)
+            }
+            
+            // Move to next field if it exists
+            if (nextField) {
+                setTimeout(() => {
+                    editCell(type, id, nextField);
+                }, 100);
+            }
+        }
             if (!editingCell) return;
             
             const { type, id, field, input, cell, originalValue } = editingCell;
@@ -857,7 +882,7 @@
                 // Reload fresh data
                 await loadInitialData();
                 
-                // Reset state
+                // Reset state - CLEAR SELECTIONS
                 hasChanges = false;
                 selectedForDeletion.clear();
                 updateChangesIndicator();
@@ -876,7 +901,7 @@
         function cancelAllChanges() {
             if (confirm('Are you sure you want to cancel all unsaved changes?')) {
                 hasChanges = false;
-                selectedForDeletion.clear();
+                selectedForDeletion.clear(); // Clear selections
                 loadInitialData();
                 showStatus('Changes cancelled', 'success');
             }
