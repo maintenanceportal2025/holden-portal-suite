@@ -716,13 +716,9 @@
             // Check if email is being cleared (move to inactive)
             if (field === 'email' && originalValue && originalValue.trim() !== '' && (!newValue || newValue === '')) {
                 moveToInactive(type, id, originalValue);
-                // Don't process further - moveToInactive handles the data update
-                editingCell = null;
-                renderAllLists();
-                return;
             }
             
-            // Update data for normal edits
+            // Update data normally
             if (type === 'maintenance') {
                 const person = maintenanceTeam.find(p => p.id === id);
                 if (person) {
@@ -763,12 +759,6 @@
                 };
                 
                 inactiveContacts.push(inactiveContact);
-                
-                // Actually clear the email from the main contact
-                contact.email = '';
-                contact.changed = true;
-                markAsChanged();
-                
                 console.log('Moved to inactive:', inactiveContact);
                 showStatus(`📋 ${contact.name || contact.zone} moved to inactive list`, 'success');
             }
