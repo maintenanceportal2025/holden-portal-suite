@@ -283,6 +283,16 @@
             display: none !important;
         }
 
+        .inactive-section {
+            margin-top: 30px;
+        }
+
+        .inactive-row {
+            grid-template-columns: 1fr 1fr 100px 100px 120px;
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+
         @media (max-width: 768px) {
             .table-header, .table-row {
                 font-size: 14px;
@@ -374,6 +384,26 @@
                 </p>
             </div>
 
+            <!-- Inactive Contacts Section -->
+            <div id="inactiveSection" class="section inactive-section hidden">
+                <div class="section-header">
+                    <h2 class="section-title">📋 Inactive Contacts (Reference)</h2>
+                </div>
+                
+                <div class="table-container">
+                    <div class="table-header" style="grid-template-columns: 1fr 1fr 100px 100px 120px;">
+                        <div>Name</div>
+                        <div>Email</div>
+                        <div>Type</div>
+                        <div>Removed</div>
+                        <div>Actions</div>
+                    </div>
+                    <div id="inactiveList">
+                        <!-- Inactive contacts will be rendered here -->
+                    </div>
+                </div>
+            </div>
+
             <!-- Action Bar -->
             <div id="actionBar" class="action-bar hidden">
                 <button class="btn btn-success" onclick="saveAllChanges()">
@@ -396,6 +426,7 @@
                     <li><strong>Remove from notifications:</strong> Clear the email field and save</li>
                     <li><strong>Add new:</strong> Use the + buttons to add new people</li>
                     <li><strong>Delete entries:</strong> Check the box next to unwanted entries and use Delete Selected</li>
+                    <li><strong>Restore contacts:</strong> Previously removed contacts appear in the Inactive section</li>
                 </ul>
             </div>
         </div>
@@ -408,6 +439,7 @@
         // Global State
         let maintenanceTeam = [];
         let zoneReps = [];
+        let inactiveContacts = [];
         let hasChanges = false;
         let editingCell = null;
         let selectedForDeletion = new Set();
@@ -474,6 +506,7 @@
         function renderAllLists() {
             renderMaintenanceTeam();
             renderZoneReps();
+            renderInactiveContacts();
             updateChangesIndicator();
         }
 
@@ -542,6 +575,39 @@
             });
         }
 
+        // Render inactive contacts
+        function renderInactiveContacts() {
+            const section = document.getElementById('inactiveSection');
+            const container = document.getElementById('inactiveList');
+            
+            if (inactiveContacts.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            section.classList.remove('hidden');
+            container.innerHTML = '';
+            
+            inactiveContacts.forEach((contact, index) => {
+                const row = document.createElement('div');
+                row.className = 'table-row inactive-row';
+                
+                row.innerHTML = `
+                    <div class="table-cell">${contact.name}</div>
+                    <div class="table-cell" style="font-family: monospace;">${contact.email}</div>
+                    <div class="table-cell">${contact.type === 'maintenance' ? '🔧 Maintenance' : '🏘️ Zone Rep'}</div>
+                    <div class="table-cell">${contact.removedDate}</div>
+                    <div class="table-cell">
+                        <button class="btn btn-secondary" onclick="restoreContact(${index})" style="padding: 4px 8px; font-size: 12px;">
+                            ↩️ Restore
+                        </button>
+                    </div>
+                `;
+                
+                container.appendChild(row);
+            });
+        }
+
         // Edit cell functionality
         function editCell(type, id, field) {
             if (editingCell) {
@@ -562,6 +628,14 @@
             input.value = currentValue;
             input.placeholder = getPlaceholder(field);
             
+            // Set tab order for better UX
+            if (type === 'maintenance') {
+                input.tabIndex = field === 'name' ? 1 : 2;
+            } else {
+                // Zone rep: zone=1, name=2, email=3
+                input.tabIndex = field === 'zone' ? 1 : field === 'name' ? 2 : 3;
+            }
+            
             // Replace cell content
             cell.innerHTML = '';
             cell.appendChild(input);
@@ -571,12 +645,15 @@
             input.focus();
             input.select();
             
-            // Save on Enter (with navigation) or blur
+            // Save on Enter (and move to next field), blur, Tab to next field
             input.addEventListener('blur', () => finishEdit());
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
                     e.preventDefault();
                     finishEditAndMoveNext(type, id, field);
+                } else if (e.key === 'Tab') {
+                    // Let tab work naturally, but finish current edit
+                    finishEdit();
                 } else if (e.key === 'Escape') {
                     cancelEdit();
                 }
@@ -589,19 +666,19 @@
         function finishEditAndMoveNext(type, id, currentField) {
             if (!editingCell) return;
             
-            // Finish current edit first
+            // Finish current edit
             finishEdit();
             
             // Determine next field
             let nextField = null;
             if (type === 'maintenance') {
                 if (currentField === 'name') nextField = 'email';
-                // If email, no next field (last field)
+                // If email, stay on email (last field)
             } else {
-                // Zone rep: zone → name → email
+                // Zone rep
                 if (currentField === 'zone') nextField = 'name';
                 else if (currentField === 'name') nextField = 'email';
-                // If email, no next field (last field)
+                // If email, stay on email (last field)
             }
             
             // Move to next field if it exists
@@ -611,9 +688,6 @@
                 }, 100);
             }
         }
-
-        // Finish editing
-        function finishEdit() {
             if (!editingCell) return;
             
             const { type, id, field, input, cell, originalValue } = editingCell;
@@ -808,7 +882,7 @@
                 // Reload fresh data
                 await loadInitialData();
                 
-                // Reset state
+                // Reset state - CLEAR SELECTIONS
                 hasChanges = false;
                 selectedForDeletion.clear();
                 updateChangesIndicator();
@@ -827,7 +901,7 @@
         function cancelAllChanges() {
             if (confirm('Are you sure you want to cancel all unsaved changes?')) {
                 hasChanges = false;
-                selectedForDeletion.clear();
+                selectedForDeletion.clear(); // Clear selections
                 loadInitialData();
                 showStatus('Changes cancelled', 'success');
             }
@@ -878,6 +952,38 @@
                 showStatus('❌ Failed to delete entries: ' + error.message, 'error');
             } finally {
                 showLoading(false);
+            }
+        }
+
+        // Restore contact from inactive
+        async function restoreContact(index) {
+            try {
+                const contact = inactiveContacts[index];
+                console.log('↩️ Restoring contact:', contact);
+                
+                if (contact.type === 'maintenance') {
+                    addMaintenancePerson();
+                    const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
+                    newPerson.name = contact.name;
+                    newPerson.email = contact.email;
+                } else {
+                    addZoneRep();
+                    const newRep = zoneReps[zoneReps.length - 1];
+                    newRep.zone = contact.zone;
+                    newRep.name = contact.name;
+                    newRep.email = contact.email;
+                }
+                
+                // Remove from inactive list
+                inactiveContacts.splice(index, 1);
+                
+                markAsChanged();
+                renderAllLists();
+                showStatus('✅ Contact restored - remember to save changes', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error restoring contact:', error);
+                showStatus('❌ Failed to restore contact: ' + error.message, 'error');
             }
         }
 
