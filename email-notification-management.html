@@ -1103,10 +1103,20 @@
         function goBackToAdmin() {
             if (hasChanges) {
                 if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                    goBackToAdminMain();
                 }
             } else {
-                window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                goBackToAdminMain();
+            }
+        }
+
+        // Smart navigation back to admin dashboard
+        function goBackToAdminMain() {
+            // Go back in history, but if it's the login screen, go back further
+            if (document.referrer && document.referrer.includes('login')) {
+                window.history.go(-2); // Skip login screen
+            } else {
+                window.history.back(); // Normal back
             }
         }
 
