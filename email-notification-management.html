@@ -718,7 +718,7 @@
                 moveToInactive(type, id, originalValue);
             }
             
-            // Update data normally
+            // Update data
             if (type === 'maintenance') {
                 const person = maintenanceTeam.find(p => p.id === id);
                 if (person) {
@@ -1099,14 +1099,15 @@
             }, 5000);
         }
 
-        // Navigate back to admin dashboard
+        // Navigate back to admin portal
         function goBackToAdmin() {
-            if (hasChanges && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                return;
+            if (hasChanges) {
+                if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                }
+            } else {
+                window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
             }
-            
-            // Use simple history back - same as Dynamic Dropdowns
-            window.history.back();
         }
 
         // Make JSONP request to backend
