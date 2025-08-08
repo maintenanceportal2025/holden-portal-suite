@@ -1103,10 +1103,10 @@
         function goBackToAdmin() {
             if (hasChanges) {
                 if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
-                    window.history.go(-2);
+                    window.history.go(-1);
                 }
             } else {
-                window.history.go(-2);
+                window.history.go(-1);
             }
         }
 
