@@ -571,17 +571,45 @@
             input.focus();
             input.select();
             
-            // Save on Enter or blur
+            // Save on Enter (with navigation) or blur
             input.addEventListener('blur', () => finishEdit());
             input.addEventListener('keydown', (e) => {
                 if (e.key === 'Enter') {
-                    finishEdit();
+                    e.preventDefault();
+                    finishEditAndMoveNext(type, id, field);
                 } else if (e.key === 'Escape') {
                     cancelEdit();
                 }
             });
             
             editingCell = { type, id, field, input, cell, originalValue: currentValue };
+        }
+
+        // Finish editing and move to next field
+        function finishEditAndMoveNext(type, id, currentField) {
+            if (!editingCell) return;
+            
+            // Finish current edit first
+            finishEdit();
+            
+            // Determine next field
+            let nextField = null;
+            if (type === 'maintenance') {
+                if (currentField === 'name') nextField = 'email';
+                // If email, no next field (last field)
+            } else {
+                // Zone rep: zone → name → email
+                if (currentField === 'zone') nextField = 'name';
+                else if (currentField === 'name') nextField = 'email';
+                // If email, no next field (last field)
+            }
+            
+            // Move to next field if it exists
+            if (nextField) {
+                setTimeout(() => {
+                    editCell(type, id, nextField);
+                }, 100);
+            }
         }
 
         // Finish editing
