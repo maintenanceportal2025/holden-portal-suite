@@ -30,8 +30,34 @@
         .header {
             background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             color: white;
-            padding: 30px;
+            padding: 60px 30px 30px;
             text-align: center;
+            position: relative;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(10px);
+            z-index: 10;
+        }
+
+        .back-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
         }
 
         .header h1 {
@@ -310,6 +336,9 @@
 
     <div class="container">
         <div class="header">
+            <button class="back-button" onclick="goBackToAdmin()">
+                ← Back to Admin Portal
+            </button>
             <h1>📧 Email Notification Management</h1>
             <p>Manage maintenance team and zone representative email lists</p>
         </div>
@@ -1068,6 +1097,17 @@
             setTimeout(() => {
                 statusDiv.style.display = 'none';
             }, 5000);
+        }
+
+        // Navigate back to admin portal
+        function goBackToAdmin() {
+            if (hasChanges) {
+                if (confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+                }
+            } else {
+                window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/holden-admin-portal.html';
+            }
         }
 
         // Make JSONP request to backend
