@@ -374,30 +374,6 @@
                 </p>
             </div>
 
-            <!-- Inactive Contacts Section -->
-            <div id="inactiveSection" class="section hidden">
-                <div class="section-header">
-                    <h2 class="section-title">📋 Inactive Contacts (Reference)</h2>
-                </div>
-                
-                <div class="table-container">
-                    <div class="table-header" style="grid-template-columns: 1fr 1fr 100px 100px 120px;">
-                        <div>Name</div>
-                        <div>Email</div>
-                        <div>Type</div>
-                        <div>Removed</div>
-                        <div>Actions</div>
-                    </div>
-                    <div id="inactiveList">
-                        <!-- Inactive contacts will be rendered here -->
-                    </div>
-                </div>
-                
-                <p style="margin-top: 15px; color: #64748b; font-size: 14px;">
-                    💡 Contacts moved here when email address is cleared • Can be restored or permanently deleted
-                </p>
-            </div>
-
             <!-- Action Bar -->
             <div id="actionBar" class="action-bar hidden">
                 <button class="btn btn-success" onclick="saveAllChanges()">
@@ -432,7 +408,6 @@
         // Global State
         let maintenanceTeam = [];
         let zoneReps = [];
-        let inactiveContacts = [];
         let hasChanges = false;
         let editingCell = null;
         let selectedForDeletion = new Set();
@@ -499,7 +474,6 @@
         function renderAllLists() {
             renderMaintenanceTeam();
             renderZoneReps();
-            renderInactiveContacts();
             updateChangesIndicator();
         }
 
@@ -561,45 +535,6 @@
                     <div class="table-cell">
                         <input type="checkbox" onchange="toggleSelection('zoneRep', ${rep.id})" 
                                ${selectedForDeletion.has(`zoneRep-${rep.id}`) ? 'checked' : ''}>
-                    </div>
-                `;
-                
-                container.appendChild(row);
-            });
-        }
-
-        // Render inactive contacts
-        function renderInactiveContacts() {
-            const section = document.getElementById('inactiveSection');
-            const container = document.getElementById('inactiveList');
-            
-            if (inactiveContacts.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-            
-            section.classList.remove('hidden');
-            container.innerHTML = '';
-            
-            inactiveContacts.forEach((contact, index) => {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                row.style.gridTemplateColumns = '1fr 1fr 100px 100px 120px';
-                row.style.background = '#fef2f2';
-                row.style.borderLeft = '4px solid #ef4444';
-                
-                row.innerHTML = `
-                    <div class="table-cell">${contact.name}</div>
-                    <div class="table-cell" style="font-family: monospace;">${contact.email}</div>
-                    <div class="table-cell">${contact.type === 'maintenance' ? '🔧 Maintenance' : '🏘️ Zone Rep'}</div>
-                    <div class="table-cell">${contact.removedDate}</div>
-                    <div class="table-cell">
-                        <button class="btn btn-secondary" onclick="restoreContact(${index})" style="padding: 4px 8px; font-size: 12px; margin-right: 4px;">
-                            ↩️ Restore
-                        </button>
-                        <button class="btn btn-danger" onclick="removeFromInactive(${index})" style="padding: 4px 8px; font-size: 12px;">
-                            🗑️ Delete
-                        </button>
                     </div>
                 `;
                 
@@ -684,11 +619,6 @@
             const { type, id, field, input, cell, originalValue } = editingCell;
             const newValue = input.value.trim();
             
-            // Check if email is being cleared (move to inactive)
-            if (field === 'email' && originalValue && originalValue.trim() !== '' && (!newValue || newValue === '')) {
-                moveToInactive(type, id, originalValue);
-            }
-            
             // Update data
             if (type === 'maintenance') {
                 const person = maintenanceTeam.find(p => p.id === id);
@@ -712,103 +642,6 @@
             
             editingCell = null;
             renderAllLists();
-        }
-
-        // Move contact to inactive when email cleared
-        function moveToInactive(type, id, email) {
-            const contact = type === 'maintenance' 
-                ? maintenanceTeam.find(p => p.id === id)
-                : zoneReps.find(r => r.id === id);
-                
-            if (contact) {
-                const inactiveContact = {
-                    name: contact.name || (contact.zone || 'Unknown'),
-                    email: email,
-                    type: type,
-                    zone: contact.zone,
-                    removedDate: new Date().toISOString().split('T')[0]
-                };
-                
-                inactiveContacts.push(inactiveContact);
-                console.log('Moved to inactive:', inactiveContact);
-                showStatus(`📋 ${contact.name || contact.zone} moved to inactive list`, 'success');
-            }
-        }
-
-        // Restore contact from inactive
-        function restoreContact(index) {
-            const contact = inactiveContacts[index];
-            console.log('↩️ Restoring contact:', contact);
-            
-            if (contact.type === 'maintenance') {
-                // Find existing maintenance person with same name but no email
-                const existingPerson = maintenanceTeam.find(p => 
-                    p.name === contact.name && (!p.email || p.email.trim() === '')
-                );
-                
-                if (existingPerson) {
-                    // Restore email to existing person
-                    existingPerson.email = contact.email;
-                    existingPerson.changed = true;
-                    markAsChanged();
-                } else {
-                    // If no existing match, create new (shouldn't normally happen)
-                    addMaintenancePerson();
-                    const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
-                    newPerson.name = contact.name;
-                    newPerson.email = contact.email;
-                }
-            } else {
-                // Find existing zone rep with same zone and name but no email
-                const existingRep = zoneReps.find(r => 
-                    r.zone === contact.zone && 
-                    r.name === contact.name && 
-                    (!r.email || r.email.trim() === '')
-                );
-                
-                if (existingRep) {
-                    // Restore email to existing rep
-                    existingRep.email = contact.email;
-                    existingRep.changed = true;
-                    markAsChanged();
-                } else {
-                    // If no exact match, find any rep in same zone with no email
-                    const zoneRepWithoutEmail = zoneReps.find(r => 
-                        r.zone === contact.zone && (!r.email || r.email.trim() === '')
-                    );
-                    
-                    if (zoneRepWithoutEmail) {
-                        // Restore to this rep and update name if needed
-                        zoneRepWithoutEmail.name = contact.name;
-                        zoneRepWithoutEmail.email = contact.email;
-                        zoneRepWithoutEmail.changed = true;
-                        markAsChanged();
-                    } else {
-                        // If no existing entry, create new (shouldn't normally happen)
-                        addZoneRep();
-                        const newRep = zoneReps[zoneReps.length - 1];
-                        newRep.zone = contact.zone;
-                        newRep.name = contact.name;
-                        newRep.email = contact.email;
-                    }
-                }
-            }
-            
-            // Remove from inactive list
-            inactiveContacts.splice(index, 1);
-            
-            renderAllLists();
-            showStatus(`↩️ ${contact.name} email restored - remember to save changes`, 'success');
-        }
-
-        // Remove from inactive permanently
-        function removeFromInactive(index) {
-            const contact = inactiveContacts[index];
-            if (confirm(`Permanently delete ${contact.name} from inactive list?`)) {
-                inactiveContacts.splice(index, 1);
-                renderAllLists();
-                showStatus(`🗑️ ${contact.name} permanently removed`, 'success');
-            }
         }
 
         // Cancel editing
