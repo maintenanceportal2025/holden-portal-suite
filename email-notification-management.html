@@ -759,6 +759,12 @@
                 };
                 
                 inactiveContacts.push(inactiveContact);
+                
+                // Actually clear the email from the main contact
+                contact.email = '';
+                contact.changed = true;
+                markAsChanged();
+                
                 console.log('Moved to inactive:', inactiveContact);
                 showStatus(`📋 ${contact.name || contact.zone} moved to inactive list`, 'success');
             }
