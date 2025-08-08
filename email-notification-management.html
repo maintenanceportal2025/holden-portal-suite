@@ -741,25 +741,64 @@
             console.log('↩️ Restoring contact:', contact);
             
             if (contact.type === 'maintenance') {
-                // Add back to maintenance team
-                addMaintenancePerson();
-                const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
-                newPerson.name = contact.name;
-                newPerson.email = contact.email;
+                // Find existing maintenance person with same name but no email
+                const existingPerson = maintenanceTeam.find(p => 
+                    p.name === contact.name && (!p.email || p.email.trim() === '')
+                );
+                
+                if (existingPerson) {
+                    // Restore email to existing person
+                    existingPerson.email = contact.email;
+                    existingPerson.changed = true;
+                    markAsChanged();
+                } else {
+                    // If no existing match, create new (shouldn't normally happen)
+                    addMaintenancePerson();
+                    const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
+                    newPerson.name = contact.name;
+                    newPerson.email = contact.email;
+                }
             } else {
-                // Add back to zone reps
-                addZoneRep();
-                const newRep = zoneReps[zoneReps.length - 1];
-                newRep.zone = contact.zone;
-                newRep.name = contact.name;
-                newRep.email = contact.email;
+                // Find existing zone rep with same zone and name but no email
+                const existingRep = zoneReps.find(r => 
+                    r.zone === contact.zone && 
+                    r.name === contact.name && 
+                    (!r.email || r.email.trim() === '')
+                );
+                
+                if (existingRep) {
+                    // Restore email to existing rep
+                    existingRep.email = contact.email;
+                    existingRep.changed = true;
+                    markAsChanged();
+                } else {
+                    // If no exact match, find any rep in same zone with no email
+                    const zoneRepWithoutEmail = zoneReps.find(r => 
+                        r.zone === contact.zone && (!r.email || r.email.trim() === '')
+                    );
+                    
+                    if (zoneRepWithoutEmail) {
+                        // Restore to this rep and update name if needed
+                        zoneRepWithoutEmail.name = contact.name;
+                        zoneRepWithoutEmail.email = contact.email;
+                        zoneRepWithoutEmail.changed = true;
+                        markAsChanged();
+                    } else {
+                        // If no existing entry, create new (shouldn't normally happen)
+                        addZoneRep();
+                        const newRep = zoneReps[zoneReps.length - 1];
+                        newRep.zone = contact.zone;
+                        newRep.name = contact.name;
+                        newRep.email = contact.email;
+                    }
+                }
             }
             
             // Remove from inactive list
             inactiveContacts.splice(index, 1);
             
             renderAllLists();
-            showStatus(`↩️ ${contact.name} restored - remember to save changes`, 'success');
+            showStatus(`↩️ ${contact.name} email restored - remember to save changes`, 'success');
         }
 
         // Remove from inactive permanently
