@@ -701,6 +701,195 @@
                 font-size: 16px;
             }
         }
+
+/* ===================================================================
+   ACTIVITY TIMELINE STYLES - ADD TO EXISTING CSS
+   =================================================================== */
+
+/* Activity Timeline Section */
+.activity-timeline {
+    background: #f8fafc;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.timeline-container {
+    max-height: 400px;
+    overflow-y: auto;
+    border-radius: 6px;
+}
+
+.timeline-item {
+    display: flex;
+    align-items: flex-start;
+    padding: 12px 0;
+    border-bottom: 1px solid #e2e8f0;
+    position: relative;
+}
+
+.timeline-item:last-child {
+    border-bottom: none;
+}
+
+.timeline-icon {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    background: #3b82f6;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    margin-right: 12px;
+    position: relative;
+    z-index: 2;
+}
+
+.timeline-icon.system {
+    background: #10b981;
+}
+
+.timeline-icon.update {
+    background: #f59e0b;
+}
+
+.timeline-icon.completion {
+    background: #ef4444;
+}
+
+.timeline-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.timeline-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.timeline-user {
+    font-weight: 600;
+    color: #1f2937;
+    font-size: 14px;
+}
+
+.timeline-action {
+    color: #6b7280;
+    font-size: 13px;
+}
+
+.timeline-time {
+    color: #9ca3af;
+    font-size: 12px;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.timeline-changes {
+    margin-top: 6px;
+}
+
+.timeline-change {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 2px 0;
+    font-size: 13px;
+}
+
+.timeline-field {
+    font-weight: 500;
+    color: #374151;
+    min-width: 80px;
+}
+
+.timeline-values {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex: 1;
+}
+
+.timeline-old-value {
+    background: #fee2e2;
+    color: #dc2626;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.timeline-new-value {
+    background: #dcfce7;
+    color: #16a34a;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.timeline-arrow {
+    color: #9ca3af;
+    font-size: 12px;
+}
+
+.timeline-empty {
+    text-align: center;
+    color: #6b7280;
+    padding: 40px 20px;
+    font-style: italic;
+}
+
+.timeline-loading {
+    text-align: center;
+    color: #6b7280;
+    padding: 20px;
+}
+
+/* Timeline vertical line */
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 44px;
+    bottom: -12px;
+    width: 2px;
+    background: #e2e8f0;
+    z-index: 1;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .timeline-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .timeline-time {
+        margin-left: 0;
+    }
+    
+    .timeline-change {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .timeline-values {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+        margin-left: 10px;
+    }
+}
+
+
+        
     </style>
 </head>
 <body>
@@ -962,6 +1151,18 @@
             </div>
         </div>
     </div>
+
+    <!-- 2. ADD THIS HTML SECTION AFTER CONTACT DETAILS SECTION -->
+<div class="detail-section">
+    <div class="section-title-bar">📜 Activity Timeline</div>
+    <div class="activity-timeline">
+        <div id="timelineContainer" class="timeline-container">
+            <div class="timeline-loading" id="timelineLoading">
+                Loading activity history...
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- REPORT MODAL -->
     <div id="reportModal" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
@@ -1922,49 +2123,53 @@
         }
         
         function openProblemDetailsPage(problem) {
-            currentProblem = problem;
-            
-            const friendlyPID = getFriendlyPID(problem.internalId);
-            
-            document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${problem.unitNumber}`;
-            
-            // Problem Details (read-only)
-            document.getElementById('detailProblemId').textContent = friendlyPID;
-            document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
-            
-            // FIXED: Use correct timestamp field (Col A - Timestamp) for reported date
-            document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
-            
-            document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
-            document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description';
-            
-            // Update dropdowns before setting values
-            updateAllDropdowns();
-            
-            // Management Details (editable)
-            document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
-            document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
-            document.getElementById('detailCategory').value = problem.category || '';
-            document.getElementById('detailSubCategory').value = problem.subCategory || '';
-            document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
-            
-            // Completion date
-            const completionDate = problem.completionDate || '';
-            if (completionDate) {
-                const date = new Date(completionDate);
-                const formattedDate = date.toISOString().split('T')[0];
-                document.getElementById('detailCompletionDate').value = formattedDate;
-            } else {
-                document.getElementById('detailCompletionDate').value = '';
-            }
-            
-            document.getElementById('detailComments').value = problem.comments || '';
-            
-            // Contact Details
-            populateContactDetails(problem);
-            
-            showDetailsView();
-        }
+    currentProblem = problem;
+    
+    const friendlyPID = getFriendlyPID(problem.internalId);
+    
+    document.getElementById('problemPageTitle').textContent = `${friendlyPID} - ${problem.unitNumber}`;
+    
+    // Problem Details (read-only)
+    document.getElementById('detailProblemId').textContent = friendlyPID;
+    document.getElementById('detailUnitNumber').textContent = problem.unitNumber || 'Unknown';
+    
+    // FIXED: Use correct timestamp field (Col A - Timestamp) for reported date
+    document.getElementById('detailReportedDate').textContent = formatDate(problem.timestamp);
+    
+    document.getElementById('detailZone').textContent = problem.zone || 'Unknown';
+    document.getElementById('detailDescription').textContent = problem.problemDescription || 'No description';
+    
+    // Update dropdowns before setting values
+    updateAllDropdowns();
+    
+    // Management Details (editable)
+    document.getElementById('detailStatus').value = problem.problemStatus || 'Reported';
+    document.getElementById('detailPriority').value = problem.problemPriority || 'Medium';
+    document.getElementById('detailCategory').value = problem.category || '';
+    document.getElementById('detailSubCategory').value = problem.subCategory || '';
+    document.getElementById('detailAssignedTo').value = problem.assignedTo || '';
+    
+    // Completion date
+    const completionDate = problem.completionDate || '';
+    if (completionDate) {
+        const date = new Date(completionDate);
+        const formattedDate = date.toISOString().split('T')[0];
+        document.getElementById('detailCompletionDate').value = formattedDate;
+    } else {
+        document.getElementById('detailCompletionDate').value = '';
+    }
+    
+    document.getElementById('detailComments').value = problem.comments || '';
+    
+    // Contact Details
+    populateContactDetails(problem);
+    
+    // Show details view
+    showDetailsView();
+    
+    // 🎯 NEW: Display activity timeline
+    displayActivityTimeline(problem);
+}
         
         function populateContactDetails(problem) {
             const container = document.getElementById('contactDetailsContent');
@@ -2266,6 +2471,183 @@
                 }
             }
         }
+
+**
+ * SAFE FUNCTION: Display activity timeline for current problem
+ * Called from existing openProblemDetailsPage() function
+ */
+function displayActivityTimeline(problem) {
+    console.log('📜 Displaying activity timeline for:', problem.internalId);
+    
+    const container = document.getElementById('timelineContainer');
+    const loading = document.getElementById('timelineLoading');
+    
+    if (!container || !problem) {
+        console.log('❌ Timeline container or problem not found');
+        return;
+    }
+    
+    // Show loading state
+    if (loading) {
+        loading.style.display = 'block';
+    }
+    
+    try {
+        // Get activity log from problem data (Column T - activityLogParsed)
+        const activities = problem.activityLogParsed || [];
+        
+        console.log('📊 Activity log data:', activities);
+        
+        // Hide loading
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        if (!activities || activities.length === 0) {
+            container.innerHTML = `
+                <div class="timeline-empty">
+                    <div style="font-size: 32px; margin-bottom: 10px;">📝</div>
+                    <div>No activity history available</div>
+                    <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                        Activity tracking started with recent updates
+                    </div>
+                </div>
+            `;
+            return;
+        }
+        
+        // Sort activities by timestamp (newest first)
+        const sortedActivities = [...activities].sort((a, b) => 
+            new Date(b.timestamp) - new Date(a.timestamp)
+        );
+        
+        // Generate timeline HTML
+        let timelineHTML = '';
+        
+        sortedActivities.forEach((activity, index) => {
+            const timelineItem = createTimelineItem(activity, index === 0);
+            timelineHTML += timelineItem;
+        });
+        
+        container.innerHTML = timelineHTML;
+        
+        console.log('✅ Activity timeline displayed successfully');
+        
+    } catch (error) {
+        console.error('❌ Error displaying activity timeline:', error);
+        
+        // Hide loading and show error state
+        if (loading) {
+            loading.style.display = 'none';
+        }
+        
+        container.innerHTML = `
+            <div class="timeline-empty">
+                <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
+                <div>Unable to load activity history</div>
+                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
+                    ${error.message || 'Unknown error occurred'}
+                </div>
+            </div>
+        `;
+    }
+}
+
+/**
+ * SAFE FUNCTION: Create individual timeline item HTML
+ */
+function createTimelineItem(activity, isLatest = false) {
+    const timestamp = new Date(activity.timestamp);
+    const timeAgo = getTimeAgo(timestamp);
+    const formattedTime = timestamp.toLocaleString('en-AU', {
+        day: '2-digit',
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    
+    // Determine icon and style based on activity type
+    let icon = '📝';
+    let iconClass = 'update';
+    
+    if (activity.action === 'Created') {
+        icon = '✨';
+        iconClass = 'system';
+    } else if (activity.action === 'Completed') {
+        icon = '✅';
+        iconClass = 'completion';
+    } else if (activity.action === 'Updated') {
+        icon = '📝';
+        iconClass = 'update';
+    } else if (activity.user === 'SYSTEM') {
+        icon = '🤖';
+        iconClass = 'system';
+    }
+    
+    // Build changes HTML
+    let changesHTML = '';
+    if (activity.changes && activity.changes.length > 0) {
+        changesHTML = '<div class="timeline-changes">';
+        
+        activity.changes.forEach(change => {
+            const oldValue = change.oldValue || '(empty)';
+            const newValue = change.newValue || '(empty)';
+            
+            changesHTML += `
+                <div class="timeline-change">
+                    <span class="timeline-field">${change.field}:</span>
+                    <div class="timeline-values">
+                        <span class="timeline-old-value">${oldValue}</span>
+                        <span class="timeline-arrow">→</span>
+                        <span class="timeline-new-value">${newValue}</span>
+                    </div>
+                </div>
+            `;
+        });
+        
+        changesHTML += '</div>';
+    }
+    
+    return `
+        <div class="timeline-item">
+            <div class="timeline-icon ${iconClass}">
+                ${icon}
+            </div>
+            <div class="timeline-content">
+                <div class="timeline-header">
+                    <span class="timeline-user">${activity.user || 'System'}</span>
+                    <span class="timeline-action">${activity.action || 'Updated'}</span>
+                    <span class="timeline-time" title="${formattedTime}">
+                        ${timeAgo}
+                    </span>
+                </div>
+                ${changesHTML}
+            </div>
+        </div>
+    `;
+}
+
+/**
+ * SAFE FUNCTION: Get human-readable time ago
+ */
+function getTimeAgo(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / (1000 * 60));
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} min${diffMins === 1 ? '' : 's'} ago`;
+    if (diffHours < 24) return `${diffHours} hour${diffHours === 1 ? '' : 's'} ago`;
+    if (diffDays < 7) return `${diffDays} day${diffDays === 1 ? '' : 's'} ago`;
+    
+    return date.toLocaleDateString('en-AU');
+}
+
+
+        
         
         console.log('🎯 Maintenance Portal V3.0 SIMPLIFIED - Enhanced with URL Search Parameter - Ready for action!');
     </script>
