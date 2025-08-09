@@ -1362,20 +1362,44 @@ document.getElementById('passwordResetModal').addEventListener('click', function
 }
 
         async function resetPassword(username) {
-            if (!confirm(`Reset password for ${username}? A new temporary password will be generated.`)) {
-                return;
-            }
+    if (!confirm(`Reset password for ${username}?\n\nThis will generate a new temporary password.`)) {
+        return;
+    }
 
-            try {
-                // Note: This would need a new V2.4 API endpoint for password reset
-                const tempPassword = generateTempPassword();
-                showToast('success', `Password reset. Temporary password: ${tempPassword}`);
-                
-            } catch (error) {
-                console.error('Error resetting password:', error);
-                showToast('error', 'Failed to reset password');
-            }
+    // Show modal immediately with loading state
+    document.getElementById('resetUsername').textContent = username;
+    document.getElementById('tempPassword').value = 'Generating password...';
+    document.getElementById('tempPassword').disabled = true;
+    document.querySelector('.btn-copy').disabled = true;
+    document.querySelector('.btn-copy').textContent = '⏳ Loading...';
+    document.getElementById('passwordResetModal').classList.add('show');
+
+    try {
+        const response = await makeRequest('resetUserPassword', { username: username });
+        
+        if (response.success) {
+            // Update modal with actual password
+            document.getElementById('tempPassword').value = response.tempPassword;
+            document.getElementById('tempPassword').disabled = false;
+            document.querySelector('.btn-copy').disabled = false;
+            document.querySelector('.btn-copy').textContent = '📋 Copy';
+            
+            // Reload users to update any status changes
+            loadUsers();
+        } else {
+            // Show error in modal
+            document.getElementById('tempPassword').value = 'Error generating password';
+            document.querySelector('.btn-copy').textContent = '❌ Failed';
+            showToast('error', response.message || 'Failed to reset password');
         }
+        
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        document.getElementById('tempPassword').value = 'Error generating password';
+        document.querySelector('.btn-copy').textContent = '❌ Failed';
+        showToast('error', 'Failed to reset password');
+    }
+}
 
         async function toggleUserStatus(username, isCurrentlyActive) {
             const action = isCurrentlyActive ? 'disable' : 'enable';
