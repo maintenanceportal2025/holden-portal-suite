@@ -2122,7 +2122,7 @@
             `;
         }
         
-        function openProblemDetailsPage(problem) {
+ function openProblemDetailsPage(problem) {
     currentProblem = problem;
     
     const friendlyPID = getFriendlyPID(problem.internalId);
@@ -2167,8 +2167,12 @@
     // Show details view
     showDetailsView();
     
-    // 🎯 NEW: Display activity timeline
-    displayActivityTimeline(problem);
+    // 🎯 FIXED: Add small delay to ensure all data is populated
+    setTimeout(() => {
+        console.log('🔍 Timeline Debug - Problem data:', problem);
+        console.log('🔍 Timeline Debug - Activity Log:', problem.activityLogParsed);
+        displayActivityTimeline(problem);
+    }, 100);
 }
         
         function populateContactDetails(problem) {
