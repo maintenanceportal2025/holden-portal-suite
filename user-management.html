@@ -782,24 +782,34 @@
         }
 
         async function handleEditUser(e) {
-            e.preventDefault();
-            
-            const username = document.getElementById('editUsername').value;
-            const name = document.getElementById('editName').value.trim();
-            const email = document.getElementById('editEmail').value.trim();
-            const role = document.getElementById('editRole').value;
+    e.preventDefault();
+    
+    const username = document.getElementById('editUsername').value;
+    const name = document.getElementById('editName').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const role = document.getElementById('editRole').value;
 
-            try {
-                // Note: This would need a new V2.4 API endpoint for updating users
-                showToast('success', `User ${username} updated successfully`);
-                closeModal();
-                loadUsers();
-                
-            } catch (error) {
-                console.error('Error updating user:', error);
-                showToast('error', 'Failed to update user');
-            }
+    try {
+        const response = await makeRequest('updateUser', {
+            username: username,
+            name: name,
+            email: email,
+            role: role
+        });
+        
+        if (response.success) {
+            showToast('success', `User ${username} updated successfully`);
+            closeModal();
+            loadUsers();
+        } else {
+            showToast('error', response.message || 'Failed to update user');
         }
+        
+    } catch (error) {
+        console.error('Error updating user:', error);
+        showToast('error', 'Failed to update user');
+    }
+}
 
         async function resetPassword(username) {
             if (!confirm(`Reset password for ${username}? A new temporary password will be generated.`)) {
