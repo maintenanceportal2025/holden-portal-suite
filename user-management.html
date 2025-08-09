@@ -878,22 +878,37 @@
         }
 
         async function makeRequest(action, params = {}) {
-            const url = new URL(API_URL);
-            url.searchParams.append('action', action);
-            
-            // Add parameters
-            Object.keys(params).forEach(key => {
-                url.searchParams.append(key, params[key]);
-            });
-            
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+    return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+        const script = document.createElement('script');
+        const queryParams = new URLSearchParams({ action, callback: callbackName, ...params });
+        
+        script.src = `${API_URL}?${queryParams}`;
+        
+        window[callbackName] = function(response) {
+            document.head.removeChild(script);
+            delete window[callbackName];
+            resolve(response);
+        };
+        
+        script.onerror = function() {
+            document.head.removeChild(script);
+            delete window[callbackName];
+            reject(new Error('Network request failed'));
+        };
+        
+        document.head.appendChild(script);
+        
+        // Timeout after 15 seconds
+        setTimeout(() => {
+            if (window[callbackName]) {
+                document.head.removeChild(script);
+                delete window[callbackName];
+                reject(new Error('Request timeout'));
             }
-            
-            return await response.json();
-        }
+        }, 15000);
+    });
+}
 
         console.log('👥 User Management Module - Ready!');
         console.log('🔐 Note: Some functions need additional V2.4 API endpoints');
