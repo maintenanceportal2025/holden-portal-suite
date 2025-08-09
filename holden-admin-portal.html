@@ -556,8 +556,11 @@
                 </div>
 
                 <!-- User Management Module -->
-                <div class="module-card inactive">
-                    <div class="status-badge status-planned">Planned</div>
+                
+                <div class="module-card" onclick="openModule('users')">
+                    
+                    <div class="status-badge status-active">Active</div>
+                    
                     <div class="module-icon">👥</div>
                     <h3 class="module-title">User Management</h3>
                     <p class="module-description">
@@ -572,7 +575,7 @@
                             <li><span class="feature-check">✓</span>Login activity tracking</li>
                         </ul>
                     </div>
-                    <div class="action-button btn-development">🚧 In Development</div>
+                    <div class="action-button btn-launch">🚀 Launch Module</div>
                 </div>
 
                 <!-- Email Templates Module -->
@@ -737,6 +740,9 @@
             break;
         case 'emails':
             window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/email-notification-management.html';
+            break;
+        case 'users':
+            window.open('https://maintenanceportal2025.github.io/holden-portal-suite/user-management.html', '_blank');
             break;
         default:
             alert('🚧 This module is not yet implemented');
