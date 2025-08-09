@@ -461,6 +461,196 @@
             color: #64748b;
             margin-top: 4px;
         }
+
+/* Clean user cards */
+.user-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.user-item:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.user-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-display-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 4px 0;
+}
+
+.user-username {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.user-role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-role-badge.Director {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.user-role-badge.Team {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.user-role-badge.Committee {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.user-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.user-card-actions .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-view {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #2563eb;
+}
+
+.btn-edit {
+    background: #10b981;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #059669;
+}
+
+.btn-reset {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-reset:hover {
+    background: #d97706;
+}
+
+.btn-disable {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-disable:hover {
+    background: #dc2626;
+}
+
+.btn-enable {
+    background: #10b981;
+    color: white;
+}
+
+.btn-enable:hover {
+    background: #059669;
+}
+
+/* User details modal */
+.user-details-container {
+    margin: 20px 0;
+}
+
+.user-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.user-detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.detail-value {
+    color: #6b7280;
+    text-align: right;
+    flex: 1;
+}
+
+.detail-value.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.detail-value.status-active {
+    color: #059669;
+    font-weight: 600;
+}
+
+.detail-value.status-inactive {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+
+        
     </style>
 </head>
 <body>
@@ -673,17 +863,22 @@
         });
 
         function setupEventListeners() {
-            // Add user form
-            document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
-            
-            // Edit user form
-            document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
-            
-            // Modal close on outside click
-            document.getElementById('editModal').addEventListener('click', function(e) {
-                if (e.target === this) closeModal();
-            });
-        }
+    // Add user form
+    document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+    
+    // Edit user form
+    document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
+    
+    // Modal close on outside click
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    
+    // ADD THIS LINE:
+    document.getElementById('viewModal').addEventListener('click', function(e) {
+        if (e.target === this) closeViewModal();
+    });
+}
 
         async function loadUsers() {
             try {
@@ -708,53 +903,55 @@
         }
 
         function displayUsers() {
-            const container = document.getElementById('userList');
-            
-            if (users.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: #6b7280; padding: 40px;">
-                        <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
-                        <div>No users found</div>
-                        <div style="font-size: 12px; margin-top: 5px;">Create your first user account</div>
-                    </div>
-                `;
-                return;
-            }
+    const container = document.getElementById('userList');
+    
+    if (users.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: #6b7280; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+                <div>No users found</div>
+                <div style="font-size: 12px; margin-top: 5px;">Create your first user account</div>
+            </div>
+        `;
+        return;
+    }
 
-            container.innerHTML = users.map(user => {
-                const isActive = user.isActive !== false; // Default to true if not specified
-                const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
-                
-                return `
-                    <div class="user-item ${isActive ? '' : 'inactive'}">
-                        <div class="user-info">
-                            <div class="user-avatar ${isActive ? '' : 'inactive'}">
-                                ${user.name.charAt(0).toUpperCase()}
-                            </div>
-                            <div class="user-details">
-                                <div class="user-name">${user.name}</div>
-                                <div class="user-meta">
-                                    @${user.username} • ${user.email} • Last login: ${lastLogin}
-                                </div>
-                            </div>
-                            <div class="user-role ${user.role}">${user.role}</div>
-                        </div>
-                        <div class="user-actions">
-                            <button class="btn" onclick="editUser('${user.username}')">
-                                ✏️ Edit
-                            </button>
-                            <button class="btn secondary" onclick="resetPassword('${user.username}')">
-                                🔑 Reset
-                            </button>
-                            <button class="btn ${isActive ? 'danger' : 'success'}" 
-                                    onclick="toggleUserStatus('${user.username}', ${isActive})">
-                                ${isActive ? '⏸️ Disable' : '▶️ Enable'}
-                            </button>
-                        </div>
+    container.innerHTML = users.map(user => {
+        const isActive = user.isActive !== false;
+        const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+        
+        return `
+            <div class="user-item">
+                <div class="user-card-header">
+                    <div class="user-avatar">
+                        ${user.name.charAt(0).toUpperCase()}
                     </div>
-                `;
-            }).join('');
-        }
+                    <div class="user-card-info">
+                        <h3 class="user-display-name">${user.name}</h3>
+                        <p class="user-username">@${user.username}</p>
+                    </div>
+                    <div class="user-role-badge ${user.role}">${user.role}</div>
+                </div>
+                
+                <div class="user-card-actions">
+                    <button class="btn btn-view" onclick="viewUser('${user.username}')">
+                        👁️ View
+                    </button>
+                    <button class="btn btn-edit" onclick="editUser('${user.username}')">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn btn-reset" onclick="resetPassword('${user.username}')">
+                        🔑 Reset
+                    </button>
+                    <button class="btn ${isActive ? 'btn-disable' : 'btn-enable'}" 
+                            onclick="toggleUserStatus('${user.username}', ${isActive})">
+                        ${isActive ? '⏸️ Disable' : '▶️ Enable'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
 
         function updateStats() {
             const total = users.length;
@@ -971,6 +1168,73 @@
             }
         }, 15000);
     });
+}
+
+        let currentViewUser = null;
+
+function viewUser(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+    
+    currentViewUser = user;
+    
+    // Populate modal with user data
+    document.getElementById('viewUsername').textContent = user.username;
+    document.getElementById('viewName').textContent = user.name;
+    document.getElementById('viewEmail').textContent = user.email;
+    document.getElementById('viewRole').textContent = user.role;
+    
+    const isActive = user.isActive !== false;
+    document.getElementById('viewStatus').textContent = isActive ? 'Active' : 'Inactive';
+    document.getElementById('viewStatus').className = isActive ? 'detail-value status-active' : 'detail-value status-inactive';
+    
+    const createdDate = user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'Unknown';
+    document.getElementById('viewCreated').textContent = createdDate;
+    
+    const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+    document.getElementById('viewLastLogin').textContent = lastLogin;
+    
+    // Update toggle button
+    const toggleBtn = document.getElementById('toggleStatusFromView');
+    toggleBtn.textContent = isActive ? '⏸️ Disable' : '▶️ Enable';
+    toggleBtn.className = isActive ? 'btn btn-disable' : 'btn btn-enable';
+    
+    // Disable director protection
+    if (user.username === 'director' && isActive) {
+        toggleBtn.disabled = true;
+        toggleBtn.textContent = '🔒 Protected';
+        toggleBtn.className = 'btn secondary';
+    } else {
+        toggleBtn.disabled = false;
+    }
+    
+    // Show modal
+    document.getElementById('viewModal').classList.add('show');
+}
+
+function closeViewModal() {
+    document.getElementById('viewModal').classList.remove('show');
+    currentViewUser = null;
+}
+
+function editUserFromView() {
+    if (currentViewUser) {
+        closeViewModal();
+        editUser(currentViewUser.username);
+    }
+}
+
+function resetPasswordFromView() {
+    if (currentViewUser) {
+        resetPassword(currentViewUser.username);
+    }
+}
+
+function toggleStatusFromView() {
+    if (currentViewUser) {
+        const isActive = currentViewUser.isActive !== false;
+        toggleUserStatus(currentViewUser.username, isActive);
+    }
 }
 
         console.log('👥 User Management Module - Ready!');
