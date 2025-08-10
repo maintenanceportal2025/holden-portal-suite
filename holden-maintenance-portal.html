@@ -921,7 +921,67 @@
     font-weight: normal;
     white-space: nowrap;
 }
+/* Problem Context Header */
+.timeline-problem-context {
+    background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+    color: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
 
+.context-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.context-pid {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.context-unit {
+    background: rgba(255, 255, 255, 0.15);
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.context-description {
+    font-style: italic;
+    font-size: 14px;
+    opacity: 0.9;
+    line-height: 1.4;
+}
+
+/* Enhanced existing styles */
+.timeline-time {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+/* Mobile responsiveness for context header */
+@media (max-width: 768px) {
+    .context-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .timeline-problem-context {
+        padding: 12px 16px;
+    }
+}
         
     </style>
 </head>
@@ -2513,6 +2573,7 @@
  * SAFE FUNCTION: Display activity timeline for current problem
  * Called from existing openProblemDetailsPage() function
  */
+        
 function displayActivityTimeline(problem) {
     console.log('📜 Displaying activity timeline for:', problem.internalId);
     
@@ -2540,8 +2601,23 @@ function displayActivityTimeline(problem) {
             loading.style.display = 'none';
         }
         
+        // 🎯 NEW: Build problem context header
+        const friendlyPID = getFriendlyPID(problem.internalId);
+        const problemContextHTML = `
+            <div class="timeline-problem-context">
+                <div class="context-header">
+                    <span class="context-pid">${friendlyPID}</span>
+                    <span class="context-unit">Unit ${problem.unitNumber || 'Unknown'}</span>
+                </div>
+                <div class="context-description">
+                    "${problem.problemDescription || 'No description available'}"
+                </div>
+            </div>
+        `;
+        
         if (!activities || activities.length === 0) {
             container.innerHTML = `
+                ${problemContextHTML}
                 <div class="timeline-empty">
                     <div style="font-size: 32px; margin-bottom: 10px;">📝</div>
                     <div>No activity history available</div>
@@ -2559,7 +2635,7 @@ function displayActivityTimeline(problem) {
         );
         
         // Generate timeline HTML
-        let timelineHTML = '';
+        let timelineHTML = problemContextHTML; // Start with context header
         
         sortedActivities.forEach((activity, index) => {
             const timelineItem = createTimelineItem(activity, index === 0);
@@ -2597,7 +2673,8 @@ function displayActivityTimeline(problem) {
         
 function createTimelineItem(activity, isLatest = false) {
     const timestamp = new Date(activity.timestamp);
-    const timeAgo = getTimeAgo(timestamp);
+    
+    // 🎯 ENHANCED: Better timestamp formatting
     const formattedTime = timestamp.toLocaleString('en-AU', {
         day: '2-digit',
         month: '2-digit', 
@@ -2671,7 +2748,7 @@ function createTimelineItem(activity, isLatest = false) {
                 <div class="timeline-header">
                     <span class="timeline-user">${activity.user || 'System'}</span>
                     <span class="timeline-action">${activity.action || 'Updated'}</span>
-                    <span class="timeline-time" title="${formattedTime}">
+                    <span class="timeline-time">
                         ${formattedTime}
                     </span>
                 </div>
@@ -2680,6 +2757,7 @@ function createTimelineItem(activity, isLatest = false) {
         </div>
     `;
 }
+
 
 /**
  * SAFE FUNCTION: Get human-readable time ago
