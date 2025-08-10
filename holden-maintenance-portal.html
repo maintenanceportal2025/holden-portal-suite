@@ -2637,7 +2637,11 @@ function displayActivityTimeline(problem) {
         let timelineHTML = '';
         
         sortedActivities.forEach((activity, index) => {
-            const timelineItem = createTimelineItem(activity, index === 0);
+          
+
+// const timelineItem = createTimelineItem(activity, index === 0);
+const timelineItem = '<div class="timeline-item">Basic timeline item</div>';
+            
             timelineHTML += timelineItem;
         });
         
