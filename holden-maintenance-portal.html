@@ -2601,23 +2601,8 @@ function displayActivityTimeline(problem) {
             loading.style.display = 'none';
         }
         
-        // 🎯 NEW: Build problem context header
-        const friendlyPID = getFriendlyPID(problem.internalId);
-        const problemContextHTML = `
-            <div class="timeline-problem-context">
-                <div class="context-header">
-                    <span class="context-pid">${friendlyPID}</span>
-                    <span class="context-unit">Unit ${problem.unitNumber || 'Unknown'}</span>
-                </div>
-                <div class="context-description">
-                    "${problem.problemDescription || 'No description available'}"
-                </div>
-            </div>
-        `;
-        
         if (!activities || activities.length === 0) {
             container.innerHTML = `
-                ${problemContextHTML}
                 <div class="timeline-empty">
                     <div style="font-size: 32px; margin-bottom: 10px;">📝</div>
                     <div>No activity history available</div>
@@ -2635,7 +2620,7 @@ function displayActivityTimeline(problem) {
         );
         
         // Generate timeline HTML
-        let timelineHTML = problemContextHTML; // Start with context header
+        let timelineHTML = '';
         
         sortedActivities.forEach((activity, index) => {
             const timelineItem = createTimelineItem(activity, index === 0);
@@ -2665,7 +2650,7 @@ function displayActivityTimeline(problem) {
         `;
     }
 }
-
+        
 /**
  * SAFE FUNCTION: Create individual timeline item HTML
  */
@@ -2673,8 +2658,7 @@ function displayActivityTimeline(problem) {
         
 function createTimelineItem(activity, isLatest = false) {
     const timestamp = new Date(activity.timestamp);
-    
-    // 🎯 ENHANCED: Better timestamp formatting
+    const timeAgo = getTimeAgo(timestamp);
     const formattedTime = timestamp.toLocaleString('en-AU', {
         day: '2-digit',
         month: '2-digit', 
@@ -2701,13 +2685,13 @@ function createTimelineItem(activity, isLatest = false) {
         iconClass = 'system';
     }
     
-    // Build changes HTML with enhanced comment handling
+    // Build changes HTML
     let changesHTML = '';
     if (activity.changes && activity.changes.length > 0) {
         changesHTML = '<div class="timeline-changes">';
         
         activity.changes.forEach(change => {
-            // 🎯 ENHANCED: Handle different change types
+            // Handle different change types
             if (change.field === 'Comment Added') {
                 // Special handling for comment additions
                 changesHTML += `
@@ -2748,7 +2732,7 @@ function createTimelineItem(activity, isLatest = false) {
                 <div class="timeline-header">
                     <span class="timeline-user">${activity.user || 'System'}</span>
                     <span class="timeline-action">${activity.action || 'Updated'}</span>
-                    <span class="timeline-time">
+                    <span class="timeline-time" title="${formattedTime}">
                         ${formattedTime}
                     </span>
                 </div>
@@ -2757,7 +2741,6 @@ function createTimelineItem(activity, isLatest = false) {
         </div>
     `;
 }
-
 
 /**
  * SAFE FUNCTION: Get human-readable time ago
