@@ -1247,20 +1247,23 @@
                     <!-- Dynamic content -->
                 </div>
             </div>
-        </div>
+
+            <!-- Activity Timeline - MOVED INSIDE -->
+            <div class="detail-section">
+                <div class="section-title-bar">📜 Activity Timeline</div>
+                <div class="activity-timeline">
+                    <div id="timelineContainer" class="timeline-container">
+                        <div class="timeline-loading" id="timelineLoading">
+                            Loading activity history...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>  <!-- problemDetailsView closes HERE -->
     </div>
 
-    <!-- 2. ADD THIS HTML SECTION AFTER CONTACT DETAILS SECTION -->
-<div class="detail-section">
-    <div class="section-title-bar">📜 Activity Timeline</div>
-    <div class="activity-timeline">
-        <div id="timelineContainer" class="timeline-container">
-            <div class="timeline-loading" id="timelineLoading">
-                Loading activity history...
-            </div>
-        </div>
-    </div>
-</div>
+    
 
     <!-- REPORT MODAL -->
     <div id="reportModal" class="modal hidden" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center; z-index: 1000;">
