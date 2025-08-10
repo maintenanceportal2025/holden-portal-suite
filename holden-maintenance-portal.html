@@ -1053,11 +1053,16 @@
                         <h1>🔧 Maintenance Portal</h1>
                         <p>Simplified Problem Management</p>
                     </div>
+
+                    
                     <div class="header-right">
-                        <button id="refreshBtn" class="btn btn-refresh">🔄 Refresh</button>
-                        <button id="logoutBtn" class="btn btn-logout">🚪 Logout</button>
-                        <span id="dataStatus" class="data-indicator loading">Loading...</span>
-                    </div>
+    <button id="refreshBtn" class="btn btn-refresh">🔄 Refresh</button>
+    <button id="activityReportBtn" class="btn" style="background: #8b5cf6; color: white;">📋 Activity Report</button>
+    <button id="logoutBtn" class="btn btn-logout">🚪 Logout</button>
+    <span id="dataStatus" class="data-indicator loading">Loading...</span>
+</div>
+
+                    
                 </div>
             </div>
         </div>
@@ -1541,12 +1546,21 @@
             }
             
             // Header buttons
-            const refreshBtn = document.getElementById('refreshBtn');
-            const logoutBtn = document.getElementById('logoutBtn');
-            
-            if (refreshBtn) {
-                refreshBtn.addEventListener('click', refreshData);
-            }
+const refreshBtn = document.getElementById('refreshBtn');
+const logoutBtn = document.getElementById('logoutBtn');
+const activityReportBtn = document.getElementById('activityReportBtn');
+
+if (refreshBtn) {
+    refreshBtn.addEventListener('click', refreshData);
+}
+
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', logout);
+}
+
+if (activityReportBtn) {
+    activityReportBtn.addEventListener('click', generateActivityReport);
+}
             
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', logout);
