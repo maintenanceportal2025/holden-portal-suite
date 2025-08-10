@@ -1800,6 +1800,12 @@ if (activityReportBtn) {
                 const response = await makeRequest('getFaultLogData');
                 
                 if (response.success) {
+                    
+            console.log('🔍 FULL BACKEND RESPONSE:', response);
+            console.log('🔍 FIRST PROBLEM RAW:', response.data[0]);
+            console.log('🔍 TIMESTAMP FIELD VALUE:', `"${response.data[0].timestamp}"`);
+            console.log('🔍 TYPEOF TIMESTAMP:', typeof response.data[0].timestamp);
+                    
                     problems = response.data || [];
                     console.log('📊 Problems loaded:', problems.length);
                     console.log('🔍 First problem data:', problems[0]);
