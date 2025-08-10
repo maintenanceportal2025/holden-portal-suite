@@ -1796,6 +1796,8 @@ if (activityReportBtn) {
         }
         
         async function loadProblems() {
+onsole.log('🚀 loadProblems() FUNCTION STARTED'); // ADD THIS LINE
+            
             try {
                 const response = await makeRequest('getFaultLogData');
                 
