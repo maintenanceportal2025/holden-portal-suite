@@ -887,7 +887,40 @@
         margin-left: 10px;
     }
 }
+/* Enhanced comment styling */
+.timeline-change.comment-addition {
+    background: #f0f9ff;
+    border-left: 3px solid #0ea5e9;
+    padding: 8px 12px;
+    border-radius: 6px;
+    margin: 4px 0;
+}
 
+.timeline-comment-content {
+    font-style: italic;
+    color: #374151;
+    margin-top: 4px;
+    padding: 4px 8px;
+    background: white;
+    border-radius: 4px;
+    border: 1px solid #e5e7eb;
+}
+
+.timeline-field {
+    font-weight: 600;
+    color: #1f2937;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Better timestamp styling */
+.timeline-time {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: normal;
+    white-space: nowrap;
+}
 
         
     </style>
@@ -2560,6 +2593,8 @@ function displayActivityTimeline(problem) {
 /**
  * SAFE FUNCTION: Create individual timeline item HTML
  */
+
+        
 function createTimelineItem(activity, isLatest = false) {
     const timestamp = new Date(activity.timestamp);
     const timeAgo = getTimeAgo(timestamp);
@@ -2589,25 +2624,39 @@ function createTimelineItem(activity, isLatest = false) {
         iconClass = 'system';
     }
     
-    // Build changes HTML
+    // Build changes HTML with enhanced comment handling
     let changesHTML = '';
     if (activity.changes && activity.changes.length > 0) {
         changesHTML = '<div class="timeline-changes">';
         
         activity.changes.forEach(change => {
-            const oldValue = change.oldValue || '(empty)';
-            const newValue = change.newValue || '(empty)';
-            
-            changesHTML += `
-                <div class="timeline-change">
-                    <span class="timeline-field">${change.field}:</span>
-                    <div class="timeline-values">
-                        <span class="timeline-old-value">${oldValue}</span>
-                        <span class="timeline-arrow">→</span>
-                        <span class="timeline-new-value">${newValue}</span>
+            // 🎯 ENHANCED: Handle different change types
+            if (change.field === 'Comment Added') {
+                // Special handling for comment additions
+                changesHTML += `
+                    <div class="timeline-change comment-addition">
+                        <span class="timeline-field">💬 Comment Added:</span>
+                        <div class="timeline-comment-content">
+                            "${change.newValue}"
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            } else {
+                // Standard field changes
+                const oldValue = change.oldValue || '(empty)';
+                const newValue = change.newValue || '(empty)';
+                
+                changesHTML += `
+                    <div class="timeline-change">
+                        <span class="timeline-field">${change.field}:</span>
+                        <div class="timeline-values">
+                            <span class="timeline-old-value">${oldValue}</span>
+                            <span class="timeline-arrow">→</span>
+                            <span class="timeline-new-value">${newValue}</span>
+                        </div>
+                    </div>
+                `;
+            }
         });
         
         changesHTML += '</div>';
@@ -2623,7 +2672,7 @@ function createTimelineItem(activity, isLatest = false) {
                     <span class="timeline-user">${activity.user || 'System'}</span>
                     <span class="timeline-action">${activity.action || 'Updated'}</span>
                     <span class="timeline-time" title="${formattedTime}">
-                        ${timeAgo}
+                        ${formattedTime}
                     </span>
                 </div>
                 ${changesHTML}
