@@ -467,16 +467,15 @@
             try {
                 console.log('📡 Loading templates from backend...');
                 
-                // Wait for DOM to be fully ready
-                if (document.readyState !== 'complete') {
-                    await new Promise(resolve => {
-                        if (document.readyState === 'complete') {
-                            resolve();
-                        } else {
-                            window.addEventListener('load', resolve, { once: true });
-                        }
-                    });
+                // More reliable way to wait for DOM element
+                const templateGrid = await waitForElement('templateGrid');
+                
+                if (!templateGrid) {
+                    console.error('❌ Could not find templateGrid element after waiting');
+                    return;
                 }
+                
+                console.log('✅ Template grid element found');
                 
                 const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
                 const text = await response.text();
@@ -499,14 +498,11 @@
                     
                 } else {
                     console.log('⚠️ No templates found');
-                    const templateGrid = document.getElementById('templateGrid');
-                    if (templateGrid) {
-                        templateGrid.innerHTML = `
-                            <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
-                                <div>⚠️ No templates available</div>
-                            </div>
-                        `;
-                    }
+                    templateGrid.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
+                            <div>⚠️ No templates available</div>
+                        </div>
+                    `;
                 }
                 
             } catch (error) {
@@ -521,6 +517,33 @@
                     `;
                 }
             }
+        }
+
+        // Wait for DOM element to exist
+        function waitForElement(elementId, timeout = 5000) {
+            return new Promise((resolve) => {
+                const startTime = Date.now();
+                
+                function checkElement() {
+                    const element = document.getElementById(elementId);
+                    if (element) {
+                        console.log(`✅ Found element ${elementId} after ${Date.now() - startTime}ms`);
+                        resolve(element);
+                        return;
+                    }
+                    
+                    if (Date.now() - startTime > timeout) {
+                        console.error(`❌ Timeout waiting for element ${elementId}`);
+                        resolve(null);
+                        return;
+                    }
+                    
+                    // Check again in 50ms
+                    setTimeout(checkElement, 50);
+                }
+                
+                checkElement();
+            });
         }
 
         // Render actual templates from backend - EXACTLY like Mass Notification System
