@@ -244,7 +244,7 @@
         }
 
         /* SUCCESS MESSAGE */
-        .success-message {
+        .success-message, .confirmation-dialog {
             position: fixed;
             top: 50%;
             left: 50%;
@@ -256,7 +256,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             z-index: 1001;
             display: none;
-            max-width: 300px;
+            max-width: 350px;
             margin: 20px;
         }
 
@@ -286,6 +286,82 @@
             border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
+        }
+
+        /* CONFIRMATION DIALOG */
+        .confirmation-icon {
+            font-size: 3rem;
+            margin-bottom: 16px;
+        }
+
+        .confirmation-icon.warning {
+            color: #f59e0b;
+        }
+
+        .confirmation-icon.danger {
+            color: #ef4444;
+        }
+
+        .confirmation-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 12px;
+        }
+
+        .confirmation-text {
+            color: #64748b;
+            margin-bottom: 8px;
+            line-height: 1.4;
+        }
+
+        .confirmation-zone {
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 16px 0;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .confirmation-zone.all-zones {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 2px solid #fecaca;
+        }
+
+        .confirmation-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .confirm-btn, .cancel-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .confirm-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .confirm-btn:hover {
+            background: #dc2626;
+        }
+
+        .cancel-btn {
+            background: #6b7280;
+            color: white;
+        }
+
+        .cancel-btn:hover {
+            background: #4b5563;
         }
 
         /* ZONE SELECTION */
@@ -498,7 +574,7 @@
         <div class="loading-content">
             <div class="loading-spinner"></div>
             <div class="loading-text">Sending Alert...</div>
-            <div class="loading-subtext">Notifying all 44 units</div>
+            <div class="loading-subtext" id="loadingSubtext">Notifying selected zones</div>
         </div>
     </div>
 
@@ -510,6 +586,18 @@
         <button class="success-btn" onclick="closeSuccess()">Continue</button>
     </div>
 
+    <!-- CONFIRMATION DIALOG -->
+    <div id="confirmationDialog" class="confirmation-dialog">
+        <div class="confirmation-icon" id="confirmIcon">⚠️</div>
+        <div class="confirmation-title" id="confirmTitle">Confirm Alert</div>
+        <div class="confirmation-text" id="confirmText">Are you sure you want to send this alert?</div>
+        <div class="confirmation-zone" id="confirmZone">Zone 1 (11 units)</div>
+        <div class="confirmation-buttons">
+            <button class="cancel-btn" onclick="cancelAlert()">❌ Cancel</button>
+            <button class="confirm-btn" onclick="confirmAlert()">🚨 Send Alert</button>
+        </div>
+    </div>
+
     <script>
         // CONFIGURATION
         const EMAIL_SERVICE_URL = 'https://script.google.com/macros/s/AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v/exec';
@@ -518,6 +606,14 @@
         // STATE MANAGEMENT
         let isAuthenticated = false;
         let selectedZone = 'all'; // Default to all zones
+        let pendingAlert = null; // Store pending alert for confirmation
+        let zoneUnitCounts = {
+            'all': 44,
+            'Zone 1': 11,
+            'Zone 2': 11, 
+            'Zone 3': 11,
+            'Zone 4': 11
+        }; // Default counts, will be updated from backend
 
         // TEMPLATE DEFINITIONS (matching desktop interface)
         const TEMPLATE_MESSAGES = {
@@ -628,6 +724,9 @@
         function showMainInterface() {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
+            
+            // Load actual zone unit counts from backend
+            loadZoneUnitCounts();
         }
 
         function showLoginScreen() {
@@ -641,10 +740,81 @@
             if (selectedZone === 'all') {
                 headerP.textContent = 'Select affected zones, then tap alert type';
             } else {
-                const zoneBtn = document.querySelector(`[data-zone="${selectedZone}"]`);
-                const unitCount = zoneBtn.querySelector('.zone-count').textContent;
-                headerP.textContent = `${selectedZone} selected ${unitCount} - tap alert type`;
+                const unitCount = zoneUnitCounts[selectedZone] || 0;
+                headerP.textContent = `${selectedZone} selected (${unitCount} units) - tap alert type`;
             }
+        }
+
+        async function loadZoneUnitCounts() {
+            try {
+                console.log('📊 Loading zone unit counts from backend...');
+                
+                // Call the HoldenEmailService to get zone information
+                const response = await makeBackendRequest('getZoneInfo');
+                
+                if (response && response.success && response.zoneCounts) {
+                    zoneUnitCounts = response.zoneCounts;
+                    console.log('✅ Zone counts loaded:', zoneUnitCounts);
+                    updateZoneButtonCounts();
+                } else {
+                    console.log('⚠️ Using default zone counts');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading zone counts:', error);
+                console.log('⚠️ Using default zone counts');
+            }
+        }
+
+        function updateZoneButtonCounts() {
+            // Update zone button displays with actual counts
+            Object.keys(zoneUnitCounts).forEach(zone => {
+                const button = document.querySelector(`[data-zone="${zone}"]`);
+                if (button) {
+                    const countSpan = button.querySelector('.zone-count');
+                    if (countSpan) {
+                        const count = zoneUnitCounts[zone];
+                        countSpan.textContent = `(${count} unit${count !== 1 ? 's' : ''})`;
+                    }
+                }
+            });
+        }
+
+        async function makeBackendRequest(action, additionalData = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'backendCallback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                
+                const params = new URLSearchParams({
+                    action: action,
+                    callback: callbackName,
+                    ...additionalData
+                });
+                
+                script.src = `${EMAIL_SERVICE_URL}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Backend request failed'));
+                };
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Backend request timeout'));
+                    }
+                }, 10000);
+                
+                document.head.appendChild(script);
+            });
         }
 
         // ALERT SENDING
@@ -660,18 +830,71 @@
                 return;
             }
 
-            console.log(`🚨 Sending ${templateId} alert...`);
+            console.log(`🚨 Preparing ${templateId} alert for ${selectedZone}...`);
             
-            // Show loading
-            showLoading();
+            // Store pending alert and show confirmation
+            pendingAlert = { templateId, template };
+            showConfirmation(template);
+        }
 
+        function showConfirmation(template) {
+            const unitCount = zoneUnitCounts[selectedZone] || 0;
+            const isAllZones = selectedZone === 'all';
+            
+            // Update confirmation dialog
+            const confirmIcon = document.getElementById('confirmIcon');
+            const confirmTitle = document.getElementById('confirmTitle');
+            const confirmText = document.getElementById('confirmText');
+            const confirmZone = document.getElementById('confirmZone');
+            
+            // Different styling for "All Zones" vs specific zones
+            if (isAllZones) {
+                confirmIcon.textContent = '🚨';
+                confirmIcon.className = 'confirmation-icon danger';
+                confirmTitle.textContent = 'SEND TO ALL UNITS?';
+                confirmText.textContent = 'This will notify EVERY resident in the complex. Are you absolutely sure this affects all zones?';
+                confirmZone.textContent = `ALL ZONES (${unitCount} units)`;
+                confirmZone.className = 'confirmation-zone all-zones';
+            } else {
+                confirmIcon.textContent = '⚠️';
+                confirmIcon.className = 'confirmation-icon warning';
+                confirmTitle.textContent = 'Confirm Zone Alert';
+                confirmText.textContent = `Send "${template.title}" to residents in the selected zone?`;
+                confirmZone.textContent = `${selectedZone} (${unitCount} units)`;
+                confirmZone.className = 'confirmation-zone';
+            }
+            
+            // Show confirmation dialog
+            document.getElementById('confirmationDialog').style.display = 'block';
+        }
+
+        function cancelAlert() {
+            console.log('🚫 Alert cancelled by user');
+            pendingAlert = null;
+            document.getElementById('confirmationDialog').style.display = 'none';
+        }
+
+        async function confirmAlert() {
+            if (!pendingAlert) {
+                console.error('No pending alert to confirm');
+                return;
+            }
+
+            console.log('✅ Alert confirmed by user, proceeding to send...');
+            
+            // Hide confirmation dialog
+            document.getElementById('confirmationDialog').style.display = 'none';
+            
+            // Proceed with sending the alert
             try {
-                // Call the HoldenEmailService backend
-                const response = await sendEmailRequest(templateId);
+                // Show loading
+                showLoading();
+
+                const response = await sendEmailRequest(pendingAlert.templateId);
                 
                 if (response.success) {
                     hideLoading();
-                    showSuccess(template.title);
+                    showSuccess(pendingAlert.template.title);
                     console.log('✅ Alert sent successfully');
                 } else {
                     throw new Error(response.message || 'Failed to send alert');
@@ -681,6 +904,8 @@
                 console.error('❌ Error sending alert:', error);
                 hideLoading();
                 showError('Failed to send alert. Please try again.');
+            } finally {
+                pendingAlert = null;
             }
         }
 
@@ -725,9 +950,17 @@
             });
         }
 
-        // UI FEEDBACK
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
+            
+            // Update loading text based on selected zone
+            const loadingSubtext = document.getElementById('loadingSubtext');
+            const unitCount = zoneUnitCounts[selectedZone] || 0;
+            if (selectedZone === 'all') {
+                loadingSubtext.textContent = `Notifying all ${unitCount} units`;
+            } else {
+                loadingSubtext.textContent = `Notifying ${selectedZone} (${unitCount} units)`;
+            }
         }
 
         function hideLoading() {
@@ -736,8 +969,12 @@
 
         function showSuccess(alertType) {
             const successText = document.getElementById('successText');
-            const zoneText = selectedZone === 'all' ? 'all 44 units' : `${selectedZone} residents`;
-            successText.textContent = `${alertType} notification sent to ${zoneText}.`;
+            const unitCount = zoneUnitCounts[selectedZone] || 0;
+            if (selectedZone === 'all') {
+                successText.textContent = `${alertType} notification sent to all ${unitCount} units.`;
+            } else {
+                successText.textContent = `${alertType} notification sent to ${selectedZone} (${unitCount} units).`;
+            }
             document.getElementById('successMessage').style.display = 'block';
         }
 
