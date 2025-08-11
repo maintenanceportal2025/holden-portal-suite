@@ -512,6 +512,10 @@
                     <span class="zone-icon">4️⃣</span>
                     <span class="zone-text">Zone 4</span>
                 </button>
+                <button class="zone-btn" data-zone="Zone 5">
+                    <span class="zone-icon">5️⃣</span>
+                    <span class="zone-text">Zone 5</span>
+                </button>
             </div>
         </div>
 
@@ -804,18 +808,20 @@
                 const callbackName = 'emailCallback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
                 
-                // Convert zone selection to match desktop exactly
+                // Convert zone selection to match desktop interface exactly (5 zones!)
                 let recipientFilter;
                 if (selectedZone === 'all') {
                     recipientFilter = 'all_units';
                 } else if (selectedZone === 'Zone 1') {
                     recipientFilter = 'zone_1';
                 } else if (selectedZone === 'Zone 2') {
-                    recipientFilter = 'zone_2';
+                    recipientFilter = 'zone_2';  
                 } else if (selectedZone === 'Zone 3') {
                     recipientFilter = 'zone_3';
                 } else if (selectedZone === 'Zone 4') {
                     recipientFilter = 'zone_4';
+                } else if (selectedZone === 'Zone 5') {
+                    recipientFilter = 'zone_5';  // Added missing Zone 5!
                 } else {
                     recipientFilter = 'all_units'; // fallback
                 }
