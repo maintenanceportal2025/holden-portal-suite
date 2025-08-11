@@ -360,37 +360,37 @@
         <div class="section">
             <h2 class="section-title">Select Emergency Type</h2>
             <div class="template-grid">
-                <div class="template-card" data-template="water_emergency">
+                <div class="template-card" data-template="WATER_EMERGENCY">
                     <div class="template-emoji">🚰</div>
                     <div class="template-title">Water Emergency</div>
                     <div class="template-desc">Immediate shutdown</div>
                 </div>
                 
-                <div class="template-card" data-template="water_restored">
+                <div class="template-card" data-template="WATER_RESTORED">
                     <div class="template-emoji">✅</div>
                     <div class="template-title">Water Restored</div>
                     <div class="template-desc">Back to normal</div>
                 </div>
                 
-                <div class="template-card" data-template="power_emergency">
+                <div class="template-card" data-template="POWER_EMERGENCY">
                     <div class="template-emoji">⚡</div>
                     <div class="template-title">Power Emergency</div>
                     <div class="template-desc">Outage alert</div>
                 </div>
                 
-                <div class="template-card" data-template="power_restored">
+                <div class="template-card" data-template="POWER_RESTORED">
                     <div class="template-emoji">✅</div>
                     <div class="template-title">Power Restored</div>
                     <div class="template-desc">Back to normal</div>
                 </div>
                 
-                <div class="template-card" data-template="maintenance_work">
+                <div class="template-card" data-template="MAINTENANCE_ALERT">
                     <div class="template-emoji">🔧</div>
                     <div class="template-title">Maintenance Work</div>
                     <div class="template-desc">Active work</div>
                 </div>
                 
-                <div class="template-card" data-template="urgent_notice">
+                <div class="template-card" data-template="URGENT_NOTICE">
                     <div class="template-emoji">📢</div>
                     <div class="template-title">Urgent Notice</div>
                     <div class="template-desc">Important alert</div>
@@ -448,8 +448,8 @@
                 // Check service status
                 await checkServiceStatus();
                 
-                // Load templates (for validation)
-                await loadEmailTemplates();
+                // Load and display actual templates
+                await loadAndDisplayTemplates();
                 
                 console.log('✅ Field notification tool ready');
                 
@@ -457,6 +457,78 @@
                 console.error('❌ Error initializing field tool:', error);
                 showServiceOffline();
             }
+        }
+
+        // Load and display actual templates from backend
+        async function loadAndDisplayTemplates() {
+            try {
+                const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
+                const text = await response.text();
+                
+                const jsonStart = text.indexOf('(') + 1;
+                const jsonEnd = text.lastIndexOf(')');
+                const jsonStr = text.substring(jsonStart, jsonEnd);
+                const result = JSON.parse(jsonStr);
+                
+                if (result.success && result.templates.length > 0) {
+                    // Replace template grid with actual templates
+                    renderActualTemplates(result.templates);
+                    emailTemplates = result.templates;
+                    console.log('✅ Loaded real templates:', result.templates.length);
+                } else {
+                    console.log('⚠️ No templates found, keeping default templates');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading templates, keeping defaults:', error);
+            }
+        }
+
+        // Render actual templates from backend
+        function renderActualTemplates(templates) {
+            const templateGrid = document.querySelector('.template-grid');
+            
+            // Take first 6 templates or all if less than 6
+            const displayTemplates = templates.slice(0, 6);
+            
+            templateGrid.innerHTML = displayTemplates.map(template => {
+                // Get emoji based on template name/category
+                const emoji = getTemplateEmoji(template.templateId, template.category);
+                const shortTitle = getShortTitle(template.templateId);
+                const shortDesc = getShortDescription(template.subject);
+                
+                return `
+                    <div class="template-card" data-template="${template.templateId}">
+                        <div class="template-emoji">${emoji}</div>
+                        <div class="template-title">${shortTitle}</div>
+                        <div class="template-desc">${shortDesc}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Get emoji for template
+        function getTemplateEmoji(templateId, category) {
+            const id = templateId.toLowerCase();
+            if (id.includes('water') && id.includes('emergency')) return '🚰';
+            if (id.includes('water') && (id.includes('restore') || id.includes('back'))) return '✅';
+            if (id.includes('power') && id.includes('emergency')) return '⚡';
+            if (id.includes('power') && (id.includes('restore') || id.includes('back'))) return '✅';
+            if (id.includes('maintenance') || id.includes('work')) return '🔧';
+            if (id.includes('urgent') || id.includes('notice')) return '📢';
+            if (category && category.toLowerCase().includes('emergency')) return '🚨';
+            return '📢'; // Default
+        }
+
+        // Get short title for display
+        function getShortTitle(templateId) {
+            return templateId.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+        }
+
+        // Get short description from subject
+        function getShortDescription(subject) {
+            if (!subject) return 'Emergency alert';
+            return subject.length > 30 ? subject.substring(0, 27) + '...' : subject;
         }
 
         // Setup event listeners
@@ -588,12 +660,12 @@
         // Get friendly template name
         function getTemplateName(templateId) {
             const names = {
-                water_emergency: 'Water Emergency',
-                water_restored: 'Water Restored',
-                power_emergency: 'Power Emergency', 
-                power_restored: 'Power Restored',
-                maintenance_work: 'Maintenance Alert',
-                urgent_notice: 'Urgent Notice'
+                WATER_EMERGENCY: 'Water Emergency',
+                WATER_RESTORED: 'Water Restored',
+                POWER_EMERGENCY: 'Power Emergency', 
+                POWER_RESTORED: 'Power Restored',
+                MAINTENANCE_ALERT: 'Maintenance Alert',
+                URGENT_NOTICE: 'Urgent Notice'
             };
             return names[templateId] || templateId;
         }
