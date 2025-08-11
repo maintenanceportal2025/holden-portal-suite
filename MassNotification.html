@@ -2,333 +2,346 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>📢 Field Notifications</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mass Notification System - Lake Illawong</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            min-height: 100vh;
+            line-height: 1.6;
             color: #333;
-            overflow-x: hidden;
+            background: #f5f7fa;
         }
 
         .container {
-            max-width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
             padding: 20px;
-            padding-top: max(20px, env(safe-area-inset-top));
-            padding-bottom: max(20px, env(safe-area-inset-bottom));
         }
 
-        /* HEADER */
         .header {
-            text-align: center;
-            margin-bottom: 30px;
+            background: linear-gradient(135deg, #059669, #047857);
             color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            text-align: center;
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 8px;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
         }
 
         .header p {
             opacity: 0.9;
-            font-size: 1rem;
+            font-size: 1.1rem;
         }
 
-        /* STATUS BAR */
         .status-bar {
-            background: rgba(255,255,255,0.95);
-            border-radius: 12px;
-            padding: 15px 20px;
-            margin-bottom: 25px;
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            border: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
         }
 
         .status-item {
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-size: 14px;
-            font-weight: 500;
+            gap: 10px;
         }
 
-        .status-dot {
-            width: 10px;
-            height: 10px;
+        .status-indicator {
+            width: 12px;
+            height: 12px;
             border-radius: 50%;
             background: #10b981;
         }
 
-        .status-dot.offline {
+        .status-indicator.offline {
             background: #ef4444;
         }
 
-        /* TEMPLATE SELECTION */
-        .section {
-            margin-bottom: 25px;
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
         }
 
-        .section-title {
-            color: white;
-            font-size: 1.1rem;
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .card-title {
+            font-size: 1.4rem;
             font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
+            color: #1e293b;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+        .form-select, .form-input, .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-select:focus, .form-input:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 120px;
+            resize: vertical;
         }
 
         .template-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
         }
 
         .template-card {
-            background: white;
-            border-radius: 12px;
-            padding: 20px 15px;
-            text-align: center;
+            background: #f8fafc;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 15px;
             cursor: pointer;
             transition: all 0.2s;
-            border: 3px solid transparent;
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .template-card:active {
-            transform: scale(0.95);
+        .template-card:hover {
+            border-color: #059669;
+            transform: translateY(-2px);
         }
 
         .template-card.selected {
             border-color: #059669;
             background: #ecfdf5;
-            transform: scale(1.02);
-        }
-
-        .template-emoji {
-            font-size: 2rem;
-            margin-bottom: 8px;
         }
 
         .template-title {
             font-weight: 600;
-            font-size: 0.9rem;
-            color: #1f2937;
-            margin-bottom: 4px;
-        }
-
-        .template-desc {
-            font-size: 0.75rem;
-            color: #6b7280;
-            line-height: 1.3;
-        }
-
-        /* ZONE SELECTOR */
-        .zone-selector {
-            background: rgba(255,255,255,0.95);
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 25px;
-            backdrop-filter: blur(10px);
-        }
-
-        .zone-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-            color: #1f2937;
-        }
-
-        .zone-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 8px;
-        }
-
-        .zone-btn {
-            background: #f3f4f6;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 12px 8px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            min-height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .zone-btn:active {
-            transform: scale(0.95);
-        }
-
-        .zone-btn.selected {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-
-        .zone-btn.all-units {
-            grid-column: 1 / -1;
-            background: #059669;
-            color: white;
-            border-color: #059669;
-        }
-
-        .zone-btn.all-units.selected {
-            background: #047857;
-            border-color: #047857;
-        }
-
-        /* SEND BUTTON */
-        .send-section {
-            position: sticky;
-            bottom: 20px;
-        }
-
-        .send-btn {
-            width: 100%;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 12px;
-            padding: 18px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            min-height: 60px;
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
-        }
-
-        .send-btn:active {
-            transform: scale(0.98);
-        }
-
-        .send-btn:disabled {
-            background: #9ca3af;
-            cursor: not-allowed;
-            box-shadow: none;
-        }
-
-        .send-btn.sending {
-            background: #f59e0b;
-            animation: pulse 1s infinite;
-        }
-
-        .send-btn.sent {
-            background: #10b981;
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-
-        /* RESULT MESSAGE */
-        .result-message {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            margin-top: 20px;
-            text-align: center;
-            display: none;
-            animation: slideUp 0.3s ease;
-        }
-
-        .result-message.show {
-            display: block;
-        }
-
-        .result-message.success {
-            background: #ecfdf5;
-            border: 2px solid #10b981;
-            color: #065f46;
-        }
-
-        .result-message.error {
-            background: #fef2f2;
-            border: 2px solid #ef4444;
-            color: #991b1b;
-        }
-
-        .result-icon {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-
-        .result-title {
-            font-weight: 600;
-            font-size: 1.1rem;
+            color: #1e293b;
             margin-bottom: 8px;
         }
 
-        .result-details {
+        .template-category {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            display: inline-block;
+        }
+
+        .template-preview {
+            color: #64748b;
             font-size: 0.9rem;
-            opacity: 0.8;
+            line-height: 1.4;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* RESPONSIVE ADJUSTMENTS */
-        @media (max-width: 400px) {
-            .container {
-                padding: 15px;
-            }
-            
-            .template-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .zone-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-            
-            .template-card {
-                min-height: 80px;
-            }
+        .btn-primary {
+            background: #059669;
+            color: white;
         }
 
-        /* LOADING SPINNER */
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid white;
+        .btn-primary:hover {
+            background: #047857;
+        }
+
+        .btn-primary:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .preview-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .preview-header {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .preview-content {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .preview-subject {
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .preview-body {
+            color: #374151;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .recipient-info {
+            background: #eff6ff;
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .recipient-count {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #1e40af;
+        }
+
+        .recipient-details {
+            color: #3730a3;
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: #059669;
+        }
+
+        .notification.error {
+            background: #dc2626;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .page-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(245, 247, 250, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            backdrop-filter: blur(2px);
+        }
+
+        .page-loader.hidden {
+            display: none;
+        }
+
+        .loader-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #059669;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+
+        .loader-text {
+            color: #059669;
+            font-size: 1.1rem;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .loader-progress {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 10px;
         }
 
         @keyframes spin {
@@ -338,385 +351,479 @@
     </style>
 </head>
 <body>
+    <!-- Page Loading Indicator -->
+    <div class="page-loader" id="pageLoader">
+        <div class="loader-spinner"></div>
+        <div class="loader-text">Loading Mass Notification System</div>
+        <div class="loader-progress" id="loaderProgress">Connecting to email service...</div>
+    </div>
+
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>📢 Field Notifications</h1>
-            <p>Quick emergency & maintenance alerts</p>
+            <h1>📢 Mass Notification System</h1>
+            <p>Send important communications to all residents</p>
         </div>
 
         <!-- Status Bar -->
         <div class="status-bar">
             <div class="status-item">
-                <div class="status-dot" id="serviceDot"></div>
-                <span id="serviceStatus">Email Service</span>
+                <div class="status-indicator" id="serviceIndicator"></div>
+                <span><strong>Email Service:</strong> <span id="serviceStatus">Connecting...</span></span>
             </div>
+            
             <div class="status-item">
-                <span id="quotaStatus">Checking quota...</span>
+                <span><strong>Templates:</strong> <span id="templateCount">--</span> available</span>
+            </div>
+
+            <div class="status-item">
+                <span><strong>Total Units:</strong> 44 retirement village units</span>
             </div>
         </div>
 
-        <!-- Template Selection -->
-        <div class="section">
-            <h2 class="section-title">Select Emergency Type</h2>
-            <div class="template-grid">
-                <div class="template-card" data-template="water_emergency">
-                    <div class="template-emoji">🚰</div>
-                    <div class="template-title">Water Emergency</div>
-                    <div class="template-desc">Immediate shutdown</div>
-                </div>
+        <!-- Main Content -->
+        <div class="main-grid">
+            <!-- Template Selection -->
+            <div class="card">
+                <h2 class="card-title">📋 Select Template</h2>
                 
-                <div class="template-card" data-template="water_restored">
-                    <div class="template-emoji">✅</div>
-                    <div class="template-title">Water Restored</div>
-                    <div class="template-desc">Back to normal</div>
+                <div class="template-grid" id="templateGrid">
+                    <!-- Templates will be loaded here -->
                 </div>
-                
-                <div class="template-card" data-template="power_emergency">
-                    <div class="template-emoji">⚡</div>
-                    <div class="template-title">Power Emergency</div>
-                    <div class="template-desc">Outage alert</div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Recipients</label>
+                    <select class="form-select" id="recipientFilter">
+                        <option value="all_units">All Units (44 units)</option>
+                        <option value="zone_1">Zone 1 Only</option>
+                        <option value="zone_2">Zone 2 Only</option>
+                        <option value="zone_3">Zone 3 Only</option>
+                        <option value="zone_4">Zone 4 Only</option>
+                        <option value="zone_5">Zone 5 Only</option>
+                    </select>
                 </div>
+            </div>
+
+            <!-- Variable Input -->
+            <div class="card">
+                <h2 class="card-title">✏️ Customize Message</h2>
                 
-                <div class="template-card" data-template="power_restored">
-                    <div class="template-emoji">✅</div>
-                    <div class="template-title">Power Restored</div>
-                    <div class="template-desc">Back to normal</div>
-                </div>
-                
-                <div class="template-card" data-template="maintenance_work">
-                    <div class="template-emoji">🔧</div>
-                    <div class="template-title">Maintenance Work</div>
-                    <div class="template-desc">Active work</div>
-                </div>
-                
-                <div class="template-card" data-template="urgent_notice">
-                    <div class="template-emoji">📢</div>
-                    <div class="template-title">Urgent Notice</div>
-                    <div class="template-desc">Important alert</div>
+                <div id="variableInputs">
+                    <p style="color: #64748b; font-style: italic;">Select a template to see customization options</p>
                 </div>
             </div>
         </div>
 
-        <!-- Zone Selector -->
-        <div class="zone-selector">
-            <h3 class="zone-title">Select Affected Area</h3>
-            <div class="zone-grid">
-                <button class="zone-btn" data-zone="zone1">Zone 1</button>
-                <button class="zone-btn" data-zone="zone2">Zone 2</button>
-                <button class="zone-btn" data-zone="zone3">Zone 3</button>
-                <button class="zone-btn" data-zone="zone4">Zone 4</button>
-                <button class="zone-btn" data-zone="zone5">Zone 5</button>
-                <button class="zone-btn all-units selected" data-zone="all_units">🏘️ All Units</button>
+        <!-- Preview Panel -->
+        <div class="card">
+            <h2 class="card-title">👁️ Email Preview</h2>
+            
+            <div class="preview-panel" id="previewPanel" style="display: none;">
+                <div class="preview-header">Email Preview</div>
+                <div class="preview-content">
+                    <div class="preview-subject" id="previewSubject"></div>
+                    <div class="preview-body" id="previewBody"></div>
+                </div>
             </div>
-        </div>
 
-        <!-- Send Button -->
-        <div class="send-section">
-            <button class="send-btn" id="sendBtn" onclick="sendNotification()" disabled>
-                <span id="sendBtnText">📧 Select Template to Send</span>
-                <div class="spinner" id="sendSpinner" style="display: none;"></div>
-            </button>
-        </div>
-
-        <!-- Result Message -->
-        <div class="result-message" id="resultMessage">
-            <div class="result-icon" id="resultIcon"></div>
-            <div class="result-title" id="resultTitle"></div>
-            <div class="result-details" id="resultDetails"></div>
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="sendEmailBtn" onclick="sendMassNotification()" disabled>
+                    <span id="sendButtonText">📧 Send Email</span>
+                    <span id="sendButtonSpinner" style="display: none;">🔄 Sending...</span>
+                </button>
+                <button class="btn btn-secondary" onclick="refreshPreview()">
+                    🔄 Refresh Preview
+                </button>
+            </div>
         </div>
     </div>
 
     <script>
-        // Email Service Configuration - SAME AS DESKTOP VERSION
+        // Email Service Configuration
         const EMAIL_SERVICE_URL = 'https://script.google.com/macros/s/AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v/exec';
         
         // Global state
-        let selectedTemplate = null;
-        let selectedZone = 'all_units';
         let emailTemplates = [];
+        let selectedTemplate = null;
+        let currentRecipients = [];
 
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            initializeFieldTool();
-            setupEventListeners();
+            initializeMassNotification();
         });
 
-        // Initialize the field tool
-        async function initializeFieldTool() {
+        // Initialize the mass notification system
+        async function initializeMassNotification() {
             try {
-                // Check service status
+                updateLoaderProgress('Connecting to email service...');
+                
+                // Check email service status
                 await checkServiceStatus();
+                updateLoaderProgress('Loading email templates...');
                 
-                // Load templates (for validation)
+                // Load email templates
                 await loadEmailTemplates();
+                updateLoaderProgress('Setting up interface...');
                 
-                console.log('✅ Field notification tool ready');
+                // Setup event listeners
+                setupEventListeners();
+                updateLoaderProgress('Ready!');
+                
+                // Hide loader
+                setTimeout(() => {
+                    document.getElementById('pageLoader').classList.add('hidden');
+                }, 500);
                 
             } catch (error) {
-                console.error('❌ Error initializing field tool:', error);
-                showServiceOffline();
+                console.error('❌ Error initializing mass notification:', error);
+                updateLoaderProgress('Failed to load - check console');
+                showError('Failed to initialize mass notification system: ' + error.message);
+                
+                // Hide loader even on error
+                setTimeout(() => {
+                    document.getElementById('pageLoader').classList.add('hidden');
+                }, 2000);
             }
         }
 
-        // Setup event listeners
-        function setupEventListeners() {
-            // Template selection
-            document.querySelectorAll('.template-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    selectTemplate(this.dataset.template);
-                });
-            });
-
-            // Zone selection
-            document.querySelectorAll('.zone-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    selectZone(this.dataset.zone);
-                });
-            });
+        // Update loader progress text
+        function updateLoaderProgress(message) {
+            const progressElement = document.getElementById('loaderProgress');
+            if (progressElement) {
+                progressElement.textContent = message;
+            }
         }
 
         // Check email service status
         async function checkServiceStatus() {
             try {
-                const response = await fetch(`${EMAIL_SERVICE_URL}?action=checkEmailQuota&callback=?`);
-                const text = await response.text();
+                const response = await makeServiceRequest('getEmailConfig');
                 
-                // Parse JSONP response
-                const jsonStart = text.indexOf('(') + 1;
-                const jsonEnd = text.lastIndexOf(')');
-                const jsonStr = text.substring(jsonStart, jsonEnd);
-                const result = JSON.parse(jsonStr);
-                
-                if (result.success) {
-                    document.getElementById('serviceDot').classList.remove('offline');
-                    document.getElementById('serviceStatus').textContent = 'Online';
-                    document.getElementById('quotaStatus').textContent = `${result.remaining}/${result.daily} emails`;
+                if (response.success) {
+                    updateServiceStatus(true);
                 } else {
-                    showServiceOffline();
+                    throw new Error('Service not responding');
                 }
                 
             } catch (error) {
-                console.error('❌ Service check failed:', error);
-                showServiceOffline();
+                console.error('❌ Email service offline:', error);
+                updateServiceStatus(false);
             }
         }
 
-        // Show service offline
-        function showServiceOffline() {
-            document.getElementById('serviceDot').classList.add('offline');
-            document.getElementById('serviceStatus').textContent = 'Offline';
-            document.getElementById('quotaStatus').textContent = 'Service unavailable';
+        // Update service status display
+        function updateServiceStatus(isOnline) {
+            const indicator = document.getElementById('serviceIndicator');
+            const status = document.getElementById('serviceStatus');
+            
+            if (isOnline) {
+                indicator.className = 'status-indicator';
+                status.textContent = 'Online';
+            } else {
+                indicator.className = 'status-indicator offline';
+                status.textContent = 'Offline';
+            }
         }
 
-        // Load email templates (for validation)
+        // Load email templates
         async function loadEmailTemplates() {
             try {
-                const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
-                const text = await response.text();
+                const response = await makeServiceRequest('getEmailTemplates');
                 
-                const jsonStart = text.indexOf('(') + 1;
-                const jsonEnd = text.lastIndexOf(')');
-                const jsonStr = text.substring(jsonStart, jsonEnd);
-                const result = JSON.parse(jsonStr);
-                
-                if (result.success) {
-                    emailTemplates = result.templates;
-                    console.log('✅ Templates loaded:', emailTemplates.length);
+                if (response.success) {
+                    emailTemplates = response.templates;
+                    renderTemplateGrid();
+                    document.getElementById('templateCount').textContent = emailTemplates.length;
                 } else {
-                    console.error('❌ Failed to load templates:', result.error);
+                    throw new Error(response.error || 'Failed to load templates');
                 }
                 
             } catch (error) {
                 console.error('❌ Error loading templates:', error);
+                showError('Failed to load email templates: ' + error.message);
             }
         }
 
-        // Select template
+        // Render template selection grid
+        function renderTemplateGrid() {
+            const container = document.getElementById('templateGrid');
+            
+            if (emailTemplates.length === 0) {
+                container.innerHTML = '<p style="color: #64748b; font-style: italic;">No templates available</p>';
+                return;
+            }
+            
+            container.innerHTML = emailTemplates.map(template => `
+                <div class="template-card" onclick="selectTemplate('${template.templateId}')">
+                    <div class="template-category">${template.category}</div>
+                    <div class="template-title">${template.templateId}</div>
+                    <div class="template-preview">${template.subject}</div>
+                </div>
+            `).join('');
+        }
+
+        // Select a template
         function selectTemplate(templateId) {
             // Remove previous selection
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
             
-            // Select new template
-            document.querySelector(`[data-template="${templateId}"]`).classList.add('selected');
-            selectedTemplate = templateId;
-            
-            updateSendButton();
-            
-            // Haptic feedback on iOS
-            if (navigator.vibrate) {
-                navigator.vibrate(50);
-            }
-        }
-
-        // Select zone
-        function selectZone(zone) {
-            // Remove previous selection
-            document.querySelectorAll('.zone-btn').forEach(btn => {
-                btn.classList.remove('selected');
-            });
-            
-            // Select new zone
-            document.querySelector(`[data-zone="${zone}"]`).classList.add('selected');
-            selectedZone = zone;
-            
-            updateSendButton();
-        }
-
-        // Update send button
-        function updateSendButton() {
-            const sendBtn = document.getElementById('sendBtn');
-            const sendBtnText = document.getElementById('sendBtnText');
+            // Find and select template
+            selectedTemplate = emailTemplates.find(t => t.templateId === templateId);
             
             if (selectedTemplate) {
-                sendBtn.disabled = false;
-                sendBtn.style.background = '#ef4444';
+                // Visual selection
+                event.target.closest('.template-card').classList.add('selected');
                 
-                const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.slice(-1)}`;
-                const templateName = getTemplateName(selectedTemplate);
+                // Show variable inputs
+                renderVariableInputs();
                 
-                sendBtnText.textContent = `🚨 Send ${templateName} to ${zoneName}`;
-            } else {
-                sendBtn.disabled = true;
-                sendBtn.style.background = '#9ca3af';
-                sendBtnText.textContent = '📧 Select Template to Send';
+                // Update preview
+                updatePreview();
+                
+                // Enable send button
+                document.getElementById('sendEmailBtn').disabled = false;
             }
         }
 
-        // Get friendly template name
-        function getTemplateName(templateId) {
-            const names = {
-                water_emergency: 'Water Emergency',
-                water_restored: 'Water Restored',
-                power_emergency: 'Power Emergency', 
-                power_restored: 'Power Restored',
-                maintenance_work: 'Maintenance Alert',
-                urgent_notice: 'Urgent Notice'
-            };
-            return names[templateId] || templateId;
-        }
-
-        // Send notification
-        async function sendNotification() {
-            if (!selectedTemplate) {
-                showResult('error', 'No Template Selected', 'Please select a notification type first');
+        // Render variable input fields
+        function renderVariableInputs() {
+            const container = document.getElementById('variableInputs');
+            
+            if (!selectedTemplate || !selectedTemplate.variables) {
+                container.innerHTML = '<p style="color: #64748b; font-style: italic;">No customization needed for this template</p>';
                 return;
             }
+            
+            const variables = selectedTemplate.variables.split(',');
+            
+            container.innerHTML = variables.map(variable => {
+                const varName = variable.trim();
+                return `
+                    <div class="form-group">
+                        <label class="form-label">${varName}</label>
+                        <input type="text" class="form-input" id="var_${varName}" 
+                               placeholder="Enter ${varName.toLowerCase()}" 
+                               onchange="updatePreview()">
+                    </div>
+                `;
+            }).join('');
+        }
 
+        // Update email preview
+        function updatePreview() {
+            if (!selectedTemplate) {
+                document.getElementById('previewPanel').style.display = 'none';
+                document.getElementById('recipientInfo').style.display = 'none';
+                return;
+            }
+            
+            // Get variable values
+            const variables = {};
+            if (selectedTemplate.variables) {
+                selectedTemplate.variables.split(',').forEach(variable => {
+                    const varName = variable.trim();
+                    const input = document.getElementById('var_' + varName);
+                    variables[varName] = input ? input.value || `[${varName}]` : `[${varName}]`;
+                });
+            }
+            
+            // Generate preview content
+            let subject = selectedTemplate.subject;
+            let body = selectedTemplate.body;
+            
+            // Replace variables
+            Object.keys(variables).forEach(varName => {
+                const placeholder = `{${varName}}`;
+                subject = subject.replace(new RegExp(placeholder, 'g'), variables[varName]);
+                body = body.replace(new RegExp(placeholder, 'g'), variables[varName]);
+            });
+            
+            // Replace common variables
+            const today = new Date().toLocaleDateString('en-AU');
+            subject = subject.replace(/{DATE}/g, today);
+            body = body.replace(/{DATE}/g, today);
+            
+            // Update preview
+            document.getElementById('previewSubject').textContent = subject;
+            document.getElementById('previewBody').textContent = body;
+            document.getElementById('previewPanel').style.display = 'block';
+            
+            // Update recipient info
+            updateRecipientInfo();
+        }
+
+        // Update recipient information
+        function updateRecipientInfo() {
+            // Remove recipient info display - not needed
+        }
+
+        // Send mass notification
+        async function sendMassNotification() {
+            if (!selectedTemplate) {
+                showError('Please select a template first');
+                return;
+            }
+            
             try {
-                // Show sending state
-                showSendingState();
+                // Show loading state
+                showSendingState(true);
                 
-                // Prepare parameters for mass notification
-                const params = new URLSearchParams({
-                    action: 'sendMassNotification',
-                    templateId: selectedTemplate,
-                    recipientFilter: selectedZone,
-                    customData: JSON.stringify({}),
-                    adminUser: 'FieldTech',
-                    callback: '?'
+                // Get variable values
+                const customData = {};
+                if (selectedTemplate.variables) {
+                    selectedTemplate.variables.split(',').forEach(variable => {
+                        const varName = variable.trim();
+                        const input = document.getElementById('var_' + varName);
+                        if (input) {
+                            customData[varName] = input.value || '';
+                        }
+                    });
+                }
+                
+                const recipientFilter = document.getElementById('recipientFilter').value;
+                
+                // Call email service
+                const response = await makeServiceRequest('sendMassNotification', {
+                    templateId: selectedTemplate.templateId,
+                    recipientFilter: recipientFilter,
+                    customData: JSON.stringify(customData),
+                    adminUser: 'MassNotificationInterface'
                 });
                 
-                // Send to email service
-                const response = await fetch(`${EMAIL_SERVICE_URL}?${params}`);
-                const text = await response.text();
-                
-                // Parse JSONP response
-                const jsonStart = text.indexOf('(') + 1;
-                const jsonEnd = text.lastIndexOf(')');
-                const jsonStr = text.substring(jsonStart, jsonEnd);
-                const result = JSON.parse(jsonStr);
-                
-                if (result.success) {
-                    // Show success
-                    showSentState();
+                if (response.success) {
+                    showSuccess(`✅ Emails sent successfully!`);
                     
-                    const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.slice(-1)}`;
-                    showResult(
-                        'success', 
-                        'Notification Sent!', 
-                        `${getTemplateName(selectedTemplate)} sent to ${result.recipientCount} residents in ${zoneName}`
-                    );
-                    
-                    // Reset after delay
-                    setTimeout(resetForm, 3000);
-                    
+                    // Reset form
+                    setTimeout(() => {
+                        resetForm();
+                    }, 2000);
                 } else {
-                    throw new Error(result.error || 'Unknown error');
+                    throw new Error(response.error || 'Failed to send mass notification');
                 }
                 
             } catch (error) {
-                console.error('❌ Send failed:', error);
-                showResult('error', 'Send Failed', error.message || 'Please check connection and try again');
-                resetSendButton();
+                console.error('❌ Error sending mass notification:', error);
+                showError('Failed to send email: ' + error.message);
+            } finally {
+                showSendingState(false);
             }
         }
 
-        // Show sending state
-        function showSendingState() {
-            const sendBtn = document.getElementById('sendBtn');
-            const sendBtnText = document.getElementById('sendBtnText');
-            const sendSpinner = document.getElementById('sendSpinner');
+        // Show/hide sending state
+        function showSendingState(sending) {
+            const button = document.getElementById('sendEmailBtn');
+            const buttonText = document.getElementById('sendButtonText');
+            const buttonSpinner = document.getElementById('sendButtonSpinner');
             
-            sendBtn.classList.add('sending');
-            sendBtn.disabled = true;
-            sendBtnText.textContent = 'Sending...';
-            sendSpinner.style.display = 'block';
+            if (sending) {
+                button.disabled = true;
+                buttonText.style.display = 'none';
+                buttonSpinner.style.display = 'inline';
+                document.body.style.cursor = 'wait';
+            } else {
+                button.disabled = false;
+                buttonText.style.display = 'inline';
+                buttonSpinner.style.display = 'none';
+                document.body.style.cursor = 'default';
+            }
         }
 
-        // Show sent state
-        function showSentState() {
-            const sendBtn = document.getElementById('sendBtn');
-            const sendBtnText = document.getElementById('sendBtnText');
-            const sendSpinner = document.getElementById('sendSpinner');
-            
-            sendBtn.classList.remove('sending');
-            sendBtn.classList.add('sent');
-            sendBtnText.textContent = '✅ Sent Successfully!';
-            sendSpinner.style.display = 'none';
-        }
-
-        // Reset send button
-        function resetSendButton() {
-            const sendBtn = document.getElementById('sendBtn');
-            const sendSpinner = document.getElementById('sendSpinner');
-            
-            sendBtn.classList.remove('sending', 'sent');
-            sendSpinner.style.display = 'none';
-            updateSendButton();
-        }
-
-        // Show result message
-        function showResult(type, title, details) {
-            const resultMessage = document.getElementById('resultMessage');
-            const resultIcon = document.getElementById('resultIcon');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultDetails = document.getElementById('resultDetails');
-            
-            resultMessage.className = `result-message show ${type}`;
-            resultIcon.textContent = type === 'success' ? '✅' : '❌';
-            resultTitle.textContent = title;
-            resultDetails.textContent = details;
-            
-            // Hide after delay
-            setTimeout(() => {
-                resultMessage.classList.remove('show');
-            }, 5000);
+        // Setup event listeners
+        function setupEventListeners() {
+            // Recipient filter change
+            document.getElementById('recipientFilter').addEventListener('change', updateRecipientInfo);
         }
 
         // Reset form
         function resetForm() {
-            // Reset template selection
+            selectedTemplate = null;
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            selectedTemplate = null;
+            document.getElementById('variableInputs').innerHTML = '<p style="color: #64748b; font-style: italic;">Select a template to see customization options</p>';
+            document.getElementById('previewPanel').style.display = 'none';
+            document.getElementById('recipientInfo').style.display = 'none';
+            document.getElementById('sendEmailBtn').disabled = true;
+        }
+
+        // Refresh preview
+        function refreshPreview() {
+            if (selectedTemplate) {
+                updatePreview();
+                showSuccess('Preview refreshed');
+            }
+        }
+
+        // Make request to email service
+        async function makeServiceRequest(action, params = {}) {
+            const requestParams = {
+                action: action,
+                ...params
+            };
             
-            // Keep zone selection (likely to send multiple related notifications)
-            // Reset send button
-            resetSendButton();
+            const url = EMAIL_SERVICE_URL + '?' + new URLSearchParams(requestParams).toString();
+            
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                const callbackName = 'emailServiceCallback_' + Date.now();
+                
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve(data);
+                };
+                
+                script.src = url + '&callback=' + callbackName;
+                script.onerror = () => {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error('Failed to connect to email service'));
+                };
+                
+                document.body.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        document.body.removeChild(script);
+                        reject(new Error('Email service request timeout'));
+                    }
+                }, 10000);
+            });
+        }
+
+        // Utility functions
+        function showLoading(show) {
+            document.body.classList.toggle('loading', show);
+        }
+
+        function showSuccess(message) {
+            showNotification(message, 'success');
+        }
+
+        function showError(message) {
+            showNotification(message, 'error');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.classList.add('show');
+            }, 100);
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
         }
     </script>
 </body>
