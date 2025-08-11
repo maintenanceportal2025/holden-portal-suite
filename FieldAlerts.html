@@ -329,12 +329,11 @@
 
     <script>
         let selectedZone = 'All Zones';
-        let alertLog = [];
+        let pendingAlert = null;
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
             setupEventListeners();
-            loadAlertLog();
         });
 
         function setupEventListeners() {
@@ -399,34 +398,56 @@
             `).join('');
         }
 
-        function showSuccess(alertTitle, zone) {
+        function showConfirmation(alertData) {
+            const isAllZones = selectedZone === 'All Zones';
+            
             const successText = document.getElementById('successText');
-            successText.textContent = `${alertTitle} logged for ${zone}. Check the log below for details.`;
+            
+            if (isAllZones) {
+                successText.textContent = `Send ${alertData.alertTitle} to ALL ZONES? This will notify every resident in the complex.`;
+            } else {
+                successText.textContent = `Send ${alertData.alertTitle} to ${selectedZone}?`;
+            }
+            
+            // Show the success popup as confirmation
             document.getElementById('successPopup').style.display = 'block';
+            
+            // Change the button to confirm
+            const successBtn = document.querySelector('.success-btn');
+            successBtn.textContent = isAllZones ? '🚨 Send to All Zones' : '📤 Send Alert';
+            successBtn.onclick = function() {
+                closeSuccess();
+                sendConfirmedAlert();
+            };
         }
 
         function closeSuccess() {
             document.getElementById('successPopup').style.display = 'none';
         }
 
-        function saveAlertLog() {
-            try {
-                localStorage.setItem('fieldAlertLog', JSON.stringify(alertLog));
-            } catch (e) {
-                console.log('Could not save to localStorage');
-            }
+        function showSuccess(alertTitle) {
+            const successText = document.getElementById('successText');
+            successText.textContent = `${alertTitle} sent successfully to ${selectedZone}!`;
+            
+            // Reset button
+            const successBtn = document.querySelector('.success-btn');
+            successBtn.textContent = 'Continue';
+            successBtn.onclick = closeSuccess;
+            
+            document.getElementById('successPopup').style.display = 'block';
         }
 
-        function loadAlertLog() {
-            try {
-                const saved = localStorage.getItem('fieldAlertLog');
-                if (saved) {
-                    alertLog = JSON.parse(saved);
-                    displayAlertLog();
-                }
-            } catch (e) {
-                console.log('Could not load from localStorage');
-            }
+        function showError(message) {
+            alert('⚠️ ' + message);
+        }
+
+        function showLoading() {
+            // Simple loading state - could enhance later
+            document.body.style.cursor = 'wait';
+        }
+
+        function hideLoading() {
+            document.body.style.cursor = 'default';
         }
 
         console.log('🚨 Field Alert Logger - Ready! No backend required.');
