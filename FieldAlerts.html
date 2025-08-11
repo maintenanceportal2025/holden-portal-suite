@@ -1,4 +1,6 @@
-<!DOCTYPE html>
+.zone-btn.active .zone-text {
+            color: #3b82f6;
+        }<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -420,19 +422,6 @@
             font-weight: 600;
             color: #1e293b;
         }
-
-        .zone-count {
-            font-size: 0.75rem;
-            color: #64748b;
-        }
-
-        .zone-btn.active .zone-text {
-            color: #3b82f6;
-        }
-
-        .zone-btn.active .zone-count {
-            color: #3b82f6;
-        }
         @media (min-width: 768px) {
             .alerts-grid {
                 grid-template-columns: 1fr 1fr;
@@ -499,27 +488,22 @@
                 <button class="zone-btn active" data-zone="all">
                     <span class="zone-icon">🏘️</span>
                     <span class="zone-text">All Zones</span>
-                    <span class="zone-count">(44 units)</span>
                 </button>
                 <button class="zone-btn" data-zone="Zone 1">
                     <span class="zone-icon">1️⃣</span>
                     <span class="zone-text">Zone 1</span>
-                    <span class="zone-count">(11 units)</span>
                 </button>
                 <button class="zone-btn" data-zone="Zone 2">
                     <span class="zone-icon">2️⃣</span>
                     <span class="zone-text">Zone 2</span>
-                    <span class="zone-count">(11 units)</span>
                 </button>
                 <button class="zone-btn" data-zone="Zone 3">
                     <span class="zone-icon">3️⃣</span>
                     <span class="zone-text">Zone 3</span>
-                    <span class="zone-count">(11 units)</span>
                 </button>
                 <button class="zone-btn" data-zone="Zone 4">
                     <span class="zone-icon">4️⃣</span>
                     <span class="zone-text">Zone 4</span>
-                    <span class="zone-count">(11 units)</span>
                 </button>
             </div>
         </div>
@@ -591,7 +575,7 @@
         <div class="confirmation-icon" id="confirmIcon">⚠️</div>
         <div class="confirmation-title" id="confirmTitle">Confirm Alert</div>
         <div class="confirmation-text" id="confirmText">Are you sure you want to send this alert?</div>
-        <div class="confirmation-zone" id="confirmZone">Zone 1 (11 units)</div>
+        <div class="confirmation-zone" id="confirmZone">Zone 1</div>
         <div class="confirmation-buttons">
             <button class="cancel-btn" onclick="cancelAlert()">❌ Cancel</button>
             <button class="confirm-btn" onclick="confirmAlert()">🚨 Send Alert</button>
@@ -607,13 +591,6 @@
         let isAuthenticated = false;
         let selectedZone = 'all'; // Default to all zones
         let pendingAlert = null; // Store pending alert for confirmation
-        let zoneUnitCounts = {
-            'all': 44,
-            'Zone 1': 11,
-            'Zone 2': 11, 
-            'Zone 3': 11,
-            'Zone 4': 11
-        }; // Default counts, will be updated from backend
 
         // TEMPLATE DEFINITIONS (matching desktop interface)
         const TEMPLATE_MESSAGES = {
@@ -724,9 +701,6 @@
         function showMainInterface() {
             document.getElementById('loginContainer').style.display = 'none';
             document.getElementById('mainContainer').style.display = 'block';
-            
-            // Load actual zone unit counts from backend
-            loadZoneUnitCounts();
         }
 
         function showLoginScreen() {
@@ -740,81 +714,8 @@
             if (selectedZone === 'all') {
                 headerP.textContent = 'Select affected zones, then tap alert type';
             } else {
-                const unitCount = zoneUnitCounts[selectedZone] || 0;
-                headerP.textContent = `${selectedZone} selected (${unitCount} units) - tap alert type`;
+                headerP.textContent = `${selectedZone} selected - tap alert type`;
             }
-        }
-
-        async function loadZoneUnitCounts() {
-            try {
-                console.log('📊 Loading zone unit counts from backend...');
-                
-                // Call the HoldenEmailService to get zone information
-                const response = await makeBackendRequest('getZoneInfo');
-                
-                if (response && response.success && response.zoneCounts) {
-                    zoneUnitCounts = response.zoneCounts;
-                    console.log('✅ Zone counts loaded:', zoneUnitCounts);
-                    updateZoneButtonCounts();
-                } else {
-                    console.log('⚠️ Using default zone counts');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading zone counts:', error);
-                console.log('⚠️ Using default zone counts');
-            }
-        }
-
-        function updateZoneButtonCounts() {
-            // Update zone button displays with actual counts
-            Object.keys(zoneUnitCounts).forEach(zone => {
-                const button = document.querySelector(`[data-zone="${zone}"]`);
-                if (button) {
-                    const countSpan = button.querySelector('.zone-count');
-                    if (countSpan) {
-                        const count = zoneUnitCounts[zone];
-                        countSpan.textContent = `(${count} unit${count !== 1 ? 's' : ''})`;
-                    }
-                }
-            });
-        }
-
-        async function makeBackendRequest(action, additionalData = {}) {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'backendCallback_' + Math.round(100000 * Math.random());
-                const script = document.createElement('script');
-                
-                const params = new URLSearchParams({
-                    action: action,
-                    callback: callbackName,
-                    ...additionalData
-                });
-                
-                script.src = `${EMAIL_SERVICE_URL}?${params.toString()}`;
-                
-                window[callbackName] = function(response) {
-                    document.head.removeChild(script);
-                    delete window[callbackName];
-                    resolve(response);
-                };
-                
-                script.onerror = function() {
-                    document.head.removeChild(script);
-                    delete window[callbackName];
-                    reject(new Error('Backend request failed'));
-                };
-                
-                setTimeout(() => {
-                    if (window[callbackName]) {
-                        document.head.removeChild(script);
-                        delete window[callbackName];
-                        reject(new Error('Backend request timeout'));
-                    }
-                }, 10000);
-                
-                document.head.appendChild(script);
-            });
         }
 
         // ALERT SENDING
@@ -838,7 +739,6 @@
         }
 
         function showConfirmation(template) {
-            const unitCount = zoneUnitCounts[selectedZone] || 0;
             const isAllZones = selectedZone === 'all';
             
             // Update confirmation dialog
@@ -853,14 +753,14 @@
                 confirmIcon.className = 'confirmation-icon danger';
                 confirmTitle.textContent = 'SEND TO ALL UNITS?';
                 confirmText.textContent = 'This will notify EVERY resident in the complex. Are you absolutely sure this affects all zones?';
-                confirmZone.textContent = `ALL ZONES (${unitCount} units)`;
+                confirmZone.textContent = `ALL ZONES`;
                 confirmZone.className = 'confirmation-zone all-zones';
             } else {
                 confirmIcon.textContent = '⚠️';
                 confirmIcon.className = 'confirmation-icon warning';
                 confirmTitle.textContent = 'Confirm Zone Alert';
                 confirmText.textContent = `Send "${template.title}" to residents in the selected zone?`;
-                confirmZone.textContent = `${selectedZone} (${unitCount} units)`;
+                confirmZone.textContent = selectedZone;
                 confirmZone.className = 'confirmation-zone';
             }
             
@@ -874,7 +774,7 @@
             document.getElementById('confirmationDialog').style.display = 'none';
         }
 
-        async function confirmAlert() {
+        function confirmAlert() {
             if (!pendingAlert) {
                 console.error('No pending alert to confirm');
                 return;
@@ -886,6 +786,10 @@
             document.getElementById('confirmationDialog').style.display = 'none';
             
             // Proceed with sending the alert
+            sendConfirmedAlert();
+        }
+
+        async function sendConfirmedAlert() {
             try {
                 // Show loading
                 showLoading();
@@ -955,11 +859,10 @@
             
             // Update loading text based on selected zone
             const loadingSubtext = document.getElementById('loadingSubtext');
-            const unitCount = zoneUnitCounts[selectedZone] || 0;
             if (selectedZone === 'all') {
-                loadingSubtext.textContent = `Notifying all ${unitCount} units`;
+                loadingSubtext.textContent = 'Notifying all zones';
             } else {
-                loadingSubtext.textContent = `Notifying ${selectedZone} (${unitCount} units)`;
+                loadingSubtext.textContent = `Notifying ${selectedZone}`;
             }
         }
 
@@ -969,11 +872,10 @@
 
         function showSuccess(alertType) {
             const successText = document.getElementById('successText');
-            const unitCount = zoneUnitCounts[selectedZone] || 0;
             if (selectedZone === 'all') {
-                successText.textContent = `${alertType} notification sent to all ${unitCount} units.`;
+                successText.textContent = `${alertType} notification sent to all zones.`;
             } else {
-                successText.textContent = `${alertType} notification sent to ${selectedZone} (${unitCount} units).`;
+                successText.textContent = `${alertType} notification sent to ${selectedZone}.`;
             }
             document.getElementById('successMessage').style.display = 'block';
         }
