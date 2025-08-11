@@ -462,20 +462,53 @@
             }
         }
 
+        // Debug DOM structure
+        function debugDOM() {
+            console.log('🔍 Debugging DOM structure...');
+            console.log('Document ready state:', document.readyState);
+            
+            // Look for any elements with "template" in their ID or class
+            const allElements = document.querySelectorAll('*');
+            const templateElements = Array.from(allElements).filter(el => 
+                (el.id && el.id.toLowerCase().includes('template')) ||
+                (el.className && el.className.toLowerCase().includes('template'))
+            );
+            
+            console.log('🎯 Elements with "template" in ID/class:', templateElements);
+            templateElements.forEach(el => {
+                console.log(`  - ${el.tagName}#${el.id}.${el.className}`);
+            });
+            
+            // Check specifically for templateGrid
+            const templateGrid = document.getElementById('templateGrid');
+            console.log('📋 templateGrid element:', templateGrid);
+            
+            // Check for template-grid class
+            const templateGridClass = document.querySelector('.template-grid');
+            console.log('📋 .template-grid element:', templateGridClass);
+        }
+
         // Load and display actual templates from backend
         async function loadAndDisplayTemplates() {
             try {
                 console.log('📡 Loading templates from backend...');
                 
-                // More reliable way to wait for DOM element
-                const templateGrid = await waitForElement('templateGrid');
+                // Debug DOM first
+                debugDOM();
                 
-                if (!templateGrid) {
-                    console.error('❌ Could not find templateGrid element after waiting');
+                // Try multiple ways to find the template container
+                let templateContainer = document.getElementById('templateGrid');
+                if (!templateContainer) {
+                    templateContainer = document.querySelector('.template-grid');
+                    console.log('📋 Fallback to .template-grid class:', templateContainer);
+                }
+                
+                if (!templateContainer) {
+                    console.error('❌ Could not find any template container element');
                     return;
                 }
                 
-                console.log('✅ Template grid element found');
+                console.log('✅ Template container found:', templateContainer);
                 
                 const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
                 const text = await response.text();
@@ -494,11 +527,11 @@
                     console.log('📋 Template IDs found:', result.templates.map(t => t.templateId));
                     
                     // Render templates
-                    renderActualTemplates(result.templates);
+                    renderTemplatesInContainer(templateContainer, result.templates);
                     
                 } else {
                     console.log('⚠️ No templates found');
-                    templateGrid.innerHTML = `
+                    templateContainer.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
                             <div>⚠️ No templates available</div>
                         </div>
@@ -507,16 +540,30 @@
                 
             } catch (error) {
                 console.error('❌ Error loading templates:', error);
-                const templateGrid = document.getElementById('templateGrid');
-                if (templateGrid) {
-                    templateGrid.innerHTML = `
-                        <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
-                            <div>❌ Failed to load templates</div>
-                            <div style="font-size: 0.8rem; margin-top: 8px;">${error.message}</div>
-                        </div>
-                    `;
-                }
             }
+        }
+
+        // Render templates in any container
+        function renderTemplatesInContainer(container, templates) {
+            const displayTemplates = templates.slice(0, 6);
+            
+            console.log('🎨 Rendering templates in container:', container);
+            
+            container.innerHTML = displayTemplates.map(template => {
+                const emoji = getTemplateEmoji(template.templateId, template.category);
+                const displayTitle = template.templateId;
+                const displayDesc = getShortDescription(template.subject);
+                
+                return `
+                    <div class="template-card" onclick="selectTemplate('${template.templateId}')">
+                        <div class="template-emoji">${emoji}</div>
+                        <div class="template-title">${displayTitle}</div>
+                        <div class="template-desc">${displayDesc}</div>
+                    </div>
+                `;
+            }).join('');
+            
+            console.log('✅ Templates rendered successfully');
         }
 
         // Wait for DOM element to exist
