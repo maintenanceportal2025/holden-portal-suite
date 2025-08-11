@@ -462,6 +462,8 @@
         // Load and display actual templates from backend
         async function loadAndDisplayTemplates() {
             try {
+                console.log('📡 Loading templates from backend...');
+                
                 const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
                 const text = await response.text();
                 
@@ -470,24 +472,52 @@
                 const jsonStr = text.substring(jsonStart, jsonEnd);
                 const result = JSON.parse(jsonStr);
                 
+                console.log('📨 Backend response:', result);
+                
                 if (result.success && result.templates.length > 0) {
-                    // Replace template grid with actual templates
-                    renderActualTemplates(result.templates);
+                    // Store templates
                     emailTemplates = result.templates;
                     console.log('✅ Loaded real templates:', result.templates.length);
                     console.log('📋 Template IDs found:', result.templates.map(t => t.templateId));
+                    
+                    // Wait a moment for DOM to be ready, then render
+                    setTimeout(() => {
+                        renderActualTemplates(result.templates);
+                    }, 100);
+                    
                 } else {
-                    console.log('⚠️ No templates found, keeping default templates');
+                    console.log('⚠️ No templates found, keeping default loading message');
+                    const templateGrid = document.getElementById('templateGrid');
+                    if (templateGrid) {
+                        templateGrid.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
+                                <div>⚠️ No templates available</div>
+                            </div>
+                        `;
+                    }
                 }
                 
             } catch (error) {
-                console.error('❌ Error loading templates, keeping defaults:', error);
+                console.error('❌ Error loading templates:', error);
+                const templateGrid = document.getElementById('templateGrid');
+                if (templateGrid) {
+                    templateGrid.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
+                            <div>❌ Failed to load templates</div>
+                        </div>
+                    `;
+                }
             }
         }
 
         // Render actual templates from backend - EXACTLY like Mass Notification System
         function renderActualTemplates(templates) {
             const templateGrid = document.getElementById('templateGrid');
+            
+            if (!templateGrid) {
+                console.error('❌ Template grid element not found!');
+                return;
+            }
             
             if (templates.length === 0) {
                 templateGrid.innerHTML = `
@@ -500,6 +530,8 @@
             
             // Take first 6 templates for mobile display
             const displayTemplates = templates.slice(0, 6);
+            
+            console.log('🎨 Rendering templates:', displayTemplates.map(t => t.templateId));
             
             templateGrid.innerHTML = displayTemplates.map(template => {
                 const emoji = getTemplateEmoji(template.templateId, template.category);
@@ -514,6 +546,8 @@
                     </div>
                 `;
             }).join('');
+            
+            console.log('✅ Templates rendered successfully');
         }
 
         // Select template - EXACTLY like Mass Notification System
