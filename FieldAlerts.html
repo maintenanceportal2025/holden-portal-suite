@@ -518,6 +518,9 @@
 
         // Select template - EXACTLY like Mass Notification System
         function selectTemplate(templateId) {
+            console.log('🎯 Template selected:', templateId);
+            console.log('📋 Available templates:', emailTemplates.map(t => t.templateId));
+            
             // Remove previous selection
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
@@ -527,11 +530,14 @@
             const template = emailTemplates.find(t => t.templateId === templateId);
             
             if (template) {
+                console.log('✅ Template found:', template);
+                
                 // Visual selection
                 event.target.closest('.template-card').classList.add('selected');
                 
                 // Store selected template ID (not object)
                 selectedTemplate = templateId;
+                console.log('💾 Selected template stored as:', selectedTemplate);
                 
                 updateSendButton();
                 
@@ -539,6 +545,8 @@
                 if (navigator.vibrate) {
                     navigator.vibrate(50);
                 }
+            } else {
+                console.error('❌ Template not found:', templateId);
             }
         }
 
