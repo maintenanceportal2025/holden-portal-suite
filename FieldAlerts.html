@@ -661,12 +661,18 @@
         // Get friendly template name
         function getTemplateName(templateId) {
             const names = {
-                WATER_EMERGENCY: 'Water Emergency',
-                WATER_RESTORED: 'Water Restored',
-                POWER_EMERGENCY: 'Power Emergency', 
-                POWER_RESTORED: 'Power Restored',
-                MAINTENANCE_ALERT: 'Maintenance Alert',
-                URGENT_NOTICE: 'Urgent Notice'
+                WATER01: 'Water Alert 1',
+                WATER02: 'Water Alert 2', 
+                WATER03: 'Water Alert 3',
+                POWER01: 'Power Alert 1',
+                POWER02: 'Power Alert 2',
+                POWER03: 'Power Alert 3',
+                EVAC01: 'Evacuation Alert 1',
+                EVAC02: 'Evacuation Alert 2',
+                ARBOR01: 'Arbor Alert 1',
+                ARBOR02: 'Arbor Alert 2',
+                COMM01: 'Community Notice',
+                MAINT01: 'Maintenance Alert'
             };
             return names[templateId] || templateId;
         }
@@ -677,6 +683,10 @@
                 showResult('error', 'No Template Selected', 'Please select a notification type first');
                 return;
             }
+
+            // DEBUG: Log what we're about to send
+            console.log('🚀 Sending notification with template:', selectedTemplate);
+            console.log('📋 Available templates:', emailTemplates.map(t => t.templateId));
 
             try {
                 // Show sending state
@@ -692,15 +702,21 @@
                     callback: '?'
                 });
                 
+                console.log('📤 Sending request with params:', params.toString());
+                
                 // Send to email service
                 const response = await fetch(`${EMAIL_SERVICE_URL}?${params}`);
                 const text = await response.text();
+                
+                console.log('📨 Raw response:', text);
                 
                 // Parse JSONP response
                 const jsonStart = text.indexOf('(') + 1;
                 const jsonEnd = text.lastIndexOf(')');
                 const jsonStr = text.substring(jsonStart, jsonEnd);
                 const result = JSON.parse(jsonStr);
+                
+                console.log('📋 Parsed result:', result);
                 
                 if (result.success) {
                     // Show success
