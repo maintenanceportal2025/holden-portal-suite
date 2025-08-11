@@ -2,205 +2,338 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mobile Field Alerts - Lake Illawong</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>📢 Field Notifications</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
+            background: linear-gradient(135deg, #059669 0%, #047857 100%);
+            min-height: 100vh;
             color: #333;
-            background: #f5f7fa;
-            padding: 10px;
+            overflow-x: hidden;
         }
 
         .container {
-            max-width: 500px;
-            margin: 0 auto;
+            max-width: 100%;
+            padding: 20px;
+            padding-top: max(20px, env(safe-area-inset-top));
+            padding-bottom: max(20px, env(safe-area-inset-bottom));
         }
 
+        /* HEADER */
         .header {
-            background: linear-gradient(135deg, #dc2626, #991b1b);
-            color: white;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
             text-align: center;
+            margin-bottom: 30px;
+            color: white;
         }
 
         .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
         }
 
-        .card {
-            background: white;
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        /* STATUS BAR */
+        .status-bar {
+            background: rgba(255,255,255,0.95);
             border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #e2e8f0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
         }
 
-        .card-title {
-            font-size: 1.2rem;
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+        }
+
+        .status-dot.offline {
+            background: #ef4444;
+        }
+
+        /* TEMPLATE SELECTION */
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            color: white;
+            font-size: 1.1rem;
             font-weight: 600;
-            color: #1e293b;
             margin-bottom: 15px;
+            text-align: center;
         }
 
         .template-grid {
             display: grid;
-            grid-template-columns: 1fr;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
         }
 
         .template-card {
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            padding: 15px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px 15px;
+            text-align: center;
             cursor: pointer;
             transition: all 0.2s;
-            text-align: center;
+            border: 3px solid transparent;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
-        .template-card:hover {
-            border-color: #059669;
-            transform: translateY(-2px);
+        .template-card:active {
+            transform: scale(0.95);
         }
 
         .template-card.selected {
             border-color: #059669;
             background: #ecfdf5;
+            transform: scale(1.02);
+        }
+
+        .template-emoji {
+            font-size: 2rem;
+            margin-bottom: 8px;
         }
 
         .template-title {
             font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 5px;
-            font-size: 1.1rem;
+            font-size: 0.9rem;
+            color: #1f2937;
+            margin-bottom: 4px;
         }
 
-        .template-category {
-            background: #fee2e2;
-            color: #dc2626;
-            padding: 3px 8px;
-            border-radius: 12px;
+        .template-desc {
             font-size: 0.75rem;
-            margin-bottom: 8px;
-            display: inline-block;
+            color: #6b7280;
+            line-height: 1.3;
         }
 
-        .template-category.restoration {
-            background: #dcfce7;
-            color: #059669;
+        /* ZONE SELECTOR */
+        .zone-selector {
+            background: rgba(255,255,255,0.95);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            backdrop-filter: blur(10px);
         }
 
-        .template-category.maintenance {
-            background: #fef3c7;
-            color: #d97706;
-        }
-
-        .form-select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            font-size: 1rem;
+        .zone-title {
+            font-weight: 600;
             margin-bottom: 15px;
+            text-align: center;
+            color: #1f2937;
         }
 
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
+        .zone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 8px;
+        }
+
+        .zone-btn {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
             border-radius: 8px;
+            padding: 12px 8px;
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            font-size: 1rem;
-            margin-top: 10px;
+            transition: all 0.2s;
+            text-align: center;
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .btn-primary {
+        .zone-btn:active {
+            transform: scale(0.95);
+        }
+
+        .zone-btn.selected {
+            background: #3b82f6;
+            color: white;
+            border-color: #3b82f6;
+        }
+
+        .zone-btn.all-units {
+            grid-column: 1 / -1;
             background: #059669;
             color: white;
+            border-color: #059669;
         }
 
-        .btn-primary:disabled {
+        .zone-btn.all-units.selected {
+            background: #047857;
+            border-color: #047857;
+        }
+
+        /* SEND BUTTON */
+        .send-section {
+            position: sticky;
+            bottom: 20px;
+        }
+
+        .send-btn {
+            width: 100%;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 18px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            min-height: 60px;
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+        }
+
+        .send-btn:active {
+            transform: scale(0.98);
+        }
+
+        .send-btn:disabled {
             background: #9ca3af;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
-        .btn-secondary {
-            background: #6b7280;
-            color: white;
+        .send-btn.sending {
+            background: #f59e0b;
+            animation: pulse 1s infinite;
         }
 
-        .preview-panel {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 15px;
-            display: none;
+        .send-btn.sent {
+            background: #10b981;
+            animation: none;
         }
 
-        .preview-content {
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        /* RESULT MESSAGE */
+        .result-message {
             background: white;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            text-align: center;
+            display: none;
+            animation: slideUp 0.3s ease;
         }
 
-        .preview-subject {
-            font-weight: 600;
-            color: #1e293b;
+        .result-message.show {
+            display: block;
+        }
+
+        .result-message.success {
+            background: #ecfdf5;
+            border: 2px solid #10b981;
+            color: #065f46;
+        }
+
+        .result-message.error {
+            background: #fef2f2;
+            border: 2px solid #ef4444;
+            color: #991b1b;
+        }
+
+        .result-icon {
+            font-size: 2.5rem;
             margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e5e7eb;
         }
 
-        .preview-body {
-            color: #374151;
-            line-height: 1.6;
-            white-space: pre-line;
+        .result-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
         }
 
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            left: 20px;
-            padding: 15px;
-            border-radius: 8px;
-            color: white;
-            font-weight: 500;
-            z-index: 1000;
-            transform: translateY(-100px);
-            transition: transform 0.3s;
+        .result-details {
+            font-size: 0.9rem;
+            opacity: 0.8;
         }
 
-        .notification.show {
-            transform: translateY(0);
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .notification.success {
-            background: #059669;
+        /* RESPONSIVE ADJUSTMENTS */
+        @media (max-width: 400px) {
+            .container {
+                padding: 15px;
+            }
+            
+            .template-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .zone-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .template-card {
+                min-height: 80px;
+            }
         }
 
-        .notification.error {
-            background: #dc2626;
+        /* LOADING SPINNER */
+        .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top: 2px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
 
-        .loading {
-            opacity: 0.6;
-            pointer-events: none;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -208,126 +341,198 @@
     <div class="container">
         <!-- Header -->
         <div class="header">
-            <h1>🚨 Mobile Field Alerts</h1>
-            <p>Emergency communications for maintenance team</p>
+            <h1>📢 Field Notifications</h1>
+            <p>Quick emergency & maintenance alerts</p>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <div class="status-item">
+                <div class="status-dot" id="serviceDot"></div>
+                <span id="serviceStatus">Email Service</span>
+            </div>
+            <div class="status-item">
+                <span id="quotaStatus">Checking quota...</span>
+            </div>
         </div>
 
         <!-- Template Selection -->
-        <div class="card">
-            <h2 class="card-title">Select Emergency Alert</h2>
-            
-            <div class="template-grid" id="templateGrid">
-                <div class="template-card" onclick="selectTemplate('WATER02')">
-                    <div class="template-category">Emergency</div>
-                    <div class="template-title">🚰 Water Emergency</div>
-                    <div>Immediate water service shutdown</div>
+        <div class="section">
+            <h2 class="section-title">Select Emergency Type</h2>
+            <div class="template-grid">
+                <div class="template-card" data-template="water_emergency">
+                    <div class="template-emoji">🚰</div>
+                    <div class="template-title">Water Emergency</div>
+                    <div class="template-desc">Immediate shutdown</div>
                 </div>
                 
-                <div class="template-card" onclick="selectTemplate('WATER03')">
-                    <div class="template-category restoration">Restoration</div>
-                    <div class="template-title">✅ Water Restored</div>
-                    <div>Water service back to normal</div>
+                <div class="template-card" data-template="water_restored">
+                    <div class="template-emoji">✅</div>
+                    <div class="template-title">Water Restored</div>
+                    <div class="template-desc">Back to normal</div>
                 </div>
                 
-                <div class="template-card" onclick="selectTemplate('POWER02')">
-                    <div class="template-category">Emergency</div>
-                    <div class="template-title">⚡ Power Emergency</div>
-                    <div>Immediate power outage alert</div>
+                <div class="template-card" data-template="power_emergency">
+                    <div class="template-emoji">⚡</div>
+                    <div class="template-title">Power Emergency</div>
+                    <div class="template-desc">Outage alert</div>
                 </div>
                 
-                <div class="template-card" onclick="selectTemplate('POWER03')">
-                    <div class="template-category restoration">Restoration</div>
-                    <div class="template-title">✅ Power Restored</div>
-                    <div>Power service back to normal</div>
+                <div class="template-card" data-template="power_restored">
+                    <div class="template-emoji">✅</div>
+                    <div class="template-title">Power Restored</div>
+                    <div class="template-desc">Back to normal</div>
                 </div>
                 
-                <div class="template-card" onclick="selectTemplate('MAINT01')">
-                    <div class="template-category maintenance">Maintenance</div>
-                    <div class="template-title">🔧 Maintenance Work</div>
-                    <div>Active work affecting access</div>
+                <div class="template-card" data-template="maintenance_work">
+                    <div class="template-emoji">🔧</div>
+                    <div class="template-title">Maintenance Work</div>
+                    <div class="template-desc">Active work</div>
                 </div>
                 
-                <div class="template-card" onclick="selectTemplate('COMM01')">
-                    <div class="template-category maintenance">Notice</div>
-                    <div class="template-title">📢 Urgent Notice</div>
-                    <div>Important community alert</div>
+                <div class="template-card" data-template="urgent_notice">
+                    <div class="template-emoji">📢</div>
+                    <div class="template-title">Urgent Notice</div>
+                    <div class="template-desc">Important alert</div>
                 </div>
             </div>
-
-            <select class="form-select" id="recipientFilter">
-                <option value="all_units">All Units (44 units)</option>
-                <option value="zone_1">Zone 1 Only</option>
-                <option value="zone_2">Zone 2 Only</option>
-                <option value="zone_3">Zone 3 Only</option>
-                <option value="zone_4">Zone 4 Only</option>
-                <option value="zone_5">Zone 5 Only</option>
-            </select>
         </div>
 
-        <!-- Preview -->
-        <div class="card">
-            <h2 class="card-title">Preview & Send</h2>
-            
-            <div class="preview-panel" id="previewPanel">
-                <div class="preview-content">
-                    <div class="preview-subject" id="previewSubject"></div>
-                    <div class="preview-body" id="previewBody"></div>
-                </div>
+        <!-- Zone Selector -->
+        <div class="zone-selector">
+            <h3 class="zone-title">Select Affected Area</h3>
+            <div class="zone-grid">
+                <button class="zone-btn" data-zone="zone1">Zone 1</button>
+                <button class="zone-btn" data-zone="zone2">Zone 2</button>
+                <button class="zone-btn" data-zone="zone3">Zone 3</button>
+                <button class="zone-btn" data-zone="zone4">Zone 4</button>
+                <button class="zone-btn" data-zone="zone5">Zone 5</button>
+                <button class="zone-btn all-units selected" data-zone="all_units">🏘️ All Units</button>
             </div>
+        </div>
 
-            <button class="btn btn-primary" id="sendEmailBtn" onclick="sendMassNotification()" disabled>
-                <span id="sendButtonText">📧 Send Alert</span>
+        <!-- Send Button -->
+        <div class="send-section">
+            <button class="send-btn" id="sendBtn" onclick="sendNotification()" disabled>
+                <span id="sendBtnText">📧 Select Template to Send</span>
+                <div class="spinner" id="sendSpinner" style="display: none;"></div>
             </button>
+        </div>
+
+        <!-- Result Message -->
+        <div class="result-message" id="resultMessage">
+            <div class="result-icon" id="resultIcon"></div>
+            <div class="result-title" id="resultTitle"></div>
+            <div class="result-details" id="resultDetails"></div>
         </div>
     </div>
 
     <script>
-        // EXACT SAME EMAIL SERVICE AS DESKTOP
+        // Email Service Configuration - SAME AS DESKTOP VERSION
         const EMAIL_SERVICE_URL = 'https://script.google.com/macros/s/AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v/exec';
         
-        // Mobile templates (subset of desktop templates)
-        const mobileTemplates = {
-            'WATER02': {
-                templateId: 'WATER02',
-                subject: 'URGENT: Water Service Emergency',
-                body: 'Emergency water service shutdown in progress. Water supply will be interrupted immediately. We will update you as soon as service is restored. Apologize for any inconvenience.',
-                category: 'Emergency'
-            },
-            'WATER03': {
-                templateId: 'WATER03', 
-                subject: 'Water Service Restored',
-                body: 'Water service has been restored to normal operation. Thank you for your patience during the emergency maintenance.',
-                category: 'Restoration'
-            },
-            'POWER02': {
-                templateId: 'POWER02',
-                subject: 'URGENT: Power Outage Alert', 
-                body: 'Emergency power outage affecting the complex. Electrical supply has been interrupted. We are working to restore power as quickly as possible.',
-                category: 'Emergency'
-            },
-            'POWER03': {
-                templateId: 'POWER03',
-                subject: 'Power Service Restored',
-                body: 'Electrical power has been restored to normal operation. Thank you for your patience during the outage.',
-                category: 'Restoration'
-            },
-            'MAINT01': {
-                templateId: 'MAINT01',
-                subject: 'Maintenance Work in Progress',
-                body: 'Active maintenance work is currently affecting property access. Please use alternate routes and exercise caution in work areas.',
-                category: 'Maintenance'
-            },
-            'COMM01': {
-                templateId: 'COMM01',
-                subject: 'Urgent Community Notice',
-                body: 'Important community alert requiring immediate attention. Please take note of the following information and act accordingly.',
-                category: 'Notice'
-            }
-        };
-
+        // Global state
         let selectedTemplate = null;
+        let selectedZone = 'all_units';
+        let emailTemplates = [];
 
-        // EXACT SAME FUNCTIONS AS DESKTOP (simplified)
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFieldTool();
+            setupEventListeners();
+        });
+
+        // Initialize the field tool
+        async function initializeFieldTool() {
+            try {
+                // Check service status
+                await checkServiceStatus();
+                
+                // Load templates (for validation)
+                await loadEmailTemplates();
+                
+                console.log('✅ Field notification tool ready');
+                
+            } catch (error) {
+                console.error('❌ Error initializing field tool:', error);
+                showServiceOffline();
+            }
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Template selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    selectTemplate(this.dataset.template);
+                });
+            });
+
+            // Zone selection
+            document.querySelectorAll('.zone-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    selectZone(this.dataset.zone);
+                });
+            });
+        }
+
+        // Check email service status
+        async function checkServiceStatus() {
+            try {
+                const response = await fetch(`${EMAIL_SERVICE_URL}?action=checkEmailQuota&callback=?`);
+                const text = await response.text();
+                
+                // Parse JSONP response
+                const jsonStart = text.indexOf('(') + 1;
+                const jsonEnd = text.lastIndexOf(')');
+                const jsonStr = text.substring(jsonStart, jsonEnd);
+                const result = JSON.parse(jsonStr);
+                
+                if (result.success) {
+                    document.getElementById('serviceDot').classList.remove('offline');
+                    document.getElementById('serviceStatus').textContent = 'Online';
+                    document.getElementById('quotaStatus').textContent = `${result.remaining}/${result.daily} emails`;
+                } else {
+                    showServiceOffline();
+                }
+                
+            } catch (error) {
+                console.error('❌ Service check failed:', error);
+                showServiceOffline();
+            }
+        }
+
+        // Show service offline
+        function showServiceOffline() {
+            document.getElementById('serviceDot').classList.add('offline');
+            document.getElementById('serviceStatus').textContent = 'Offline';
+            document.getElementById('quotaStatus').textContent = 'Service unavailable';
+        }
+
+        // Load email templates (for validation)
+        async function loadEmailTemplates() {
+            try {
+                const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
+                const text = await response.text();
+                
+                const jsonStart = text.indexOf('(') + 1;
+                const jsonEnd = text.lastIndexOf(')');
+                const jsonStr = text.substring(jsonStart, jsonEnd);
+                const result = JSON.parse(jsonStr);
+                
+                if (result.success) {
+                    emailTemplates = result.templates;
+                    console.log('✅ Templates loaded:', emailTemplates.length);
+                } else {
+                    console.error('❌ Failed to load templates:', result.error);
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading templates:', error);
+            }
+        }
+
+        // Select template
         function selectTemplate(templateId) {
             // Remove previous selection
             document.querySelectorAll('.template-card').forEach(card => {
@@ -335,186 +540,184 @@
             });
             
             // Select new template
-            selectedTemplate = mobileTemplates[templateId];
+            document.querySelector(`[data-template="${templateId}"]`).classList.add('selected');
+            selectedTemplate = templateId;
+            
+            updateSendButton();
+            
+            // Haptic feedback on iOS
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+        }
+
+        // Select zone
+        function selectZone(zone) {
+            // Remove previous selection
+            document.querySelectorAll('.zone-btn').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+            
+            // Select new zone
+            document.querySelector(`[data-zone="${zone}"]`).classList.add('selected');
+            selectedZone = zone;
+            
+            updateSendButton();
+        }
+
+        // Update send button
+        function updateSendButton() {
+            const sendBtn = document.getElementById('sendBtn');
+            const sendBtnText = document.getElementById('sendBtnText');
             
             if (selectedTemplate) {
-                // Visual selection
-                event.target.closest('.template-card').classList.add('selected');
+                sendBtn.disabled = false;
+                sendBtn.style.background = '#ef4444';
                 
-                // Update preview
-                updatePreview();
+                const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.slice(-1)}`;
+                const templateName = getTemplateName(selectedTemplate);
                 
-                // Enable send button
-                document.getElementById('sendEmailBtn').disabled = false;
+                sendBtnText.textContent = `🚨 Send ${templateName} to ${zoneName}`;
+            } else {
+                sendBtn.disabled = true;
+                sendBtn.style.background = '#9ca3af';
+                sendBtnText.textContent = '📧 Select Template to Send';
             }
         }
 
-        function updatePreview() {
-            if (!selectedTemplate) {
-                document.getElementById('previewPanel').style.display = 'none';
-                return;
-            }
-            
-            // Generate preview content (same as desktop)
-            let subject = selectedTemplate.subject;
-            let body = selectedTemplate.body;
-            
-            // Replace common variables
-            const today = new Date().toLocaleDateString('en-AU');
-            const time = new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' });
-            
-            subject = subject.replace(/{DATE}/g, today);
-            body = body.replace(/{DATE}/g, today);
-            body = body.replace(/{TIME}/g, time);
-            
-            // Update preview
-            document.getElementById('previewSubject').textContent = subject;
-            document.getElementById('previewBody').textContent = body;
-            document.getElementById('previewPanel').style.display = 'block';
+        // Get friendly template name
+        function getTemplateName(templateId) {
+            const names = {
+                water_emergency: 'Water Emergency',
+                water_restored: 'Water Restored',
+                power_emergency: 'Power Emergency', 
+                power_restored: 'Power Restored',
+                maintenance_work: 'Maintenance Alert',
+                urgent_notice: 'Urgent Notice'
+            };
+            return names[templateId] || templateId;
         }
 
-        // EXACT SAME SEND FUNCTION AS DESKTOP
-        async function sendMassNotification() {
+        // Send notification
+        async function sendNotification() {
             if (!selectedTemplate) {
-                showError('Please select a template first');
+                showResult('error', 'No Template Selected', 'Please select a notification type first');
                 return;
             }
-            
+
             try {
-                // Show loading state
-                showSendingState(true);
+                // Show sending state
+                showSendingState();
                 
-                const recipientFilter = document.getElementById('recipientFilter').value;
-                
-                // EXACT SAME CALL AS DESKTOP
-                const response = await makeServiceRequest('sendMassNotification', {
-                    templateId: selectedTemplate.templateId,
-                    recipientFilter: recipientFilter,
+                // Prepare parameters for mass notification
+                const params = new URLSearchParams({
+                    action: 'sendMassNotification',
+                    templateId: selectedTemplate,
+                    recipientFilter: selectedZone,
                     customData: JSON.stringify({}),
-                    adminUser: 'MobileFieldAlerts'
+                    adminUser: 'FieldTech',
+                    callback: '?'
                 });
                 
-                if (response.success) {
-                    showSuccess(`✅ Alert sent successfully to ${getZoneName(recipientFilter)}!`);
+                // Send to email service
+                const response = await fetch(`${EMAIL_SERVICE_URL}?${params}`);
+                const text = await response.text();
+                
+                // Parse JSONP response
+                const jsonStart = text.indexOf('(') + 1;
+                const jsonEnd = text.lastIndexOf(')');
+                const jsonStr = text.substring(jsonStart, jsonEnd);
+                const result = JSON.parse(jsonStr);
+                
+                if (result.success) {
+                    // Show success
+                    showSentState();
                     
-                    // Reset form
-                    setTimeout(() => {
-                        resetForm();
-                    }, 3000);
+                    const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.slice(-1)}`;
+                    showResult(
+                        'success', 
+                        'Notification Sent!', 
+                        `${getTemplateName(selectedTemplate)} sent to ${result.recipientCount} residents in ${zoneName}`
+                    );
+                    
+                    // Reset after delay
+                    setTimeout(resetForm, 3000);
+                    
                 } else {
-                    throw new Error(response.error || 'Failed to send alert');
+                    throw new Error(result.error || 'Unknown error');
                 }
                 
             } catch (error) {
-                console.error('❌ Error sending alert:', error);
-                showError('Failed to send alert: ' + error.message);
-            } finally {
-                showSendingState(false);
+                console.error('❌ Send failed:', error);
+                showResult('error', 'Send Failed', error.message || 'Please check connection and try again');
+                resetSendButton();
             }
         }
 
-        function getZoneName(filter) {
-            const names = {
-                'all_units': 'all units',
-                'zone_1': 'Zone 1',
-                'zone_2': 'Zone 2',
-                'zone_3': 'Zone 3', 
-                'zone_4': 'Zone 4',
-                'zone_5': 'Zone 5'
-            };
-            return names[filter] || filter;
+        // Show sending state
+        function showSendingState() {
+            const sendBtn = document.getElementById('sendBtn');
+            const sendBtnText = document.getElementById('sendBtnText');
+            const sendSpinner = document.getElementById('sendSpinner');
+            
+            sendBtn.classList.add('sending');
+            sendBtn.disabled = true;
+            sendBtnText.textContent = 'Sending...';
+            sendSpinner.style.display = 'block';
         }
 
-        // EXACT SAME SERVICE REQUEST AS DESKTOP
-        async function makeServiceRequest(action, params = {}) {
-            const requestParams = {
-                action: action,
-                ...params
-            };
+        // Show sent state
+        function showSentState() {
+            const sendBtn = document.getElementById('sendBtn');
+            const sendBtnText = document.getElementById('sendBtnText');
+            const sendSpinner = document.getElementById('sendSpinner');
             
-            const url = EMAIL_SERVICE_URL + '?' + new URLSearchParams(requestParams).toString();
-            
-            return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                const callbackName = 'emailServiceCallback_' + Date.now();
-                
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    resolve(data);
-                };
-                
-                script.src = url + '&callback=' + callbackName;
-                script.onerror = () => {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    reject(new Error('Failed to connect to email service'));
-                };
-                
-                document.body.appendChild(script);
-                
-                setTimeout(() => {
-                    if (window[callbackName]) {
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                        reject(new Error('Email service request timeout'));
-                    }
-                }, 10000);
-            });
+            sendBtn.classList.remove('sending');
+            sendBtn.classList.add('sent');
+            sendBtnText.textContent = '✅ Sent Successfully!';
+            sendSpinner.style.display = 'none';
         }
 
-        function showSendingState(sending) {
-            const button = document.getElementById('sendEmailBtn');
-            const buttonText = document.getElementById('sendButtonText');
+        // Reset send button
+        function resetSendButton() {
+            const sendBtn = document.getElementById('sendBtn');
+            const sendSpinner = document.getElementById('sendSpinner');
             
-            if (sending) {
-                button.disabled = true;
-                buttonText.textContent = '🔄 Sending...';
-                document.body.classList.add('loading');
-            } else {
-                button.disabled = false;
-                buttonText.textContent = '📧 Send Alert';
-                document.body.classList.remove('loading');
-            }
+            sendBtn.classList.remove('sending', 'sent');
+            sendSpinner.style.display = 'none';
+            updateSendButton();
         }
 
+        // Show result message
+        function showResult(type, title, details) {
+            const resultMessage = document.getElementById('resultMessage');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDetails = document.getElementById('resultDetails');
+            
+            resultMessage.className = `result-message show ${type}`;
+            resultIcon.textContent = type === 'success' ? '✅' : '❌';
+            resultTitle.textContent = title;
+            resultDetails.textContent = details;
+            
+            // Hide after delay
+            setTimeout(() => {
+                resultMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        // Reset form
         function resetForm() {
-            selectedTemplate = null;
+            // Reset template selection
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            document.getElementById('previewPanel').style.display = 'none';
-            document.getElementById('sendEmailBtn').disabled = true;
-        }
-
-        function showSuccess(message) {
-            showNotification(message, 'success');
-        }
-
-        function showError(message) {
-            showNotification(message, 'error');
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `notification ${type}`;
-            notification.textContent = message;
+            selectedTemplate = null;
             
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.classList.add('show');
-            }, 100);
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-                setTimeout(() => {
-                    document.body.removeChild(notification);
-                }, 300);
-            }, 4000);
+            // Keep zone selection (likely to send multiple related notifications)
+            // Reset send button
+            resetSendButton();
         }
-
-        console.log('🚨 Mobile Field Alerts - Using proven desktop email service');
     </script>
 </body>
 </html>
