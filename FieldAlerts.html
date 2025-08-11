@@ -804,19 +804,53 @@
                 const callbackName = 'emailCallback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
                 
+                // Convert zone selection to match desktop exactly
+                let recipientFilter;
+                if (selectedZone === 'all') {
+                    recipientFilter = 'all_units';
+                } else if (selectedZone === 'Zone 1') {
+                    recipientFilter = 'zone_1';
+                } else if (selectedZone === 'Zone 2') {
+                    recipientFilter = 'zone_2';
+                } else if (selectedZone === 'Zone 3') {
+                    recipientFilter = 'zone_3';
+                } else if (selectedZone === 'Zone 4') {
+                    recipientFilter = 'zone_4';
+                } else {
+                    recipientFilter = 'all_units'; // fallback
+                }
+                
+                // Add common template variables that might be expected
+                const customData = {
+                    DATE: new Date().toLocaleDateString('en-AU'),
+                    TIME: new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }),
+                    CUSTOM_MESSAGE: '',
+                    AFFECTED_AREAS: selectedZone === 'all' ? 'All zones' : selectedZone
+                };
+                
+                console.log('📧 Sending with parameters:', {
+                    action: 'sendMassNotification',
+                    templateId: templateId,
+                    recipientFilter: recipientFilter,
+                    customData: customData,
+                    adminUser: 'MobileFieldAlerts'
+                });
+                
                 // Match desktop interface parameters exactly
                 const params = new URLSearchParams({
-                    action: 'sendMassNotification',  // Correct action name
+                    action: 'sendMassNotification',
                     templateId: templateId,
-                    recipientFilter: selectedZone === 'all' ? 'all_units' : selectedZone.toLowerCase().replace(' ', '_'),
-                    customData: JSON.stringify({}), // Empty custom data for mobile
+                    recipientFilter: recipientFilter,
+                    customData: JSON.stringify(customData),
                     adminUser: 'MobileFieldAlerts',
+                    authenticated: 'true',
                     callback: callbackName
                 });
                 
                 script.src = `${EMAIL_SERVICE_URL}?${params.toString()}`;
                 
                 window[callbackName] = function(response) {
+                    console.log('📧 Backend response:', response);
                     document.head.removeChild(script);
                     delete window[callbackName];
                     resolve(response);
