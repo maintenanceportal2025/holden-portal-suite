@@ -1,6 +1,4 @@
-.zone-btn.active .zone-text {
-            color: #3b82f6;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -20,7 +18,6 @@
             padding: 0;
         }
 
-        /* LOGIN SCREEN */
         .login-container {
             min-height: 100vh;
             display: flex;
@@ -91,7 +88,6 @@
             display: none;
         }
 
-        /* MAIN INTERFACE */
         .main-container {
             display: none;
             min-height: 100vh;
@@ -128,7 +124,66 @@
             cursor: pointer;
         }
 
-        /* ALERT BUTTONS GRID */
+        .zone-section {
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .zone-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .zone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .zone-btn {
+            background: rgba(255,255,255,0.9);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-height: 70px;
+        }
+
+        .zone-btn:active {
+            transform: scale(0.98);
+        }
+
+        .zone-btn.active {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .zone-btn.active .zone-text {
+            color: #3b82f6;
+        }
+
+        .zone-icon {
+            font-size: 1.2rem;
+        }
+
+        .zone-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
         .alerts-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -191,11 +246,18 @@
             line-height: 1.3;
         }
 
-        .emergency .alert-title { color: #dc2626; }
-        .restoration .alert-title { color: #059669; }
-        .maintenance .alert-title { color: #d97706; }
+        .emergency .alert-title { 
+            color: #dc2626; 
+        }
+        
+        .restoration .alert-title { 
+            color: #059669; 
+        }
+        
+        .maintenance .alert-title { 
+            color: #d97706; 
+        }
 
-        /* LOADING OVERLAY */
         .loading-overlay {
             position: fixed;
             top: 0;
@@ -245,7 +307,6 @@
             font-size: 0.9rem;
         }
 
-        /* SUCCESS MESSAGE */
         .success-message, .confirmation-dialog {
             position: fixed;
             top: 50%;
@@ -290,7 +351,6 @@
             cursor: pointer;
         }
 
-        /* CONFIRMATION DIALOG */
         .confirmation-icon {
             font-size: 3rem;
             margin-bottom: 16px;
@@ -366,62 +426,6 @@
             background: #4b5563;
         }
 
-        /* ZONE SELECTION */
-        .zone-section {
-            margin-bottom: 25px;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .zone-title {
-            color: white;
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-
-        .zone-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-        }
-
-        .zone-btn {
-            background: rgba(255,255,255,0.9);
-            border: 2px solid transparent;
-            border-radius: 12px;
-            padding: 12px 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 4px;
-            min-height: 70px;
-        }
-
-        .zone-btn:active {
-            transform: scale(0.98);
-        }
-
-        .zone-btn.active {
-            background: white;
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-        }
-
-        .zone-icon {
-            font-size: 1.2rem;
-        }
-
-        .zone-text {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: #1e293b;
-        }
         @media (min-width: 768px) {
             .alerts-grid {
                 grid-template-columns: 1fr 1fr;
@@ -431,9 +435,12 @@
             .alert-button {
                 min-height: 120px;
             }
+
+            .zone-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
-        /* ACCESSIBILITY & TOUCH */
         .alert-button {
             -webkit-tap-highlight-color: transparent;
             user-select: none;
@@ -589,10 +596,10 @@
 
         // STATE MANAGEMENT
         let isAuthenticated = false;
-        let selectedZone = 'all'; // Default to all zones
-        let pendingAlert = null; // Store pending alert for confirmation
+        let selectedZone = 'all';
+        let pendingAlert = null;
 
-        // TEMPLATE DEFINITIONS (matching desktop interface)
+        // TEMPLATE DEFINITIONS
         const TEMPLATE_MESSAGES = {
             'WATER02': {
                 title: 'Water Emergency Alert',
@@ -625,23 +632,19 @@
             console.log('🚨 Mobile Field Alert System - Initializing...');
             setupEventListeners();
             
-            // Check if already authenticated (simple session)
             if (sessionStorage.getItem('mobileAlertAuth') === 'true') {
                 showMainInterface();
             }
         });
 
         function setupEventListeners() {
-            // Login functionality
             document.getElementById('loginBtn').addEventListener('click', handleLogin);
             document.getElementById('passwordInput').addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') handleLogin();
             });
             
-            // Logout functionality
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             
-            // Alert button functionality
             document.querySelectorAll('.alert-button').forEach(button => {
                 button.addEventListener('click', function() {
                     const template = this.dataset.template;
@@ -649,22 +652,15 @@
                 });
             });
 
-            // Zone selection functionality
             document.querySelectorAll('.zone-btn').forEach(button => {
                 button.addEventListener('click', function() {
-                    // Remove active class from all zone buttons
                     document.querySelectorAll('.zone-btn').forEach(btn => {
                         btn.classList.remove('active');
                     });
                     
-                    // Add active class to clicked button
                     this.classList.add('active');
-                    
-                    // Update selected zone
                     selectedZone = this.dataset.zone;
                     console.log('📍 Zone selected:', selectedZone);
-                    
-                    // Update header text
                     updateHeaderText();
                 });
             });
@@ -682,9 +678,7 @@
                 errorElement.style.display = 'none';
             } else {
                 errorElement.style.display = 'block';
-                // Clear password field
                 document.getElementById('passwordInput').value = '';
-                // Shake animation
                 document.querySelector('.login-card').style.animation = 'shake 0.5s';
                 setTimeout(() => {
                     document.querySelector('.login-card').style.animation = '';
@@ -733,7 +727,6 @@
 
             console.log(`🚨 Preparing ${templateId} alert for ${selectedZone}...`);
             
-            // Store pending alert and show confirmation
             pendingAlert = { templateId, template };
             showConfirmation(template);
         }
@@ -741,13 +734,11 @@
         function showConfirmation(template) {
             const isAllZones = selectedZone === 'all';
             
-            // Update confirmation dialog
             const confirmIcon = document.getElementById('confirmIcon');
             const confirmTitle = document.getElementById('confirmTitle');
             const confirmText = document.getElementById('confirmText');
             const confirmZone = document.getElementById('confirmZone');
             
-            // Different styling for "All Zones" vs specific zones
             if (isAllZones) {
                 confirmIcon.textContent = '🚨';
                 confirmIcon.className = 'confirmation-icon danger';
@@ -764,7 +755,6 @@
                 confirmZone.className = 'confirmation-zone';
             }
             
-            // Show confirmation dialog
             document.getElementById('confirmationDialog').style.display = 'block';
         }
 
@@ -782,16 +772,12 @@
 
             console.log('✅ Alert confirmed by user, proceeding to send...');
             
-            // Hide confirmation dialog
             document.getElementById('confirmationDialog').style.display = 'none';
-            
-            // Proceed with sending the alert
             sendConfirmedAlert();
         }
 
         async function sendConfirmedAlert() {
             try {
-                // Show loading
                 showLoading();
 
                 const response = await sendEmailRequest(pendingAlert.templateId);
@@ -818,12 +804,11 @@
                 const callbackName = 'emailCallback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
                 
-                // Prepare request parameters matching desktop interface
                 const params = new URLSearchParams({
                     action: 'sendEmail',
                     templateId: templateId,
-                    zoneFilter: selectedZone, // Use selected zone instead of 'all'
-                    customMessage: '', // Mobile uses default template messages
+                    zoneFilter: selectedZone,
+                    customMessage: '',
                     callback: callbackName
                 });
                 
@@ -841,7 +826,6 @@
                     reject(new Error('Network request failed'));
                 };
                 
-                // Timeout after 15 seconds
                 setTimeout(() => {
                     if (window[callbackName]) {
                         document.head.removeChild(script);
@@ -854,10 +838,10 @@
             });
         }
 
+        // UI FEEDBACK
         function showLoading() {
             document.getElementById('loadingOverlay').style.display = 'flex';
             
-            // Update loading text based on selected zone
             const loadingSubtext = document.getElementById('loadingSubtext');
             if (selectedZone === 'all') {
                 loadingSubtext.textContent = 'Notifying all zones';
