@@ -649,7 +649,8 @@
                 });
                 
                 if (response.success) {
-                    showSuccess(`✅ Email sent successfully to ${response.recipientCount} recipients!`);
+                    const unitText = response.unitCount ? ` across ${response.unitCount} units` : '';
+                    showSuccess(`✅ Email sent successfully to ${response.emailCount} recipients${unitText}!`);
                     
                     // Reset form
                     setTimeout(() => {
