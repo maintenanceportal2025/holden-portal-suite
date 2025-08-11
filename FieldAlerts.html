@@ -475,6 +475,7 @@
                     renderActualTemplates(result.templates);
                     emailTemplates = result.templates;
                     console.log('✅ Loaded real templates:', result.templates.length);
+                    console.log('📋 Template IDs found:', result.templates.map(t => t.templateId));
                 } else {
                     console.log('⚠️ No templates found, keeping default templates');
                 }
