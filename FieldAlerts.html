@@ -804,11 +804,13 @@
                 const callbackName = 'emailCallback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
                 
+                // Match desktop interface parameters exactly
                 const params = new URLSearchParams({
-                    action: 'sendEmail',
+                    action: 'sendMassNotification',  // Correct action name
                     templateId: templateId,
-                    zoneFilter: selectedZone,
-                    customMessage: '',
+                    recipientFilter: selectedZone === 'all' ? 'all_units' : selectedZone.toLowerCase().replace(' ', '_'),
+                    customData: JSON.stringify({}), // Empty custom data for mobile
+                    adminUser: 'MobileFieldAlerts',
                     callback: callbackName
                 });
                 
