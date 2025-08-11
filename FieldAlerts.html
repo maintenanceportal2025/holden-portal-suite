@@ -371,34 +371,16 @@
         }
 
         function logAlert(alertType, alertTitle) {
-            const alertEntry = {
-                id: Date.now(),
-                type: alertType,
-                title: alertTitle,
+            // Store alert details for sending
+            const alertData = {
+                templateId: alertType,
+                alertTitle: alertTitle,
                 zone: selectedZone,
-                timestamp: new Date().toLocaleString('en-AU'),
-                date: new Date().toLocaleDateString('en-AU'),
-                time: new Date().toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' })
+                timestamp: new Date().toLocaleString('en-AU')
             };
 
-            // Add to log
-            alertLog.unshift(alertEntry);
-            
-            // Keep only last 10 alerts
-            if (alertLog.length > 10) {
-                alertLog = alertLog.slice(0, 10);
-            }
-
-            // Save to localStorage
-            saveAlertLog();
-
-            // Update display
-            displayAlertLog();
-
-            // Show success
-            showSuccess(alertTitle, selectedZone);
-
-            console.log('🚨 FIELD ALERT LOGGED:', alertEntry);
+            pendingAlert = alertData;
+            showConfirmation(alertData);
         }
 
         function displayAlertLog() {
