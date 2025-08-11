@@ -382,14 +382,10 @@
                 </div>
             </div>
 
-            <div class="recipient-info" id="recipientInfo" style="display: none;">
-                <div class="recipient-count" id="recipientCount">0 recipients</div>
-                <div class="recipient-details" id="recipientDetails">Select recipients and template</div>
-            </div>
-
             <div class="action-buttons">
                 <button class="btn btn-primary" id="sendEmailBtn" onclick="sendMassNotification()" disabled>
-                    📧 Send Email to All Recipients
+                    <span id="sendButtonText">📧 Send Email</span>
+                    <span id="sendButtonSpinner" style="display: none;">🔄 Sending...</span>
                 </button>
                 <button class="btn btn-secondary" onclick="refreshPreview()">
                     🔄 Refresh Preview
@@ -597,23 +593,7 @@
 
         // Update recipient information
         function updateRecipientInfo() {
-            const filter = document.getElementById('recipientFilter').value;
-            
-            // Estimate recipient counts
-            const counts = {
-                'all_units': { count: 44, description: 'All retirement village units' },
-                'zone_1': { count: 8, description: 'Zone 1 units only' },
-                'zone_2': { count: 9, description: 'Zone 2 units only' },
-                'zone_3': { count: 9, description: 'Zone 3 units only' },
-                'zone_4': { count: 9, description: 'Zone 4 units only' },
-                'zone_5': { count: 9, description: 'Zone 5 units only' }
-            };
-            
-            const info = counts[filter] || counts['all_units'];
-            
-            document.getElementById('recipientCount').textContent = `${info.count} recipients`;
-            document.getElementById('recipientDetails').textContent = info.description;
-            document.getElementById('recipientInfo').style.display = 'block';
+            // Remove recipient info display - not needed
         }
 
         // Send mass notification
@@ -624,7 +604,8 @@
             }
             
             try {
-                showLoading(true);
+                // Show loading state
+                showSendingState(true);
                 
                 // Get variable values
                 const customData = {};
@@ -649,8 +630,7 @@
                 });
                 
                 if (response.success) {
-                    const unitText = response.unitCount ? ` across ${response.unitCount} units` : '';
-                    showSuccess(`✅ Email sent successfully to ${response.emailCount} recipients${unitText}!`);
+                    showSuccess(`✅ Emails sent successfully!`);
                     
                     // Reset form
                     setTimeout(() => {
@@ -664,7 +644,26 @@
                 console.error('❌ Error sending mass notification:', error);
                 showError('Failed to send email: ' + error.message);
             } finally {
-                showLoading(false);
+                showSendingState(false);
+            }
+        }
+
+        // Show/hide sending state
+        function showSendingState(sending) {
+            const button = document.getElementById('sendEmailBtn');
+            const buttonText = document.getElementById('sendButtonText');
+            const buttonSpinner = document.getElementById('sendButtonSpinner');
+            
+            if (sending) {
+                button.disabled = true;
+                buttonText.style.display = 'none';
+                buttonSpinner.style.display = 'inline';
+                document.body.style.cursor = 'wait';
+            } else {
+                button.disabled = false;
+                buttonText.style.display = 'inline';
+                buttonSpinner.style.display = 'none';
+                document.body.style.cursor = 'default';
             }
         }
 
