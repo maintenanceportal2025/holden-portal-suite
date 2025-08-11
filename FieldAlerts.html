@@ -445,17 +445,20 @@
         // Initialize the field tool
         async function initializeFieldTool() {
             try {
-                // Check service status
-                await checkServiceStatus();
-                
-                // Load and display actual templates
+                // Load templates FIRST (most important for functionality)
                 await loadAndDisplayTemplates();
+                
+                // Check service status in background (non-blocking)
+                checkServiceStatus().catch(error => {
+                    console.log('⚠️ Service check failed (non-critical):', error);
+                    showServiceOffline();
+                });
                 
                 console.log('✅ Field notification tool ready');
                 
             } catch (error) {
                 console.error('❌ Error initializing field tool:', error);
-                showServiceOffline();
+                // Don't show service offline if templates loaded successfully
             }
         }
 
@@ -463,6 +466,17 @@
         async function loadAndDisplayTemplates() {
             try {
                 console.log('📡 Loading templates from backend...');
+                
+                // Wait for DOM to be fully ready
+                if (document.readyState !== 'complete') {
+                    await new Promise(resolve => {
+                        if (document.readyState === 'complete') {
+                            resolve();
+                        } else {
+                            window.addEventListener('load', resolve, { once: true });
+                        }
+                    });
+                }
                 
                 const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
                 const text = await response.text();
@@ -480,13 +494,11 @@
                     console.log('✅ Loaded real templates:', result.templates.length);
                     console.log('📋 Template IDs found:', result.templates.map(t => t.templateId));
                     
-                    // Wait a moment for DOM to be ready, then render
-                    setTimeout(() => {
-                        renderActualTemplates(result.templates);
-                    }, 100);
+                    // Render templates
+                    renderActualTemplates(result.templates);
                     
                 } else {
-                    console.log('⚠️ No templates found, keeping default loading message');
+                    console.log('⚠️ No templates found');
                     const templateGrid = document.getElementById('templateGrid');
                     if (templateGrid) {
                         templateGrid.innerHTML = `
@@ -504,6 +516,7 @@
                     templateGrid.innerHTML = `
                         <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
                             <div>❌ Failed to load templates</div>
+                            <div style="font-size: 0.8rem; margin-top: 8px;">${error.message}</div>
                         </div>
                     `;
                 }
