@@ -633,7 +633,7 @@
             console.log('✅ Templates rendered successfully');
         }
 
-        // Select template - EXACTLY like Mass Notification System
+        // Select template - FIXED for onclick context
         function selectTemplate(templateId) {
             console.log('🎯 Template selected:', templateId);
             console.log('📋 Available templates:', emailTemplates.map(t => t.templateId));
@@ -649,10 +649,17 @@
             if (template) {
                 console.log('✅ Template found:', template);
                 
-                // Visual selection
-                event.target.closest('.template-card').classList.add('selected');
+                // Find the clicked card by matching the templateId in onclick attribute
+                const clickedCard = Array.from(document.querySelectorAll('.template-card')).find(card => {
+                    return card.getAttribute('onclick')?.includes(templateId);
+                });
                 
-                // Store selected template ID (not object)
+                if (clickedCard) {
+                    clickedCard.classList.add('selected');
+                    console.log('✅ Card selected visually');
+                }
+                
+                // Store selected template ID
                 selectedTemplate = templateId;
                 console.log('💾 Selected template stored as:', selectedTemplate);
                 
