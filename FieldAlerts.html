@@ -543,19 +543,19 @@
             }
         }
 
-        // Render templates in any container
+        // Render templates in any container - SIMPLIFIED
         function renderTemplatesInContainer(container, templates) {
             const displayTemplates = templates.slice(0, 6);
             
             console.log('🎨 Rendering templates in container:', container);
             
-            container.innerHTML = displayTemplates.map(template => {
+            container.innerHTML = displayTemplates.map((template, index) => {
                 const emoji = getTemplateEmoji(template.templateId, template.category);
                 const displayTitle = template.templateId;
                 const displayDesc = getShortDescription(template.subject);
                 
                 return `
-                    <div class="template-card" onclick="selectTemplate('${template.templateId}')">
+                    <div class="template-card" data-template-id="${template.templateId}" data-index="${index}">
                         <div class="template-emoji">${emoji}</div>
                         <div class="template-title">${displayTitle}</div>
                         <div class="template-desc">${displayDesc}</div>
@@ -563,7 +563,53 @@
                 `;
             }).join('');
             
+            // Add event listeners AFTER rendering
+            setTimeout(() => {
+                addTemplateClickListeners();
+            }, 100);
+            
             console.log('✅ Templates rendered successfully');
+        }
+
+        // Add click listeners to template cards
+        function addTemplateClickListeners() {
+            const templateCards = document.querySelectorAll('.template-card');
+            console.log('🎯 Adding click listeners to', templateCards.length, 'cards');
+            
+            templateCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    const templateId = this.getAttribute('data-template-id');
+                    console.log('🖱️ Card clicked:', templateId);
+                    selectTemplateById(templateId, this);
+                });
+            });
+        }
+
+        // Select template by ID - SIMPLIFIED
+        function selectTemplateById(templateId, clickedElement) {
+            console.log('🎯 Selecting template:', templateId);
+            
+            // Remove previous selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Add selection to clicked element
+            if (clickedElement) {
+                clickedElement.classList.add('selected');
+                console.log('✅ Visual selection applied');
+            }
+            
+            // Store selected template
+            selectedTemplate = templateId;
+            console.log('💾 Template stored:', selectedTemplate);
+            
+            updateSendButton();
+            
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
         }
 
         // Wait for DOM element to exist
