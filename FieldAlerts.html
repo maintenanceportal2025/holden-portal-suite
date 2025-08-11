@@ -485,27 +485,61 @@
             }
         }
 
-        // Render actual templates from backend
+        // Render actual templates from backend - EXACTLY like Mass Notification System
         function renderActualTemplates(templates) {
-            const templateGrid = document.querySelector('.template-grid');
+            const templateGrid = document.getElementById('templateGrid');
             
-            // Take first 6 templates or all if less than 6
+            if (templates.length === 0) {
+                templateGrid.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: rgba(255,255,255,0.8);">
+                        <div>❌ No templates available</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Take first 6 templates for mobile display
             const displayTemplates = templates.slice(0, 6);
             
             templateGrid.innerHTML = displayTemplates.map(template => {
-                // Get emoji based on template name/category
                 const emoji = getTemplateEmoji(template.templateId, template.category);
-                const shortTitle = getShortTitle(template.templateId);
-                const shortDesc = getShortDescription(template.subject);
+                const displayTitle = template.templateId;
+                const displayDesc = getShortDescription(template.subject);
                 
                 return `
-                    <div class="template-card" data-template="${template.templateId}">
+                    <div class="template-card" onclick="selectTemplate('${template.templateId}')">
                         <div class="template-emoji">${emoji}</div>
-                        <div class="template-title">${shortTitle}</div>
-                        <div class="template-desc">${shortDesc}</div>
+                        <div class="template-title">${displayTitle}</div>
+                        <div class="template-desc">${displayDesc}</div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // Select template - EXACTLY like Mass Notification System
+        function selectTemplate(templateId) {
+            // Remove previous selection
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Find and select template
+            const template = emailTemplates.find(t => t.templateId === templateId);
+            
+            if (template) {
+                // Visual selection
+                event.target.closest('.template-card').classList.add('selected');
+                
+                // Store selected template ID (not object)
+                selectedTemplate = templateId;
+                
+                updateSendButton();
+                
+                // Haptic feedback
+                if (navigator.vibrate) {
+                    navigator.vibrate(50);
+                }
+            }
         }
 
         // Get emoji for template
@@ -523,7 +557,8 @@
 
         // Get short title for display
         function getShortTitle(templateId) {
-            return templateId.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim();
+            // Use the actual templateId as display name (like Mass Notification System)
+            return templateId;
         }
 
         // Get short description from subject
@@ -534,13 +569,7 @@
 
         // Setup event listeners
         function setupEventListeners() {
-            // Template selection
-            document.querySelectorAll('.template-card').forEach(card => {
-                card.addEventListener('click', function() {
-                    selectTemplate(this.dataset.template);
-                });
-            });
-
+            // Template selection is now handled by onclick in dynamic HTML
             // Zone selection
             document.querySelectorAll('.zone-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -658,23 +687,14 @@
             }
         }
 
-        // Get friendly template name
+        // Get friendly template name for display in send button
         function getTemplateName(templateId) {
-            const names = {
-                WATER01: 'Water Alert 1',
-                WATER02: 'Water Alert 2', 
-                WATER03: 'Water Alert 3',
-                POWER01: 'Power Alert 1',
-                POWER02: 'Power Alert 2',
-                POWER03: 'Power Alert 3',
-                EVAC01: 'Evacuation Alert 1',
-                EVAC02: 'Evacuation Alert 2',
-                ARBOR01: 'Arbor Alert 1',
-                ARBOR02: 'Arbor Alert 2',
-                COMM01: 'Community Notice',
-                MAINT01: 'Maintenance Alert'
-            };
-            return names[templateId] || templateId;
+            // Find the actual template to get its subject
+            const template = emailTemplates.find(t => t.templateId === templateId);
+            if (template && template.subject) {
+                return template.subject.length > 20 ? template.subject.substring(0, 17) + '...' : template.subject;
+            }
+            return templateId;
         }
 
         // Send notification
