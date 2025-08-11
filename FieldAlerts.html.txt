@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mobile Field Alerts - Lake Illawong</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+        }
+
+        /* LOGIN SCREEN */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .login-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 1rem;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 16px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .login-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .login-btn:hover {
+            background: #2563eb;
+        }
+
+        .login-error {
+            color: #ef4444;
+            margin-top: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        /* MAIN INTERFACE */
+        .main-container {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            opacity: 0.9;
+            font-size: 1rem;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* ALERT BUTTONS GRID */
+        .alerts-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 16px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .alert-button {
+            background: white;
+            border: none;
+            border-radius: 16px;
+            padding: 24px 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .alert-button:active {
+            transform: scale(0.98);
+        }
+
+        .alert-button.emergency {
+            background: linear-gradient(135deg, #fee2e2 0%, #fef2f2 100%);
+            border: 2px solid #fca5a5;
+        }
+
+        .alert-button.restoration {
+            background: linear-gradient(135deg, #dcfce7 0%, #f0fdf4 100%);
+            border: 2px solid #86efac;
+        }
+
+        .alert-button.maintenance {
+            background: linear-gradient(135deg, #fef3c7 0%, #fffbeb 100%);
+            border: 2px solid #fcd34d;
+        }
+
+        .alert-icon {
+            font-size: 2.5rem;
+            margin-bottom: 4px;
+        }
+
+        .alert-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+
+        .alert-subtitle {
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.3;
+        }
+
+        .emergency .alert-title { color: #dc2626; }
+        .restoration .alert-title { color: #059669; }
+        .maintenance .alert-title { color: #d97706; }
+
+        /* LOADING OVERLAY */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-content {
+            background: white;
+            border-radius: 16px;
+            padding: 40px 30px;
+            text-align: center;
+            max-width: 300px;
+            margin: 20px;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #e2e8f0;
+            border-top: 4px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .loading-subtext {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* SUCCESS MESSAGE */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+            max-width: 300px;
+            margin: 20px;
+        }
+
+        .success-icon {
+            font-size: 3rem;
+            color: #10b981;
+            margin-bottom: 16px;
+        }
+
+        .success-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .success-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* ZONE SELECTION */
+        .zone-section {
+            margin-bottom: 25px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .zone-title {
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .zone-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+
+        .zone-btn {
+            background: rgba(255,255,255,0.9);
+            border: 2px solid transparent;
+            border-radius: 12px;
+            padding: 12px 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            min-height: 70px;
+        }
+
+        .zone-btn:active {
+            transform: scale(0.98);
+        }
+
+        .zone-btn.active {
+            background: white;
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+
+        .zone-icon {
+            font-size: 1.2rem;
+        }
+
+        .zone-text {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .zone-count {
+            font-size: 0.75rem;
+            color: #64748b;
+        }
+
+        .zone-btn.active .zone-text {
+            color: #3b82f6;
+        }
+
+        .zone-btn.active .zone-count {
+            color: #3b82f6;
+        }
+        @media (min-width: 768px) {
+            .alerts-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 20px;
+            }
+            
+            .alert-button {
+                min-height: 120px;
+            }
+        }
+
+        /* ACCESSIBILITY & TOUCH */
+        .alert-button {
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        .alert-button:focus {
+            outline: 3px solid #3b82f6;
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <!-- LOGIN SCREEN -->
+    <div id="loginContainer" class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">🚨 Field Alert System</h1>
+            <p class="login-subtitle">Maintenance Team Access</p>
+            
+            <input 
+                type="password" 
+                id="passwordInput" 
+                class="login-input" 
+                placeholder="Enter password"
+                autocomplete="current-password"
+            >
+            
+            <button id="loginBtn" class="login-btn">
+                🔓 Access Alert System
+            </button>
+            
+            <div id="loginError" class="login-error">
+                Incorrect password. Please try again.
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN INTERFACE -->
+    <div id="mainContainer" class="main-container">
+        <button id="logoutBtn" class="logout-btn">
+            🚪 Logout
+        </button>
+
+        <div class="header">
+            <h1>🚨 Field Alert System</h1>
+            <p>Select affected zones, then tap alert type</p>
+        </div>
+
+        <!-- ZONE SELECTION -->
+        <div class="zone-section">
+            <h3 class="zone-title">📍 Affected Zones</h3>
+            <div class="zone-grid">
+                <button class="zone-btn active" data-zone="all">
+                    <span class="zone-icon">🏘️</span>
+                    <span class="zone-text">All Zones</span>
+                    <span class="zone-count">(44 units)</span>
+                </button>
+                <button class="zone-btn" data-zone="Zone 1">
+                    <span class="zone-icon">1️⃣</span>
+                    <span class="zone-text">Zone 1</span>
+                    <span class="zone-count">(11 units)</span>
+                </button>
+                <button class="zone-btn" data-zone="Zone 2">
+                    <span class="zone-icon">2️⃣</span>
+                    <span class="zone-text">Zone 2</span>
+                    <span class="zone-count">(11 units)</span>
+                </button>
+                <button class="zone-btn" data-zone="Zone 3">
+                    <span class="zone-icon">3️⃣</span>
+                    <span class="zone-text">Zone 3</span>
+                    <span class="zone-count">(11 units)</span>
+                </button>
+                <button class="zone-btn" data-zone="Zone 4">
+                    <span class="zone-icon">4️⃣</span>
+                    <span class="zone-text">Zone 4</span>
+                    <span class="zone-count">(11 units)</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="alerts-grid">
+            <!-- WATER EMERGENCY -->
+            <button class="alert-button emergency" data-template="WATER02">
+                <div class="alert-icon">🚰</div>
+                <div class="alert-title">Water Emergency</div>
+                <div class="alert-subtitle">Immediate water service shutdown</div>
+            </button>
+
+            <!-- WATER RESTORED -->
+            <button class="alert-button restoration" data-template="WATER03">
+                <div class="alert-icon">✅</div>
+                <div class="alert-title">Water Restored</div>
+                <div class="alert-subtitle">Water service back to normal</div>
+            </button>
+
+            <!-- POWER EMERGENCY -->
+            <button class="alert-button emergency" data-template="POWER02">
+                <div class="alert-icon">⚡</div>
+                <div class="alert-title">Power Emergency</div>
+                <div class="alert-subtitle">Immediate power outage alert</div>
+            </button>
+
+            <!-- POWER RESTORED -->
+            <button class="alert-button restoration" data-template="POWER03">
+                <div class="alert-icon">✅</div>
+                <div class="alert-title">Power Restored</div>
+                <div class="alert-subtitle">Power service back to normal</div>
+            </button>
+
+            <!-- MAINTENANCE WORK -->
+            <button class="alert-button maintenance" data-template="MAINT01">
+                <div class="alert-icon">🔧</div>
+                <div class="alert-title">Maintenance Work</div>
+                <div class="alert-subtitle">Active maintenance affecting access</div>
+            </button>
+
+            <!-- URGENT NOTICE -->
+            <button class="alert-button maintenance" data-template="COMM01">
+                <div class="alert-icon">📢</div>
+                <div class="alert-title">Urgent Notice</div>
+                <div class="alert-subtitle">Important community alert</div>
+            </button>
+        </div>
+    </div>
+
+    <!-- LOADING OVERLAY -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Sending Alert...</div>
+            <div class="loading-subtext">Notifying all 44 units</div>
+        </div>
+    </div>
+
+    <!-- SUCCESS MESSAGE -->
+    <div id="successMessage" class="success-message">
+        <div class="success-icon">✅</div>
+        <div class="success-title">Alert Sent!</div>
+        <div class="success-text" id="successText">Emergency notification sent to all residents.</div>
+        <button class="success-btn" onclick="closeSuccess()">Continue</button>
+    </div>
+
+    <script>
+        // CONFIGURATION
+        const EMAIL_SERVICE_URL = 'https://script.google.com/macros/s/AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v/exec';
+        const MAINTENANCE_PASSWORD = 'maint2025';
+
+        // STATE MANAGEMENT
+        let isAuthenticated = false;
+        let selectedZone = 'all'; // Default to all zones
+
+        // TEMPLATE DEFINITIONS (matching desktop interface)
+        const TEMPLATE_MESSAGES = {
+            'WATER02': {
+                title: 'Water Emergency Alert',
+                message: 'Emergency water service shutdown in progress'
+            },
+            'WATER03': {
+                title: 'Water Service Restored',
+                message: 'Water service has been restored to normal operation'
+            },
+            'POWER02': {
+                title: 'Power Emergency Alert', 
+                message: 'Emergency power outage affecting the complex'
+            },
+            'POWER03': {
+                title: 'Power Service Restored',
+                message: 'Power service has been restored to normal operation'
+            },
+            'MAINT01': {
+                title: 'Maintenance Work Notice',
+                message: 'Active maintenance work affecting property access'
+            },
+            'COMM01': {
+                title: 'Urgent Community Notice',
+                message: 'Important community alert requiring immediate attention'
+            }
+        };
+
+        // INITIALIZATION
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚨 Mobile Field Alert System - Initializing...');
+            setupEventListeners();
+            
+            // Check if already authenticated (simple session)
+            if (sessionStorage.getItem('mobileAlertAuth') === 'true') {
+                showMainInterface();
+            }
+        });
+
+        function setupEventListeners() {
+            // Login functionality
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') handleLogin();
+            });
+            
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            
+            // Alert button functionality
+            document.querySelectorAll('.alert-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    const template = this.dataset.template;
+                    sendAlert(template);
+                });
+            });
+
+            // Zone selection functionality
+            document.querySelectorAll('.zone-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all zone buttons
+                    document.querySelectorAll('.zone-btn').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update selected zone
+                    selectedZone = this.dataset.zone;
+                    console.log('📍 Zone selected:', selectedZone);
+                    
+                    // Update header text
+                    updateHeaderText();
+                });
+            });
+        }
+
+        // AUTHENTICATION
+        function handleLogin() {
+            const password = document.getElementById('passwordInput').value;
+            const errorElement = document.getElementById('loginError');
+            
+            if (password === MAINTENANCE_PASSWORD) {
+                isAuthenticated = true;
+                sessionStorage.setItem('mobileAlertAuth', 'true');
+                showMainInterface();
+                errorElement.style.display = 'none';
+            } else {
+                errorElement.style.display = 'block';
+                // Clear password field
+                document.getElementById('passwordInput').value = '';
+                // Shake animation
+                document.querySelector('.login-card').style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    document.querySelector('.login-card').style.animation = '';
+                }, 500);
+            }
+        }
+
+        function handleLogout() {
+            isAuthenticated = false;
+            sessionStorage.removeItem('mobileAlertAuth');
+            showLoginScreen();
+        }
+
+        function showMainInterface() {
+            document.getElementById('loginContainer').style.display = 'none';
+            document.getElementById('mainContainer').style.display = 'block';
+        }
+
+        function showLoginScreen() {
+            document.getElementById('loginContainer').style.display = 'flex';
+            document.getElementById('mainContainer').style.display = 'none';
+            document.getElementById('passwordInput').value = '';
+        }
+
+        function updateHeaderText() {
+            const headerP = document.querySelector('.header p');
+            if (selectedZone === 'all') {
+                headerP.textContent = 'Select affected zones, then tap alert type';
+            } else {
+                const zoneBtn = document.querySelector(`[data-zone="${selectedZone}"]`);
+                const unitCount = zoneBtn.querySelector('.zone-count').textContent;
+                headerP.textContent = `${selectedZone} selected ${unitCount} - tap alert type`;
+            }
+        }
+
+        // ALERT SENDING
+        async function sendAlert(templateId) {
+            if (!isAuthenticated) {
+                console.error('Not authenticated');
+                return;
+            }
+
+            const template = TEMPLATE_MESSAGES[templateId];
+            if (!template) {
+                console.error('Template not found:', templateId);
+                return;
+            }
+
+            console.log(`🚨 Sending ${templateId} alert...`);
+            
+            // Show loading
+            showLoading();
+
+            try {
+                // Call the HoldenEmailService backend
+                const response = await sendEmailRequest(templateId);
+                
+                if (response.success) {
+                    hideLoading();
+                    showSuccess(template.title);
+                    console.log('✅ Alert sent successfully');
+                } else {
+                    throw new Error(response.message || 'Failed to send alert');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error sending alert:', error);
+                hideLoading();
+                showError('Failed to send alert. Please try again.');
+            }
+        }
+
+        async function sendEmailRequest(templateId) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'emailCallback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                
+                // Prepare request parameters matching desktop interface
+                const params = new URLSearchParams({
+                    action: 'sendEmail',
+                    templateId: templateId,
+                    zoneFilter: selectedZone, // Use selected zone instead of 'all'
+                    customMessage: '', // Mobile uses default template messages
+                    callback: callbackName
+                });
+                
+                script.src = `${EMAIL_SERVICE_URL}?${params.toString()}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                // Timeout after 15 seconds
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        // UI FEEDBACK
+        function showLoading() {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').style.display = 'none';
+        }
+
+        function showSuccess(alertType) {
+            const successText = document.getElementById('successText');
+            const zoneText = selectedZone === 'all' ? 'all 44 units' : `${selectedZone} residents`;
+            successText.textContent = `${alertType} notification sent to ${zoneText}.`;
+            document.getElementById('successMessage').style.display = 'block';
+        }
+
+        function closeSuccess() {
+            document.getElementById('successMessage').style.display = 'none';
+        }
+
+        function showError(message) {
+            alert('⚠️ ' + message);
+        }
+
+        // Add shake animation for login errors
+        const shakeCSS = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                25% { transform: translateX(-10px); }
+                75% { transform: translateX(10px); }
+            }
+        `;
+        const style = document.createElement('style');
+        style.textContent = shakeCSS;
+        document.head.appendChild(style);
+
+        console.log('🚨 Mobile Field Alert System - Ready!');
+    </script>
+</body>
+</html>
