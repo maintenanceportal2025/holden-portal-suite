@@ -424,9 +424,6 @@
                 grid-template-columns: repeat(2, 1fr);
             }
         }
-
-
-        
     </style>
 </head>
 <body>
@@ -495,11 +492,11 @@
                 <!-- Quick Stats -->
                 <div class="quick-stats">
                     <div class="stat-item">
-                        <div class="stat-number" style="color: #10b981;">2</div>
+                        <div class="stat-number" style="color: #10b981;">3</div>
                         <div class="stat-label">Active Modules</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number" style="color: #f59e0b;">2</div>
+                        <div class="stat-number" style="color: #f59e0b;">1</div>
                         <div class="stat-label">In Development</div>
                     </div>
                     <div class="stat-item">
@@ -558,12 +555,29 @@
                     <div class="action-button btn-launch">🚀 Launch Module</div>
                 </div>
 
-                <!-- User Management Module -->
-                
-                <div class="module-card" onclick="openModule('users')">
-                    
+                <!-- Email Communication Module -->
+                <div class="module-card" onclick="openModule('email-communication')">
                     <div class="status-badge status-active">Active</div>
-                    
+                    <div class="module-icon">📧</div>
+                    <h3 class="module-title">Email Communication</h3>
+                    <p class="module-description">
+                        Mass notifications, template management, and communication tools for resident engagement
+                    </p>
+                    <div>
+                        <h4 class="features-title">Key Features:</h4>
+                        <ul class="features-list">
+                            <li><span class="feature-check">✓</span>Mass notification system</li>
+                            <li><span class="feature-check">✓</span>Template selection and customization</li>
+                            <li><span class="feature-check">✓</span>Zone-specific targeting</li>
+                            <li><span class="feature-check">✓</span>Mobile and desktop interfaces</li>
+                        </ul>
+                    </div>
+                    <div class="action-button btn-launch">🚀 Launch Module</div>
+                </div>
+
+                <!-- User Management Module -->
+                <div class="module-card inactive">
+                    <div class="status-badge status-planned">Planned</div>
                     <div class="module-icon">👥</div>
                     <h3 class="module-title">User Management</h3>
                     <p class="module-description">
@@ -578,27 +592,7 @@
                             <li><span class="feature-check">✓</span>Login activity tracking</li>
                         </ul>
                     </div>
-                    <div class="action-button btn-launch">🚀 Launch Module</div>
-                </div>
-
-                <!-- Email Templates Module -->
-                <div class="module-card" onclick="openModule('email-communication')">
-    <div class="status-badge status-active">Active</div>
-    <div class="module-icon">📧</div>
-    <h3 class="module-title">Email Communication</h3>
-    <p class="module-description">
-        Mass notifications, template management, and communication tools
-    </p>
-                    <div>
-                        <h4 class="features-title">Key Features:</h4>
-                        <ul class="features-list">
-                            <li><span class="feature-check">✓</span>Template editor with variables</li>
-                            <li><span class="feature-check">✓</span>Preview and testing</li>
-                            <li><span class="feature-check">✓</span>Multi-scenario templates</li>
-                            <li><span class="feature-check">✓</span>Professional formatting</li>
-                        </ul>
-                    </div>
-                    <div class="action-button btn-launch">🚀 Launch Module</div>
+                    <div class="action-button btn-development">🚧 In Development</div>
                 </div>
 
                 <!-- Team Notes Module -->
@@ -633,35 +627,30 @@
                         <h4 class="features-title">Key Features:</h4>
                         <ul class="features-list">
                             <li><span class="feature-check">✓</span>System configuration</li>
-                            <li><span class="feature-check">✓</span>Backup and restore</li>
+                            <li><span class="feature-check">✓</span>Backup management</li>
                             <li><span class="feature-check">✓</span>Maintenance mode</li>
                             <li><span class="feature-check">✓</span>Performance monitoring</li>
                         </ul>
                     </div>
-                    <div class="action-button btn-future">📋 Future Release</div>
+                    <div class="action-button btn-future">⚙️ Future Release</div>
                 </div>
-
             </div>
 
-            <!-- System Information Footer -->
+            <!-- System Information -->
             <div class="system-info">
-                <h4>🏗️ Admin Panel Architecture</h4>
+                <h4>System Information</h4>
                 <div class="info-grid">
                     <div class="info-item">
-                        <strong>Backend:</strong><br/>
-                        Google Apps Script V2.3
+                        <strong>Version:</strong> 1.0 Production
                     </div>
                     <div class="info-item">
-                        <strong>Database:</strong><br/>
-                        Google Sheets + Named Ranges
+                        <strong>Database:</strong> Google Sheets
                     </div>
                     <div class="info-item">
-                        <strong>Architecture:</strong><br/>
-                        Modular Card-Based System
+                        <strong>Units:</strong> 44 Retirement Village
                     </div>
                     <div class="info-item">
-                        <strong>Access:</strong><br/>
-                        Password-Protected Admin Panel
+                        <strong>Last Updated:</strong> August 2025
                     </div>
                 </div>
             </div>
@@ -669,23 +658,27 @@
     </div>
 
     <script>
+        // Admin password (in production, this should be more secure)
         const ADMIN_PASSWORD = 'admin2025';
 
         // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            setupEventListeners();
+            console.log('🛠️ Admin Panel initialized');
+            
+            // Setup event listeners
+            document.getElementById('loginBtn').addEventListener('click', handleLogin);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('togglePassword').addEventListener('click', togglePasswordVisibility);
+            
+            // Allow Enter key to submit login
+            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    handleLogin();
+                }
+            });
         });
 
-        function setupEventListeners() {
-            document.getElementById('loginBtn').addEventListener('click', handleLogin);
-            document.getElementById('passwordInput').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') handleLogin();
-            });
-            document.getElementById('togglePassword').addEventListener('click', togglePassword);
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-        }
-
-        function togglePassword() {
+        function togglePasswordVisibility() {
             const passwordInput = document.getElementById('passwordInput');
             const toggleBtn = document.getElementById('togglePassword');
             
@@ -737,105 +730,20 @@
         }
 
         function openModule(moduleType) {
-    switch(moduleType) {
-        case 'dropdowns':
-            window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/admin-dropdowns.html';
-            break;
-        case 'emails':
-            window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/email-notification-management.html';
-            break;
-        case 'users':
-            window.open('https://maintenanceportal2025.github.io/holden-portal-suite/user-management.html', '_blank');
-            break;
-        default:
-            alert('🚧 This module is not yet implemented');
-    }
-}
-
-/**
- * SAFE FUNCTION: Display activity timeline for current problem
- * Called from existing openProblemDetailsPage() function
- */
-function displayActivityTimeline(problem) {
-    console.log('📜 Displaying activity timeline for:', problem.internalId);
-    
-    const container = document.getElementById('timelineContainer');
-    const loading = document.getElementById('timelineLoading');
-    
-    if (!container || !problem) {
-        console.log('❌ Timeline container or problem not found');
-        return;
-    }
-    
-    // Show loading state
-    if (loading) {
-        loading.style.display = 'block';
-    }
-    
-    try {
-        // Get activity log from problem data (Column T - activityLogParsed)
-        const activities = problem.activityLogParsed || [];
-        
-        console.log('📊 Activity log data:', activities);
-        
-        // Hide loading
-        if (loading) {
-            loading.style.display = 'none';
+            switch(moduleType) {
+                case 'dropdowns':
+                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/admin-dropdowns.html';
+                    break;
+                case 'emails':
+                    window.location.href = 'https://maintenanceportal2025.github.io/holden-portal-suite/email-notification-management.html';
+                    break;
+                case 'email-communication':
+                    window.open('email-communication-hub.html', '_blank');
+                    break;
+                default:
+                    alert('🚧 This module is not yet implemented');
+            }
         }
-        
-        if (!activities || activities.length === 0) {
-            container.innerHTML = `
-                <div class="timeline-empty">
-                    <div style="font-size: 32px; margin-bottom: 10px;">📝</div>
-                    <div>No activity history available</div>
-                    <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                        Activity tracking started with recent updates
-                    </div>
-                </div>
-            `;
-            return;
-        }
-        
-        // Sort activities by timestamp (newest first)
-        const sortedActivities = [...activities].sort((a, b) => 
-            new Date(b.timestamp) - new Date(a.timestamp)
-        );
-        
-        // Generate timeline HTML
-        let timelineHTML = '';
-        
-        sortedActivities.forEach((activity, index) => {
-            const timelineItem = createTimelineItem(activity, index === 0);
-            timelineHTML += timelineItem;
-        });
-        
-        container.innerHTML = timelineHTML;
-        
-        console.log('✅ Activity timeline displayed successfully');
-        
-    } catch (error) {
-        console.error('❌ Error displaying activity timeline:', error);
-        
-        // Hide loading and show error state
-        if (loading) {
-            loading.style.display = 'none';
-        }
-        
-        container.innerHTML = `
-            <div class="timeline-empty">
-                <div style="font-size: 32px; margin-bottom: 10px;">⚠️</div>
-                <div>Unable to load activity history</div>
-                <div style="font-size: 12px; color: #9ca3af; margin-top: 5px;">
-                    ${error.message || 'Unknown error occurred'}
-                </div>
-            </div>
-        `;
-    }
-}
-
-
-
-        
     </script>
 </body>
 </html>
