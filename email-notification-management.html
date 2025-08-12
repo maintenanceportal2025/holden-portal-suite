@@ -86,21 +86,18 @@
         }
 
         .section-title {
+            font-size: 1.3rem;
             color: #1e293b;
-            font-size: 1.2rem;
-            font-weight: 600;
-        }
-
-        .section-controls {
             display: flex;
+            align-items: center;
             gap: 10px;
         }
 
         .table-container {
             background: white;
             border-radius: 6px;
-            border: 1px solid #e2e8f0;
             overflow: hidden;
+            border: 1px solid #e2e8f0;
         }
 
         .table-header {
@@ -108,82 +105,72 @@
             display: grid;
             padding: 15px;
             font-weight: 600;
-            color: #374151;
+            color: #475569;
             border-bottom: 1px solid #e2e8f0;
+        }
+
+        .maintenance-header {
+            grid-template-columns: 1fr 1fr 120px;
+        }
+
+        .zone-header {
+            grid-template-columns: 120px 1fr 1fr 120px;
         }
 
         .table-row {
             display: grid;
-            padding: 15px;
+            padding: 12px 15px;
             border-bottom: 1px solid #f1f5f9;
-            transition: background 0.2s;
-        }
-
-        .table-row:last-child {
-            border-bottom: none;
+            transition: background-color 0.2s;
         }
 
         .table-row:hover {
             background: #f8fafc;
         }
 
-        .maintenance-header, .maintenance-row {
-            grid-template-columns: 1fr 1fr 120px 100px;
+        .table-row.editing {
+            background: #fef3c7;
         }
 
-        .zone-header, .zone-row {
-            grid-template-columns: 100px 1fr 1fr 100px;
+        .table-row.changed {
+            background: #ecfdf5;
+            border-left: 4px solid #10b981;
         }
 
-        .editable {
-            padding: 4px 8px;
-            border-radius: 4px;
-            cursor: text;
-            transition: all 0.2s;
-            border: 2px solid transparent;
+        .maintenance-row {
+            grid-template-columns: 1fr 1fr 120px;
         }
 
-        .editable:hover {
-            background: #f8fafc;
+        .zone-row {
+            grid-template-columns: 120px 1fr 1fr 120px;
         }
 
-        .editable.editing {
-            background: white;
-            border-color: #3b82f6;
-            outline: none;
-        }
-
-        .remove-btn {
-            background: #ef4444;
-            color: white;
-            border: none;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+        .table-cell {
+            padding: 8px;
             cursor: pointer;
+            border-radius: 4px;
             transition: all 0.2s;
-        }
-
-        .remove-btn:hover {
-            background: #dc2626;
-        }
-
-        .add-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 14px;
-            cursor: pointer;
-            transition: all 0.2s;
+            min-height: 40px;
             display: flex;
             align-items: center;
-            gap: 6px;
         }
 
-        .add-btn:hover {
-            background: #059669;
+        .table-cell:hover {
+            background: #f1f5f9;
+        }
+
+        .table-cell.empty {
+            color: #94a3b8;
+            font-style: italic;
+        }
+
+        .edit-input {
+            width: 100%;
+            padding: 8px;
+            border: 2px solid #3b82f6;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
         }
 
         .btn {
@@ -365,39 +352,34 @@
             <div class="section">
                 <div class="section-header">
                     <h2 class="section-title">🔧 Maintenance Team</h2>
-                    <div class="section-controls">
-                        <button class="add-btn" onclick="addMaintenanceContact()">
-                            ➕ Add Contact
-                        </button>
-                    </div>
+                    <button class="btn btn-primary" onclick="addMaintenancePerson()">
+                        ➕ Add New Person
+                    </button>
                 </div>
                 
                 <div class="table-container">
                     <div class="table-header maintenance-header">
                         <div>Name</div>
                         <div>Email Address</div>
-                        <div>Status</div>
                         <div>Actions</div>
                     </div>
                     <div id="maintenanceList">
-                        <!-- Maintenance contacts will be rendered here -->
+                        <!-- Maintenance team rows will be rendered here -->
                     </div>
                 </div>
                 
                 <p style="margin-top: 15px; color: #64748b; font-size: 14px;">
-                    💡 Click name or email to edit • Clear email to deactivate (moves to inactive) • Remove email to exclude from notifications
+                    💡 Syncs with MtceTeamEmailList Named Range • Remove email to exclude from notifications
                 </p>
             </div>
 
             <!-- Zone Representatives Section -->
             <div class="section">
                 <div class="section-header">
-                    <h2 class="section-title">🏠 Zone Representatives</h2>
-                    <div class="section-controls">
-                        <button class="add-btn" onclick="addZoneContact()">
-                            ➕ Add Contact
-                        </button>
-                    </div>
+                    <h2 class="section-title">🏘️ Zone Representatives</h2>
+                    <button class="btn btn-primary" onclick="addZoneRep()">
+                        ➕ Add New Zone Rep
+                    </button>
                 </div>
                 
                 <div class="table-container">
@@ -407,20 +389,20 @@
                         <div>Email Address</div>
                         <div>Actions</div>
                     </div>
-                    <div id="zoneList">
-                        <!-- Zone contacts will be rendered here -->
+                    <div id="zoneRepsList">
+                        <!-- Zone reps rows will be rendered here -->
                     </div>
                 </div>
                 
                 <p style="margin-top: 15px; color: #64748b; font-size: 14px;">
-                    💡 Click zone, name or email to edit • Clear email to deactivate (moves to inactive) • Remove email to exclude from notifications
+                    💡 Syncs with ZoneRepEmailList Named Range • Remove email to exclude from notifications
                 </p>
             </div>
 
             <!-- Inactive Contacts Section -->
             <div id="inactiveSection" class="section hidden">
                 <div class="section-header">
-                    <h2 class="section-title">📋 Inactive Contacts (Reference)</h2>
+                    <h2 class="section-title">📋 Inactive Contacts (Reference Only)</h2>
                 </div>
                 
                 <div class="table-container">
@@ -459,11 +441,10 @@
                 <h3 style="margin-bottom: 15px; color: #1e293b;">📖 How to Use</h3>
                 <ul style="color: #64748b; line-height: 1.6;">
                     <li><strong>Edit:</strong> Click any name, zone, or email to edit in place</li>
-                    <li><strong>Save Changes:</strong> Use the Save Changes button after making edits</li>
-                    <li><strong>Add Contacts:</strong> Use the Add Contact buttons in each section</li>
-                    <li><strong>Deactivate:</strong> Clear the email field to move contact to inactive list</li>
-                    <li><strong>Remove:</strong> Use the remove button to exclude from notifications entirely</li>
-                    <li><strong>Restore:</strong> Inactive contacts can be restored by adding email back</li>
+                    <li><strong>Save Changes:</strong> Use the Save Changes button when you're ready</li>
+                    <li><strong>Remove from notifications:</strong> Clear the email field and save</li>
+                    <li><strong>Add new:</strong> Use the + buttons to add new people</li>
+                    <li><strong>Delete entries:</strong> Check the box next to unwanted entries and use Delete Selected</li>
                 </ul>
             </div>
         </div>
@@ -557,11 +538,19 @@
                 row.className = `table-row maintenance-row ${person.changed ? 'changed' : ''}`;
                 
                 row.innerHTML = `
-                    <div class="editable" onclick="startEdit(this)" data-type="maintenance" data-id="${person.id}" data-field="name">${person.name || 'Enter name...'}</div>
-                    <div class="editable" onclick="startEdit(this)" data-type="maintenance" data-id="${person.id}" data-field="email">${person.email || 'Enter email...'}</div>
-                    <div style="color: #10b981; font-weight: 500;">Active</div>
-                    <div>
-                        <button class="remove-btn" onclick="removeContact(${person.id}, 'maintenance')">Remove</button>
+                    <div class="table-cell ${!person.name ? 'empty' : ''}" 
+                         onclick="editCell('maintenance', ${person.id}, 'name')"
+                         id="maintenance-${person.id}-name">
+                        ${person.name || 'Enter name...'}
+                    </div>
+                    <div class="table-cell ${!person.email ? 'empty' : ''}" 
+                         onclick="editCell('maintenance', ${person.id}, 'email')"
+                         id="maintenance-${person.id}-email">
+                        ${person.email || 'Enter email address...'}
+                    </div>
+                    <div class="table-cell">
+                        <input type="checkbox" onchange="toggleSelection('maintenance', ${person.id})" 
+                               ${selectedForDeletion.has(`maintenance-${person.id}`) ? 'checked' : ''}>
                     </div>
                 `;
                 
@@ -571,7 +560,7 @@
 
         // Render zone representatives
         function renderZoneReps() {
-            const container = document.getElementById('zoneList');
+            const container = document.getElementById('zoneRepsList');
             container.innerHTML = '';
 
             zoneReps.forEach(rep => {
@@ -579,11 +568,24 @@
                 row.className = `table-row zone-row ${rep.changed ? 'changed' : ''}`;
                 
                 row.innerHTML = `
-                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="zone">${rep.zone || 'Zone...'}</div>
-                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="name">${rep.name || 'Enter name...'}</div>
-                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="email">${rep.email || 'Enter email...'}</div>
-                    <div>
-                        <button class="remove-btn" onclick="removeContact(${rep.id}, 'zone')">Remove</button>
+                    <div class="table-cell ${!rep.zone ? 'empty' : ''}" 
+                         onclick="editCell('zoneRep', ${rep.id}, 'zone')"
+                         id="zoneRep-${rep.id}-zone">
+                        ${rep.zone || 'Enter zone...'}
+                    </div>
+                    <div class="table-cell ${!rep.name ? 'empty' : ''}" 
+                         onclick="editCell('zoneRep', ${rep.id}, 'name')"
+                         id="zoneRep-${rep.id}-name">
+                        ${rep.name || 'Enter name...'}
+                    </div>
+                    <div class="table-cell ${!rep.email ? 'empty' : ''}" 
+                         onclick="editCell('zoneRep', ${rep.id}, 'email')"
+                         id="zoneRep-${rep.id}-email">
+                        ${rep.email || 'Enter email address...'}
+                    </div>
+                    <div class="table-cell">
+                        <input type="checkbox" onchange="toggleSelection('zoneRep', ${rep.id})" 
+                               ${selectedForDeletion.has(`zoneRep-${rep.id}`) ? 'checked' : ''}>
                     </div>
                 `;
                 
@@ -593,107 +595,295 @@
 
         // Render inactive contacts
         function renderInactiveContacts() {
-            // This would show contacts that have been deactivated
-            // For now, keep the section hidden
-            document.getElementById('inactiveSection').classList.add('hidden');
+            const section = document.getElementById('inactiveSection');
+            const container = document.getElementById('inactiveList');
+            
+            if (inactiveContacts.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            
+            section.classList.remove('hidden');
+            container.innerHTML = '';
+            
+            inactiveContacts.forEach((contact, index) => {
+                const row = document.createElement('div');
+                row.className = 'table-row';
+                row.style.gridTemplateColumns = '1fr 1fr 100px 100px 120px';
+                row.style.background = '#fef2f2';
+                row.style.borderLeft = '4px solid #ef4444';
+                
+                row.innerHTML = `
+                    <div class="table-cell">${contact.name}</div>
+                    <div class="table-cell" style="font-family: monospace;">${contact.email}</div>
+                    <div class="table-cell">${contact.type === 'maintenance' ? 'Team' : 'Zone'}</div>
+                    <div class="table-cell" style="font-size: 12px;">${contact.removed || 'N/A'}</div>
+                    <div class="table-cell">
+                        <button onclick="restoreFromInactive(${index})" style="background: #059669; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px; margin-right: 5px;">Restore</button>
+                        <button onclick="removeFromInactive(${index})" style="background: #dc2626; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 12px;">Delete</button>
+                    </div>
+                `;
+                
+                container.appendChild(row);
+            });
         }
 
-        // Start editing a cell
-        function startEdit(element) {
-            if (editingCell) return;
+        // Edit cell functionality
+        function editCell(type, id, field) {
+            if (editingCell) {
+                cancelEdit();
+            }
             
-            editingCell = element;
-            const originalValue = element.textContent;
-            element.classList.add('editing');
-            element.contentEditable = true;
-            element.focus();
+            const cellId = `${type}-${id}-${field}`;
+            const cell = document.getElementById(cellId);
+            if (!cell) return;
             
-            // Select all text
-            const range = document.createRange();
-            range.selectNodeContents(element);
-            const selection = window.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
+            editingCell = { type, id, field, cell, originalValue: cell.textContent };
             
-            const saveEdit = () => {
-                const newValue = element.textContent.trim();
-                element.classList.remove('editing');
-                element.contentEditable = false;
-                editingCell = null;
-                
-                const type = element.dataset.type;
-                const id = parseInt(element.dataset.id);
-                const field = element.dataset.field;
-                
-                updateContact(type, id, field, newValue);
-            };
+            const currentValue = getCurrentValue(type, id, field);
+            const placeholder = getPlaceholder(field);
             
-            element.addEventListener('blur', saveEdit, { once: true });
-            element.addEventListener('keypress', (e) => {
+            cell.innerHTML = `<input type="text" class="edit-input" value="${currentValue}" placeholder="${placeholder}" id="editInput">`;
+            
+            const input = document.getElementById('editInput');
+            input.focus();
+            input.select();
+            
+            // Handle save/cancel
+            input.addEventListener('keydown', function(e) {
                 if (e.key === 'Enter') {
-                    e.preventDefault();
-                    saveEdit();
+                    saveEdit(input.value);
+                } else if (e.key === 'Escape') {
+                    cancelEdit();
                 }
             });
+            
+            input.addEventListener('blur', function() {
+                saveEdit(input.value);
+            });
         }
 
-        // Update contact data
-        function updateContact(type, id, field, value) {
-            let contact;
+        // Save edit
+        function saveEdit(newValue) {
+            if (!editingCell) return;
+            
+            const { type, id, field, cell } = editingCell;
+            const trimmedValue = newValue.trim();
+            
+            // Update data
             if (type === 'maintenance') {
-                contact = maintenanceTeam.find(p => p.id === id);
+                const person = maintenanceTeam.find(p => p.id === id);
+                if (person && person[field] !== trimmedValue) {
+                    person[field] = trimmedValue;
+                    person.changed = true;
+                    markAsChanged();
+                    
+                    // If email cleared, move to inactive
+                    if (field === 'email' && !trimmedValue) {
+                        person.type = 'maintenance';
+                        person.removed = new Date().toLocaleDateString();
+                        inactiveContacts.push(person);
+                        maintenanceTeam = maintenanceTeam.filter(p => p.id !== id);
+                    }
+                }
             } else {
-                contact = zoneReps.find(r => r.id === id);
+                const rep = zoneReps.find(r => r.id === id);
+                if (rep && rep[field] !== trimmedValue) {
+                    rep[field] = trimmedValue;
+                    rep.changed = true;
+                    markAsChanged();
+                    
+                    // If email cleared, move to inactive
+                    if (field === 'email' && !trimmedValue) {
+                        rep.type = 'zone';
+                        rep.removed = new Date().toLocaleDateString();
+                        inactiveContacts.push(rep);
+                        zoneReps = zoneReps.filter(r => r.id !== id);
+                    }
+                }
             }
             
-            if (contact && contact[field] !== value) {
-                contact[field] = value;
-                contact.changed = true;
-                markAsChanged();
-                renderAllLists();
-            }
+            editingCell = null;
+            renderAllLists();
         }
 
-        // Add new maintenance contact
-        function addMaintenanceContact() {
+        // Cancel edit
+        function cancelEdit() {
+            if (!editingCell) return;
+            editingCell = null;
+            renderAllLists();
+        }
+
+        // Toggle selection for deletion
+        function toggleSelection(type, id) {
+            const key = `${type}-${id}`;
+            if (selectedForDeletion.has(key)) {
+                selectedForDeletion.delete(key);
+            } else {
+                selectedForDeletion.add(key);
+            }
+            console.log('Selected for deletion:', Array.from(selectedForDeletion));
+            updateChangesIndicator();
+        }
+
+        // Add new maintenance person
+        function addMaintenancePerson() {
             const newId = Math.max(...maintenanceTeam.map(p => p.id), 0) + 1;
-            maintenanceTeam.push({
-                id: newId,
-                name: 'New Contact',
-                email: 'email@example.com',
-                changed: true,
-                isNew: true
+            maintenanceTeam.push({ 
+                id: newId, 
+                name: '', 
+                email: '', 
+                changed: true, 
+                isNew: true 
             });
             markAsChanged();
             renderAllLists();
-        }
-
-        // Add new zone contact
-        function addZoneContact() {
-            const newId = Math.max(...zoneReps.map(r => r.id), 0) + 1;
-            zoneReps.push({
-                id: newId,
-                zone: 'Z',
-                name: 'New Contact',
-                email: 'email@example.com',
-                changed: true,
-                isNew: true
-            });
-            markAsChanged();
-            renderAllLists();
-        }
-
-        // Remove contact
-        function removeContact(id, type) {
-            if (!confirm('Remove this contact from notifications?')) return;
             
-            if (type === 'maintenance') {
-                maintenanceTeam = maintenanceTeam.filter(p => p.id !== id);
-            } else {
-                zoneReps = zoneReps.filter(r => r.id !== id);
-            }
+            // Focus on name field
+            setTimeout(() => {
+                editCell('maintenance', newId, 'name');
+            }, 100);
+        }
+
+        // Add new zone representative
+        function addZoneRep() {
+            const newId = Math.max(...zoneReps.map(r => r.id), 0) + 1;
+            zoneReps.push({ 
+                id: newId, 
+                zone: '', 
+                name: '', 
+                email: '', 
+                changed: true, 
+                isNew: true 
+            });
             markAsChanged();
             renderAllLists();
+            
+            // Focus on zone field
+            setTimeout(() => {
+                editCell('zoneRep', newId, 'zone');
+            }, 100);
+        }
+
+        // Delete selected entries
+        async function deleteSelected() {
+            if (selectedForDeletion.size === 0) return;
+            
+            const count = selectedForDeletion.size;
+            if (!confirm(`Delete ${count} selected ${count === 1 ? 'entry' : 'entries'}?`)) return;
+            
+            try {
+                showLoading(true);
+                
+                for (const key of selectedForDeletion) {
+                    const [type, idStr] = key.split('-');
+                    const numId = parseInt(idStr);
+                    
+                    if (type === 'maintenance') {
+                        const person = maintenanceTeam.find(p => p.id === numId);
+                        if (person && !person.isNew) {
+                            await makeRequest('deleteNamedRangeRow', {
+                                rangeName: 'MtceTeamEmailList',
+                                row: person.id - 1
+                            });
+                        }
+                        maintenanceTeam = maintenanceTeam.filter(p => p.id !== numId);
+                    } else {
+                        const rep = zoneReps.find(r => r.id === numId);
+                        if (rep && !rep.isNew) {
+                            await makeRequest('deleteNamedRangeRow', {
+                                rangeName: 'ZoneRepEmailList',
+                                row: rep.id - 1
+                            });
+                        }
+                        zoneReps = zoneReps.filter(r => r.id !== numId);
+                    }
+                }
+                
+                selectedForDeletion.clear();
+                await loadInitialData();
+                showStatus('✅ Selected entries deleted', 'success');
+                
+            } catch (error) {
+                console.error('❌ Error deleting entries:', error);
+                showStatus('❌ Failed to delete entries: ' + error.message, 'error');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        // Restore from inactive
+        function restoreFromInactive(index) {
+            const contact = inactiveContacts[index];
+            
+            // Restore to appropriate list
+            if (contact.type === 'maintenance') {
+                const existingIndex = maintenanceTeam.findIndex(p => p.name === contact.name);
+                if (existingIndex >= 0) {
+                    // Update existing entry
+                    maintenanceTeam[existingIndex].email = contact.email;
+                    maintenanceTeam[existingIndex].changed = true;
+                    markAsChanged();
+                } else {
+                    // If no existing entry, create new (shouldn't normally happen)
+                    addMaintenancePerson();
+                    const newPerson = maintenanceTeam[maintenanceTeam.length - 1];
+                    newPerson.name = contact.name;
+                    newPerson.email = contact.email;
+                }
+            } else {
+                const existingIndex = zoneReps.findIndex(r => r.zone === contact.zone && r.name === contact.name);
+                if (existingIndex >= 0) {
+                    // Update existing entry
+                    zoneReps[existingIndex].email = contact.email;
+                    zoneReps[existingIndex].changed = true;
+                    markAsChanged();
+                } else {
+                    // If no existing entry, create new (shouldn't normally happen)
+                    addZoneRep();
+                    const newRep = zoneReps[zoneReps.length - 1];
+                    newRep.zone = contact.zone;
+                    newRep.name = contact.name;
+                    newRep.email = contact.email;
+                }
+            }
+            
+            // Remove from inactive list
+            inactiveContacts.splice(index, 1);
+            
+            renderAllLists();
+            showStatus(`↩️ ${contact.name} email restored - remember to save changes`, 'success');
+        }
+
+        // Remove from inactive permanently
+        function removeFromInactive(index) {
+            const contact = inactiveContacts[index];
+            if (confirm(`Permanently delete ${contact.name} from inactive list?`)) {
+                inactiveContacts.splice(index, 1);
+                renderAllLists();
+                showStatus(`🗑️ ${contact.name} permanently removed`, 'success');
+            }
+        }
+
+        // Get current value
+        function getCurrentValue(type, id, field) {
+            if (type === 'maintenance') {
+                const person = maintenanceTeam.find(p => p.id === id);
+                return person ? (person[field] || '') : '';
+            } else {
+                const rep = zoneReps.find(r => r.id === id);
+                return rep ? (rep[field] || '') : '';
+            }
+        }
+
+        // Get placeholder text
+        function getPlaceholder(field) {
+            switch (field) {
+                case 'name': return 'Enter name...';
+                case 'email': return 'Enter email address...';
+                case 'zone': return 'Enter zone...';
+                default: return 'Enter value...';
+            }
         }
 
         // Mark as changed
@@ -706,13 +896,25 @@
         function updateChangesIndicator() {
             const indicator = document.getElementById('changesIndicator');
             const actionBar = document.getElementById('actionBar');
+            const deleteBtn = document.getElementById('deleteBtn');
+            
+            if (hasChanges || selectedForDeletion.size > 0) {
+                actionBar.classList.remove('hidden');
+            } else {
+                actionBar.classList.add('hidden');
+            }
             
             if (hasChanges) {
                 indicator.classList.add('show');
-                actionBar.classList.remove('hidden');
             } else {
                 indicator.classList.remove('show');
-                actionBar.classList.add('hidden');
+            }
+            
+            // Show/hide delete button based on selections
+            if (selectedForDeletion.size > 0) {
+                deleteBtn.style.display = 'inline-flex';
+            } else {
+                deleteBtn.style.display = 'none';
             }
         }
 
@@ -723,24 +925,51 @@
             try {
                 showLoading(true);
                 
+                // Prepare maintenance team data
+                const maintenanceData = maintenanceTeam.map(person => ({
+                    name: person.name || '',
+                    email: person.email || ''
+                }));
+                
+                // Prepare zone reps data
+                const zoneData = zoneReps.map(rep => ({
+                    zone: rep.zone || '',
+                    name: rep.name || '',
+                    email: rep.email || ''
+                }));
+                
                 // Save maintenance team
-                const maintenanceData = maintenanceTeam.map(p => ({ name: p.name, email: p.email }));
-                await makeRequest('updateNamedRange', {
+                console.log('💾 Saving maintenance team...');
+                const maintenanceResult = await makeRequest('updateNamedRange', {
                     rangeName: 'MtceTeamEmailList',
                     data: maintenanceData
                 });
                 
+                if (!maintenanceResult.success) {
+                    throw new Error('Failed to save maintenance team: ' + maintenanceResult.error);
+                }
+                
                 // Save zone representatives
-                const zoneData = zoneReps.map(r => ({ zone: r.zone, name: r.name, email: r.email }));
-                await makeRequest('updateNamedRange', {
-                    rangeName: 'ZoneRepEmailList', 
+                console.log('💾 Saving zone representatives...');
+                const zoneResult = await makeRequest('updateNamedRange', {
+                    rangeName: 'ZoneRepEmailList',
                     data: zoneData
                 });
                 
+                if (!zoneResult.success) {
+                    throw new Error('Failed to save zone representatives: ' + zoneResult.error);
+                }
+                
                 // Reset change flags
                 hasChanges = false;
-                maintenanceTeam.forEach(p => { p.changed = false; p.isNew = false; });
-                zoneReps.forEach(r => { r.changed = false; r.isNew = false; });
+                maintenanceTeam.forEach(person => {
+                    person.changed = false;
+                    person.isNew = false;
+                });
+                zoneReps.forEach(rep => {
+                    rep.changed = false;
+                    rep.isNew = false;
+                });
                 
                 updateChangesIndicator();
                 renderAllLists();
@@ -756,9 +985,10 @@
 
         // Cancel all changes
         function cancelAllChanges() {
-            if (!hasChanges) return;
+            if (!hasChanges && selectedForDeletion.size === 0) return;
             
-            if (confirm('Cancel all unsaved changes?')) {
+            if (confirm('Are you sure you want to cancel all unsaved changes?')) {
+                selectedForDeletion.clear();
                 loadInitialData();
             }
         }
@@ -817,6 +1047,16 @@
             setTimeout(() => {
                 statusDiv.style.display = 'none';
             }, 5000);
+        }
+
+        // Navigate back to admin dashboard
+        function goBackToAdmin() {
+            if (hasChanges && !confirm('You have unsaved changes. Are you sure you want to leave?')) {
+                return;
+            }
+            
+            // Use simple history back - same as Dynamic Dropdowns
+            window.history.back();
         }
 
         console.log('📧 Email Notification Management - Ready!');
