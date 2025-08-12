@@ -593,7 +593,7 @@
         <div class="admin-header">
             <div class="header-top">
                 <h1 class="admin-title">🎛️ Dropdown Manager</h1>
-               <button onclick="goBackToAdminMain()" class="back-btn">← Back to Admin Portal</button>
+               //<button onclick="goBackToAdminMain()" class="back-btn">← Back to Admin Portal</button>
             </div>
             <p class="admin-subtitle">Enhanced UX v2 - Dropdown Management for Holden Maintenance System</p>
         </div>
@@ -1314,14 +1314,7 @@
             });
         }
 
-function goBackToAdminMain() {
-    // Go back in history, but if it's the login screen, go back further
-    if (document.referrer && document.referrer.includes('login')) {
-        window.history.go(-2); // Skip login screen
-    } else {
-        window.history.back(); // Normal back
-    }
-}
+
 
         
         console.log('🎛️ Standalone Dropdown Manager - Ready!');
