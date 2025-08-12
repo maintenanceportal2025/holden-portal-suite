@@ -894,25 +894,40 @@
             updateSendButton();
         }
 
-        // Update send button
-        function updateSendButton() {
-            const sendBtn = document.getElementById('sendBtn');
-            const sendBtnText = document.getElementById('sendBtnText');
-            
-            if (selectedTemplate) {
-                sendBtn.disabled = false;
-                sendBtn.style.background = '#ef4444';
-                
-                const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.slice(-1)}`;
-                const templateName = getTemplateName(selectedTemplate);
-                
-                sendBtnText.textContent = `🚨 Send ${templateName} to ${zoneName}`;
-            } else {
-                sendBtn.disabled = true;
-                sendBtn.style.background = '#9ca3af';
-                sendBtnText.textContent = '📧 Select Template to Send';
-            }
-        }
+        // Update send button - REQUIRE BOTH TEMPLATE AND ZONE
+function updateSendButton() {
+    const sendBtn = document.getElementById('sendBtn');
+    const sendBtnText = document.getElementById('sendBtnText');
+    
+    if (selectedTemplate && selectedZone) {
+        // Both selected - enable send
+        sendBtn.disabled = false;
+        sendBtn.style.background = '#ef4444';
+        
+        const zoneName = selectedZone === 'all_units' ? 'All Units' : `Zone ${selectedZone.replace(/\D/g, '')}`;
+        const templateName = getFieldTemplateTitle(selectedTemplate);
+        
+        sendBtnText.textContent = `🚨 Send ${templateName} to ${zoneName}`;
+        
+    } else if (selectedTemplate && !selectedZone) {
+        // Template selected but no zone
+        sendBtn.disabled = true;
+        sendBtn.style.background = '#f59e0b'; // Orange warning
+        sendBtnText.textContent = '📍 Select Zone to Send';
+        
+    } else if (!selectedTemplate && selectedZone) {
+        // Zone selected but no template
+        sendBtn.disabled = true;
+        sendBtn.style.background = '#f59e0b'; // Orange warning
+        sendBtnText.textContent = '📧 Select Template to Send';
+        
+    } else {
+        // Nothing selected
+        sendBtn.disabled = true;
+        sendBtn.style.background = '#9ca3af';
+        sendBtnText.textContent = '📍 Select Zone & Template to Send';
+    }
+}
 
         // Get friendly template name for display in send button
         function getTemplateName(templateId) {
