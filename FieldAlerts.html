@@ -543,16 +543,30 @@
             }
         }
 
-        // Render templates in any container - SIMPLIFIED
+        // Render templates in any container - FILTER FOR FIELD TEMPLATES
         function renderTemplatesInContainer(container, templates) {
-            const displayTemplates = templates.slice(0, 6);
+            // Filter to show only field-friendly templates
+            const fieldTemplates = templates.filter(template => {
+                const id = template.templateId;
+                return id === 'WATER04' || id === 'WATER05' || id === 'WATER06' ||
+                       id === 'POWER04' || id === 'POWER05' || id === 'POWER06' ||
+                       id === 'URGENT01';
+            });
+            
+            console.log('🎯 Filtered to field templates:', fieldTemplates.map(t => t.templateId));
+            
+            if (fieldTemplates.length === 0) {
+                // Fallback to first 6 templates if new ones don't exist yet
+                console.log('⚠️ No field templates found, using first 6 available');
+                fieldTemplates = templates.slice(0, 6);
+            }
             
             console.log('🎨 Rendering templates in container:', container);
             
-            container.innerHTML = displayTemplates.map((template, index) => {
-                const emoji = getTemplateEmoji(template.templateId, template.category);
-                const displayTitle = template.templateId;
-                const displayDesc = getShortDescription(template.subject);
+            container.innerHTML = fieldTemplates.map((template, index) => {
+                const emoji = getFieldTemplateEmoji(template.templateId);
+                const displayTitle = getFieldTemplateTitle(template.templateId);
+                const displayDesc = template.subject || 'Emergency notification';
                 
                 return `
                     <div class="template-card" data-template-id="${template.templateId}" data-index="${index}">
@@ -569,6 +583,34 @@
             }, 100);
             
             console.log('✅ Templates rendered successfully');
+        }
+
+        // Get emoji for field templates
+        function getFieldTemplateEmoji(templateId) {
+            const emojiMap = {
+                'WATER04': '🚰',  // Water Emergency
+                'WATER05': '⏰',  // Water Delayed
+                'WATER06': '✅',  // Water Restored
+                'POWER04': '⚡',  // Power Emergency
+                'POWER05': '⏰',  // Power Delayed  
+                'POWER06': '✅',  // Power Restored
+                'URGENT01': '📢' // Urgent Notice
+            };
+            return emojiMap[templateId] || '📢';
+        }
+
+        // Get friendly titles for field templates
+        function getFieldTemplateTitle(templateId) {
+            const titleMap = {
+                'WATER04': 'Water Emergency',
+                'WATER05': 'Water Delayed',
+                'WATER06': 'Water Restored',
+                'POWER04': 'Power Emergency',
+                'POWER05': 'Power Delayed',
+                'POWER06': 'Power Restored',
+                'URGENT01': 'Urgent Notice'
+            };
+            return titleMap[templateId] || templateId;
         }
 
         // Add click listeners to template cards
@@ -875,7 +917,7 @@
             return templateId;
         }
 
-        // Send notification
+        // Send notification - FIXED ZONE FILTERING
         async function sendNotification() {
             if (!selectedTemplate) {
                 showResult('error', 'No Template Selected', 'Please select a notification type first');
@@ -884,23 +926,35 @@
 
             // DEBUG: Log what we're about to send
             console.log('🚀 Sending notification with template:', selectedTemplate);
+            console.log('🎯 Selected zone:', selectedZone);
             console.log('📋 Available templates:', emailTemplates.map(t => t.templateId));
 
             try {
                 // Show sending state
                 showSendingState();
                 
+                // CRITICAL FIX: Ensure zone parameter is correct format
+                let recipientFilter;
+                if (selectedZone === 'all_units') {
+                    recipientFilter = 'all_units';
+                } else {
+                    // Convert 'zone1' to 'zone_1' format expected by backend
+                    recipientFilter = selectedZone.replace(/(\d)/, '_$1');
+                }
+                
+                console.log('📤 Sending with recipientFilter:', recipientFilter);
+                
                 // Prepare parameters for mass notification
                 const params = new URLSearchParams({
                     action: 'sendMassNotification',
                     templateId: selectedTemplate,
-                    recipientFilter: selectedZone,
+                    recipientFilter: recipientFilter,
                     customData: JSON.stringify({}),
                     adminUser: 'FieldTech',
                     callback: '?'
                 });
                 
-                console.log('📤 Sending request with params:', params.toString());
+                console.log('📤 Full request URL:', `${EMAIL_SERVICE_URL}?${params.toString()}`);
                 
                 // Send to email service
                 const response = await fetch(`${EMAIL_SERVICE_URL}?${params}`);
