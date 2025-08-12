@@ -399,17 +399,24 @@
         </div>
 
         <!-- Zone Selector -->
-        <div class="zone-selector">
-            <h3 class="zone-title">Select Affected Area</h3>
-            <div class="zone-grid">
-                <button class="zone-btn" data-zone="zone1">Zone 1</button>
-                <button class="zone-btn" data-zone="zone2">Zone 2</button>
-                <button class="zone-btn" data-zone="zone3">Zone 3</button>
-                <button class="zone-btn" data-zone="zone4">Zone 4</button>
-                <button class="zone-btn" data-zone="zone5">Zone 5</button>
-                <button class="zone-btn all-units" data-zone="all_units">🏘️ All Units</button>
-            </div>
-        </div>
+       <!-- Zone Selector -->
+<div class="zone-selector">
+    <h3 class="zone-title">Select Affected Area</h3>
+    <div class="zone-grid">
+        <button class="zone-btn" data-zone="zone1">Zone 1</button>
+        <button class="zone-btn" data-zone="zone2">Zone 2</button>
+        <button class="zone-btn" data-zone="zone3">Zone 3</button>
+        <button class="zone-btn" data-zone="zone4">Zone 4</button>
+        <button class="zone-btn" data-zone="zone5">Zone 5</button>
+        <button class="zone-btn all-units" data-zone="all_units">🏘️ All Units</button>
+    </div>
+    <!-- ADD THIS CLEAR BUTTON HERE -->
+    <div style="text-align: center; margin-top: 15px;">
+        <button onclick="clearSelections()" style="background: #6b7280; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-size: 14px; cursor: pointer;">
+            🗑️ Clear Selections
+        </button>
+    </div>
+</div>
 
         <!-- Send Button -->
         <div class="send-section">
@@ -1073,6 +1080,28 @@
                 navigator.vibrate(100);
             }
         }
+
+        function clearSelections() {
+    // Clear template selection
+    document.querySelectorAll('.template-card').forEach(card => {
+        card.classList.remove('selected');
+    });
+    selectedTemplate = null;
+    
+    // Clear zone selection
+    document.querySelectorAll('.zone-btn').forEach(btn => {
+        btn.classList.remove('selected');
+    });
+    selectedZone = null;
+    
+    // Update send button
+    updateSendButton();
+    
+    // Haptic feedback
+    if (navigator.vibrate) {
+        navigator.vibrate(100);
+    }
+}
     </script>
 </body>
 </html>
