@@ -15,9 +15,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
             color: #333;
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            min-height: 100vh;
-            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         .container {
@@ -33,7 +31,6 @@
             border-radius: 12px;
             margin-bottom: 30px;
             text-align: center;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
 
         .header h1 {
@@ -121,8 +118,8 @@
 
         .form-select:focus, .form-input:focus, .form-textarea:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
         }
 
         .form-textarea {
@@ -146,13 +143,13 @@
         }
 
         .template-card:hover {
-            border-color: #3b82f6;
+            border-color: #059669;
             transform: translateY(-2px);
         }
 
         .template-card.selected {
-            border-color: #3b82f6;
-            background: #eff6ff;
+            border-color: #059669;
+            background: #ecfdf5;
         }
 
         .template-title {
@@ -191,12 +188,12 @@
         }
 
         .btn-primary {
-            background: #3b82f6;
+            background: #059669;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #2563eb;
+            background: #047857;
         }
 
         .btn-primary:disabled {
@@ -293,7 +290,7 @@
         }
 
         .notification.success {
-            background: #10b981;
+            background: #059669;
         }
 
         .notification.error {
@@ -328,14 +325,14 @@
             width: 50px;
             height: 50px;
             border: 4px solid #e2e8f0;
-            border-top: 4px solid #3b82f6;
+            border-top: 4px solid #059669;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-bottom: 20px;
         }
 
         .loader-text {
-            color: #3b82f6;
+            color: #059669;
             font-size: 1.1rem;
             font-weight: 500;
             text-align: center;
@@ -350,29 +347,6 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
-        }
-
-        @media (max-width: 768px) {
-            .main-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .container {
-                margin: 10px;
-                padding: 15px;
-            }
-            
-            .header {
-                padding: 20px;
-            }
-            
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
         }
     </style>
 </head>
@@ -391,66 +365,75 @@
             <p>Send important communications to all residents</p>
         </div>
 
-        <!-- Service Status Bar -->
+        <!-- Status Bar -->
         <div class="status-bar">
             <div class="status-item">
-                <div class="status-indicator" id="emailStatusIndicator"></div>
-                <span><strong>Email Service:</strong> <span id="emailServiceStatus">Checking...</span></span>
+                <div class="status-indicator" id="serviceIndicator"></div>
+                <span><strong>Email Service:</strong> <span id="serviceStatus">Connecting...</span></span>
             </div>
+            
             <div class="status-item">
-                <span><strong>Templates:</strong> <span id="templateCount">0</span> available</span>
+                <span><strong>Templates:</strong> <span id="templateCount">--</span> available</span>
             </div>
+
             <div class="status-item">
                 <span><strong>Total Units:</strong> 44 retirement village units</span>
             </div>
         </div>
 
+        <!-- Main Content -->
         <div class="main-grid">
             <!-- Template Selection -->
             <div class="card">
-                <h2 class="card-title">📋 Email Template</h2>
+                <h2 class="card-title">📋 Select Template</h2>
                 
-                <div class="form-group">
-                    <label class="form-label" for="recipientFilter">Send To:</label>
+                <div class="template-grid" id="templateGrid">
+                    <!-- Templates will be loaded here -->
+                </div>
+
+                <div class="form-group" style="margin-top: 20px;">
+                    <label class="form-label">Recipients</label>
                     <select class="form-select" id="recipientFilter">
-                        <option value="all_units">All Units (44 residents)</option>
-                        <option value="unit_primary_only">Unit Primary Contacts Only</option>
-                        <option value="zone_reps_only">Zone Representatives Only</option>
+                        <option value="all_units">All Units (44 units)</option>
+                        <option value="zone_1">Zone 1 Only</option>
+                        <option value="zone_2">Zone 2 Only</option>
+                        <option value="zone_3">Zone 3 Only</option>
+                        <option value="zone_4">Zone 4 Only</option>
+                        <option value="zone_5">Zone 5 Only</option>
                     </select>
-                </div>
-
-                <div id="templateGrid" class="template-grid">
-                    <div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px;">
-                        Loading email templates...
-                    </div>
-                </div>
-
-                <div id="variableInputs" style="margin-top: 20px;">
-                    <p style="color: #64748b; font-style: italic;">Select a template to see customization options</p>
                 </div>
             </div>
 
-            <!-- Email Preview -->
+            <!-- Variable Input -->
             <div class="card">
-                <h2 class="card-title">👁️ Email Preview</h2>
+                <h2 class="card-title">✏️ Customize Message</h2>
                 
-                <div class="preview-panel" id="previewPanel" style="display: none;">
-                    <div class="preview-header">Email Preview</div>
-                    <div class="preview-content">
-                        <div class="preview-subject" id="previewSubject"></div>
-                        <div class="preview-body" id="previewBody"></div>
-                    </div>
+                <div id="variableInputs">
+                    <p style="color: #64748b; font-style: italic;">Select a template to see customization options</p>
                 </div>
+            </div>
+        </div>
 
-                <div class="action-buttons">
-                    <button class="btn btn-primary" id="sendEmailBtn" onclick="sendMassNotification()" disabled>
-                        <span id="sendButtonText">📧 Send Email</span>
-                        <span id="sendButtonSpinner" style="display: none;">🔄 Sending...</span>
-                    </button>
-                    <button class="btn btn-secondary" onclick="refreshPreview()">
-                        🔄 Refresh Preview
-                    </button>
+        <!-- Preview Panel -->
+        <div class="card">
+            <h2 class="card-title">👁️ Email Preview</h2>
+            
+            <div class="preview-panel" id="previewPanel" style="display: none;">
+                <div class="preview-header">Email Preview</div>
+                <div class="preview-content">
+                    <div class="preview-subject" id="previewSubject"></div>
+                    <div class="preview-body" id="previewBody"></div>
                 </div>
+            </div>
+
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="sendEmailBtn" onclick="sendMassNotification()" disabled>
+                    <span id="sendButtonText">📧 Send Email</span>
+                    <span id="sendButtonSpinner" style="display: none;">🔄 Sending...</span>
+                </button>
+                <button class="btn btn-secondary" onclick="refreshPreview()">
+                    🔄 Refresh Preview
+                </button>
             </div>
         </div>
     </div>
@@ -530,14 +513,14 @@
 
         // Update service status display
         function updateServiceStatus(isOnline) {
-            const indicator = document.getElementById('emailStatusIndicator');
-            const status = document.getElementById('emailServiceStatus');
+            const indicator = document.getElementById('serviceIndicator');
+            const status = document.getElementById('serviceStatus');
             
             if (isOnline) {
-                indicator.classList.remove('offline');
+                indicator.className = 'status-indicator';
                 status.textContent = 'Online';
             } else {
-                indicator.classList.add('offline');
+                indicator.className = 'status-indicator offline';
                 status.textContent = 'Offline';
             }
         }
@@ -547,82 +530,68 @@
             try {
                 const response = await makeServiceRequest('getEmailTemplates');
                 
-                if (response.success && response.templates) {
+                if (response.success) {
                     emailTemplates = response.templates;
-                    updateTemplateCount(emailTemplates.length);
-                    displayTemplates();
+                    renderTemplateGrid();
+                    document.getElementById('templateCount').textContent = emailTemplates.length;
                 } else {
-                    throw new Error('Failed to load templates');
+                    throw new Error(response.error || 'Failed to load templates');
                 }
                 
             } catch (error) {
                 console.error('❌ Error loading templates:', error);
-                updateTemplateCount(0);
-                displayTemplateError();
+                showError('Failed to load email templates: ' + error.message);
             }
         }
 
-        // Update template count display
-        function updateTemplateCount(count) {
-            document.getElementById('templateCount').textContent = count;
-        }
-
-        // Display templates in grid
-        function displayTemplates() {
-            const grid = document.getElementById('templateGrid');
+        // Render template selection grid
+        function renderTemplateGrid() {
+            const container = document.getElementById('templateGrid');
             
             if (emailTemplates.length === 0) {
-                grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #64748b; padding: 40px;">No email templates available</div>';
+                container.innerHTML = '<p style="color: #64748b; font-style: italic;">No templates available</p>';
                 return;
             }
             
-            grid.innerHTML = emailTemplates.map(template => `
+            container.innerHTML = emailTemplates.map(template => `
                 <div class="template-card" onclick="selectTemplate('${template.templateId}')">
-                    <div class="template-title">${template.title}</div>
                     <div class="template-category">${template.category}</div>
-                    <div class="template-preview">${template.description || 'No description available'}</div>
+                    <div class="template-title">${template.templateId}</div>
+                    <div class="template-preview">${template.subject}</div>
                 </div>
             `).join('');
         }
 
-        // Display template loading error
-        function displayTemplateError() {
-            const grid = document.getElementById('templateGrid');
-            grid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; color: #dc2626; padding: 40px;">Failed to load email templates</div>';
-        }
-
-        // Select template
+        // Select a template
         function selectTemplate(templateId) {
-            selectedTemplate = emailTemplates.find(t => t.templateId === templateId);
-            
-            if (!selectedTemplate) {
-                showError('Template not found');
-                return;
-            }
-            
-            // Update UI
+            // Remove previous selection
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
-            event.currentTarget.classList.add('selected');
             
-            // Show variable inputs
-            displayVariableInputs();
+            // Find and select template
+            selectedTemplate = emailTemplates.find(t => t.templateId === templateId);
             
-            // Update preview
-            updatePreview();
-            
-            // Enable send button
-            document.getElementById('sendEmailBtn').disabled = false;
-            
-            showSuccess(`Template "${selectedTemplate.title}" selected`);
+            if (selectedTemplate) {
+                // Visual selection
+                event.target.closest('.template-card').classList.add('selected');
+                
+                // Show variable inputs
+                renderVariableInputs();
+                
+                // Update preview
+                updatePreview();
+                
+                // Enable send button
+                document.getElementById('sendEmailBtn').disabled = false;
+            }
         }
 
-        // Display variable input fields
-        function displayVariableInputs() {
+        // Render variable input fields
+        function renderVariableInputs() {
             const container = document.getElementById('variableInputs');
             
-            if (!selectedTemplate.variables) {
+            if (!selectedTemplate || !selectedTemplate.variables) {
                 container.innerHTML = '<p style="color: #64748b; font-style: italic;">This template has no customizable variables</p>';
                 return;
             }
