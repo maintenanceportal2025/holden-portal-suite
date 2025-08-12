@@ -85,98 +85,68 @@
             margin-right: auto;
         }
 
-        /* Live Stats Dashboard - Much More Compact */
+        /* Stats Section */
         .stats-section {
-            margin-bottom: 20px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 10px;
-            margin-bottom: 10px;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
         }
 
         .stat-card {
-            background: white;
-            border-radius: 8px;
-            padding: 12px 8px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 8px;
             border: 1px solid #e2e8f0;
-            transition: all 0.2s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .stat-icon {
             font-size: 1.5rem;
-            margin-bottom: 4px;
+            margin-bottom: 6px;
         }
 
         .stat-number {
-            font-size: 1.4rem;
+            font-size: 1.5rem;
             font-weight: 700;
-            margin-bottom: 2px;
+            color: #1e293b;
+            margin-bottom: 4px;
         }
 
         .stat-label {
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             color: #64748b;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
             font-weight: 500;
         }
 
         .stat-trend {
-            font-size: 0.65rem;
-            margin-top: 3px;
-            padding: 2px 4px;
-            border-radius: 6px;
-            display: inline-block;
+            font-size: 0.7rem;
+            color: #94a3b8;
+            margin-top: 2px;
         }
 
-        .trend-up {
-            background: #dcfce7;
-            color: #166534;
-        }
+        .trend-up { color: #059669; }
+        .trend-down { color: #dc2626; }
+        .trend-stable { color: #64748b; }
 
-        .trend-down {
-            background: #fecaca;
-            color: #dc2626;
-        }
-
-        .trend-stable {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        /* Portal Cards */
+        /* Portals Section */
         .portals-section {
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 1.8rem;
+            font-size: 1.3rem;
             font-weight: 600;
             color: white;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             text-align: center;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .portals-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 25px;
-        }
-
-        /* Portal Cards - Much More Compact */
-        .portals-section {
-            margin-bottom: 20px;
         }
 
         .portals-grid {
@@ -212,6 +182,38 @@
         .portal-card:hover {
             transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .access-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-protected {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-analytics {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-public {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-admin {
+            background: #f3e8ff;
+            color: #7c3aed;
         }
 
         .portal-icon {
@@ -267,119 +269,61 @@
             padding: 10px 20px;
             border-radius: 8px;
             text-decoration: none;
+            text-align: center;
             font-weight: 600;
             transition: all 0.2s ease;
-            border: none;
-            cursor: pointer;
-            font-size: 0.9rem;
-            width: 100%;
-            text-align: center;
             margin-top: auto;
         }
 
         .portal-btn:hover {
-            background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
         }
 
-        .access-badge {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-protected {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .badge-public {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .badge-analytics {
-            background: #e0e7ff;
-            color: #3730a3;
-        }
-
-        /* Quick Actions - REMOVED */
-        .quick-actions {
-            display: none;
-        }
-
-        /* System Status - Simplified */
-        .system-status {
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 16px;
+        /* Actions Section */
+        .actions-section {
+            background: white;
+            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            margin-bottom: 20px;
         }
 
-        .status-title {
-            font-size: 1.2rem;
-            font-weight: 600;
-            color: #1e293b;
-            margin-bottom: 12px;
-            text-align: center;
-        }
-
-        .status-grid {
+        .actions-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 12px;
         }
 
-        .status-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 14px;
+        .action-btn {
+            display: inline-block;
             background: #f8fafc;
+            color: #374151;
+            padding: 12px 16px;
             border-radius: 8px;
-            border-left: 3px solid #e2e8f0;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            border: 1px solid #e2e8f0;
         }
 
-        .status-online {
-            border-left-color: #10b981;
+        .action-btn:hover {
+            background: #f1f5f9;
+            border-color: #cbd5e1;
         }
 
-        .status-loading {
-            border-left-color: #f59e0b;
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: white;
+            opacity: 0.8;
+            font-size: 0.8rem;
         }
 
-        .status-error {
-            border-left-color: #ef4444;
-        }
-
-        .status-indicator {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            margin-right: 8px;
-        }
-
-        .indicator-online {
-            background: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-        }
-
-        .indicator-loading {
-            background: #f59e0b;
+        .loading {
             animation: pulse 2s infinite;
-        }
-
-        .indicator-error {
-            background: #ef4444;
         }
 
         @keyframes pulse {
@@ -387,63 +331,8 @@
             50% { opacity: 0.5; }
         }
 
-        /* Footer */
-        .footer {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            text-align: left;
-        }
-
-        .footer-section h4 {
-            color: #1e293b;
-            font-weight: 600;
-            margin-bottom: 10px;
-        }
-
-        .footer-section p, .footer-section a {
-            color: #64748b;
-            font-size: 0.9rem;
-            text-decoration: none;
-            margin-bottom: 5px;
-            display: block;
-        }
-
-        .footer-section a:hover {
-            color: #3b82f6;
-        }
-
-        .version-info {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px solid #e2e8f0;
-            color: #94a3b8;
-            font-size: 0.8rem;
-        }
-
-        /* Loading Animation */
-        .loading-spinner {
-            display: inline-block;
-            width: 16px;
-            height: 16px;
-            border: 2px solid #e2e8f0;
-            border-radius: 50%;
-            border-top-color: #3b82f6;
-            animation: spin 1s ease-in-out infinite;
-        }
-
         @keyframes spin {
+            from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
 
@@ -526,6 +415,7 @@
             </div>
             <p class="hero-description">
                 Professional maintenance management for Lake Illawong Retirement Village's 44 units.
+                Real-time tracking, smart analytics, and seamless communication tools.
             </p>
         </div>
 
@@ -628,470 +518,192 @@
                         Automatic notifications and instant confirmation with tracking numbers.
                     </p>
                     <ul class="portal-features">
-                        <li>Dynamic unit and resident selection</li>
-                        <li>Immediate confirmation with PID tracking</li>
-                        <li>Automatic email notifications to all parties</li>
-                        <li>Mobile-optimized for easy submission</li>
+                        <li>Guided problem submission with unit selection</li>
+                        <li>Instant confirmation with tracking number (PID)</li>
+                        <li>Automatic email notifications to relevant parties</li>
+                        <li>Mobile-optimized for easy access</li>
                     </ul>
                     <a href="holden-resident-form.html" class="portal-btn" target="_blank">
-                        Submit Maintenance Request
+                        Submit Problem Report
+                    </a>
+                </div>
+
+                <!-- Admin Portal -->
+                <div class="portal-card">
+                    <div class="access-badge badge-admin">🛠️ Admin Access</div>
+                    <div class="portal-icon">⚙️</div>
+                    <h3 class="portal-title">Admin Portal</h3>
+                    <p class="portal-subtitle">System Administration</p>
+                    <p class="portal-description">
+                        Advanced system administration for managing dropdowns, email lists, templates, and user accounts. 
+                        Full system configuration and maintenance tools.
+                    </p>
+                    <ul class="portal-features">
+                        <li>Dynamic dropdown management</li>
+                        <li>Email notification configuration</li>
+                        <li>Mass communication tools</li>
+                        <li>User account management</li>
+                    </ul>
+                    <a href="holden-admin-portal.html" class="portal-btn" target="_blank">
+                        Access Admin Portal
                     </a>
                 </div>
             </div>
         </div>
 
-
-
-        <!-- System Status -->
-        <div class="system-status">
-            <h3 class="status-title">System Health</h3>
-            <div class="status-grid">
-                <div class="status-item" id="apiStatus">
-                    <div style="display: flex; align-items: center;">
-                        <div class="status-indicator indicator-loading" id="apiIndicator"></div>
-                        <span>Backend APIs</span>
-                    </div>
-                    <span id="apiStatusText">Checking...</span>
-                </div>
-                <div class="status-item" id="dataStatus">
-                    <div style="display: flex; align-items: center;">
-                        <div class="status-indicator indicator-loading" id="dataIndicator"></div>
-                        <span>Google Sheets Database</span>
-                    </div>
-                    <span id="dataStatusText">Checking...</span>
-                </div>
-                <div class="status-item" id="emailStatus">
-                    <div style="display: flex; align-items: center;">
-                        <div class="status-indicator indicator-loading" id="emailIndicator"></div>
-                        <span>Email Notifications</span>
-                    </div>
-                    <span id="emailStatusText">Checking...</span>
-                </div>
-                <div class="status-item" id="syncStatus">
-                    <div style="display: flex; align-items: center;">
-                        <div class="status-indicator indicator-online" id="syncIndicator"></div>
-                        <span>Portal Synchronization</span>
-                    </div>
-                    <span>Online</span>
-                </div>
+        <!-- Quick Actions -->
+        <div class="actions-section">
+            <div class="actions-grid">
+                <a href="#" onclick="showSystemInfo()" class="action-btn">
+                    📋 System Information
+                </a>
+                <a href="#" onclick="showUserGuide()" class="action-btn">
+                    📖 User Guide
+                </a>
+                <a href="#" onclick="showContactInfo()" class="action-btn">
+                    📞 Contact Support
+                </a>
+                <a href="#" onclick="refreshStats()" class="action-btn">
+                    🔄 Refresh Data
+                </a>
             </div>
         </div>
 
         <!-- Footer -->
         <div class="footer">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>System Information</h4>
-                    <p>Architecture: Three-Portal Integrated Solution</p>
-                    <p>Technology: HTML5 + Google Apps Script</p>
-                    <p>Database: Google Sheets (Real-time sync)</p>
-                    <p>Hosting: Netlify Static Deployment</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Portal Versions</h4>
-                    <p>Maintenance Portal: v3.0</p>
-                    <p>Data Explorer: v2.0</p>
-                    <p>Resident Portal: v1.0</p>
-                    <p>Backend API: v5.1</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Support & Contact</h4>
-                    <a href="mailto:maintenance@lakeillawong.com.au">Technical Support</a>
-                    <a href="mailto:management@lakeillawong.com.au">System Administration</a>
-                    <a href="#" onclick="downloadGuide()">User Documentation</a>
-                    <a href="#" onclick="showSystemInfo()">System Diagnostics</a>
-                </div>
-            </div>
-            <div class="version-info">
-                <p>Lake Illawong Maintenance System Dashboard v1.0 • Built with ❤️ for efficient maintenance management • August 2025</p>
-            </div>
+            <p>Lake Illawong Maintenance System | Version 1.0 | Last Updated: August 2025</p>
         </div>
     </div>
 
     <script>
-        // =================================================================
-        // CONFIGURATION - DEFINITIVE API URLS FROM KNOWLEDGE BASE
-        // =================================================================
-        
-        // Maintenance Portal API - Full CRUD operations (Create, Read, Update, Delete)
-        const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
-        
-        // Data Explorer API - Read-only analytics and reporting  
+        // API Endpoints
         const EXPLORER_API_URL = 'https://script.google.com/macros/s/AKfycbzEWNgrtuamJxLUEo_dWCm9-WxoD-zDejn6LKwV3Vt8yCHv0CArlBVtzj1ad_JM0A6N/exec';
-        
-        // =================================================================
-        // SYSTEM INITIALIZATION
-        // =================================================================
-        
+        const MAINTENANCE_API_URL = 'https://script.google.com/macros/s/AKfycbztwt4c9-rAfrZUQT9_fRi3Lwt23Mcc9ygETGAp59NZiwlbkeTjr9SBgLJXbUUtQ7R7/exec';
+
+        // Initialize dashboard
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Lake Illawong Dashboard - Initializing...');
+            console.log('🏠 Lake Illawong Dashboard initializing...');
+            loadStatistics();
             
-            // Set up device-aware portal links
-            setupDeviceAwareLinks();
-            
-            // Load live system statistics
-            loadSystemStats();
-            
-            // Check system health
-            checkSystemHealth();
-            
-            // Set up auto-refresh (every 5 minutes)
-            setInterval(loadSystemStats, 5 * 60 * 1000);
-            
-            console.log('✅ Dashboard initialization complete');
+            // Auto-refresh every 5 minutes
+            setInterval(loadStatistics, 300000);
         });
 
-        // =================================================================
-        // DEVICE DETECTION & SMART PORTAL ROUTING
-        // =================================================================
-        
-        function setupDeviceAwareLinks() {
-            const isMobile = detectMobileDevice();
-            console.log('📱 Device detection:', isMobile ? 'Mobile' : 'Desktop');
-            
-            // Update Explorer portal link based on device
-            const explorerLinks = document.querySelectorAll('a[href="holden-desktop-explorer.html"]');
-            explorerLinks.forEach(link => {
-                if (isMobile) {
-                    link.href = 'holden-mobile-explorer.html';
-                    console.log('📱 Explorer link updated for mobile user');
-                }
-            });
-            
-            // Update portal card description for mobile users
-            if (isMobile) {
-                const explorerCard = document.querySelector('.portal-card:nth-child(2) .portal-subtitle');
-                if (explorerCard) {
-                    explorerCard.textContent = 'Mobile Analytics & Reporting';
-                }
-            }
-        }
-
-        function detectMobileDevice() {
-            // Check screen width AND user agent for comprehensive mobile detection
-            const screenWidth = window.innerWidth <= 768;
-            const userAgentMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-            const touchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-            
-            return screenWidth || userAgentMobile || touchDevice;
-        }
-
-        // =================================================================
-        // LIVE STATISTICS LOADING
-        // =================================================================
-        
-        async function loadSystemStats() {
-            console.log('📊 Loading live system statistics...');
-            console.log('🔍 Using same approach as working Explorer portal...');
+        // Load statistics from both APIs
+        async function loadStatistics() {
+            console.log('📊 Loading statistics...');
             
             try {
-                // Use the SAME approach as the working Explorer portal:
-                // Load data first, then calculate stats locally
-                console.log('📊 Loading problems data from Explorer API...');
-                const response = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
-                console.log('📊 Explorer API response:', response);
-                
-                if (response && response.success && response.data) {
-                    // Calculate stats exactly like the working Explorer portal
-                    const calculatedStats = calculateStatsFromData(response.data);
-                    updateStatsDisplay(calculatedStats);
-                    console.log('✅ Stats calculated from Explorer data:', calculatedStats);
-                    return; // Success - exit here
-                } else {
-                    console.log('⚠️ Explorer API failed, trying Maintenance API...');
+                // Try Explorer API first (primary)
+                const explorerData = await fetchWithTimeout(EXPLORER_API_URL + '?action=getStats', 10000);
+                if (explorerData && explorerData.success) {
+                    updateStatsDisplay(explorerData.stats);
+                    return;
                 }
-                
+            } catch (error) {
+                console.warn('⚠️ Explorer API unavailable, trying maintenance API...');
+            }
+
+            try {
                 // Fallback to Maintenance API
-                console.log('📊 Fallback to Maintenance API...');
-                const maintenanceResponse = await fetchWithJsonp(`${MAINTENANCE_API_URL}?action=getFaultLogData`);
-                console.log('📊 Maintenance API response:', maintenanceResponse);
-                
-                if (maintenanceResponse && maintenanceResponse.success && maintenanceResponse.data) {
-                    const calculatedStats = calculateStatsFromData(maintenanceResponse.data);
-                    updateStatsDisplay(calculatedStats);
-                    console.log('✅ Stats calculated from Maintenance API');
-                } else {
-                    console.warn('⚠️ Both APIs failed - using sample statistics');
-                    updateStatsDisplay(getFallbackStats());
+                const maintenanceData = await fetchWithTimeout(MAINTENANCE_API_URL + '?action=getStats', 10000);
+                if (maintenanceData && maintenanceData.success) {
+                    updateStatsDisplay(maintenanceData.stats);
+                    return;
                 }
-                
             } catch (error) {
-                console.error('❌ Error loading stats:', error);
-                console.log('🔍 Error details:', error.message);
-                updateStatsDisplay(getFallbackStats());
+                console.warn('⚠️ Maintenance API unavailable...');
             }
+
+            // Show fallback message if both APIs fail
+            showStatsError();
         }
 
-        function calculateStatsFromData(problems) {
-            console.log('🧮 Calculating stats from problems data:', problems.length);
-            
-            // Calculate stats exactly like the working Explorer portal
-            const total = problems.length;
-            const active = problems.filter(p => 
-                p.problemStatus !== 'Completed' && p.problemStatus !== 'Cancelled'
-            ).length;
-            const urgent = problems.filter(p => p.problemPriority === 'Urgent').length;
-            const completed = problems.filter(p => p.problemStatus === 'Completed').length;
-            const completionRate = total > 0 ? Math.round((completed / total) * 100) : 0;
-            
-            // Calculate this week's new submissions
-            const oneWeekAgo = new Date();
-            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-            const thisWeekNew = problems.filter(p => {
-                if (!p.timestamp) return false;
-                try {
-                    const problemDate = new Date(p.timestamp);
-                    return problemDate >= oneWeekAgo;
-                } catch {
-                    return false;
-                }
-            }).length;
-            
-            const calculatedStats = {
-                totalProblems: total,
-                activeProblems: active,
-                urgentProblems: urgent,
-                completionRate: completionRate,
-                thisWeekNew: thisWeekNew,
-                trends: {
-                    total: 'Live data',
-                    active: 'Live data', 
-                    urgent: 'Live data',
-                    completion: 'Live data'
-                }
-            };
-            
-            console.log('✅ Stats calculated:', calculatedStats);
-            return calculatedStats;
-        }
-
-        function updateStatsDisplay(stats) {
-            console.log('🔍 Stats object received:', stats);
-            
-            // Handle Explorer API format (stats.summary object) vs simple format
-            const summary = stats.summary || stats;
-            
-            // Update total problems
-            document.getElementById('totalProblems').textContent = summary.totalProblems || '--';
-            
-            // Update active problems  
-            document.getElementById('activeProblems').textContent = summary.activeProblems || '--';
-            
-            // Update urgent problems
-            document.getElementById('urgentProblems').textContent = summary.urgentProblems || '--';
-            
-            // Update completion rate - check both possible sources
-            const completionRate = summary.completionRate || stats.trends?.completionRate || 0;
-            document.getElementById('completionRate').textContent = `${completionRate}%`;
-            
-            // Update this week's new submissions
-            document.getElementById('thisWeekNew').textContent = summary.thisWeekNew || '--';
-            
-            // Update trend indicators
-            updateTrendIndicators(stats);
-            
-            console.log('📈 Stats display updated with:', {
-                total: summary.totalProblems,
-                active: summary.activeProblems,
-                urgent: summary.urgentProblems,
-                completion: completionRate
-            });
-        }
-
-        function updateTrendIndicators(stats) {
-            const trends = stats.trends || {};
-            
-            // Update total trend
-            const totalTrend = document.getElementById('totalTrend');
-            totalTrend.textContent = trends.total || 'Current data';
-            
-            // Update active trend
-            const activeTrend = document.getElementById('activeTrend');
-            activeTrend.textContent = trends.active || 'Current data';
-            
-            // Update urgent trend
-            const urgentTrend = document.getElementById('urgentTrend');
-            urgentTrend.textContent = trends.urgent || 'Current data';
-            
-            // Update completion trend
-            const completionTrend = document.getElementById('completionTrend');
-            completionTrend.textContent = trends.completion || 'Current data';
-        }
-
-        function getFallbackStats() {
-            return {
-                totalProblems: 25,
-                activeProblems: 18,
-                urgentProblems: 3,
-                completionRate: 72,
-                thisWeekNew: 5,
-                trends: {
-                    total: 'Sample data',
-                    active: 'Sample data',
-                    urgent: 'Sample data',
-                    completion: 'Sample data'
-                }
-            };
-        }
-
-        // =================================================================
-        // SYSTEM HEALTH MONITORING
-        // =================================================================
-        
-        async function checkSystemHealth() {
-            console.log('🔍 Checking system health...');
-            
-            // Simplified health check - just verify data is loading
-            await checkDataHealth();
-            
-            // Email system (simulated)
-            checkEmailHealth();
-            
-            // Set API status based on data loading success
-            setAPIStatusFromDataHealth();
-        }
-
-        function setAPIStatusFromDataHealth() {
-            const dataIndicator = document.getElementById('dataIndicator');
-            const apiIndicator = document.getElementById('apiIndicator');
-            const apiStatusText = document.getElementById('apiStatusText');
-            const apiStatusItem = document.getElementById('apiStatus');
-            
-            // If data loaded successfully, APIs are working
-            if (dataIndicator.className.includes('indicator-online')) {
-                apiIndicator.className = 'status-indicator indicator-online';
-                apiStatusText.textContent = 'Explorer API Online';
-                apiStatusItem.className = 'status-item status-online';
-                console.log('✅ API status set from successful data loading');
-            } else {
-                apiIndicator.className = 'status-indicator indicator-error';
-                apiStatusText.textContent = 'API Issues';
-                apiStatusItem.className = 'status-item status-error';
-            }
-        }
-
-        async function checkDataHealth() {
-            const indicator = document.getElementById('dataIndicator');
-            const statusText = document.getElementById('dataStatusText');
-            const statusItem = document.getElementById('dataStatus');
+        // Fetch with timeout
+        async function fetchWithTimeout(url, timeout = 8000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeout);
             
             try {
-                // Only check Explorer API since it's providing the stats successfully
-                const response = await fetchWithJsonp(`${EXPLORER_API_URL}?action=getFaultLogData`);
-                
-                if (response && response.success && response.data) {
-                    indicator.className = 'status-indicator indicator-online';
-                    statusText.textContent = `${response.data.length} records`;
-                    statusItem.className = 'status-item status-online';
-                    console.log('✅ Data health check passed via Explorer API');
-                } else {
-                    throw new Error('Explorer API data not accessible');
-                }
-                
+                const response = await fetch(url, { signal: controller.signal });
+                clearTimeout(timeoutId);
+                return await response.json();
             } catch (error) {
-                indicator.className = 'status-indicator indicator-error';
-                statusText.textContent = 'Data Error';
-                statusItem.className = 'status-item status-error';
-                console.error('❌ Data health check failed:', error);
+                clearTimeout(timeoutId);
+                throw error;
             }
         }
 
-        function checkEmailHealth() {
-            // Email system status (simulated - would need backend check for real status)
-            const indicator = document.getElementById('emailIndicator');
-            const statusText = document.getElementById('emailStatusText');
-            const statusItem = document.getElementById('emailStatus');
-            
-            // Assume healthy unless proven otherwise
-            indicator.className = 'status-indicator indicator-online';
-            statusText.textContent = 'Online';
-            statusItem.className = 'status-item status-online';
-            
-            console.log('✅ Email system assumed healthy');
-        }
+        // Update statistics display
+        function updateStatsDisplay(stats) {
+            if (!stats) return;
 
-        // =================================================================
-        // UTILITY FUNCTIONS
-        // =================================================================
-        
-        function fetchWithJsonp(url) {
-            return new Promise((resolve, reject) => {
-                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
-                const script = document.createElement('script');
-                
-                window[callbackName] = function(data) {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    resolve(data);
-                };
-                
-                script.onerror = function() {
-                    delete window[callbackName];
-                    document.body.removeChild(script);
-                    reject(new Error('JSONP request failed'));
-                };
-                
-                script.src = url + (url.includes('?') ? '&' : '?') + 'callback=' + callbackName;
-                document.body.appendChild(script);
-                
-                // Timeout after 10 seconds
-                setTimeout(() => {
-                    if (window[callbackName]) {
-                        delete window[callbackName];
-                        document.body.removeChild(script);
-                        reject(new Error('JSONP request timeout'));
-                    }
-                }, 10000);
+            console.log('📈 Updating stats display:', stats);
+
+            document.getElementById('totalProblems').textContent = stats.totalProblems || '--';
+            document.getElementById('activeProblems').textContent = stats.activeProblems || '--';
+            document.getElementById('urgentProblems').textContent = stats.urgentProblems || '--';
+            document.getElementById('completionRate').textContent = (stats.completionRate || '--') + '%';
+            document.getElementById('thisWeekNew').textContent = stats.thisWeekNew || '--';
+
+            // Update trends
+            document.getElementById('totalTrend').textContent = 'Live data';
+            document.getElementById('activeTrend').textContent = 'Needs attention';
+            document.getElementById('urgentTrend').textContent = stats.urgentProblems > 0 ? 'Requires action' : 'All normal';
+            document.getElementById('completionTrend').textContent = 'System performance';
+            document.getElementById('weekTrend').textContent = 'Recent activity';
+
+            // Remove loading animation
+            document.querySelectorAll('.loading').forEach(el => {
+                el.classList.remove('loading');
             });
         }
 
-        // =================================================================
-        // USER ACTIONS - SIMPLIFIED
-        // =================================================================
-        
-        function refreshStats() {
-            console.log('🔄 Manual stats refresh requested');
+        // Show error state
+        function showStatsError() {
+            console.warn('❌ Unable to load statistics from any API');
             
-            // Show loading state
-            const statNumbers = document.querySelectorAll('.stat-number');
-            statNumbers.forEach(el => el.textContent = '--');
-            
-            const trends = document.querySelectorAll('.stat-trend');
-            trends.forEach(el => el.textContent = 'Loading...');
-            
-            // Reload statistics
-            loadSystemStats();
-            
-            // Recheck system health
-            checkSystemHealth();
-            
-            // Show user feedback
-            showNotification('📊 System data refreshed', 'success');
+            document.getElementById('totalProblems').textContent = 'N/A';
+            document.getElementById('activeProblems').textContent = 'N/A';
+            document.getElementById('urgentProblems').textContent = 'N/A';
+            document.getElementById('completionRate').textContent = 'N/A';
+            document.getElementById('thisWeekNew').textContent = 'N/A';
+
+            document.getElementById('totalTrend').textContent = 'Data unavailable';
+            document.getElementById('activeTrend').textContent = 'Data unavailable';
+            document.getElementById('urgentTrend').textContent = 'Data unavailable';
+            document.getElementById('completionTrend').textContent = 'Data unavailable';
+            document.getElementById('weekTrend').textContent = 'Data unavailable';
+
+            // Remove loading animation
+            document.querySelectorAll('.loading').forEach(el => {
+                el.classList.remove('loading');
+            });
         }
 
+        // Refresh statistics manually
+        function refreshStats() {
+            document.querySelectorAll('.stat-number').forEach(el => {
+                el.textContent = '--';
+                el.parentElement.classList.add('loading');
+            });
+            
+            loadStatistics();
+            showNotification('Statistics refreshed!', 'success');
+        }
+
+        // Show system information
         function showSystemInfo() {
             const info = `
 LAKE ILLAWONG MAINTENANCE SYSTEM
-==================================
+================================
 
 System Architecture:
-• Frontend: HTML5 + Vanilla JavaScript
-• Backend: Google Apps Script (JSONP protocol)
-• Database: Google Sheets (Real-time sync)
-• Authentication: Password-protected access
-• Hosting: Static web hosting (Netlify compatible)
-
-Current Versions:
-• Maintenance Portal: v3.0 - Smart Priority Management
-• Data Explorer: v2.0 - Enhanced Desktop Analytics
-• Resident Portal: v1.0 - Resident Submission Portal
-• Backend API: v5.1 - Unified Integration
-• Dashboard: v1.0 - System Hub
-
-Portal URLs:
+• Landing Page: index.html (this page)
 • Maintenance: holden-maintenance-portal.html
 • Explorer: holden-desktop-explorer.html
 • Resident: holden-resident-form.html
+• Admin: holden-admin-portal.html
 
 Database Structure:
 • Google Sheets ID: 1dmW103c3TC3M1TBqvUVyvOVGdOiARLBs9ouC5v8kD7k
@@ -1100,6 +712,7 @@ Database Structure:
 
 Authentication:
 • Maintenance Portal Password: maint2025
+• Admin Portal: Separate login system
 • Data Explorer: No authentication required
 • Resident Portal: Public access
 
@@ -1114,13 +727,54 @@ Status: Production Ready ✅
             alert(info);
         }
 
+        // Show user guide
+        function showUserGuide() {
+            const guide = generateUserGuide();
+            alert(guide);
+        }
+
+        // Show contact information
+        function showContactInfo() {
+            const contact = `
+LAKE ILLAWONG MAINTENANCE SYSTEM - CONTACT INFORMATION
+====================================================
+
+TECHNICAL SUPPORT:
+• Email: maintenance@lakeillawong.com.au
+• Phone: (02) 4297-1111
+• Hours: Monday-Friday 8:00 AM - 5:00 PM
+
+SYSTEM ADMINISTRATION:
+• Email: management@lakeillawong.com.au
+• Emergency: (02) 4297-1111
+• Hours: Monday-Friday 9:00 AM - 4:00 PM
+
+RESIDENT SUPPORT:
+• Property Manager: Available via main office
+• Maintenance Requests: Use the Resident Submission Portal
+• Emergency Repairs: Call main office immediately
+
+SYSTEM STATUS:
+• Live System Monitoring: Check dashboard statistics
+• Planned Maintenance: Notifications via email
+• System Updates: Automatic with notification
+
+For urgent maintenance issues outside business hours, 
+please contact the emergency number: (02) 4297-1111
+
+Last Updated: August 2025
+            `;
+            
+            alert(contact);
+        }
+
         function generateUserGuide() {
             return `
 LAKE ILLAWONG MAINTENANCE SYSTEM - USER GUIDE
 ==============================================
 
 SYSTEM OVERVIEW:
-The Lake Illawong Maintenance System consists of three integrated portals designed to streamline maintenance operations across the 44-unit retirement village.
+The Lake Illawong Maintenance System consists of four integrated portals designed to streamline maintenance operations across the 44-unit retirement village.
 
 PORTAL DESCRIPTIONS:
 
@@ -1157,6 +811,16 @@ PORTAL DESCRIPTIONS:
      - Mobile-optimized for easy access
    • Users: Residents, unit owners, property managers
 
+4. ADMIN PORTAL (Administrative Access)
+   • Purpose: System administration and configuration
+   • Access: Password protected (separate login)
+   • Features:
+     - Dynamic dropdown management
+     - Email list management
+     - Mass communication tools
+     - User account management
+   • Users: System administrators, property managers
+
 GETTING STARTED:
 
 For Residents:
@@ -1181,6 +845,13 @@ For Management/Analytics:
 3. Apply filters to analyze specific data subsets
 4. Export filtered data to CSV for external analysis
 5. View individual problem details in modal windows
+
+For System Administration:
+1. Access the Admin Portal using admin credentials
+2. Manage system dropdowns and categories
+3. Configure email lists and notifications
+4. Send mass communications to residents
+5. Manage user accounts and permissions
 
 SYSTEM INTEGRATION:
 • All portals share the same Google Sheets database
@@ -1215,57 +886,33 @@ System Version: Production v1.0
                 right: 20px;
                 background: ${type === 'success' ? '#10b981' : type === 'error' ? '#ef4444' : '#3b82f6'};
                 color: white;
-                padding: 15px 20px;
-                border-radius: 10px;
-                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-                z-index: 10000;
+                padding: 12px 20px;
+                border-radius: 8px;
                 font-weight: 500;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
             `;
             
             notification.textContent = message;
             document.body.appendChild(notification);
             
-            // Animate in
+            // Show notification
             setTimeout(() => {
-                notification.style.opacity = '1';
                 notification.style.transform = 'translateX(0)';
             }, 100);
             
-            // Animate out and remove
+            // Hide notification
             setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
+                notification.style.transform = 'translateX(400px)';
                 setTimeout(() => {
-                    document.body.removeChild(notification);
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
                 }, 300);
             }, 3000);
         }
-
-        // =================================================================
-        // ENHANCED ANALYTICS (Future Enhancement)
-        // =================================================================
-        
-        // This could be extended to call the Data Explorer API for more detailed analytics
-        async function loadDetailedAnalytics() {
-            try {
-                const response = await fetchWithJsonp(`${WEB_APP_URL}?action=getExplorerStats`);
-                
-                if (response && response.success) {
-                    // Could enhance dashboard with more detailed metrics
-                    console.log('📊 Detailed analytics available:', response.data);
-                }
-                
-            } catch (error) {
-                console.log('ℹ️ Detailed analytics not available');
-            }
-        }
-
-        console.log('🏠 Lake Illawong Dashboard v1.0 - Ready for deployment!');
-        console.log('🚀 Professional system hub connecting three production portals');
-        console.log('📊 Live statistics, health monitoring, and role-based navigation');
     </script>
 </body>
 </html>
