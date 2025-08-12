@@ -471,143 +471,139 @@
 
     <script>
         // Configuration
-        const SPREADSHEET_ID = 'YOUR_SPREADSHEET_ID';
-        const API_KEY = 'YOUR_API_KEY';
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbxtdMfxB5b1F5K401X0lJxnK2-DGkiG2zYZNukJvAHx0K1AqgPTMIdiunwS3etm0FOL/exec';
         
-        // Global state
-        let maintenanceContacts = [];
-        let zoneContacts = [];
+        // Global State
+        let maintenanceTeam = [];
+        let zoneReps = [];
         let inactiveContacts = [];
-        let hasUnsavedChanges = false;
-        let editingElements = new Set();
+        let hasChanges = false;
+        let editingCell = null;
+        let selectedForDeletion = new Set();
 
-        // Initialize the application
+        // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('📧 Email Notification Management System v2.0 loaded');
-            loadEmailLists();
+            console.log('📧 New Email Notification Management - Starting...');
+            loadInitialData();
         });
 
-        // Load email lists from Google Sheets
-        async function loadEmailLists() {
-            showLoading(true);
-            
+        // Load initial data from backend
+        async function loadInitialData() {
             try {
-                // Simulate API call - replace with actual Google Sheets API integration
-                await new Promise(resolve => setTimeout(resolve, 1500));
+                showLoading(true);
                 
-                // Sample data - replace with actual API response
-                maintenanceContacts = [
-                    { id: 1, name: 'John Smith', email: 'john.smith@maintenance.com', active: true },
-                    { id: 2, name: 'Sarah Johnson', email: 'sarah.j@repair.com', active: true },
-                    { id: 3, name: 'Mike Wilson', email: 'mike.wilson@contractors.com', active: true }
-                ];
+                // Load maintenance team
+                console.log('📋 Loading maintenance team...');
+                const maintenanceResponse = await makeRequest('getNamedRangeData', { rangeName: 'MtceTeamEmailList' });
                 
-                zoneContacts = [
-                    { id: 4, zone: 'A', name: 'Emma Davis', email: 'emma.davis@email.com', active: true },
-                    { id: 5, zone: 'B', name: 'Robert Brown', email: 'rob.brown@email.com', active: true },
-                    { id: 6, zone: 'C', name: 'Lisa Chen', email: 'lisa.chen@email.com', active: true },
-                    { id: 7, zone: 'D', name: 'David Miller', email: 'david.m@email.com', active: true }
-                ];
-                
-                inactiveContacts = [
-                    { id: 8, name: 'Former Contact', email: '', type: 'Maintenance', removedDate: '2024-03-15', active: false }
-                ];
+                if (maintenanceResponse.success) {
+                    maintenanceTeam = maintenanceResponse.data.map((item, index) => ({
+                        id: index + 1,
+                        name: item.name || '',
+                        email: item.email || '',
+                        changed: false,
+                        isNew: false
+                    }));
+                    console.log('✅ Maintenance team loaded:', maintenanceTeam.length, 'people');
+                } else {
+                    throw new Error('Failed to load maintenance team: ' + maintenanceResponse.error);
+                }
 
-                renderAllLists();
-                showStatus('Email lists loaded successfully', 'success');
+                // Load zone representatives
+                console.log('📋 Loading zone representatives...');
+                const zoneResponse = await makeRequest('getNamedRangeData', { rangeName: 'ZoneRepEmailList' });
                 
+                if (zoneResponse.success) {
+                    zoneReps = zoneResponse.data.map((item, index) => ({
+                        id: index + 1,
+                        zone: item.zone || '',
+                        name: item.name || '',
+                        email: item.email || '',
+                        changed: false,
+                        isNew: false
+                    }));
+                    console.log('✅ Zone representatives loaded:', zoneReps.length, 'people');
+                } else {
+                    throw new Error('Failed to load zone representatives: ' + zoneResponse.error);
+                }
+
+                // Render all lists
+                renderAllLists();
+                showStatus('✅ Email lists loaded successfully', 'success');
+
             } catch (error) {
-                console.error('Error loading email lists:', error);
-                showStatus('Error loading email lists. Please try again.', 'error');
+                console.error('❌ Error loading data:', error);
+                showStatus('❌ Failed to load email lists: ' + error.message, 'error');
             } finally {
                 showLoading(false);
             }
         }
 
-        // Render all contact lists
+        // Render all lists
         function renderAllLists() {
-            renderMaintenanceList();
-            renderZoneList();
-            renderInactiveList();
+            renderMaintenanceTeam();
+            renderZoneReps();
+            renderInactiveContacts();
+            updateChangesIndicator();
         }
 
-        // Render maintenance team list
-        function renderMaintenanceList() {
+        // Render maintenance team
+        function renderMaintenanceTeam() {
             const container = document.getElementById('maintenanceList');
             container.innerHTML = '';
-            
-            maintenanceContacts.filter(contact => contact.active).forEach(contact => {
+
+            maintenanceTeam.forEach(person => {
                 const row = document.createElement('div');
-                row.className = 'table-row maintenance-row';
+                row.className = `table-row maintenance-row ${person.changed ? 'changed' : ''}`;
+                
                 row.innerHTML = `
-                    <div class="editable" data-field="name" data-id="${contact.id}" onclick="startEdit(this)">${contact.name}</div>
-                    <div class="editable" data-field="email" data-id="${contact.id}" onclick="startEdit(this)">${contact.email}</div>
+                    <div class="editable" onclick="startEdit(this)" data-type="maintenance" data-id="${person.id}" data-field="name">${person.name || 'Enter name...'}</div>
+                    <div class="editable" onclick="startEdit(this)" data-type="maintenance" data-id="${person.id}" data-field="email">${person.email || 'Enter email...'}</div>
                     <div style="color: #10b981; font-weight: 500;">Active</div>
                     <div>
-                        <button class="remove-btn" onclick="removeContact(${contact.id}, 'maintenance')">Remove</button>
+                        <button class="remove-btn" onclick="removeContact(${person.id}, 'maintenance')">Remove</button>
                     </div>
                 `;
+                
                 container.appendChild(row);
             });
         }
 
-        // Render zone representatives list
-        function renderZoneList() {
+        // Render zone representatives
+        function renderZoneReps() {
             const container = document.getElementById('zoneList');
             container.innerHTML = '';
-            
-            zoneContacts.filter(contact => contact.active).forEach(contact => {
+
+            zoneReps.forEach(rep => {
                 const row = document.createElement('div');
-                row.className = 'table-row zone-row';
+                row.className = `table-row zone-row ${rep.changed ? 'changed' : ''}`;
+                
                 row.innerHTML = `
-                    <div class="editable" data-field="zone" data-id="${contact.id}" onclick="startEdit(this)">${contact.zone}</div>
-                    <div class="editable" data-field="name" data-id="${contact.id}" onclick="startEdit(this)">${contact.name}</div>
-                    <div class="editable" data-field="email" data-id="${contact.id}" onclick="startEdit(this)">${contact.email}</div>
+                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="zone">${rep.zone || 'Zone...'}</div>
+                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="name">${rep.name || 'Enter name...'}</div>
+                    <div class="editable" onclick="startEdit(this)" data-type="zone" data-id="${rep.id}" data-field="email">${rep.email || 'Enter email...'}</div>
                     <div>
-                        <button class="remove-btn" onclick="removeContact(${contact.id}, 'zone')">Remove</button>
+                        <button class="remove-btn" onclick="removeContact(${rep.id}, 'zone')">Remove</button>
                     </div>
                 `;
+                
                 container.appendChild(row);
             });
         }
 
-        // Render inactive contacts list
-        function renderInactiveList() {
-            const container = document.getElementById('inactiveList');
-            const section = document.getElementById('inactiveSection');
-            
-            const inactive = [...maintenanceContacts, ...zoneContacts, ...inactiveContacts].filter(contact => !contact.active);
-            
-            if (inactive.length === 0) {
-                section.classList.add('hidden');
-                return;
-            }
-            
-            section.classList.remove('hidden');
-            container.innerHTML = '';
-            
-            inactive.forEach(contact => {
-                const row = document.createElement('div');
-                row.className = 'table-row';
-                row.style.gridTemplateColumns = '1fr 1fr 100px 100px 120px';
-                row.innerHTML = `
-                    <div>${contact.name}</div>
-                    <div style="color: #9ca3af;">${contact.email || 'No email'}</div>
-                    <div>${contact.type || (zoneContacts.includes(contact) ? 'Zone' : 'Maintenance')}</div>
-                    <div style="font-size: 12px; color: #6b7280;">${contact.removedDate || 'N/A'}</div>
-                    <div>
-                        <button class="btn btn-primary" style="padding: 4px 8px; font-size: 12px;" onclick="restoreContact(${contact.id})">Restore</button>
-                    </div>
-                `;
-                container.appendChild(row);
-            });
+        // Render inactive contacts
+        function renderInactiveContacts() {
+            // This would show contacts that have been deactivated
+            // For now, keep the section hidden
+            document.getElementById('inactiveSection').classList.add('hidden');
         }
 
-        // Start editing a field
+        // Start editing a cell
         function startEdit(element) {
-            if (editingElements.has(element)) return;
+            if (editingCell) return;
             
-            editingElements.add(element);
+            editingCell = element;
+            const originalValue = element.textContent;
             element.classList.add('editing');
             element.contentEditable = true;
             element.focus();
@@ -619,17 +615,17 @@
             selection.removeAllRanges();
             selection.addRange(range);
             
-            // Save on Enter or blur
             const saveEdit = () => {
+                const newValue = element.textContent.trim();
                 element.classList.remove('editing');
                 element.contentEditable = false;
-                editingElements.delete(element);
+                editingCell = null;
                 
+                const type = element.dataset.type;
                 const id = parseInt(element.dataset.id);
                 const field = element.dataset.field;
-                const value = element.textContent.trim();
                 
-                updateContact(id, field, value);
+                updateContact(type, id, field, newValue);
             };
             
             element.addEventListener('blur', saveEdit, { once: true });
@@ -638,119 +634,121 @@
                     e.preventDefault();
                     saveEdit();
                 }
-            }, { once: true });
+            });
         }
 
         // Update contact data
-        function updateContact(id, field, value) {
-            let contact = maintenanceContacts.find(c => c.id === id) || zoneContacts.find(c => c.id === id);
+        function updateContact(type, id, field, value) {
+            let contact;
+            if (type === 'maintenance') {
+                contact = maintenanceTeam.find(p => p.id === id);
+            } else {
+                contact = zoneReps.find(r => r.id === id);
+            }
             
-            if (contact) {
+            if (contact && contact[field] !== value) {
                 contact[field] = value;
-                markUnsavedChanges();
-                
-                // If email is cleared, move to inactive
-                if (field === 'email' && !value.trim()) {
-                    contact.active = false;
-                    contact.removedDate = new Date().toISOString().split('T')[0];
-                    renderAllLists();
-                }
+                contact.changed = true;
+                markAsChanged();
+                renderAllLists();
             }
         }
 
         // Add new maintenance contact
         function addMaintenanceContact() {
-            const newId = Math.max(...maintenanceContacts.map(c => c.id), 0) + 1;
-            const newContact = {
+            const newId = Math.max(...maintenanceTeam.map(p => p.id), 0) + 1;
+            maintenanceTeam.push({
                 id: newId,
                 name: 'New Contact',
                 email: 'email@example.com',
-                active: true
-            };
-            
-            maintenanceContacts.push(newContact);
-            renderMaintenanceList();
-            markUnsavedChanges();
+                changed: true,
+                isNew: true
+            });
+            markAsChanged();
+            renderAllLists();
         }
 
         // Add new zone contact
         function addZoneContact() {
-            const newId = Math.max(...zoneContacts.map(c => c.id), 0) + 1;
-            const newContact = {
+            const newId = Math.max(...zoneReps.map(r => r.id), 0) + 1;
+            zoneReps.push({
                 id: newId,
-                zone: 'E',
+                zone: 'Z',
                 name: 'New Contact',
                 email: 'email@example.com',
-                active: true
-            };
-            
-            zoneContacts.push(newContact);
-            renderZoneList();
-            markUnsavedChanges();
+                changed: true,
+                isNew: true
+            });
+            markAsChanged();
+            renderAllLists();
         }
 
         // Remove contact
         function removeContact(id, type) {
-            if (!confirm('Are you sure you want to remove this contact from notifications?')) return;
+            if (!confirm('Remove this contact from notifications?')) return;
             
-            let contact;
             if (type === 'maintenance') {
-                contact = maintenanceContacts.find(c => c.id === id);
+                maintenanceTeam = maintenanceTeam.filter(p => p.id !== id);
             } else {
-                contact = zoneContacts.find(c => c.id === id);
+                zoneReps = zoneReps.filter(r => r.id !== id);
             }
-            
-            if (contact) {
-                contact.active = false;
-                contact.removedDate = new Date().toISOString().split('T')[0];
-                contact.type = type === 'maintenance' ? 'Maintenance' : 'Zone';
-                renderAllLists();
-                markUnsavedChanges();
-            }
+            markAsChanged();
+            renderAllLists();
         }
 
-        // Restore inactive contact
-        function restoreContact(id) {
-            let contact = maintenanceContacts.find(c => c.id === id) || 
-                         zoneContacts.find(c => c.id === id) || 
-                         inactiveContacts.find(c => c.id === id);
-            
-            if (contact) {
-                contact.active = true;
-                contact.email = contact.email || 'email@example.com';
-                delete contact.removedDate;
-                delete contact.type;
-                renderAllLists();
-                markUnsavedChanges();
-            }
+        // Mark as changed
+        function markAsChanged() {
+            hasChanges = true;
+            updateChangesIndicator();
         }
 
-        // Mark unsaved changes
-        function markUnsavedChanges() {
-            hasUnsavedChanges = true;
-            document.getElementById('changesIndicator').classList.add('show');
-            document.getElementById('actionBar').classList.remove('hidden');
+        // Update changes indicator
+        function updateChangesIndicator() {
+            const indicator = document.getElementById('changesIndicator');
+            const actionBar = document.getElementById('actionBar');
+            
+            if (hasChanges) {
+                indicator.classList.add('show');
+                actionBar.classList.remove('hidden');
+            } else {
+                indicator.classList.remove('show');
+                actionBar.classList.add('hidden');
+            }
         }
 
         // Save all changes
         async function saveAllChanges() {
-            if (!hasUnsavedChanges) return;
-            
-            showLoading(true);
+            if (!hasChanges) return;
             
             try {
-                // Simulate saving to Google Sheets
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                showLoading(true);
                 
-                hasUnsavedChanges = false;
-                document.getElementById('changesIndicator').classList.remove('show');
-                document.getElementById('actionBar').classList.add('hidden');
+                // Save maintenance team
+                const maintenanceData = maintenanceTeam.map(p => ({ name: p.name, email: p.email }));
+                await makeRequest('updateNamedRange', {
+                    rangeName: 'MtceTeamEmailList',
+                    data: maintenanceData
+                });
                 
-                showStatus('All changes saved successfully!', 'success');
+                // Save zone representatives
+                const zoneData = zoneReps.map(r => ({ zone: r.zone, name: r.name, email: r.email }));
+                await makeRequest('updateNamedRange', {
+                    rangeName: 'ZoneRepEmailList', 
+                    data: zoneData
+                });
+                
+                // Reset change flags
+                hasChanges = false;
+                maintenanceTeam.forEach(p => { p.changed = false; p.isNew = false; });
+                zoneReps.forEach(r => { r.changed = false; r.isNew = false; });
+                
+                updateChangesIndicator();
+                renderAllLists();
+                showStatus('✅ All changes saved successfully!', 'success');
                 
             } catch (error) {
-                console.error('Error saving changes:', error);
-                showStatus('Error saving changes. Please try again.', 'error');
+                console.error('❌ Error saving changes:', error);
+                showStatus('❌ Failed to save changes: ' + error.message, 'error');
             } finally {
                 showLoading(false);
             }
@@ -758,18 +756,48 @@
 
         // Cancel all changes
         function cancelAllChanges() {
-            if (!hasUnsavedChanges) return;
+            if (!hasChanges) return;
             
-            if (confirm('Are you sure you want to cancel all unsaved changes?')) {
-                loadEmailLists(); // Reload original data
-                hasUnsavedChanges = false;
-                document.getElementById('changesIndicator').classList.remove('show');
-                document.getElementById('actionBar').classList.add('hidden');
-                showStatus('Changes cancelled', 'success');
+            if (confirm('Cancel all unsaved changes?')) {
+                loadInitialData();
             }
         }
 
-        // Show loading overlay
+        // Make JSONP request to backend
+        async function makeRequest(action, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                const queryParams = new URLSearchParams({ action, callback: callbackName, ...params });
+                
+                script.src = `${WEB_APP_URL}?${queryParams}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                document.head.appendChild(script);
+                
+                // Timeout after 15 seconds
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+            });
+        }
+
+        // Show/hide loading overlay
         function showLoading(show) {
             const overlay = document.getElementById('loadingOverlay');
             if (show) {
@@ -791,13 +819,7 @@
             }, 5000);
         }
 
-        // Prevent accidental navigation with unsaved changes
-        window.addEventListener('beforeunload', function(e) {
-            if (hasUnsavedChanges) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
+        console.log('📧 Email Notification Management - Ready!');
     </script>
 </body>
 </html>
