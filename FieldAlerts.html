@@ -335,6 +335,19 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+.template-card:active {
+    transform: scale(0.95);
+    background: #e0e7ff;
+    transition: all 0.1s ease;
+}
+
+.zone-btn:active {
+    transform: scale(0.95);
+    background: #2563eb;
+    transition: all 0.1s ease;
+}
+
+        
     </style>
 </head>
 <body>
@@ -358,13 +371,18 @@
 
         <!-- Template Selection -->
         <div class="section">
+
+            
             <h2 class="section-title">Select Emergency Type</h2>
-            <div class="template-grid">
-                <div class="template-card" data-template="WATER_EMERGENCY">
-                    <div class="template-emoji">🚰</div>
-                    <div class="template-title">Water Emergency</div>
-                    <div class="template-desc">Immediate shutdown</div>
-                </div>
+    <div class="template-grid" id="templateGrid">
+        <!-- Loading indicator instead of fake cards -->
+        <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: rgba(255,255,255,0.8);">
+            <div style="font-size: 2rem; margin-bottom: 16px;">⏳</div>
+            <div style="font-size: 1.1rem; margin-bottom: 8px;">Loading Templates...</div>
+            <div style="font-size: 0.9rem; opacity: 0.7;">Connecting to email service</div>
+        </div>
+
+                
                 
                 <div class="template-card" data-template="WATER_RESTORED">
                     <div class="template-emoji">✅</div>
