@@ -982,7 +982,9 @@
                     );
                     
                     // Reset after delay
-                    setTimeout(resetForm, 3000);
+                    setTimeout(() => {
+                        clearSelections();
+                    }, 3000);
                     
                 } else {
                     throw new Error(result.error || 'Unknown error');
@@ -1047,22 +1049,29 @@
             }, 5000);
         }
 
-        // Reset form - CLEAR BOTH SELECTIONS
-        function resetForm() {
-            // Reset template selection
+        // Clear all selections
+        function clearSelections() {
+            // Clear template selection
             document.querySelectorAll('.template-card').forEach(card => {
                 card.classList.remove('selected');
             });
             selectedTemplate = null;
             
-            // Reset zone selection
+            // Clear zone selection
             document.querySelectorAll('.zone-btn').forEach(btn => {
                 btn.classList.remove('selected');
             });
             selectedZone = null;
             
-            // Reset send button
-            resetSendButton();
+            // Update send button
+            updateSendButton();
+            
+            console.log('🗑️ All selections cleared');
+            
+            // Haptic feedback
+            if (navigator.vibrate) {
+                navigator.vibrate(100);
+            }
         }
     </script>
 </body>
