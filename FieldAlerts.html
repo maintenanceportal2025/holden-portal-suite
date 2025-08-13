@@ -546,11 +546,25 @@
         function renderTemplatesInContainer(container, templates) {
             // Filter to show only field-friendly templates
             const fieldTemplates = templates.filter(template => {
-                const id = template.templateId;
-                return id === 'WATER04' || id === 'WATER05' || id === 'WATER06' ||
-                       id === 'POWER04' || id === 'POWER05' || id === 'POWER06' ||
-                       id === 'URGENT01';
-            });
+    // NEW: Check fieldAlert flag first (preferred method)
+    if (template.fieldAlert === true) {
+        console.log('✅ Template enabled for mobile via fieldAlert:', template.templateId);
+        return true;
+    }
+    
+    // SAFE: Maintain backward compatibility with hardcoded templates
+    const id = template.templateId;
+    const isLegacyFieldTemplate = id === 'WATER04' || id === 'WATER05' || id === 'WATER06' ||
+                                 id === 'POWER04' || id === 'POWER05' || id === 'POWER06' ||
+                                 id === 'URGENT01';
+    
+    if (isLegacyFieldTemplate) {
+        console.log('✅ Legacy field template found:', template.templateId);
+        return true;
+    }
+    
+    return false;
+});
             
             console.log('🎯 Filtered to field templates:', fieldTemplates.map(t => t.templateId));
             
