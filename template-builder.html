@@ -704,19 +704,48 @@
             setupEventListeners();
         });
 
-        // Setup event listeners
         function setupEventListeners() {
-            // Form input listeners for live preview
-            document.getElementById('templateSubject').addEventListener('input', updatePreview);
-            document.getElementById('templateBody').addEventListener('input', updatePreview);
-            document.getElementById('templateVariables').addEventListener('input', function() {
-                updatePreview();
-                updateVariablePreview();
-            });
+    // Form input listeners for live preview
+    document.getElementById('templateSubject').addEventListener('input', updatePreview);
+    document.getElementById('templateBody').addEventListener('input', updatePreview);
+    document.getElementById('templateVariables').addEventListener('input', function() {
+        updatePreview();
+        updateVariablePreview();
+    });
+    
+    // Form submission
+    document.getElementById('templateForm').addEventListener('submit', handleFormSubmit);
+    
+    // NEW: Real-time Template ID check
+    document.getElementById('templateId').addEventListener('input', function() {
+        const templateId = this.value.trim();
+        const exists = checkTemplateIdExists(templateId);
+        
+        if (exists && !editingTemplate) {
+            this.style.borderColor = '#ef4444';
+            this.style.backgroundColor = '#fef2f2';
             
-            // Form submission
-            document.getElementById('templateForm').addEventListener('submit', handleFormSubmit);
+            // Show error message
+            let errorMsg = this.nextElementSibling?.nextElementSibling;
+            if (!errorMsg || !errorMsg.classList.contains('duplicate-error')) {
+                errorMsg = document.createElement('small');
+                errorMsg.className = 'duplicate-error';
+                errorMsg.style.color = '#ef4444';
+                errorMsg.style.marginTop = '5px';
+                errorMsg.style.display = 'block';
+                this.parentNode.appendChild(errorMsg);
+            }
+            errorMsg.textContent = `⚠️ Template ID "${templateId}" already exists`;
+        } else {
+            this.style.borderColor = '';
+            this.style.backgroundColor = '';
+            
+            // Remove error message
+            const errorMsg = this.parentNode.querySelector('.duplicate-error');
+            if (errorMsg) errorMsg.remove();
         }
+    });
+}
 
         // Add common variable to the variables field
         function addCommonVariable() {
@@ -1168,6 +1197,14 @@ if (templateData.fieldAlert && templateData.variables && templateData.variables.
                 }, 10000);
             });
         }
+
+        // Real-time Template ID validation
+function checkTemplateIdExists(templateId) {
+    if (!templateId || templateId.length < 3) return false;
+    
+    // Check if template ID already exists (case-insensitive)
+    return templates.some(t => t.templateId.toLowerCase() === templateId.toLowerCase());
+}
 
         console.log('🔧 Template Builder - Ready!');
     </script>
