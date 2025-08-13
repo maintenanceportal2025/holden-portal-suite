@@ -509,7 +509,9 @@
                 
                 console.log('✅ Template container found:', templateContainer);
                 
-                const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
+                const timestamp = Date.now();
+console.log('🔍 About to call backend with timestamp:', timestamp);
+const response = await fetch(`${EMAIL_SERVICE_URL}?action=getEmailTemplates&timestamp=${timestamp}&callback=?`);
                 const text = await response.text();
                 
                 const jsonStart = text.indexOf('(') + 1;
