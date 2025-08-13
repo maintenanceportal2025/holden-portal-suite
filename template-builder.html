@@ -1001,11 +1001,7 @@
                 fieldAlert: document.getElementById('fieldAlert').checked
             };
 
-        // ADD THIS DEBUG LINE:
-        console.log('🐛 Sending templateData:', JSON.stringify(templateData, null, 2));
-
-        // Then the existing backend call...
-        const response = await makeRequest(action, { templateData: JSON.stringify(templateData) });
+        
             
             
             // Basic validation
@@ -1026,6 +1022,12 @@ if (templateData.fieldAlert && templateData.variables && templateData.variables.
                 showStatus('Template ID already exists. Please choose a different ID.', 'error');
                 return;
             }
+
+            // NOW add the debug line and backend call here:
+            console.log('🐛 Sending templateData:', JSON.stringify(templateData, null, 2));
+
+            const action = editingTemplate ? 'updateEmailTemplate' : 'createEmailTemplate';
+            const response = await makeRequest(action, { templateData: JSON.stringify(templateData) });
             
             try {
                 showLoading(true);
