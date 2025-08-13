@@ -472,6 +472,29 @@
                 flex-direction: column;
             }
         }
+.checkbox-container {
+    transition: all 0.2s;
+}
+
+.checkbox-container:hover {
+    background: #e0f2fe !important;
+}
+
+.checkbox-label {
+    margin: 0 !important;
+}
+
+.mobile-badge {
+    background: #10b981;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin-top: 5px;
+    display: inline-block;
+}
+        
     </style>
 </head>
 <body>
@@ -644,6 +667,25 @@
         </div>
     </div>
 
+    <div class="form-group">
+    <label class="form-label">Mobile Field Access</label>
+    <div class="checkbox-container" style="background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 8px; padding: 15px; transition: all 0.2s;">
+        <label class="checkbox-label" style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0;">
+            <input type="checkbox" id="fieldAlert" style="width: 18px; height: 18px;">
+            <div>
+                <strong>📱 Available in Mobile Field Alerts</strong>
+                <div style="font-size: 14px; color: #374151; margin-top: 5px;">
+                    Enable this template for quick emergency notifications in the mobile field interface. 
+                    Recommended for urgent alerts that field staff need to send immediately.
+                </div>
+            </div>
+        </label>
+    </div>
+    <small style="color: #6b7280; margin-top: 8px; display: block;">
+        💡 <strong>Tip:</strong> Mobile templates work best without variables (pre-filled content for speed)
+    </small>
+</div>
+
     <script>
         // Configuration - Your Email Service URL
         const EMAIL_SERVICE_URL = 'https://script.google.com/macros/s/AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v/exec';
@@ -815,10 +857,13 @@
             container.innerHTML = filteredTemplates.map(template => `
                 <div class="template-card">
                     <div class="template-header">
+                    
                         <div class="template-info">
-                            <h3>${template.templateId}</h3>
-                            <div class="template-category">${template.category || 'Uncategorized'}</div>
-                        </div>
+    <h3>${template.templateId}</h3>
+    <div class="template-category">${template.category || 'Uncategorized'}</div>
+    ${template.fieldAlert ? '<div class="mobile-badge">📱 Mobile Field</div>' : ''}
+</div>
+                        
                         <div class="template-actions">
                             <button class="btn btn-primary btn-small" onclick="editTemplate('${template.templateId}')">
                                 ✏️ Edit
@@ -894,6 +939,7 @@
             document.getElementById('templateSubject').value = editingTemplate.subject || '';
             document.getElementById('templateBody').value = editingTemplate.body || '';
             document.getElementById('templateVariables').value = editingTemplate.variables || '';
+            document.getElementById('fieldAlert').checked = editingTemplate.fieldAlert || false;
             
             // Set category
             const category = editingTemplate.category;
@@ -952,6 +998,7 @@
                 subject: document.getElementById('templateSubject').value.trim(),
                 body: document.getElementById('templateBody').value.trim(),
                 variables: document.getElementById('templateVariables').value.trim()
+                fieldAlert: document.getElementById('fieldAlert').checked
             };
             
             // Basic validation
@@ -959,7 +1006,14 @@
                 showStatus('Please fill in all required fields', 'error');
                 return;
             }
-            
+
+// NEW: Add this validation here
+if (templateData.fieldAlert && templateData.variables && templateData.variables.trim()) {
+    if (!confirm('⚠️ Mobile Field Alert templates work best without variables for quick sending.\n\nContinue anyway?')) {
+        return;
+    }
+}
+        
             // Check for duplicate template ID (when creating)
             if (!editingTemplate && templates.find(t => t.templateId === templateData.templateId)) {
                 showStatus('Template ID already exists. Please choose a different ID.', 'error');
