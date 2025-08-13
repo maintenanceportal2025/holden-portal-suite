@@ -544,6 +544,11 @@
 
         // Render templates in any container - FILTER FOR FIELD TEMPLATES
         function renderTemplatesInContainer(container, templates) {
+            console.log('🔍 DEBUG: All templates received:', templates.map(t => ({id: t.templateId, fieldAlert: t.fieldAlert})));
+    
+    // ADD THIS NEW DEBUG LINE:
+    console.log('🔍 DEBUG: Templates with fieldAlert=true:', templates.filter(t => t.fieldAlert === true).map(t => t.templateId));
+            
             // Filter to show only field-friendly templates
             const fieldTemplates = templates.filter(template => {
     // NEW: Check fieldAlert flag first (preferred method)
