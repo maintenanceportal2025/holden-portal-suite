@@ -820,6 +820,7 @@
         // Check email service status
         async function checkServiceStatus() {
             try {
+                console.log('🔍 About to call backend:', `${EMAIL_SERVICE_URL}?action=getEmailTemplates&callback=?`);
                 const response = await fetch(`${EMAIL_SERVICE_URL}?action=checkEmailQuota&callback=?`);
                 const text = await response.text();
                 
