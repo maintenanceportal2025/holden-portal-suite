@@ -1000,6 +1000,13 @@
                 variables: document.getElementById('templateVariables').value.trim(),
                 fieldAlert: document.getElementById('fieldAlert').checked
             };
+
+        // ADD THIS DEBUG LINE:
+        console.log('🐛 Sending templateData:', JSON.stringify(templateData, null, 2));
+
+        // Then the existing backend call...
+        const response = await makeRequest(action, { templateData: JSON.stringify(templateData) });
+            
             
             // Basic validation
             if (!templateData.templateId || !templateData.category || !templateData.subject || !templateData.body) {
