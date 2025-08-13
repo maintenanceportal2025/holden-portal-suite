@@ -575,8 +575,58 @@
 
                 <div class="form-group">
                     <label class="form-label" for="templateVariables">Variables (Optional)</label>
-                    <input type="text" class="form-input" id="templateVariables" placeholder="e.g., DATE, INCIDENT, DURATION">
+                    <div style="display: flex; gap: 10px; margin-bottom: 8px;">
+                        <input type="text" class="form-input" id="templateVariables" placeholder="e.g., DATE, INCIDENT, DURATION" style="flex: 1;">
+                        <select class="form-select" id="commonVariables" onchange="addCommonVariable()" style="min-width: 180px;">
+                            <option value="">+ Add Common Variable</option>
+                            <optgroup label="Date & Time">
+                                <option value="DATE">DATE - Current date</option>
+                                <option value="TIME">TIME - Current time</option>
+                                <option value="DATETIME">DATETIME - Date and time</option>
+                            </optgroup>
+                            <optgroup label="Problem Details">
+                                <option value="PID">PID - Problem ID</option>
+                                <option value="UNIT_NUMBER">UNIT_NUMBER - Unit number</option>
+                                <option value="RESIDENT_NAME">RESIDENT_NAME - Resident name</option>
+                                <option value="PROBLEM_DESCRIPTION">PROBLEM_DESCRIPTION - Problem details</option>
+                                <option value="PRIORITY">PRIORITY - Problem priority</option>
+                                <option value="STATUS">STATUS - Problem status</option>
+                            </optgroup>
+                            <optgroup label="Incident Details">
+                                <option value="INCIDENT">INCIDENT - Incident type</option>
+                                <option value="LOCATION">LOCATION - Affected location</option>
+                                <option value="DURATION">DURATION - Expected duration</option>
+                                <option value="START_TIME">START_TIME - Start time</option>
+                                <option value="END_TIME">END_TIME - Expected end time</option>
+                                <option value="CAUSE">CAUSE - Incident cause</option>
+                            </optgroup>
+                            <optgroup label="Contact Details">
+                                <option value="CONTACT">CONTACT - Contact person</option>
+                                <option value="PHONE">PHONE - Contact phone</option>
+                                <option value="EMAIL">EMAIL - Contact email</option>
+                                <option value="EMERGENCY_CONTACT">EMERGENCY_CONTACT - Emergency contact</option>
+                            </optgroup>
+                            <optgroup label="Actions & Instructions">
+                                <option value="ACTION_REQUIRED">ACTION_REQUIRED - Required action</option>
+                                <option value="INSTRUCTIONS">INSTRUCTIONS - Special instructions</option>
+                                <option value="PRECAUTIONS">PRECAUTIONS - Safety precautions</option>
+                                <option value="ALTERNATIVE">ALTERNATIVE - Alternative arrangements</option>
+                            </optgroup>
+                            <optgroup label="System Details">
+                                <option value="PORTAL_LINK">PORTAL_LINK - Maintenance portal link</option>
+                                <option value="REFERENCE_NUMBER">REFERENCE_NUMBER - Reference number</option>
+                                <option value="CONTRACTOR">CONTRACTOR - Contractor name</option>
+                                <option value="ZONE">ZONE - Zone information</option>
+                            </optgroup>
+                        </select>
+                    </div>
                     <small style="color: #6b7280;">Comma-separated list of variable names (without {}). Leave empty for quick-send templates.</small>
+                    <div style="margin-top: 10px;">
+                        <div id="variablePreview" style="display: none; background: #f0f9ff; border: 1px solid #0ea5e9; border-radius: 4px; padding: 8px; font-size: 12px;">
+                            <strong>Variables will appear as:</strong>
+                            <div id="variablePreviewContent" style="margin-top: 5px; font-family: monospace;"></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Preview Section -->
@@ -615,10 +665,58 @@
             // Form input listeners for live preview
             document.getElementById('templateSubject').addEventListener('input', updatePreview);
             document.getElementById('templateBody').addEventListener('input', updatePreview);
-            document.getElementById('templateVariables').addEventListener('input', updatePreview);
+            document.getElementById('templateVariables').addEventListener('input', function() {
+                updatePreview();
+                updateVariablePreview();
+            });
             
             // Form submission
             document.getElementById('templateForm').addEventListener('submit', handleFormSubmit);
+        }
+
+        // Add common variable to the variables field
+        function addCommonVariable() {
+            const select = document.getElementById('commonVariables');
+            const variablesInput = document.getElementById('templateVariables');
+            
+            if (select.value) {
+                const currentVariables = variablesInput.value.trim();
+                const newVariable = select.value;
+                
+                // Check if variable already exists
+                const existingVariables = currentVariables ? currentVariables.split(',').map(v => v.trim()) : [];
+                if (!existingVariables.includes(newVariable)) {
+                    const updatedVariables = currentVariables ? 
+                        currentVariables + ', ' + newVariable : 
+                        newVariable;
+                    
+                    variablesInput.value = updatedVariables;
+                    updatePreview();
+                    updateVariablePreview();
+                }
+                
+                // Reset dropdown
+                select.selectedIndex = 0;
+            }
+        }
+
+        // Update variable preview
+        function updateVariablePreview() {
+            const variablesInput = document.getElementById('templateVariables');
+            const preview = document.getElementById('variablePreview');
+            const previewContent = document.getElementById('variablePreviewContent');
+            
+            const variables = variablesInput.value.trim();
+            
+            if (variables) {
+                const variableList = variables.split(',').map(v => v.trim()).filter(v => v);
+                const previewTags = variableList.map(v => `{${v}}`).join(' ');
+                
+                previewContent.textContent = previewTags;
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
         }
 
         // Category selection functions
@@ -778,6 +876,7 @@
             });
             
             clearPreview();
+            updateVariablePreview();
             document.getElementById('templateModal').classList.remove('hidden');
         }
 
@@ -807,6 +906,7 @@
             }
             
             updatePreview();
+            updateVariablePreview();
             document.getElementById('templateModal').classList.remove('hidden');
         }
 
