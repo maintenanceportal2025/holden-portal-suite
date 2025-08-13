@@ -678,7 +678,7 @@
         // Update category filter with dynamic categories from existing templates
         function updateCategoryFilter() {
             const categoryFilter = document.getElementById('categoryFilter');
-            const currentFilter = categoryFilter.value;
+            let currentFilter = categoryFilter.value;
             
             // Get unique categories from templates
             const uniqueCategories = [...new Set(templates.map(t => t.category))].filter(cat => cat).sort();
