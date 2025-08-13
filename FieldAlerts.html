@@ -524,6 +524,7 @@
                     emailTemplates = result.templates;
                     console.log('✅ Loaded real templates:', result.templates.length);
                     console.log('📋 Template IDs found:', result.templates.map(t => t.templateId));
+                    console.log('🔍 MOBILE01 details:', result.templates.find(t => t.templateId === 'MOBILE01'));
                     
                     // Render templates
                     renderTemplatesInContainer(templateContainer, result.templates);
