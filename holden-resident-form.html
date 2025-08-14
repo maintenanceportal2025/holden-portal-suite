@@ -496,9 +496,11 @@
                 
                 const response = await callScript({ action: 'getDropdownOptions' });
                 
-                if (response.success && response.data) {
-                    populateDropdown('unitNumber', response.data.unitNumbers);
-                    populateDropdown('reportedBy', response.data.reportedBy);
+               if (response.success) {
+    // Handle both formats - with or without .data wrapper
+    const data = response.data || response;
+    populateDropdown('unitNumber', data.unitNumbers);
+    populateDropdown('reportedBy', data.reportedBy);
                     console.log('Dropdowns loaded successfully');
                 } else {
                     console.log('Failed to load dropdowns, using defaults');
