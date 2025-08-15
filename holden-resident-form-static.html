@@ -1,127 +1,44 @@
-<!--
-=====================================================================
-HOLDEN RESIDENT FORM - STATIC VERSION (FULLY DOCUMENTED)
-=====================================================================
-VERSION: 2.2-STATIC-ENHANCED
-CREATED: August 15, 2025
-LAST MODIFIED: August 15, 2025
-AUTHOR: Maintenance System Team
-
-PURPOSE: 
-Static resident maintenance request submission form with hardcoded dropdowns
-for optimal performance. This is the primary interface residents use to
-report maintenance issues.
-
-BACKEND CONNECTION:
-- Script: HoldenResidentSubmission_V2.2_CLEAN
-- Action: submitFault
-- Method: JSONP (cross-origin compatibility)
-- Response: { success, message, internalId, friendlyPID }
-
-FEATURES:
-✅ Hardcoded dropdowns for instant loading
-✅ Email Service V2.0 integration
-✅ Mobile-optimized responsive design
-✅ PID tracking number generation
-✅ Automatic email notifications
-✅ Enhanced error handling with timeouts
-✅ Performance monitoring
-✅ Version tracking system
-
-IMPROVEMENTS IN THIS VERSION:
-✅ Added comprehensive documentation and version tracking
-✅ Fixed PID display bug (result.problemId → result.friendlyPID)
-✅ Enhanced error handling with 15-second timeout
-✅ Added performance monitoring
-✅ Better user feedback for network issues
-✅ Extensive code documentation
-
-CHANGE LOG:
-v2.2-STATIC-ENHANCED (2025-08-15):
-- Added comprehensive documentation system
-- Fixed PID display bug (result.problemId → result.friendlyPID)
-- Enhanced error handling with timeout and better messages
-- Added performance monitoring and version tracking
-- Extensive code comments for maintainability
-
-v2.2-STATIC (2025-08-15):
-- Removed dynamic dropdown loading for better UX
-- Added hardcoded dropdowns for instant availability
-- Optimized loading time from 3-5s to <1s
-
-INTEGRATION POINTS:
-- Email Service V2.0: Resident + Zone Rep + Maintenance notifications
-- Google Sheets: FaultLog tab for problem storage
-- UnitList tab: Dual lookup system for contact details
-
-PERFORMANCE NOTES:
-- Page load: <1 second (vs 3-5s with dynamic dropdowns)
-- No API calls until form submission
-- Hardcoded data reduces server load
-- Performance monitoring tracks actual load times
-
-MAINTENANCE NOTES:
-- Unit changes: Update hardcoded dropdown + Categories tab
-- Resident changes: Update hardcoded dropdown + Categories tab
-- Future: Implement automated sync routine (V3.0 planned)
-
-DEPENDENCIES:
-- Backend: V2.2 CLEAN Script (Google Apps Script)
-- Styling: Inline CSS (self-contained)
-- Logo: pelican-logo.png
-- No external libraries required
-
-=====================================================================
--->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resident Maintenance Request - Lake Illawong</title>
-    
-    <!-- =====================================================================
-         INLINE STYLES - SELF-CONTAINED DESIGN (PRESERVED FROM ORIGINAL)
-         ===================================================================== -->
+    <title>Lake Illawong - Submit Maintenance Request</title>
     <style>
-        /* =================================================================
-           GLOBAL STYLES & RESET
-           ================================================================= */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #eeeeee;
             min-height: 100vh;
-            color: #1a202c;
+            padding: 20px;
             line-height: 1.6;
         }
 
-        /* =================================================================
-           HEADER STYLING
-           ================================================================= */
-        .header {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 24px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* UPDATED: Header section with logo and text side by side */
+        .header-section {
+            background: #eeeeee;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 24px;
             display: flex;
             align-items: center;
-            gap: 24px;
+            justify-content: center;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 20px;
         }
 
         .logo-container {
@@ -129,10 +46,9 @@ DEPENDENCIES:
         }
 
         .logo-image {
-            height: 60px;
-            width: auto;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
         }
 
         .header-text {
@@ -140,58 +56,51 @@ DEPENDENCIES:
         }
 
         .system-title {
-            font-size: clamp(20px, 4vw, 28px);
+            color: #1e293b;
+            font-size: 24px;
             font-weight: 700;
-            color: #1e40af;
+            margin-bottom: 2px;
             letter-spacing: -0.025em;
-            margin: 0;
         }
 
-        /* =================================================================
-           MAIN CONTENT CONTAINER
-           ================================================================= */
-        .container {
-            max-width: 600px;
-            margin: 40px auto;
-            padding: 0 24px;
+        .system-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
-        /* =================================================================
-           TITLE CARD
-           ================================================================= */
+        /* Modified: Title card section */
         .title-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: white;
             border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
             padding: 40px 32px;
             text-align: center;
-            margin-bottom: 32px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
         }
 
         .title-card h1 {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1e40af;
-            margin-bottom: 12px;
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 4px;
             letter-spacing: -0.025em;
+            color: #1e293b;
         }
 
         .title-card p {
-            font-size: 18px;
             color: #64748b;
-            font-weight: 500;
+            font-size: 16px;
+            font-weight: 400;
         }
 
-        /* =================================================================
-           FORM CARD STYLING
-           ================================================================= */
+        /* Modified: Form card section */
         .form-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
+            background: white;
             border-radius: 20px;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
             overflow: hidden;
             border: 1px solid rgba(226, 232, 240, 0.8);
         }
@@ -201,9 +110,6 @@ DEPENDENCIES:
             background: white;
         }
 
-        /* =================================================================
-           INFO BOX - INSTRUCTIONS FOR USERS
-           ================================================================= */
         .info-box {
             background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
             border: 1px solid #0891b2;
@@ -220,9 +126,6 @@ DEPENDENCIES:
             font-weight: 600;
         }
 
-        /* =================================================================
-           FORM FIELD STYLING
-           ================================================================= */
         .form-group {
             margin-bottom: 28px;
         }
@@ -234,11 +137,6 @@ DEPENDENCIES:
             color: #1e293b;
             font-size: 15px;
             letter-spacing: -0.025em;
-        }
-
-        .required {
-            color: #dc2626;
-            margin-left: 4px;
         }
 
         .form-input {
@@ -263,9 +161,6 @@ DEPENDENCIES:
             border-color: #94a3b8;
         }
 
-        /* =================================================================
-           DROPDOWN SPECIFIC STYLING
-           ================================================================= */
         select.form-input {
             cursor: pointer;
             appearance: none;
@@ -276,18 +171,12 @@ DEPENDENCIES:
             padding-right: 48px;
         }
 
-        /* =================================================================
-           TEXTAREA SPECIFIC STYLING
-           ================================================================= */
         textarea.form-input {
             min-height: 130px;
             resize: vertical;
             line-height: 1.6;
         }
 
-        /* =================================================================
-           SUBMIT BUTTON STYLING
-           ================================================================= */
         .submit-btn {
             width: 100%;
             background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
@@ -301,131 +190,213 @@ DEPENDENCIES:
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            letter-spacing: 0.025em;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
         }
 
         .submit-btn:hover:not(:disabled) {
             background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
             transform: translateY(-2px);
-            box-shadow: 0 10px 25px rgba(8, 145, 178, 0.3);
+            box-shadow: 0 12px 25px rgba(8, 145, 178, 0.3);
         }
 
-        .submit-btn:active {
-            transform: translateY(0);
+        .submit-btn:hover:not(:disabled)::before {
+            left: 100%;
         }
 
         .submit-btn:disabled {
-            opacity: 0.7;
+            background: #e2e8f0;
+            color: #94a3b8;
             cursor: not-allowed;
             transform: none;
+            box-shadow: none;
         }
 
-        /* =================================================================
-           LOADING ANIMATION
-           ================================================================= */
         .loading {
             display: none;
             text-align: center;
-            padding: 32px;
+            margin-top: 28px;
             color: #64748b;
             font-weight: 500;
         }
 
         .loading-dots {
             display: inline-block;
-            margin-bottom: 16px;
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
         }
 
         .loading-dots div {
-            display: inline-block;
-            width: 12px;
-            height: 12px;
-            background: #0891b2;
+            position: absolute;
+            top: 33px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            margin: 0 4px;
-            animation: loading-bounce 1.4s ease-in-out infinite both;
+            background: #0891b2;
+            animation: loading-dots 1.2s linear infinite;
         }
 
-        .loading-dots div:nth-child(1) { animation-delay: -0.32s; }
-        .loading-dots div:nth-child(2) { animation-delay: -0.16s; }
+        .loading-dots div:nth-child(1) { left: 8px; animation-delay: 0s; }
+        .loading-dots div:nth-child(2) { left: 8px; animation-delay: -0.4s; }
+        .loading-dots div:nth-child(3) { left: 32px; animation-delay: -0.8s; }
 
-        @keyframes loading-bounce {
-            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-            40% { transform: scale(1.2); opacity: 1; }
+        @keyframes loading-dots {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
         }
 
-        /* =================================================================
-           RESULT MESSAGE STYLING
-           ================================================================= */
         .result {
             display: none;
+            margin-top: 28px;
             padding: 24px;
-            border-radius: 14px;
-            margin-top: 24px;
+            border-radius: 16px;
+            text-align: center;
             font-weight: 500;
-            line-height: 1.6;
+            border-width: 1px;
+            border-style: solid;
         }
 
         .result.success {
-            background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);
-            border: 1px solid #16a34a;
-            color: #15803d;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-color: #22c55e;
         }
 
         .result.error {
-            background: linear-gradient(135deg, #fef2f2 0%, #fecaca 100%);
-            border: 1px solid #dc2626;
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
             color: #dc2626;
+            border-color: #fecaca;
         }
 
-        /* =================================================================
-           RESPONSIVE DESIGN
-           ================================================================= */
-        @media (max-width: 640px) {
-            .container {
-                margin: 20px auto;
-                padding: 0 16px;
-            }
+        .required {
+            color: #ef4444;
+            font-weight: 600;
+        }
 
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 580px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header-section {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .header-content {
+                gap: 16px;
+                padding: 0 10px;
+            }
+            
+            .logo-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .system-title {
+                font-size: 20px;
+            }
+            
+            .system-subtitle {
+                font-size: 12px;
+            }
+            
+            .title-card {
+                padding: 32px 24px;
+                margin-bottom: 16px;
+            }
+            
+            .title-card h1 {
+                font-size: 24px;
+            }
+            
+            .form-card {
+                border-radius: 16px;
+                margin: 0;
+            }
+            
             .form-container {
                 padding: 32px 24px;
             }
-
-            .title-card {
-                padding: 32px 24px;
-                margin-bottom: 24px;
-            }
-
-            .title-card h1 {
-                font-size: 28px;
-            }
-
+            
             .info-box {
                 padding: 20px;
                 margin-bottom: 24px;
             }
+            
+            .form-group {
+                margin-bottom: 24px;
+            }
+            
+            .form-input {
+                padding: 16px 18px;
+            }
+            
+            .submit-btn {
+                padding: 18px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-image {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .title-card {
+                padding: 28px 20px;
+            }
+            
+            .title-card h1 {
+                font-size: 22px;
+            }
+            
+            .form-container {
+                padding: 24px 20px;
+            }
         }
     </style>
 </head>
-
 <body>
-    <!-- =====================================================================
-         PAGE HEADER WITH LOGO AND BRANDING
-         ===================================================================== -->
-    <header class="header">
-        <div class="header-content">
-            <div class="logo-container">
-                <img src="pelican-logo.png" class="logo-image" alt="Lake Illawong Residential Club">
-            </div>
-            <div class="header-text">
-                <h1 class="system-title">PROBLEM REPORTING SYSTEM</h1>
+    <div class="container">
+        <!-- UPDATED: Header section with logo and text side by side -->
+        <div class="header-section">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="pelican-logo.png" class="logo-image" alt="Lake Illawong Residential Club">
+                </div>
+                <div class="header-text">
+                    <h1 class="system-title">PROBLEM REPORTING SYSTEM</h1>
+                </div>
             </div>
         </div>
-    </header>
 
-    <!-- =====================================================================
-         MAIN CONTENT CONTAINER
-         ===================================================================== -->
-    <div class="container">
         <!-- Title Card -->
         <div class="title-card">
             <h1>Resident Form</h1>
@@ -435,24 +406,18 @@ DEPENDENCIES:
         <!-- Form Card -->
         <div class="form-card">
             <div class="form-container">
-                <!-- User Instructions -->
                 <div class="info-box">
                     <strong>For non-unit issues, select:</strong><br>
                     Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
                 </div>
 
-                <!-- =====================================================================
-                     MAINTENANCE REQUEST FORM
-                     ===================================================================== -->
                 <form id="faultForm">
-                    <!-- Unit Number Selection -->
                     <div class="form-group">
                         <label class="form-label" for="unitNumber">
                             Unit Number <span class="required">*</span>
                         </label>
                         <select id="unitNumber" name="unitNumber" class="form-input" required>
                             <option value="">Select...</option>
-                            <!-- ORIGINAL HARDCODED UNITS FROM STATIC FORM -->
                             <option value="Unit 1">Unit 1</option>
                             <option value="Unit 2">Unit 2</option>
                             <option value="Unit 3">Unit 3</option>
@@ -497,21 +462,19 @@ DEPENDENCIES:
                             <option value="Unit 42">Unit 42</option>
                             <option value="Unit 43">Unit 43</option>
                             <option value="Unit 44">Unit 44</option>
-                            <option value="Unit 50">Unit 50 (Gardening)</option>
-                            <option value="Unit 51">Unit 51 (Common Areas)</option>
-                            <option value="Unit 52">Unit 52 (Clubhouse)</option>
-                            <option value="Unit 60">Unit 60 (Ben Blanks)</option>
+                            <option value="Unit 50">Unit 50</option>
+                            <option value="Unit 51">Unit 51</option>
+                            <option value="Unit 52">Unit 52</option>
+                            <option value="Unit 60">Unit 60</option>
                         </select>
                     </div>
 
-                    <!-- Reported By Selection -->
                     <div class="form-group">
                         <label class="form-label" for="reportedBy">
                             Reported By <span class="required">*</span>
                         </label>
                         <select id="reportedBy" name="reportedBy" class="form-input" required>
                             <option value="">Select...</option>
-                            <!-- ORIGINAL HARDCODED RESIDENTS FROM STATIC FORM -->
                             <option value="Lance Amoore">Lance Amoore</option>
                             <option value="Common Areas">Common Areas</option>
                             <option value="June Barnett">June Barnett</option>
@@ -573,7 +536,6 @@ DEPENDENCIES:
                         </select>
                     </div>
 
-                    <!-- Problem Description -->
                     <div class="form-group">
                         <label class="form-label" for="problemDescription">
                             Problem Description <span class="required">*</span>
@@ -587,13 +549,11 @@ DEPENDENCIES:
                         ></textarea>
                     </div>
 
-                    <!-- Submit Button -->
                     <button type="submit" id="submitBtn" class="submit-btn">
                         🏠 Submit Request
                     </button>
                 </form>
 
-                <!-- Loading Animation -->
                 <div id="loading" class="loading">
                     <div class="loading-dots">
                         <div></div>
@@ -603,72 +563,40 @@ DEPENDENCIES:
                     Submitting your request...
                 </div>
 
-                <!-- Result Messages -->
                 <div id="successResult" class="result success"></div>
                 <div id="errorResult" class="result error"></div>
             </div>
         </div>
     </div>
 
-    <!-- =====================================================================
-         JAVASCRIPT - FORM LOGIC AND BACKEND INTEGRATION
-         ===================================================================== -->
     <script>
-        // =====================================================================
-        // CONFIGURATION & VERSION TRACKING (NEW IMPROVEMENT)
-        // =====================================================================
-        const FORM_VERSION = '2.2-STATIC-ENHANCED';
-        const LAST_UPDATED = '2025-08-15';
-        const BACKEND_VERSION = 'V2.2-CLEAN';
-        
-        // Backend URL - Points to V2.2 CLEAN Script (UNCHANGED FROM ORIGINAL)
+        // Backend URL
         const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
 
-        // =====================================================================
-        // INITIALIZATION (ENHANCED FROM ORIGINAL)
-        // =====================================================================
+        // Static dropdowns - no loading needed
         document.addEventListener('DOMContentLoaded', function() {
-            // Original simple message (preserved)
             console.log('Static form ready - no dropdown loading required');
-            
-            // Enhanced version tracking (new improvement)
-            console.log(`🌐 Holden Resident Form ${FORM_VERSION} - Ready!`);
-            console.log(`📅 Last Updated: ${LAST_UPDATED}`);
-            console.log(`🔗 Backend: ${BACKEND_VERSION}`);
-            
-            // Performance monitoring (new improvement)
-            console.log('⚡ Performance: Page ready in', 
-                (performance.now() / 1000).toFixed(2), 'seconds');
         });
 
-        // =====================================================================
-        // FORM SUBMISSION HANDLER (ENHANCED FROM ORIGINAL)
-        // =====================================================================
-        // Original structure preserved, enhanced with better error handling
+        // Form submission handler
         document.getElementById('faultForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Extract form data (unchanged from original)
             const formData = new FormData(e.target);
             const unitNumber = formData.get('unitNumber');
             const reportedBy = formData.get('reportedBy');
             const problemDescription = formData.get('problemDescription');
 
-            // Validate required fields (unchanged from original)
             if (!unitNumber || !reportedBy || !problemDescription) {
                 showError('Please complete all required fields');
                 return;
             }
 
-            // Show loading state (unchanged from original)
             setLoading(true);
 
             try {
-                // Enhanced logging (new improvement)
-                console.log('🔄 Submitting fault to backend...');
-                console.log(`📋 Unit: ${unitNumber}, Reporter: ${reportedBy}`);
+                console.log('Submitting fault...');
                 
-                // Call backend script (unchanged from original)
                 const result = await callScript({
                     action: 'submitFault',
                     unitNumber: unitNumber,
@@ -677,92 +605,59 @@ DEPENDENCIES:
                 });
 
                 if (result.success) {
-                    // SUCCESS: Fixed PID display bug (CRITICAL FIX)
-                    console.log('✅ Submission successful:', result.friendlyPID);
-                    showSuccess(
-                        `Your maintenance request has been submitted successfully!<br><br>` +
-                        `<strong>Problem ID:</strong> ${result.friendlyPID}<br>` + // FIXED: was result.problemId
-                        `<strong>Unit:</strong> ${unitNumber}<br><br>` +
-                        `You will receive email confirmation shortly.`
-                    );
+                    showSuccess(`Your maintenance request has been submitted successfully!<br><br><strong>Problem ID:</strong> ${result.friendlyPID}<br><strong>Unit:</strong> ${unitNumber}<br><br>You will receive email confirmation shortly.`);
                     
-                    // Reset form for next submission (unchanged from original)
+                    // Reset form
                     document.getElementById('faultForm').reset();
                 } else {
-                    // ERROR: Enhanced error logging (new improvement)
-                    console.error('❌ Submission failed:', result.message);
                     showError(result.message || 'Failed to submit request. Please try again.');
                 }
 
             } catch (error) {
-                // NETWORK ERROR: Enhanced error handling (new improvement)
-                console.error('🌐 Network error:', error);
+                console.error('Submission error:', error);
                 showError('Network error. Please check your connection and try again.');
             } finally {
-                // Always hide loading state (unchanged from original)
                 setLoading(false);
             }
         });
 
-        // =====================================================================
-        // BACKEND COMMUNICATION - JSONP (ENHANCED FROM ORIGINAL)
-        // =====================================================================
-        /**
-         * Call Google Apps Script backend via JSONP
-         * Enhanced with timeout and better error handling
-         * 
-         * @param {Object} params - Parameters to send
-         * @returns {Promise<Object>} Response from backend
-         */
+        // JSONP function
         async function callScript(params) {
             return new Promise((resolve, reject) => {
-                // Generate unique callback name (unchanged from original)
                 const callbackName = 'callback_' + Math.random().toString(36).substr(2, 9);
                 const script = document.createElement('script');
                 
-                // Build URL with parameters (unchanged from original)
                 const url = new URL(WEB_APP_URL);
                 Object.keys(params).forEach(key => {
                     url.searchParams.append(key, params[key]);
                 });
                 url.searchParams.append('callback', callbackName);
                 
-                // Set up callback function (unchanged from original)
                 window[callbackName] = function(response) {
                     document.body.removeChild(script);
                     delete window[callbackName];
                     resolve(response);
                 };
                 
-                // Enhanced error handling (new improvement)
                 script.onerror = function() {
                     document.body.removeChild(script);
                     delete window[callbackName];
-                    reject(new Error('Network error - unable to connect to backend'));
+                    reject(new Error('Network error'));
                 };
                 
-                // Set script source and add to page (unchanged from original)
                 script.src = url.toString();
                 document.body.appendChild(script);
                 
-                // Enhanced timeout handling (new improvement - was missing in original)
                 setTimeout(() => {
                     if (window[callbackName]) {
                         document.body.removeChild(script);
                         delete window[callbackName];
-                        reject(new Error('Request timeout - backend took too long to respond'));
+                        reject(new Error('Request timeout'));
                     }
-                }, 15000); // 15-second timeout
+                }, 15000);
             });
         }
 
-        // =====================================================================
-        // UI HELPER FUNCTIONS (PRESERVED FROM ORIGINAL)
-        // =====================================================================
-        
-        /**
-         * Show/hide loading state (unchanged from original)
-         */
         function setLoading(loading) {
             const submitBtn = document.getElementById('submitBtn');
             const loadingDiv = document.getElementById('loading');
@@ -779,9 +674,6 @@ DEPENDENCIES:
             }
         }
 
-        /**
-         * Display success message to user (unchanged from original)
-         */
         function showSuccess(message) {
             hideResults();
             const successDiv = document.getElementById('successResult');
@@ -790,9 +682,6 @@ DEPENDENCIES:
             successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        /**
-         * Display error message to user (unchanged from original)
-         */
         function showError(message) {
             hideResults();
             const errorDiv = document.getElementById('errorResult');
@@ -801,97 +690,13 @@ DEPENDENCIES:
             errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
-        /**
-         * Hide all result messages (unchanged from original)
-         */
         function hideResults() {
             document.getElementById('successResult').style.display = 'none';
             document.getElementById('errorResult').style.display = 'none';
         }
 
-        // =====================================================================
-        // SYSTEM INFORMATION & DEBUGGING (NEW IMPROVEMENTS)
-        // =====================================================================
-        
-        // Enhanced system information logging
-        console.log('🏠 Lake Illawong Maintenance System - Resident Portal');
-        console.log('📊 System Info:', {
-            version: FORM_VERSION,
-            lastUpdated: LAST_UPDATED,
-            backendVersion: BACKEND_VERSION,
-            dropdownType: 'Static (Hardcoded)',
-            unitsCount: 47, // 44 residential + 3 common
-            residentsCount: 78,
-            loadTime: 'Instant (<1s)',
-            dependencies: 'None (Self-contained)',
-            improvements: [
-                'Version tracking system',
-                'Enhanced error handling with timeout',
-                'Performance monitoring',
-                'Fixed PID display bug',
-                'Comprehensive documentation'
-            ]
-        });
-        
-        // Final ready message (preserving original style)
-        console.log('✅ Static Resident Form - Enhanced and Ready!');
+        // Static dropdowns - no loading needed
+console.log('Static form ready - no dropdown loading required'); // ✅ Good
     </script>
 </body>
 </html>
-
-<!--
-=====================================================================
-END OF HOLDEN RESIDENT FORM - STATIC ENHANCED VERSION
-=====================================================================
-
-SUMMARY OF IMPROVEMENTS MADE:
-✅ Added comprehensive documentation system
-✅ Fixed critical PID display bug (result.problemId → result.friendlyPID)
-✅ Enhanced error handling with 15-second timeout
-✅ Added version tracking constants for better maintenance
-✅ Enhanced logging and debugging information
-✅ Added performance monitoring
-✅ Preserved all original functionality and styling
-✅ Maintained original dropdown data exactly as provided
-
-TESTING CHECKLIST:
-□ Form loads instantly (no dropdown loading delays)
-□ All original units appear in dropdown (1-44 + 50-52)
-□ All original residents appear in dropdown
-□ Form validation works (required fields)
-□ Submission shows loading state
-□ Success shows Problem ID correctly (not "undefined") - FIXED
-□ Email notifications sent to all parties
-□ Form resets after successful submission
-□ Error handling works with timeout
-□ Performance monitoring logs load time
-□ Version information displays in console
-□ Mobile responsive design works
-
-DEPLOYMENT CHECKLIST:
-□ Ensure backend V2.2 CLEAN is deployed at specified URL
-□ Test with real submission to verify PID fix works
-□ Verify email notifications work correctly
-□ Check console for version and performance info
-□ Test timeout handling (simulate slow network)
-□ Test on mobile devices
-□ Verify pelican-logo.png is accessible
-
-FUTURE ENHANCEMENTS (V3.0):
-□ Automated sync with Categories tab
-□ Client-side form validation improvements
-□ Accessibility enhancements (ARIA labels)
-□ Dark mode support
-□ Offline capability with service workers
-□ Real-time form validation
-□ Progress indicators during submission
-
-MAINTENANCE NOTES:
-- Update FORM_VERSION constant when making changes
-- Update LAST_UPDATED date
-- Update BACKEND_VERSION when backend changes
-- Keep dropdown data in sync with Categories tab
-- Monitor console logs for performance metrics
-
-=====================================================================
--->
