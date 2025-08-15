@@ -1,3 +1,120 @@
+<!--
+=====================================================================
+🔍 HOLDEN-DESKTOP-EXPLORER.HTML - DESKTOP PROBLEM DATA ANALYTICS
+=====================================================================
+
+🔄 WORKFLOW PROCESS:
+1. **Before ANY change**: Copy current file to backup folder
+2. **Make change**: Update the file
+3. **Update header**: Increment version, add to VERSION HISTORY
+4. **Document change**: Note what was modified
+
+🎯 VERSION NUMBERING:
+• **Major.Minor.Patch** (e.g., v1.2.3)
+• **Major**: Big functionality changes
+• **Minor**: Feature additions
+• **Patch**: Bug fixes, documentation updates
+
+This gives you instant rollback capability and change tracking!
+
+📋 DOCUMENT INFORMATION:
+• File Name: holden-desktop-explorer.html
+• System: Lake Illawong Maintenance Portal (Development)
+• Component Type: Desktop Problem Data Analytics Interface
+• Version: v1.0.0
+• Status: 🚧 DEVELOPMENT (Not Production)
+• Created: August 2025
+• Last Modified: August 15, 2025
+• Backup Location: MyDrive/MaintenancePortal/Backups/holden-desktop-explorer/
+
+📊 VERSION HISTORY:
+• v1.0.0 (Aug 15, 2025): Initial documentation added
+• [Next version]: [Description of changes]
+
+🔄 BACKUP PROTOCOL:
+• Before ANY changes: Copy to MyDrive/MaintenancePortal/Backups/holden-desktop-explorer/v[X.X.X]_[Date]/
+• Update version number in header after changes
+• Document what changed in VERSION HISTORY
+• Keep last 3 versions minimum for rollback
+
+🎯 PRIMARY PURPOSE:
+Desktop-optimized analytics interface for comprehensive exploration and analysis
+of maintenance problem data. Provides advanced filtering, statistical dashboards,
+data export capabilities, and detailed problem visualization for supervisory analysis.
+
+🔗 SYSTEM CONNECTIONS:
+• Backend API: HOLDEN PROBLEM DATA EXPLORER API V1.0.js
+• Data Sources: FaultLog (current) and LegacyLog datasets
+• Mobile Counterpart: holden-mobile-explorer.html (same backend, different UI)
+• Landing Page Integration: Linked from index.html auto-switching system
+• Related Files: holden-mobile-explorer.html, index.html
+
+⚙️ TECHNICAL SPECIFICATIONS:
+• Technology: HTML5 + CSS3 + Vanilla JavaScript
+• Design: Desktop-optimized dual-pane layout with sidebar filters
+• Authentication: None (public read-only access)
+• Dependencies: Problem Data Explorer API
+• Browser Support: Modern desktop browsers optimized
+• Layout: Grid-based responsive design with advanced filtering
+
+🎨 UI/UX FEATURES:
+• Dual-Pane Layout: Sidebar filters + main content area
+• Dataset Toggle: Switch between Current and Legacy data
+• Advanced Filtering: Multi-criteria filtering with checkbox lists
+• Search Functionality: Real-time search with debouncing
+• Statistics Dashboard: 6-card stats overview with trend indicators
+• Problem Cards: Grid-based problem visualization with priority indicators
+• Modal Details: Click-through detailed problem view
+• Export Options: CSV export with date range filtering
+
+🔄 WORKFLOW:
+1. Data Selection: Choose Current vs Legacy dataset
+2. Apply Filters: Use sidebar to filter by unit, status, priority, category, etc.
+3. Search Problems: Real-time text search across problem descriptions
+4. Browse Results: Grid-based problem cards with visual priority indicators
+5. View Details: Click problem cards for detailed modal view
+6. Export Data: Generate CSV exports with current filter settings
+7. Statistical Analysis: Review dashboard statistics and trends
+
+🚀 DEPLOYMENT STATUS: 🚧 DEVELOPMENT
+• Current State: Functional desktop analytics interface
+• Integration: Connected to shared Problem Data Explorer API
+• Production Ready: No - part of development system
+
+🔍 ARCHITECTURE ANALYSIS:
+• Module Category: Data Analytics / Problem Exploration (Desktop)
+• Access Level: Public read-only interface (no authentication)
+• Data Sources: Shared backend with mobile explorer
+• Unique Features: Desktop-optimized layout, advanced filtering, export capabilities
+
+🎯 RESPONSIVE DESIGN PATTERN:
+• DESKTOP COUNTERPART: Companion to holden-mobile-explorer.html
+• SAME BACKEND: Shares Problem Data Explorer API with mobile version
+• DIFFERENT UX: Desktop-optimized layout vs mobile touch interface
+• AUTO-SWITCHING: Landing page detects device and routes appropriately
+
+⚠️ ARCHITECTURE DUPLICATION:
+• DUAL INTERFACES: Desktop and mobile versions for same functionality
+• SAME BACKEND API: Both explorers use identical data source
+• MAINTENANCE OVERHEAD: Two interfaces to maintain for same feature set
+• CONSOLIDATION OPPORTUNITY: Could be unified responsive design
+
+🎯 INTEGRATION QUESTIONS:
+• Should desktop and mobile explorers be consolidated into responsive design?
+• Is separate interface justification sufficient vs unified approach?
+• How does auto-switching from landing page affect user experience?
+• Should advanced desktop features be made available on mobile?
+
+🚨 DEVELOPMENT NOTES:
+• Grid layout optimized for desktop screen real estate
+• LocalStorage used for user preferences (items per page)
+• Advanced filtering system with multiple criteria support
+• Modal system for detailed problem viewing
+• CSV export functionality with date range filtering
+• Statistical dashboard with trend indicators
+
+=====================================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head> 
