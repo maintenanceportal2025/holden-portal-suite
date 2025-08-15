@@ -1,3 +1,95 @@
+<!--
+=====================================================================
+📢 FIELDALERTS.HTML - MOBILE EMERGENCY NOTIFICATION TOOL
+=====================================================================
+WORKFLOW PROCESS:
+
+Before ANY change: Copy current file to backup folder
+Make change: Update the file
+Update header: Increment version, add to VERSION HISTORY
+Document change: Note what was modified
+
+🎯 VERSION NUMBERING:
+
+Major.Minor.Patch (e.g., v1.2.3)
+Major: Big functionality changes
+Minor: Feature additions
+Patch: Bug fixes, documentation updates
+
+This gives you instant rollback capability and change tracking!
+
+📋 DOCUMENT INFORMATION:
+• File Name: FieldAlerts.html
+• System: Lake Illawong Maintenance Portal (Development)
+• Component Type: Mobile Emergency Notification Interface
+• Version: v1.0.0
+• Status: 🚧 DEVELOPMENT (Not Production)
+• Created: August 2025
+• Last Modified: August 15, 2025
+• Backup Location: MyDrive/MaintenancePortal/Backups/FieldAlerts/
+
+📊 VERSION HISTORY:
+• v1.0.0 (Aug 15, 2025): Initial documentation added
+• [Next version]: [Description of changes]
+
+🔄 BACKUP PROTOCOL:
+• Before ANY changes: Copy to MyDrive/MaintenancePortal/Backups/[FileName]/v[X.X.X]_[Date]/
+• Update version number in header after changes
+• Document what changed in VERSION HISTORY
+• Keep last 3 versions minimum for rollback
+
+🎯 PRIMARY PURPOSE:
+Mobile-optimized emergency notification tool for field technicians to send 
+urgent alerts (water emergencies, power outages, etc.) to specific zones 
+or all units in the retirement village.
+
+🔗 SYSTEM CONNECTIONS:
+• Backend API: Email Service (AKfycbwwSy44WvoHQIKiUn9Ctf0rHyYCuLPNFBrlSVSexks7rVnRvdVQeZC9F3Zwu2RruX3v)
+• Template System: Uses predefined emergency templates (WATER04, POWER04, URGENT01)
+• Zone System: Targets zones 1-5 or all units
+• Integration Status: Standalone tool (not integrated with main dashboard)
+• Related Files: MassNotification.html, email-communication-hub.html
+
+⚙️ TECHNICAL SPECIFICATIONS:
+• Technology: HTML5 + CSS3 + Vanilla JavaScript
+• Design: Mobile-first, touch-optimized interface
+• Authentication: None (open access for emergency use)
+• Dependencies: Email Service backend only
+• Browser Support: Modern mobile browsers
+• API Protocol: JSONP for cross-origin requests
+
+🎨 UI/UX FEATURES:
+• Emergency Templates: Water, Power, Urgent notification types with emoji icons
+• Zone Selection: Visual grid for targeting specific areas (1-5, All Units)
+• Touch Interface: Large buttons (44px minimum), haptic feedback support
+• Status Indicators: Service availability and quota monitoring
+• Real-time Feedback: Success/error messaging with animations
+
+🔄 WORKFLOW:
+1. Select Emergency Type: Choose from predefined templates (filtered by fieldAlert flag)
+2. Select Zone: Target specific zones (zone1-zone5) or all units
+3. Send Notification: Mass email delivery via Email Service backend
+4. Confirmation: Real-time success/failure feedback with detailed results
+
+🚀 DEPLOYMENT STATUS: 🚧 DEVELOPMENT
+• Current State: Functional development prototype
+• Integration: Standalone (not connected to main system dashboard)
+• Production Ready: No - part of development system requiring consolidation
+
+🔍 ARCHITECTURE ANALYSIS:
+• Module Category: Emergency Communications
+• Access Level: Field Technician Tool (no authentication required)
+• Potential Overlaps: MassNotification.html, email-communication-hub.html
+• Consolidation Candidate: Review against other notification tools
+
+🎯 INTEGRATION QUESTIONS:
+• Should this be integrated into main admin portal as emergency module?
+• Does functionality duplicate MassNotification.html capabilities?
+• Should zones be centrally managed across all notification tools?
+
+=====================================================================
+-->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
