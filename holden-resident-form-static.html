@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lake Illawong - Submit Maintenance Request</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: #eeeeee;
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        /* UPDATED: Header section with logo and text side by side */
+        .header-section {
+            background: #eeeeee;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo-container {
+            flex-shrink: 0;
+        }
+
+        .logo-image {
+            width: 120px;
+            height: 120px;
+            object-fit: contain;
+        }
+
+        .header-text {
+            flex: 1;
+        }
+
+        .system-title {
+            color: #1e293b;
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 2px;
+            letter-spacing: -0.025em;
+        }
+
+        .system-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        /* Modified: Title card section */
+        .title-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+            padding: 40px 32px;
+            text-align: center;
+            margin-bottom: 20px;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .title-card h1 {
+            font-size: 26px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            letter-spacing: -0.025em;
+            color: #1e293b;
+        }
+
+        .title-card p {
+            color: #64748b;
+            font-size: 16px;
+            font-weight: 400;
+        }
+
+        /* Modified: Form card section */
+        .form-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(15, 23, 42, 0.08);
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .form-container {
+            padding: 40px 32px;
+            background: white;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border: 1px solid #0891b2;
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            color: #0c4a6e;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-box strong {
+            color: #0369a1;
+            font-weight: 600;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #1e293b;
+            font-size: 15px;
+            letter-spacing: -0.025em;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 16px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: white;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #0891b2;
+            box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1);
+            background: #fefefe;
+        }
+
+        .form-input:hover:not(:focus) {
+            border-color: #94a3b8;
+        }
+
+        select.form-input {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23475569' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 16px center;
+            background-repeat: no-repeat;
+            background-size: 16px;
+            padding-right: 48px;
+        }
+
+        textarea.form-input {
+            min-height: 130px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #0891b2 0%, #0e7490 100%);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            letter-spacing: 0.025em;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: linear-gradient(135deg, #0e7490 0%, #155e75 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px rgba(8, 145, 178, 0.3);
+        }
+
+        .submit-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .submit-btn:disabled {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin-top: 28px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .loading-dots {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 16px;
+        }
+
+        .loading-dots div {
+            position: absolute;
+            top: 33px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0891b2;
+            animation: loading-dots 1.2s linear infinite;
+        }
+
+        .loading-dots div:nth-child(1) { left: 8px; animation-delay: 0s; }
+        .loading-dots div:nth-child(2) { left: 8px; animation-delay: -0.4s; }
+        .loading-dots div:nth-child(3) { left: 32px; animation-delay: -0.8s; }
+
+        @keyframes loading-dots {
+            0% { opacity: 1; }
+            50% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .result {
+            display: none;
+            margin-top: 28px;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 500;
+            border-width: 1px;
+            border-style: solid;
+        }
+
+        .result.success {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            color: #166534;
+            border-color: #22c55e;
+        }
+
+        .result.error {
+            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+            color: #dc2626;
+            border-color: #fecaca;
+        }
+
+        .required {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        /* Mobile Responsive Adjustments */
+        @media (max-width: 580px) {
+            body {
+                padding: 12px;
+            }
+            
+            .header-section {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+            
+            .header-content {
+                gap: 16px;
+                padding: 0 10px;
+            }
+            
+            .logo-image {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .system-title {
+                font-size: 20px;
+            }
+            
+            .system-subtitle {
+                font-size: 12px;
+            }
+            
+            .title-card {
+                padding: 32px 24px;
+                margin-bottom: 16px;
+            }
+            
+            .title-card h1 {
+                font-size: 24px;
+            }
+            
+            .form-card {
+                border-radius: 16px;
+                margin: 0;
+            }
+            
+            .form-container {
+                padding: 32px 24px;
+            }
+            
+            .info-box {
+                padding: 20px;
+                margin-bottom: 24px;
+            }
+            
+            .form-group {
+                margin-bottom: 24px;
+            }
+            
+            .form-input {
+                padding: 16px 18px;
+            }
+            
+            .submit-btn {
+                padding: 18px;
+                font-size: 15px;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .logo-image {
+                width: 80px;
+                height: 80px;
+                font-size: 32px;
+            }
+            
+            .title-card {
+                padding: 28px 20px;
+            }
+            
+            .title-card h1 {
+                font-size: 22px;
+            }
+            
+            .form-container {
+                padding: 24px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- UPDATED: Header section with logo and text side by side -->
+        <div class="header-section">
+            <div class="header-content">
+                <div class="logo-container">
+                    <img src="pelican-logo.png" class="logo-image" alt="Lake Illawong Residential Club">
+                </div>
+                <div class="header-text">
+                    <h1 class="system-title">PROBLEM REPORTING SYSTEM</h1>
+                </div>
+            </div>
+        </div>
+
+        <!-- Title Card -->
+        <div class="title-card">
+            <h1>Resident Form</h1>
+            <p>Report maintenance issues for your unit or common areas</p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="form-card">
+            <div class="form-container">
+                <div class="info-box">
+                    <strong>For non-unit issues, select:</strong><br>
+                    Unit 50 (Gardening), Unit 51 (Common Areas), or Unit 52 (Clubhouse)
+                </div>
+
+                <form id="faultForm">
+                    <div class="form-group">
+                        <label class="form-label" for="unitNumber">
+                            Unit Number <span class="required">*</span>
+                        </label>
+                        <select id="unitNumber" name="unitNumber" class="form-input" required>
+                            <option value="">Select...</option>
+                            <option value="Unit 1">Unit 1</option>
+                            <option value="Unit 2">Unit 2</option>
+                            <option value="Unit 3">Unit 3</option>
+                            <option value="Unit 4">Unit 4</option>
+                            <option value="Unit 5">Unit 5</option>
+                            <option value="Unit 6">Unit 6</option>
+                            <option value="Unit 7">Unit 7</option>
+                            <option value="Unit 8">Unit 8</option>
+                            <option value="Unit 9">Unit 9</option>
+                            <option value="Unit 10">Unit 10</option>
+                            <option value="Unit 11">Unit 11</option>
+                            <option value="Unit 12">Unit 12</option>
+                            <option value="Unit 13">Unit 13</option>
+                            <option value="Unit 14">Unit 14</option>
+                            <option value="Unit 15">Unit 15</option>
+                            <option value="Unit 16">Unit 16</option>
+                            <option value="Unit 17">Unit 17</option>
+                            <option value="Unit 18">Unit 18</option>
+                            <option value="Unit 19">Unit 19</option>
+                            <option value="Unit 20">Unit 20</option>
+                            <option value="Unit 21">Unit 21</option>
+                            <option value="Unit 22">Unit 22</option>
+                            <option value="Unit 23">Unit 23</option>
+                            <option value="Unit 24">Unit 24</option>
+                            <option value="Unit 25">Unit 25</option>
+                            <option value="Unit 26">Unit 26</option>
+                            <option value="Unit 27">Unit 27</option>
+                            <option value="Unit 28">Unit 28</option>
+                            <option value="Unit 29">Unit 29</option>
+                            <option value="Unit 30">Unit 30</option>
+                            <option value="Unit 31">Unit 31</option>
+                            <option value="Unit 32">Unit 32</option>
+                            <option value="Unit 33">Unit 33</option>
+                            <option value="Unit 34">Unit 34</option>
+                            <option value="Unit 35">Unit 35</option>
+                            <option value="Unit 36">Unit 36</option>
+                            <option value="Unit 37">Unit 37</option>
+                            <option value="Unit 38">Unit 38</option>
+                            <option value="Unit 39">Unit 39</option>
+                            <option value="Unit 40">Unit 40</option>
+                            <option value="Unit 41">Unit 41</option>
+                            <option value="Unit 42">Unit 42</option>
+                            <option value="Unit 43">Unit 43</option>
+                            <option value="Unit 44">Unit 44</option>
+                            <option value="Unit 50">Unit 50</option>
+                            <option value="Unit 51">Unit 51</option>
+                            <option value="Unit 52">Unit 52</option>
+                            <option value="Unit 60">Unit 60</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="reportedBy">
+                            Reported By <span class="required">*</span>
+                        </label>
+                        <select id="reportedBy" name="reportedBy" class="form-input" required>
+                            <option value="">Select...</option>
+                            <option value="Lance Amoore">Lance Amoore</option>
+                            <option value="Common Areas">Common Areas</option>
+                            <option value="June Barnett">June Barnett</option>
+                            <option value="Tony Barnett">Tony Barnett</option>
+                            <option value="Francis Batt">Francis Batt</option>
+                            <option value="Keith Bell">Keith Bell</option>
+                            <option value="Lynne Bell">Lynne Bell</option>
+                            <option value="Ben Blanks">Ben Blanks</option>
+                            <option value="David Blanks">David Blanks</option>
+                            <option value="Dot Blanks">Dot Blanks</option>
+                            <option value="Judi Borschman">Judi Borschman</option>
+                            <option value="Peggy Boughey">Peggy Boughey</option>
+                            <option value="Terry Boughey">Terry Boughey</option>
+                            <option value="Andrew Bouwmeester">Andrew Bouwmeester</option>
+                            <option value="Leone Burgin">Leone Burgin</option>
+                            <option value="Janice Campbell">Janice Campbell</option>
+                            <option value="Sue Campbell">Sue Campbell</option>
+                            <option value="Louise Castle">Louise Castle</option>
+                            <option value="Margaret Chamberlain">Margaret Chamberlain</option>
+                            <option value="Clubhouse">Clubhouse</option>
+                            <option value="Geoffrey Cruise">Geoffrey Cruise</option>
+                            <option value="Anne Fenollar">Anne Fenollar</option>
+                            <option value="Ruth Foster">Ruth Foster</option>
+                            <option value="Gardening">Gardening</option>
+                            <option value="Jennifer Gardner">Jennifer Gardner</option>
+                            <option value="Natalie Gough">Natalie Gough</option>
+                            <option value="John Heller">John Heller</option>
+                            <option value="Margaret Hollingsworth">Margaret Hollingsworth</option>
+                            <option value="Judith Kaylara">Judith Kaylara</option>
+                            <option value="Colin Kemp">Colin Kemp</option>
+                            <option value="Susan Kemp">Susan Kemp</option>
+                            <option value="Kaye Lamb">Kaye Lamb</option>
+                            <option value="Vicky Lothian">Vicky Lothian</option>
+                            <option value="Lois Lyons">Lois Lyons</option>
+                            <option value="Alistair McKee">Alistair McKee</option>
+                            <option value="Margaret McLean">Margaret McLean</option>
+                            <option value="Linda Miaris">Linda Miaris</option>
+                            <option value="Catherine Morrison">Catherine Morrison</option>
+                            <option value="Deborah Morrison">Deborah Morrison</option>
+                            <option value="Iain Morrison">Iain Morrison</option>
+                            <option value="Gayle Murray">Gayle Murray</option>
+                            <option value="Lesley Newcombe">Lesley Newcombe</option>
+                            <option value="Tricia Parks">Tricia Parks</option>
+                            <option value="Dishan Rajaratnam">Dishan Rajaratnam</option>
+                            <option value="Salome Rajaratnam">Salome Rajaratnam</option>
+                            <option value="Wendy Ritchie">Wendy Ritchie</option>
+                            <option value="Nancye Silva">Nancye Silva</option>
+                            <option value="Steve Simms">Steve Simms</option>
+                            <option value="Lisa Spittal">Lisa Spittal</option>
+                            <option value="Raya Sprague">Raya Sprague</option>
+                            <option value="Nanne Stubbs">Nanne Stubbs</option>
+                            <option value="Michael Taylor">Michael Taylor</option>
+                            <option value="Adrian Teuma">Adrian Teuma</option>
+                            <option value="Bill Treloar">Bill Treloar</option>
+                            <option value="Julie Trolland">Julie Trolland</option>
+                            <option value="Ken Trolland">Ken Trolland</option>
+                            <option value="David Young">David Young</option>
+                            <option value="David Zaz">David Zaz</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="problemDescription">
+                            Problem Description <span class="required">*</span>
+                        </label>
+                        <textarea 
+                            id="problemDescription" 
+                            name="problemDescription" 
+                            class="form-input" 
+                            placeholder="Please provide a detailed description of the maintenance problem..."
+                            required
+                        ></textarea>
+                    </div>
+
+                    <button type="submit" id="submitBtn" class="submit-btn">
+                        🏠 Submit Request
+                    </button>
+                </form>
+
+                <div id="loading" class="loading">
+                    <div class="loading-dots">
+                        <div></div>
+                        <div></div>
+                        <div></div>
+                    </div>
+                    Submitting your request...
+                </div>
+
+                <div id="successResult" class="result success"></div>
+                <div id="errorResult" class="result error"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Backend URL
+        const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwb9A9ExDlWDcT5za8Ol7CHZJhlrmvug1XLEKfCdt9sswmygo2Pnj_eSUhNy83rzI6Q/exec';
+
+        // Static dropdowns - no loading needed
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Static form ready - no dropdown loading required');
+        });
+
+        // Form submission handler
+        document.getElementById('faultForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(e.target);
+            const unitNumber = formData.get('unitNumber');
+            const reportedBy = formData.get('reportedBy');
+            const problemDescription = formData.get('problemDescription');
+
+            if (!unitNumber || !reportedBy || !problemDescription) {
+                showError('Please complete all required fields');
+                return;
+            }
+
+            setLoading(true);
+
+            try {
+                console.log('Submitting fault...');
+                
+                const result = await callScript({
+                    action: 'submitFault',
+                    unitNumber: unitNumber,
+                    reportedBy: reportedBy,
+                    problemDescription: problemDescription
+                });
+
+                if (result.success) {
+                    showSuccess(`Your maintenance request has been submitted successfully!<br><br><strong>Problem ID:</strong> ${result.problemId}<br><strong>Unit:</strong> ${unitNumber}<br><br>You will receive email confirmation shortly.`);
+                    
+                    // Reset form
+                    document.getElementById('faultForm').reset();
+                } else {
+                    showError(result.message || 'Failed to submit request. Please try again.');
+                }
+
+            } catch (error) {
+                console.error('Submission error:', error);
+                showError('Network error. Please check your connection and try again.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // JSONP function
+        async function callScript(params) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'callback_' + Math.random().toString(36).substr(2, 9);
+                const script = document.createElement('script');
+                
+                const url = new URL(WEB_APP_URL);
+                Object.keys(params).forEach(key => {
+                    url.searchParams.append(key, params[key]);
+                });
+                url.searchParams.append('callback', callbackName);
+                
+                window[callbackName] = function(response) {
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.body.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network error'));
+                };
+                
+                script.src = url.toString();
+                document.body.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.body.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+            });
+        }
+
+        function setLoading(loading) {
+            const submitBtn = document.getElementById('submitBtn');
+            const loadingDiv = document.getElementById('loading');
+            
+            if (loading) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Submitting...';
+                loadingDiv.style.display = 'block';
+                hideResults();
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '🏠 Submit Request';
+                loadingDiv.style.display = 'none';
+            }
+        }
+
+        function showSuccess(message) {
+            hideResults();
+            const successDiv = document.getElementById('successResult');
+            successDiv.innerHTML = message;
+            successDiv.style.display = 'block';
+            successDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function showError(message) {
+            hideResults();
+            const errorDiv = document.getElementById('errorResult');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+            errorDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function hideResults() {
+            document.getElementById('successResult').style.display = 'none';
+            document.getElementById('errorResult').style.display = 'none';
+        }
+
+        console.log('Static Resident Form - Ready!');
+    </script>
+</body>
+</html>
