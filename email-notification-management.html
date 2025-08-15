@@ -1,3 +1,83 @@
+<!--
+=====================================================================
+EMAIL-NOTIFICATION-MANAGEMENT.HTML - EMAIL CONTACT MANAGEMENT
+=====================================================================
+
+🔄 WORKFLOW PROCESS:
+1. **Before ANY change**: Copy current file to backup folder
+2. **Make change**: Update the file
+3. **Update header**: Increment version, add to VERSION HISTORY
+4. **Document change**: Note what was modified
+
+🎯 VERSION NUMBERING:
+• **Major.Minor.Patch** (e.g., v1.2.3)
+• **Major**: Big functionality changes
+• **Minor**: Feature additions
+• **Patch**: Bug fixes, documentation updates
+
+This gives you instant rollback capability and change tracking!
+
+📋 DOCUMENT INFORMATION:
+• File Name: email-notification-management.html
+• System: Lake Illawong Maintenance Portal (Development)
+• Component Type: Email Contact List Management Interface
+• Version: v1.0.0
+• Status: 🚧 DEVELOPMENT (Not Production)
+• Created: August 2025
+• Last Modified: August 15, 2025
+• Backup Location: MyDrive/MaintenancePortal/Backups/email-notification-management/
+
+📊 VERSION HISTORY:
+• v1.0.0 (Aug 15, 2025): Initial documentation added
+• [Next version]: [Description of changes]
+
+🔄 BACKUP PROTOCOL:
+• Before ANY changes: Copy to MyDrive/MaintenancePortal/Backups/email-notification-management/v[X.X.X]_[Date]/
+• Update version number in header after changes
+• Document what changed in VERSION HISTORY
+• Keep last 3 versions minimum for rollback
+
+🎯 PRIMARY PURPOSE:
+Administrative interface for managing email contact lists used across the entire
+maintenance system. Provides CRUD operations for maintenance team and zone 
+representative email lists that feed into all notification systems.
+
+🔗 SYSTEM CONNECTIONS:
+• Backend API: Email Contact Management API (AKfycbxtdMfxB5b1F5K401X0lJxnK2-DGkiG2zYZNukJvAHx0K1AqgPTMIdiunwS3etm0FOL)
+• Named Ranges: MtceTeamEmailList, ZoneRepEmailList (Google Sheets)
+• Fed Systems: All notification systems use these contact lists
+• Admin Integration: Accessed via admin portal navigation
+• Related Files: FieldAlerts.html, MassNotification.html, email-communication-hub.html
+
+⚙️ TECHNICAL SPECIFICATIONS:
+• Technology: HTML5 + CSS3 + Vanilla JavaScript
+• Design: Desktop admin interface with table-based data management
+• Authentication: None (accessed via admin portal)
+• Dependencies: Email Contact Management backend API
+• Browser Support: Modern desktop browsers
+• API Protocol: JSONP requests with callback handling
+
+🎨 UI/UX FEATURES:
+• Inline Editing: Click-to-edit table cells with immediate feedback
+• Change Tracking: Visual indicators for modified/new/deleted contacts
+• Bulk Operations: Multi-select and batch deletion capabilities
+• Section Tabs: Maintenance Team vs Zone Representatives management
+• Inactive Tracking: Soft deletion with restoration capabilities
+• Auto-Save Prevention: Changes indicator prevents accidental navigation
+
+🔄 WORKFLOW:
+1. Load Data: Retrieve maintenance team and zone rep contact lists from backend
+2. View Contacts: Browse organized tables of current email contacts
+3. Edit Inline: Click any cell to edit names, zones, or email addresses
+4. Track Changes: Visual feedback for all modifications and new entries
+5. Bulk Management: Select multiple contacts for batch operations
+6. Save Changes: Commit all modifications to backend named ranges
+7. Sync System: Updated contacts immediately available across all notification tools
+
+🚀 DEPLOYMENT STATUS: 🚧 DEVELOPMENT
+• Current State: Functional contact management interface
+• Integration: Connected to admin portal system
+• Production
 <!DOCTYPE html>
 <html lang="en">
 <head>
