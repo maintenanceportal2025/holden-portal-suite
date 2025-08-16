@@ -798,7 +798,8 @@
                 
                 let allItemsResponse;
                 try {
-                    allItemsResponse = await makeRequest('getDropdownItems');
+                    // Call getDropdownItems with sheetName parameter for your service
+                    allItemsResponse = await makeRequest('getDropdownItems', { sheetName: 'Dropdowns' });
                 } catch (requestError) {
                     console.error('❌ Error calling getDropdownItems:', requestError);
                     throw new Error('Failed to connect to service for deletion');
@@ -880,7 +881,7 @@
                     showToast('info', 'Updating', `Updating "${currentEditItem.value}" to "${value}"...`);
                     
                     // Get exact rowIndex for the item being updated
-                    const allItemsResponse = await makeRequest('getDropdownItems');
+                    const allItemsResponse = await makeRequest('getDropdownItems', { sheetName: 'Dropdowns' });
                     
                     if (allItemsResponse.success) {
                         const targetItem = allItemsResponse.items.find(item => 
