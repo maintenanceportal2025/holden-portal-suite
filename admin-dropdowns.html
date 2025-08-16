@@ -693,13 +693,14 @@
 
         // Create HTML for a dropdown item
         function createItemHTML(type, value, index) {
-            // Escape HTML to prevent XSS
-            const safeValue = value.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
-            const safeType = type.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            // Ensure value is a string and escape HTML to prevent XSS
+            const stringValue = String(value); // Convert to string first
+            const safeValue = stringValue.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+            const safeType = String(type).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
             
             return `
                 <div class="item">
-                    <div class="item-content">${value}</div>
+                    <div class="item-content">${stringValue}</div>
                     <div class="item-actions">
                         <button class="action-btn edit-btn" onclick="editItem('${safeType}', '${safeValue}', ${index})">Edit</button>
                         <button class="action-btn delete-btn" onclick="deleteItem('${safeType}', '${safeValue}', ${index})">Delete</button>
