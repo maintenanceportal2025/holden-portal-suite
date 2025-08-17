@@ -23,7 +23,7 @@
             margin: 0 auto;
         }
 
-        /* Header Section - White Rounded Box */
+        /* Header Section */
         .header {
             background: white;
             border-radius: 15px;
@@ -204,6 +204,9 @@
             padding: 40px;
             color: #ef4444;
             font-weight: 500;
+            background: #fef2f2;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
         }
 
         .empty {
@@ -261,7 +264,7 @@
             color: #374151;
         }
 
-        .form-input, .form-select {
+        .form-input {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e5e7eb;
@@ -270,7 +273,7 @@
             transition: border-color 0.3s ease;
         }
 
-        .form-input:focus, .form-select:focus {
+        .form-input:focus {
             outline: none;
             border-color: #3b82f6;
         }
@@ -307,7 +310,6 @@
 
         .btn-primary:hover {
             background: #2563eb;
-            transform: scale(1.05);
         }
 
         /* Config Modal Styles */
@@ -338,6 +340,9 @@
         .config-modal-header {
             padding: 20px 20px 0 20px;
             border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
         }
 
         .config-modal-header h3 {
@@ -352,6 +357,24 @@
             font-size: 0.9rem;
         }
 
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
         .config-modal-body {
             padding: 20px;
         }
@@ -362,6 +385,7 @@
             margin-bottom: 15px;
             font-size: 0.9rem;
             color: #6b7280;
+            flex-wrap: wrap;
         }
 
         .config-textarea {
@@ -418,27 +442,6 @@
             opacity: 1;
         }
 
-        .close-btn {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #6b7280;
-            padding: 0;
-            width: 30px;
-            height: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .close-btn:hover {
-            color: #374151;
-        }
-
         /* Responsive Design */
         @media (max-width: 768px) {
             .sections-grid {
@@ -458,12 +461,16 @@
             .config-textarea {
                 height: 300px;
             }
+
+            .config-stats {
+                font-size: 0.8rem;
+            }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- Header Section - White Rounded Box -->
+        <!-- Header Section -->
         <div class="header">
             <h1>🎛️ Dropdown Management Hub</h1>
             <p>Centralized control for all system dropdown options and static config generation</p>
@@ -605,10 +612,12 @@
     <!-- Config Generation Modal -->
     <div class="config-modal" id="configModal">
         <div class="config-modal-content">
-            <button class="close-btn" onclick="closeConfigModal()">&times;</button>
             <div class="config-modal-header">
-                <h3 id="configModalTitle">Generated Config File</h3>
-                <p id="configModalSubtitle">Copy this content to replace your config file</p>
+                <div>
+                    <h3 id="configModalTitle">Generated Config File</h3>
+                    <p id="configModalSubtitle">Copy this content to replace your config file</p>
+                </div>
+                <button class="close-btn" onclick="closeConfigModal()">&times;</button>
             </div>
             
             <div class="config-modal-body">
@@ -645,24 +654,20 @@
             'Assigned To': 'assignedToContainer'
         };
 
-        // Initialize the application
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🎛️ Dropdown Management Hub Initialized');
-            loadAllDropdowns();
-        });
-
         // Load all dropdown data
         async function loadAllDropdowns() {
             try {
-                console.log('📋 Loading all dropdown data...');
+                console.log('📋 Starting dropdown data load...');
                 
                 const response = await fetch(`${API_URL}?action=getAllDropdowns`);
+                console.log('📡 Response status:', response.status);
+                
                 const data = await response.json();
+                console.log('📊 Response data:', data);
                 
                 if (data.success) {
                     allDropdownData = data.dropdowns;
                     console.log('✅ Dropdown data loaded:', allDropdownData);
-                    
                     displayAllDropdowns();
                 } else {
                     throw new Error(data.error || 'Failed to load dropdown data');
@@ -670,15 +675,24 @@
                 
             } catch (error) {
                 console.error('❌ Error loading dropdown data:', error);
-                showError('Failed to load dropdown data. Please check the service connection.');
+                showError('Failed to load dropdown data: ' + error.message);
             }
         }
 
-        // Display all dropdown data in their respective containers
+        // Display all dropdown data
         function displayAllDropdowns() {
+            console.log('🖥️ Displaying all dropdowns...');
+            
             Object.keys(typeContainers).forEach(type => {
                 const container = document.getElementById(typeContainers[type]);
                 const items = allDropdownData[type] || [];
+                
+                console.log(`📝 ${type}: ${items.length} items`);
+                
+                if (!container) {
+                    console.error(`❌ Container not found: ${type}`);
+                    return;
+                }
                 
                 if (items.length === 0) {
                     container.innerHTML = `<div class="empty">No ${type.toLowerCase()} items found</div>`;
@@ -688,14 +702,17 @@
             });
         }
 
-        // Create HTML for a dropdown item
+        // Create HTML for dropdown item
         function createItemHTML(type, value, index) {
+            const escapedType = type.replace(/'/g, "\\'");
+            const escapedValue = value.replace(/'/g, "\\'");
+            
             return `
                 <div class="item">
                     <div class="item-content">${value}</div>
                     <div class="item-actions">
-                        <button class="action-btn edit-btn" onclick="editItem('${type}', '${value}', ${index})">Edit</button>
-                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${value}', ${index})">Delete</button>
+                        <button class="action-btn edit-btn" onclick="editItem('${escapedType}', '${escapedValue}', ${index})">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${escapedType}', '${escapedValue}', ${index})">Delete</button>
                     </div>
                 </div>
             `;
@@ -703,6 +720,7 @@
 
         // Show add modal
         function showAddModal(type) {
+            console.log('➕ Add modal for:', type);
             currentEditItem = null;
             
             document.getElementById('modalTitle').textContent = `Add New ${type}`;
@@ -717,6 +735,7 @@
 
         // Edit item
         function editItem(type, value, index) {
+            console.log('✏️ Edit item:', type, value);
             currentEditItem = { type, value, index };
             
             document.getElementById('modalTitle').textContent = `Edit ${type}`;
@@ -730,17 +749,15 @@
             document.getElementById('itemValue').select();
         }
 
-        // Delete item - SIMPLIFIED WORKING VERSION
+        // Delete item
         async function deleteItem(type, value, index) {
             if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
                 return;
             }
             
             try {
-                console.log(`🗑️ Attempting to delete: ${type} = ${value}`);
+                console.log(`🗑️ Deleting: ${type} = ${value}`);
                 
-                // Since getDropdownItems is broken, we need to calculate the row ourselves
-                // Get all current data
                 const response = await fetch(`${API_URL}?action=getAllDropdowns`);
                 const data = await response.json();
                 
@@ -748,16 +765,13 @@
                     throw new Error('Failed to load current data');
                 }
                 
-                // Calculate the row index by scanning through all data
-                // We need to simulate what the sheet looks like
-                let currentRow = 1; // Start at row 1 (after header row 0)
+                // Calculate row index
+                let currentRow = 1;
                 let targetRow = -1;
-                
-                // Go through all types in alphabetical order (since backend sorts)
                 const allTypes = Object.keys(data.dropdowns).sort();
                 
                 for (const currentType of allTypes) {
-                    const items = data.dropdowns[currentType].sort(); // Backend sorts values too
+                    const items = data.dropdowns[currentType].sort();
                     
                     for (const item of items) {
                         if (currentType === type && item === value) {
@@ -771,30 +785,29 @@
                 }
                 
                 if (targetRow === -1) {
-                    throw new Error('Could not locate item in sheet');
+                    throw new Error('Could not locate item');
                 }
                 
-                console.log(`📍 Calculated row index: ${targetRow}`);
+                console.log(`📍 Row index: ${targetRow}`);
                 
-                // Now delete using the calculated row
                 const deleteResponse = await fetch(`${API_URL}?action=deleteDropdownItem&rowIndex=${targetRow}`);
                 const deleteResult = await deleteResponse.json();
                 
                 if (deleteResult.success) {
-                    console.log('✅ Item deleted successfully');
+                    console.log('✅ Item deleted');
                     await loadAllDropdowns();
                 } else {
-                    throw new Error(deleteResult.error || 'Delete operation failed');
+                    throw new Error(deleteResult.error || 'Delete failed');
                 }
                 
             } catch (error) {
-                console.error('❌ Error deleting item:', error);
+                console.error('❌ Delete error:', error);
                 alert('Error deleting item: ' + error.message);
             }
         }
 
         // Handle form submission
-        document.getElementById('addEditForm').addEventListener('submit', async function(e) {
+        async function handleFormSubmit(e) {
             e.preventDefault();
             
             const type = document.getElementById('itemType').value;
@@ -809,21 +822,18 @@
                 let response;
                 
                 if (currentEditItem) {
-                    // Update existing item - SIMPLIFIED WORKING VERSION
-                    console.log(`✏️ Attempting to update: ${currentEditItem.type} = ${currentEditItem.value} → ${type} = ${value}`);
+                    console.log(`✏️ Updating: ${currentEditItem.type} = ${currentEditItem.value} → ${type} = ${value}`);
                     
-                    // Calculate the row index by scanning through all data
                     const allResponse = await fetch(`${API_URL}?action=getAllDropdowns`);
                     const allData = await allResponse.json();
                     
                     if (!allData.success) {
-                        throw new Error('Failed to load current data for update');
+                        throw new Error('Failed to load data for update');
                     }
                     
-                    // Calculate the row index (same logic as delete)
-                    let currentRow = 1; // Start at row 1 (after header)
+                    // Calculate row index
+                    let currentRow = 1;
                     let targetRow = -1;
-                    
                     const allTypes = Object.keys(allData.dropdowns).sort();
                     
                     for (const currentType of allTypes) {
@@ -844,18 +854,14 @@
                         throw new Error('Could not locate item to update');
                     }
                     
-                    console.log(`📍 Calculated update row: ${targetRow}`);
-                    response = await fetch(`${API_URL}?action=updateDropdownItem&rowIndex=${targetRow}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
-                    
-                } else {
-                    // Add new item
+                    console.log(`📍 Update row: ${targetRow}`);
                     response = await fetch(`${API_URL}?action=addDropdownItem&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
                 }
                 
                 const result = await response.json();
                 
                 if (result.success) {
-                    console.log('✅ Item saved successfully');
+                    console.log('✅ Item saved');
                     closeModal();
                     await loadAllDropdowns();
                 } else {
@@ -863,4 +869,584 @@
                 }
                 
             } catch (error) {
-                console.error
+                console.error('❌ Save error:', error);
+                alert('Error saving item: ' + error.message);
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('addEditModal').style.display = 'none';
+            currentEditItem = null;
+        }
+
+        // Show error message
+        function showError(message) {
+            Object.values(typeContainers).forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `<div class="error">${message}</div>`;
+                }
+            });
+        }
+
+        // Generate resident config
+        function generateResidentConfig() {
+            try {
+                console.log('📋 Generating resident config...');
+                
+                const units = allDropdownData['Unit Number'] || [];
+                const residents = allDropdownData['Reported By'] || [];
+                
+                const sortedUnits = [...units].sort();
+                const sortedResidents = [...residents].sort();
+                
+                const timestamp = new Date().toISOString();
+                
+                const configContent = `// =====================================================================
+// RESIDENT CONFIG FILE - AUTO-GENERATED
+// =====================================================================
+// Generated: ${timestamp}
+// Source: Holden Maintenance Portal Dropdowns Tab
+// Usage: Static config for holden-resident-form.html
+//
+// IMPORTANT: This file is auto-generated. Do not edit manually.
+// To update: Use Generate Config function and replace this file.
+// =====================================================================
+
+const ResidentConfig = {
+    // Unit numbers (${sortedUnits.length} items)
+    unitNumbers: ${JSON.stringify(sortedUnits, null, 8)},
+    
+    // Reported by names (${sortedResidents.length} items)
+    reportedBy: ${JSON.stringify(sortedResidents, null, 8)},
+    
+    // Generation metadata
+    metadata: {
+        generated: "${timestamp}",
+        totalUnits: ${sortedUnits.length},
+        totalResidents: ${sortedResidents.length},
+        version: "auto-generated"
+    }
+};
+
+// Export for use in HTML
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ResidentConfig;
+}
+
+// Global access for HTML forms
+window.ResidentConfig = ResidentConfig;
+
+console.log('📋 Resident Config Loaded:', ResidentConfig.metadata);`;
+
+                const stats = `Units: ${sortedUnits.length} • Residents: ${sortedResidents.length} • Total: ${sortedUnits.length + sortedResidents.length}`;
+                
+                showConfigModal('Resident Config File', configContent, stats);
+                console.log(`✅ Generated resident config: ${sortedUnits.length} units, ${sortedResidents.length} residents`);
+                
+            } catch (error) {
+                console.error('❌ Resident config error:', error);
+                alert('Error generating resident config: ' + error.message);
+            }
+        }
+
+        // Generate maintenance config
+        function generateMaintenanceConfig() {
+            try {
+                console.log('🔧 Generating maintenance config...');
+                
+                const status = allDropdownData['Status'] || [];
+                const priority = allDropdownData['Priority'] || [];
+                const category = allDropdownData['Category'] || [];
+                const subCategory = allDropdownData['Sub-Category'] || [];
+                const assignedTo = allDropdownData['Assigned To'] || [];
+                
+                const sortedStatus = [...status].sort();
+                const sortedPriority = [...priority].sort();
+                const sortedCategory = [...category].sort();
+                const sortedSubCategory = [...subCategory].sort();
+                const sortedAssignedTo = [...assignedTo].sort();
+                
+                const timestamp = new Date().toISOString();
+                const totalItems = sortedStatus.length + sortedPriority.length + sortedCategory.length + sortedSubCategory.length + sortedAssignedTo.length;
+                
+                const configContent = `// =====================================================================
+// MAINTENANCE CONFIG FILE - AUTO-GENERATED
+// =====================================================================
+// Generated: ${timestamp}
+// Source: Holden Maintenance Portal Dropdowns Tab
+// Usage: Static config for holden-maintenance-portal.html
+//
+// IMPORTANT: This file is auto-generated. Do not edit manually.
+// To update: Use Generate Config function and replace this file.
+// =====================================================================
+
+const MaintenanceConfig = {
+    // Status options (${sortedStatus.length} items)
+    status: ${JSON.stringify(sortedStatus, null, 8)},
+    
+    // Priority levels (${sortedPriority.length} items)
+    priority: ${JSON.stringify(sortedPriority, null, 8)},
+    
+    // Categories (${sortedCategory.length} items)
+    category: ${JSON.stringify(sortedCategory, null, 8)},
+    
+    // Sub-categories (${sortedSubCategory.length} items)
+    subCategory: ${JSON.stringify(sortedSubCategory, null, 8)},
+    
+    // Assigned to staff (${sortedAssignedTo.length} items)
+    assignedTo: ${JSON.stringify(sortedAssignedTo, null, 8)},
+    
+    // Generation metadata
+    metadata: {
+        generated: "${timestamp}",
+        totalStatus: ${sortedStatus.length},
+        totalPriority: ${sortedPriority.length},
+        totalCategory: ${sortedCategory.length},
+        totalSubCategory: ${sortedSubCategory.length},
+        totalAssignedTo: ${sortedAssignedTo.length},
+        totalItems: ${totalItems},
+        version: "auto-generated"
+    }
+};
+
+// Export for use in HTML
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MaintenanceConfig;
+}
+
+// Global access for HTML forms
+window.MaintenanceConfig = MaintenanceConfig;
+
+console.log('🔧 Maintenance Config Loaded:', MaintenanceConfig.metadata);`;
+
+                const stats = `Status: ${sortedStatus.length} • Priority: ${sortedPriority.length} • Category: ${sortedCategory.length} • Sub-Category: ${sortedSubCategory.length} • Assigned To: ${sortedAssignedTo.length} • Total: ${totalItems}`;
+                
+                showConfigModal('Maintenance Config File', configContent, stats);
+                console.log(`✅ Generated maintenance config: ${totalItems} total items`);
+                
+            } catch (error) {
+                console.error('❌ Maintenance config error:', error);
+                alert('Error generating maintenance config: ' + error.message);
+            }
+        }
+
+        // Show config modal
+        function showConfigModal(title, content, stats) {
+            document.getElementById('configModalTitle').textContent = title;
+            document.getElementById('configModalSubtitle').textContent = 'Copy this content to replace your config file';
+            document.getElementById('configContent').value = content;
+            document.getElementById('configStats').textContent = stats || '';
+            document.getElementById('configModal').style.display = 'block';
+            
+            // Reset copy button
+            const copyBtn = document.getElementById('copyConfigBtn');
+            const copyMsg = document.getElementById('copySuccessMessage');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = '📋 Copy to Clipboard';
+            copyMsg.className = 'copy-message';
+            copyMsg.textContent = '';
+        }
+
+        // Close config modal
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        // Copy config to clipboard
+        async function copyConfigToClipboard() {
+            try {
+                const configContent = document.getElementById('configContent').value;
+                
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(configContent);
+                } else {
+                    const textArea = document.getElementById('configContent');
+                    textArea.select();
+                    document.execCommand('copy');
+                }
+                
+                // Success feedback
+                const copyBtn = document.getElementById('copyConfigBtn');
+                const copyMsg = document.getElementById('copySuccessMessage');
+                
+                copyBtn.className = 'copy-btn success';
+                copyBtn.textContent = '✅ Copied!';
+                copyMsg.textContent = 'Config copied to clipboard successfully!';
+                copyMsg.className = 'copy-message show';
+                
+                console.log('✅ Config copied to clipboard');
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy to Clipboard';
+                    copyMsg.className = 'copy-message';
+                    copyMsg.textContent = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Copy error:', error);
+                
+                // Error feedback
+                const copyBtn = document.getElementById('copyConfigBtn');
+                const copyMsg = document.getElementById('copySuccessMessage');
+                
+                copyBtn.className = 'copy-btn error';
+                copyBtn.textContent = '❌ Copy Failed';
+                copyMsg.textContent = 'Copy failed. Please select and copy manually.';
+                copyMsg.className = 'copy-message show';
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy to Clipboard';
+                    copyMsg.className = 'copy-message';
+                    copyMsg.textContent = '';
+                }, 3000);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎛️ Dropdown Management Hub Initialized');
+            console.log('📡 API URL:', API_URL);
+            
+            // Setup form submission
+            document.getElementById('addEditForm').addEventListener('submit', handleFormSubmit);
+            
+            // Load dropdown data
+            loadAllDropdowns();
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const addEditModal = document.getElementById('addEditModal');
+            const configModal = document.getElementById('configModal');
+            
+            if (event.target === addEditModal) {
+                closeModal();
+            }
+            
+            if (event.target === configModal) {
+                closeConfigModal();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (document.getElementById('addEditModal').style.display === 'block') {
+                    closeModal();
+                }
+                if (document.getElementById('configModal').style.display === 'block') {
+                    closeConfigModal();
+                }
+            }
+        });
+
+        console.log('🔧 Dropdown Management Hub - Ready!');
+        console.log('📄 Config generation functionality loaded');
+    </script>
+</body>
+</html> fetch(`${API_URL}?action=updateDropdownItem&rowIndex=${targetRow}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
+                    
+                } else {
+                    console.log(`➕ Adding: ${type} = ${value}`);
+                    response = await fetch(`${API_URL}?action=addDropdownItem&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    console.log('✅ Item saved');
+                    closeModal();
+                    await loadAllDropdowns();
+                } else {
+                    throw new Error(result.error || 'Failed to save item');
+                }
+                
+            } catch (error) {
+                console.error('❌ Save error:', error);
+                alert('Error saving item: ' + error.message);
+            }
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('addEditModal').style.display = 'none';
+            currentEditItem = null;
+        }
+
+        // Show error message
+        function showError(message) {
+            Object.values(typeContainers).forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = `<div class="error">${message}</div>`;
+                }
+            });
+        }
+
+        // Generate resident config
+        function generateResidentConfig() {
+            try {
+                console.log('📋 Generating resident config...');
+                
+                const units = allDropdownData['Unit Number'] || [];
+                const residents = allDropdownData['Reported By'] || [];
+                
+                const sortedUnits = [...units].sort();
+                const sortedResidents = [...residents].sort();
+                
+                const timestamp = new Date().toISOString();
+                
+                const configContent = `// =====================================================================
+// RESIDENT CONFIG FILE - AUTO-GENERATED
+// =====================================================================
+// Generated: ${timestamp}
+// Source: Holden Maintenance Portal Dropdowns Tab
+// Usage: Static config for holden-resident-form.html
+//
+// IMPORTANT: This file is auto-generated. Do not edit manually.
+// To update: Use Generate Config function and replace this file.
+// =====================================================================
+
+const ResidentConfig = {
+    // Unit numbers (${sortedUnits.length} items)
+    unitNumbers: ${JSON.stringify(sortedUnits, null, 8)},
+    
+    // Reported by names (${sortedResidents.length} items)
+    reportedBy: ${JSON.stringify(sortedResidents, null, 8)},
+    
+    // Generation metadata
+    metadata: {
+        generated: "${timestamp}",
+        totalUnits: ${sortedUnits.length},
+        totalResidents: ${sortedResidents.length},
+        version: "auto-generated"
+    }
+};
+
+// Export for use in HTML
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = ResidentConfig;
+}
+
+// Global access for HTML forms
+window.ResidentConfig = ResidentConfig;
+
+console.log('📋 Resident Config Loaded:', ResidentConfig.metadata);`;
+
+                const stats = `Units: ${sortedUnits.length} • Residents: ${sortedResidents.length} • Total: ${sortedUnits.length + sortedResidents.length}`;
+                
+                showConfigModal('Resident Config File', configContent, stats);
+                console.log(`✅ Generated resident config: ${sortedUnits.length} units, ${sortedResidents.length} residents`);
+                
+            } catch (error) {
+                console.error('❌ Resident config error:', error);
+                alert('Error generating resident config: ' + error.message);
+            }
+        }
+
+        // Generate maintenance config
+        function generateMaintenanceConfig() {
+            try {
+                console.log('🔧 Generating maintenance config...');
+                
+                const status = allDropdownData['Status'] || [];
+                const priority = allDropdownData['Priority'] || [];
+                const category = allDropdownData['Category'] || [];
+                const subCategory = allDropdownData['Sub-Category'] || [];
+                const assignedTo = allDropdownData['Assigned To'] || [];
+                
+                const sortedStatus = [...status].sort();
+                const sortedPriority = [...priority].sort();
+                const sortedCategory = [...category].sort();
+                const sortedSubCategory = [...subCategory].sort();
+                const sortedAssignedTo = [...assignedTo].sort();
+                
+                const timestamp = new Date().toISOString();
+                const totalItems = sortedStatus.length + sortedPriority.length + sortedCategory.length + sortedSubCategory.length + sortedAssignedTo.length;
+                
+                const configContent = `// =====================================================================
+// MAINTENANCE CONFIG FILE - AUTO-GENERATED
+// =====================================================================
+// Generated: ${timestamp}
+// Source: Holden Maintenance Portal Dropdowns Tab
+// Usage: Static config for holden-maintenance-portal.html
+//
+// IMPORTANT: This file is auto-generated. Do not edit manually.
+// To update: Use Generate Config function and replace this file.
+// =====================================================================
+
+const MaintenanceConfig = {
+    // Status options (${sortedStatus.length} items)
+    status: ${JSON.stringify(sortedStatus, null, 8)},
+    
+    // Priority levels (${sortedPriority.length} items)
+    priority: ${JSON.stringify(sortedPriority, null, 8)},
+    
+    // Categories (${sortedCategory.length} items)
+    category: ${JSON.stringify(sortedCategory, null, 8)},
+    
+    // Sub-categories (${sortedSubCategory.length} items)
+    subCategory: ${JSON.stringify(sortedSubCategory, null, 8)},
+    
+    // Assigned to staff (${sortedAssignedTo.length} items)
+    assignedTo: ${JSON.stringify(sortedAssignedTo, null, 8)},
+    
+    // Generation metadata
+    metadata: {
+        generated: "${timestamp}",
+        totalStatus: ${sortedStatus.length},
+        totalPriority: ${sortedPriority.length},
+        totalCategory: ${sortedCategory.length},
+        totalSubCategory: ${sortedSubCategory.length},
+        totalAssignedTo: ${sortedAssignedTo.length},
+        totalItems: ${totalItems},
+        version: "auto-generated"
+    }
+};
+
+// Export for use in HTML
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MaintenanceConfig;
+}
+
+// Global access for HTML forms
+window.MaintenanceConfig = MaintenanceConfig;
+
+console.log('🔧 Maintenance Config Loaded:', MaintenanceConfig.metadata);`;
+
+                const stats = `Status: ${sortedStatus.length} • Priority: ${sortedPriority.length} • Category: ${sortedCategory.length} • Sub-Category: ${sortedSubCategory.length} • Assigned To: ${sortedAssignedTo.length} • Total: ${totalItems}`;
+                
+                showConfigModal('Maintenance Config File', configContent, stats);
+                console.log(`✅ Generated maintenance config: ${totalItems} total items`);
+                
+            } catch (error) {
+                console.error('❌ Maintenance config error:', error);
+                alert('Error generating maintenance config: ' + error.message);
+            }
+        }
+
+        // Show config modal
+        function showConfigModal(title, content, stats) {
+            document.getElementById('configModalTitle').textContent = title;
+            document.getElementById('configModalSubtitle').textContent = 'Copy this content to replace your config file';
+            document.getElementById('configContent').value = content;
+            document.getElementById('configStats').textContent = stats || '';
+            document.getElementById('configModal').style.display = 'block';
+            
+            // Reset copy button
+            const copyBtn = document.getElementById('copyConfigBtn');
+            const copyMsg = document.getElementById('copySuccessMessage');
+            copyBtn.className = 'copy-btn';
+            copyBtn.textContent = '📋 Copy to Clipboard';
+            copyMsg.className = 'copy-message';
+            copyMsg.textContent = '';
+        }
+
+        // Close config modal
+        function closeConfigModal() {
+            document.getElementById('configModal').style.display = 'none';
+        }
+
+        // Copy config to clipboard
+        async function copyConfigToClipboard() {
+            try {
+                const configContent = document.getElementById('configContent').value;
+                
+                if (navigator.clipboard) {
+                    await navigator.clipboard.writeText(configContent);
+                } else {
+                    const textArea = document.getElementById('configContent');
+                    textArea.select();
+                    document.execCommand('copy');
+                }
+                
+                // Success feedback
+                const copyBtn = document.getElementById('copyConfigBtn');
+                const copyMsg = document.getElementById('copySuccessMessage');
+                
+                copyBtn.className = 'copy-btn success';
+                copyBtn.textContent = '✅ Copied!';
+                copyMsg.textContent = 'Config copied to clipboard successfully!';
+                copyMsg.className = 'copy-message show';
+                
+                console.log('✅ Config copied to clipboard');
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy to Clipboard';
+                    copyMsg.className = 'copy-message';
+                    copyMsg.textContent = '';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('❌ Copy error:', error);
+                
+                // Error feedback
+                const copyBtn = document.getElementById('copyConfigBtn');
+                const copyMsg = document.getElementById('copySuccessMessage');
+                
+                copyBtn.className = 'copy-btn error';
+                copyBtn.textContent = '❌ Copy Failed';
+                copyMsg.textContent = 'Copy failed. Please select and copy manually.';
+                copyMsg.className = 'copy-message show';
+                
+                // Reset after 3 seconds
+                setTimeout(() => {
+                    copyBtn.className = 'copy-btn';
+                    copyBtn.textContent = '📋 Copy to Clipboard';
+                    copyMsg.className = 'copy-message';
+                    copyMsg.textContent = '';
+                }, 3000);
+            }
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎛️ Dropdown Management Hub Initialized');
+            console.log('📡 API URL:', API_URL);
+            
+            // Setup form submission
+            document.getElementById('addEditForm').addEventListener('submit', handleFormSubmit);
+            
+            // Load dropdown data
+            loadAllDropdowns();
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const addEditModal = document.getElementById('addEditModal');
+            const configModal = document.getElementById('configModal');
+            
+            if (event.target === addEditModal) {
+                closeModal();
+            }
+            
+            if (event.target === configModal) {
+                closeConfigModal();
+            }
+        });
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                if (document.getElementById('addEditModal').style.display === 'block') {
+                    closeModal();
+                }
+                if (document.getElementById('configModal').style.display === 'block') {
+                    closeConfigModal();
+                }
+            }
+        });
+
+        console.log('🔧 Dropdown Management Hub - Ready!');
+        console.log('📄 Config generation functionality loaded');
+    </script>
+</body>
+</html>
