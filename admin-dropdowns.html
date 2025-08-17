@@ -728,9 +728,9 @@
                 
                 itemEl.addEventListener('mouseenter', () => {
                     actions.style.opacity = '1';
-                    itemEl.style.background = '#e2e8f0';
-                    itemEl.style.borderLeftColor = '#3b82f6';
-                    itemEl.style.transform = 'translateX(5px)';
+                    itemEl.style.background = '#f3f4f6';
+                    itemEl.style.borderLeftColor = '#d1d5db';
+                    itemEl.style.transform = 'translateX(2px)';
                 });
                 
                 itemEl.addEventListener('mouseleave', () => {
@@ -871,7 +871,7 @@
             }
         }
 
-        // Calculate row index for an item (mirrors backend sorting)
+        // Calculate row index for an item (mirrors backend sorting) - REVERTED TO ORIGINAL
         function calculateRowIndex(targetType, targetValue) {
             console.log(`🧮 Calculating row index for: ${targetType} = ${targetValue}`);
             
