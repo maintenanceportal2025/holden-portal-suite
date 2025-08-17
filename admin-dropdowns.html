@@ -490,30 +490,9 @@
             'Assigned To': 'assignedToContainer'
         };
 
-        // Test function to debug backend responses
-        async function debugBackendCalls() {
-            console.log('🔍 Testing backend endpoints...');
-            
-            try {
-                console.log('Testing getAllDropdowns...');
-                const response1 = await fetch(`${API_URL}?action=getAllDropdowns`);
-                const data1 = await response1.json();
-                console.log('getAllDropdowns result:', data1);
-                
-                console.log('Testing getDropdownItems...');
-                const response2 = await fetch(`${API_URL}?action=getDropdownItems`);
-                const data2 = await response2.json();
-                console.log('getDropdownItems result:', data2);
-                
-            } catch (error) {
-                console.error('Debug error:', error);
-            }
-        }
-
-        // Call debug on page load (temporary)
+        // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🎛️ Dropdown Management Hub Initialized');
-            debugBackendCalls(); // Temporary debug
             loadAllDropdowns();
         });
 
@@ -596,7 +575,7 @@
             document.getElementById('itemValue').select();
         }
 
-        // Delete item - FIXED VERSION
+        // Delete item - SIMPLIFIED WORKING VERSION
         async function deleteItem(type, value, index) {
             if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
                 return;
@@ -605,7 +584,8 @@
             try {
                 console.log(`🗑️ Attempting to delete: ${type} = ${value}`);
                 
-                // Get all data to find the exact row
+                // Since getDropdownItems is broken, we need to calculate the row ourselves
+                // Get all current data
                 const response = await fetch(`${API_URL}?action=getAllDropdowns`);
                 const data = await response.json();
                 
@@ -613,39 +593,43 @@
                     throw new Error('Failed to load current data');
                 }
                 
-                // Find all items of this type to determine the correct row index
-                const allItems = data.dropdowns[type] || [];
-                const itemIndex = allItems.findIndex(item => item === value);
+                // Calculate the row index by scanning through all data
+                // We need to simulate what the sheet looks like
+                let currentRow = 1; // Start at row 1 (after header row 0)
+                let targetRow = -1;
                 
-                if (itemIndex === -1) {
-                    throw new Error('Item not found in current data');
+                // Go through all types in alphabetical order (since backend sorts)
+                const allTypes = Object.keys(data.dropdowns).sort();
+                
+                for (const currentType of allTypes) {
+                    const items = data.dropdowns[currentType].sort(); // Backend sorts values too
+                    
+                    for (const item of items) {
+                        if (currentType === type && item === value) {
+                            targetRow = currentRow;
+                            break;
+                        }
+                        currentRow++;
+                    }
+                    
+                    if (targetRow !== -1) break;
                 }
                 
-                // Get raw sheet data to find actual row
-                const rawResponse = await fetch(`${API_URL}?action=getDropdownItems`);
-                const rawData = await rawResponse.json();
+                if (targetRow === -1) {
+                    throw new Error('Could not locate item in sheet');
+                }
                 
-                if (rawData.success && rawData.items) {
-                    // Find the exact item in raw data
-                    const targetItem = rawData.items.find(item => 
-                        item.type === type && item.value === value
-                    );
-                    
-                    if (targetItem && targetItem.rowIndex !== undefined) {
-                        const deleteResponse = await fetch(`${API_URL}?action=deleteDropdownItem&rowIndex=${targetItem.rowIndex}`);
-                        const deleteResult = await deleteResponse.json();
-                        
-                        if (deleteResult.success) {
-                            console.log('✅ Item deleted successfully');
-                            await loadAllDropdowns();
-                        } else {
-                            throw new Error(deleteResult.error || 'Delete operation failed');
-                        }
-                    } else {
-                        throw new Error('Could not find item row index');
-                    }
+                console.log(`📍 Calculated row index: ${targetRow}`);
+                
+                // Now delete using the calculated row
+                const deleteResponse = await fetch(`${API_URL}?action=deleteDropdownItem&rowIndex=${targetRow}`);
+                const deleteResult = await deleteResponse.json();
+                
+                if (deleteResult.success) {
+                    console.log('✅ Item deleted successfully');
+                    await loadAllDropdowns();
                 } else {
-                    throw new Error('Failed to get raw sheet data');
+                    throw new Error(deleteResult.error || 'Delete operation failed');
                 }
                 
             } catch (error) {
@@ -670,26 +654,44 @@
                 let response;
                 
                 if (currentEditItem) {
-                    // Update existing item - FIXED VERSION
+                    // Update existing item - SIMPLIFIED WORKING VERSION
                     console.log(`✏️ Attempting to update: ${currentEditItem.type} = ${currentEditItem.value} → ${type} = ${value}`);
                     
-                    // Get raw sheet data to find actual row
-                    const rawResponse = await fetch(`${API_URL}?action=getDropdownItems`);
-                    const rawData = await rawResponse.json();
+                    // Calculate the row index by scanning through all data
+                    const allResponse = await fetch(`${API_URL}?action=getAllDropdowns`);
+                    const allData = await allResponse.json();
                     
-                    if (rawData.success && rawData.items) {
-                        const targetItem = rawData.items.find(item => 
-                            item.type === currentEditItem.type && item.value === currentEditItem.value
-                        );
-                        
-                        if (targetItem && targetItem.rowIndex !== undefined) {
-                            response = await fetch(`${API_URL}?action=updateDropdownItem&rowIndex=${targetItem.rowIndex}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
-                        } else {
-                            throw new Error('Could not find item to update');
-                        }
-                    } else {
-                        throw new Error('Failed to get raw sheet data for update');
+                    if (!allData.success) {
+                        throw new Error('Failed to load current data for update');
                     }
+                    
+                    // Calculate the row index (same logic as delete)
+                    let currentRow = 1; // Start at row 1 (after header)
+                    let targetRow = -1;
+                    
+                    const allTypes = Object.keys(allData.dropdowns).sort();
+                    
+                    for (const currentType of allTypes) {
+                        const items = allData.dropdowns[currentType].sort();
+                        
+                        for (const item of items) {
+                            if (currentType === currentEditItem.type && item === currentEditItem.value) {
+                                targetRow = currentRow;
+                                break;
+                            }
+                            currentRow++;
+                        }
+                        
+                        if (targetRow !== -1) break;
+                    }
+                    
+                    if (targetRow === -1) {
+                        throw new Error('Could not locate item to update');
+                    }
+                    
+                    console.log(`📍 Calculated update row: ${targetRow}`);
+                    response = await fetch(`${API_URL}?action=updateDropdownItem&rowIndex=${targetRow}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
+                    
                 } else {
                     // Add new item
                     response = await fetch(`${API_URL}?action=addDropdownItem&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
