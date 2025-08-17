@@ -360,6 +360,7 @@
             gap: 12px;
             transform: translateX(400px);
             transition: transform 0.3s ease;
+            min-width: 300px;
         }
 
         .toast.show {
@@ -376,6 +377,10 @@
 
         .toast.warning {
             border-left: 4px solid #f59e0b;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
         }
 
         @media (max-width: 768px) {
@@ -590,32 +595,6 @@
             loadAllDropdowns();
         });
 
-        // Load all dropdown data using JSONP
-        async function loadAllDropdowns() {
-            try {
-                console.log('📋 Loading all dropdown data...');
-                showToast('info', 'Loading...', 'Fetching dropdown data from service...');
-                
-                const data = await makeJSONPRequest('getAllDropdowns');
-                
-                if (data.success) {
-                    allDropdownData = data.dropdowns;
-                    console.log('✅ Dropdown data loaded:', allDropdownData);
-                    
-                    displayAllDropdowns();
-                    updateStats();
-                    showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
-                } else {
-                    throw new Error(data.error || 'Failed to load dropdown data');
-                }
-                
-            } catch (error) {
-                console.error('❌ Error loading dropdown data:', error);
-                showToast('error', 'Load Failed', `Failed to load dropdown data: ${error.message}`);
-                displayErrorState();
-            }
-        }
-
         // JSONP request helper
         function makeJSONPRequest(action, params = {}) {
             return new Promise((resolve, reject) => {
@@ -636,6 +615,8 @@
                     .join('&');
                 
                 const url = `${API_URL}?action=${action}&callback=${callbackName}${paramStr ? '&' + paramStr : ''}`;
+                
+                console.log('📡 Making JSONP request:', url);
                 
                 // Create script tag
                 const script = document.createElement('script');
@@ -661,6 +642,44 @@
                 }, 15000);
                 
                 document.head.appendChild(script);
+            });
+        }
+
+        // Load all dropdown data using JSONP
+        async function loadAllDropdowns() {
+            try {
+                console.log('📋 Loading all dropdown data...');
+                showToast('info', 'Loading...', 'Fetching dropdown data from service...');
+                
+                const data = await makeJSONPRequest('getAllDropdowns');
+                
+                console.log('📥 Raw API response:', data);
+                
+                if (data.success) {
+                    allDropdownData = data.dropdowns;
+                    console.log('✅ Dropdown data loaded:', allDropdownData);
+                    
+                    displayAllDropdowns();
+                    updateStats();
+                    showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
+                } else {
+                    throw new Error(data.error || 'Failed to load dropdown data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdown data:', error);
+                showToast('error', 'Load Failed', `Failed to load dropdown data: ${error.message}`);
+                displayErrorState();
+            }
+        }
+
+        // Display error state
+        function displayErrorState() {
+            Object.values(typeContainers).forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '<div class="loading" style="color: #ef4444;">❌ Failed to load data</div>';
+                }
             });
         }
 
@@ -878,4 +897,130 @@
                 
                 let configContent = '';
                 
-                if (configType ===
+                if (configType === 'resident') {
+                    configContent = generateResidentConfig();
+                } else if (configType === 'maintenance') {
+                    configContent = generateMaintenanceConfig();
+                } else {
+                    throw new Error('Invalid config type');
+                }
+                
+                // Update preview
+                document.getElementById('configPreview').textContent = configContent;
+                
+                // Copy to clipboard
+                await navigator.clipboard.writeText(configContent);
+                
+                showToast('success', 'Config Generated', `${configType} config copied to clipboard! Paste into your project.`);
+                
+            } catch (error) {
+                console.error('❌ Error generating config:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    // Fallback for clipboard access issues
+                    document.getElementById('configPreview').textContent = configContent || '// Error generating config';
+                    showToast('warning', 'Manual Copy Required', 'Config generated but clipboard access denied. Please copy manually from preview below.');
+                } else {
+                    showToast('error', 'Config Failed', `Failed to generate ${configType} config: ${error.message}`);
+                }
+            }
+        }
+
+        // Generate resident configuration file
+        function generateResidentConfig() {
+            const unitNumbers = allDropdownData['Unit Number'] || [];
+            const reportedBy = allDropdownData['Reported By'] || [];
+            
+            return `// Generated Resident Configuration - ${new Date().toISOString()}
+// Copy this content to resident-config.js in your project
+
+const RESIDENT_CONFIG = {
+    unitNumbers: ${JSON.stringify(unitNumbers, null, 4)},
+    reportedByNames: ${JSON.stringify(reportedBy, null, 4)}
+};
+
+// Export for use in resident submission forms
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RESIDENT_CONFIG;
+}`;
+        }
+
+        // Generate maintenance configuration file
+        function generateMaintenanceConfig() {
+            const statuses = allDropdownData['Status'] || [];
+            const priorities = allDropdownData['Priority'] || [];
+            const categories = allDropdownData['Category'] || [];
+            const subCategories = allDropdownData['Sub-Category'] || [];
+            const assignedTo = allDropdownData['Assigned To'] || [];
+            
+            return `// Generated Maintenance Configuration - ${new Date().toISOString()}
+// Copy this content to maintenance-config.js in your project
+
+const MAINTENANCE_CONFIG = {
+    statuses: ${JSON.stringify(statuses, null, 4)},
+    priorities: ${JSON.stringify(priorities, null, 4)},
+    categories: ${JSON.stringify(categories, null, 4)},
+    subCategories: ${JSON.stringify(subCategories, null, 4)},
+    assignedTo: ${JSON.stringify(assignedTo, null, 4)}
+};
+
+// Export for use in maintenance portals
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MAINTENANCE_CONFIG;
+}`;
+        }
+
+        // Toast notification system
+        function showToast(type, title, message, duration = 5000) {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <div style="font-weight: 600;">${icons[type]} ${title}</div>
+                <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 4px;">${message}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto-remove after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        console.log('🎛️ Enhanced Dropdown Manager - Ready!');
+        console.log('📡 API URL:', API_URL);
+        console.log('🔄 Using JSONP for API calls');
+    </script>
+</body>
+</html>
