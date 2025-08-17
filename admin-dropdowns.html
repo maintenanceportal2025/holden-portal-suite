@@ -212,7 +212,8 @@
             border-color: #d1d5db;
         }
 
-        .item-value {
+        .item-content {
+            flex: 1;
             font-weight: 500;
             color: #374151;
         }
@@ -711,14 +712,34 @@
             }
 
             container.innerHTML = items.map(item => `
-                <div class="item">
-                    <span class="item-value">${item}</span>
-                    <div class="item-actions">
-                        <button class="item-btn edit-btn" onclick="editItem('${type}', '${item}')">Edit</button>
-                        <button class="item-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
+                <div class="item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #e2e8f0; transition: all 0.3s ease; margin-bottom: 8px;">
+                    <div class="item-content" style="flex: 1; font-weight: 500; color: #374151;">${item}</div>
+                    <div class="item-actions" style="display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                        <button class="action-btn edit-btn" onclick="editItem('${type}', '${item}')" style="padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 500; background: #fbbf24; color: white;">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')" style="padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 500; background: #ef4444; color: white;">Delete</button>
                     </div>
                 </div>
             `).join('');
+
+            // Add JavaScript hover events since CSS isn't working
+            const itemElements = container.querySelectorAll('.item');
+            itemElements.forEach(itemEl => {
+                const actions = itemEl.querySelector('.item-actions');
+                
+                itemEl.addEventListener('mouseenter', () => {
+                    actions.style.opacity = '1';
+                    itemEl.style.background = '#e2e8f0';
+                    itemEl.style.borderLeftColor = '#3b82f6';
+                    itemEl.style.transform = 'translateX(5px)';
+                });
+                
+                itemEl.addEventListener('mouseleave', () => {
+                    actions.style.opacity = '0';
+                    itemEl.style.background = '#f8fafc';
+                    itemEl.style.borderLeftColor = '#e2e8f0';
+                    itemEl.style.transform = 'translateX(0)';
+                });
+            });
         }
 
 
