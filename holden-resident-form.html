@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lake Illawong - Submit Maintenance Request</title>
+    <!-- Add to head section of holden-resident-form.html -->
+<script src="resident-config.js"></script>
     <style>
         * {
             box-sizing: border-box;
@@ -499,24 +501,31 @@
         });
 
         async function loadDropdownOptions() {
-            try {
-                console.log('Loading dropdown options...');
-                
-                const response = await callScript({ action: 'getDropdownOptions' });
-                
-               if (response.success) {
-    // Handle both formats - with or without .data wrapper
-    const data = response.data || response;
-    populateDropdown('unitNumber', data.unitNumbers);
-    populateDropdown('reportedBy', data.reportedBy);
-                    console.log('Dropdowns loaded successfully');
-                } else {
-                    console.log('Failed to load dropdowns, using defaults');
-                }
-            } catch (error) {
-                console.error('Error loading dropdowns:', error);
-            }
+    try {
+        console.log('Loading dropdown options...');
+        
+        // Try config file first, fallback to API
+        let data = null;
+        if (window.RESIDENT_CONFIG && window.RESIDENT_CONFIG.data) {
+            data = window.RESIDENT_CONFIG.data;
+            console.log('Using config file');
+        } else {
+            const response = await callScript({ action: 'getDropdownOptions' });
+            data = response.data || response;
+            console.log('Using API fallback');
         }
+        
+        if (data && data.unitNumbers && data.reportedBy) {
+            populateDropdown('unitNumber', data.unitNumbers);
+            populateDropdown('reportedBy', data.reportedBy);
+            console.log('Dropdowns loaded successfully');
+        } else {
+            console.log('Failed to load dropdowns, using defaults');
+        }
+    } catch (error) {
+        console.error('Error loading dropdowns:', error);
+    }
+}
 
         function populateDropdown(elementId, options) {
             const select = document.getElementById(elementId);
