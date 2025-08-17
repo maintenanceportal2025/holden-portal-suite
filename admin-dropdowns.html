@@ -433,10 +433,10 @@
                         ⚙️ Configuration Files Generator
                     </div>
                     <div class="config-buttons">
-                        <button class="config-btn" onclick="generateAndCopyConfig('resident')">
+                        <button class="config-btn" onclick="generateConfig('resident')">
                             📄 Generate Resident Config
                         </button>
-                        <button class="config-btn" onclick="generateAndCopyConfig('maintenance')">
+                        <button class="config-btn" onclick="generateConfig('maintenance')">
                             🔧 Generate Maintenance Config
                         </button>
                     </div>
@@ -444,6 +444,19 @@
                 <div id="configPreview" class="config-preview">
                     // Generated configuration will appear here
                     // Click the buttons above to generate config files
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <div style="display: flex; gap: 12px;">
+                        <button id="copyBtn" class="config-btn" onclick="copyToClipboard()" style="background: #059669; display: none;">
+                            📋 Copy to Clipboard
+                        </button>
+                        <button class="config-btn" onclick="clearPreview()" style="background: #6b7280;">
+                            🗑️ Clear Preview
+                        </button>
+                    </div>
+                    <div id="configInfo" style="font-size: 0.85rem; color: #6b7280; display: none;">
+                        <!-- Config info will appear here -->
+                    </div>
                 </div>
             </div>
 
@@ -577,6 +590,8 @@
         // Global state
         let allDropdownData = {};
         let currentEditItem = null;
+        let currentConfigContent = '';
+        let currentConfigType = '';
 
         // Type to container mapping
         const typeContainers = {
@@ -890,8 +905,8 @@
             return index + 2; // +2 for 1-based indexing and header row
         }
 
-        // Generate and copy configuration to clipboard
-        async function generateAndCopyConfig(configType) {
+        // Generate configuration (separate from copying)
+        function generateConfig(configType) {
             try {
                 console.log(`🔄 Generating ${configType} config...`);
                 
@@ -905,25 +920,80 @@
                     throw new Error('Invalid config type');
                 }
                 
+                // Store current config
+                currentConfigContent = configContent;
+                currentConfigType = configType;
+                
                 // Update preview
                 document.getElementById('configPreview').textContent = configContent;
                 
-                // Copy to clipboard
-                await navigator.clipboard.writeText(configContent);
+                // Show copy button and info
+                document.getElementById('copyBtn').style.display = 'block';
+                const infoElement = document.getElementById('configInfo');
+                infoElement.style.display = 'block';
+                infoElement.textContent = `${configType.charAt(0).toUpperCase() + configType.slice(1)} config generated (${configContent.split('\n').length} lines)`;
                 
-                showToast('success', 'Config Generated', `${configType} config copied to clipboard! Paste into your project.`);
+                showToast('success', 'Config Generated', `${configType} configuration ready! Click "Copy to Clipboard" below.`);
                 
             } catch (error) {
                 console.error('❌ Error generating config:', error);
+                showToast('error', 'Config Failed', `Failed to generate ${configType} config: ${error.message}`);
+            }
+        }
+
+        // Copy current config to clipboard
+        async function copyToClipboard() {
+            try {
+                if (!currentConfigContent) {
+                    showToast('warning', 'No Config', 'Please generate a config first');
+                    return;
+                }
+                
+                await navigator.clipboard.writeText(currentConfigContent);
+                
+                showToast('success', 'Copied!', `${currentConfigType} config copied to clipboard successfully! 📋✨`);
+                
+                // Briefly change button text
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '#059669';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ Error copying to clipboard:', error);
                 
                 if (error.name === 'NotAllowedError') {
-                    // Fallback for clipboard access issues
-                    document.getElementById('configPreview').textContent = configContent || '// Error generating config';
-                    showToast('warning', 'Manual Copy Required', 'Config generated but clipboard access denied. Please copy manually from preview below.');
+                    showToast('warning', 'Manual Copy Required', 'Clipboard access denied. Please select and copy the code manually from the preview above.');
                 } else {
-                    showToast('error', 'Config Failed', `Failed to generate ${configType} config: ${error.message}`);
+                    showToast('error', 'Copy Failed', `Failed to copy: ${error.message}`);
                 }
             }
+        }
+
+        // Clear preview window
+        function clearPreview() {
+            document.getElementById('configPreview').textContent = `// Generated configuration will appear here
+// Click the buttons above to generate config files`;
+            
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('configInfo').style.display = 'none';
+            
+            currentConfigContent = '';
+            currentConfigType = '';
+            
+            showToast('info', 'Preview Cleared', 'Preview window has been reset');
+        }
+
+        // Generate and copy configuration to clipboard (legacy function - keeping for backward compatibility)
+        async function generateAndCopyConfig(configType) {
+            generateConfig(configType);
+            // Small delay to ensure generation completes
+            setTimeout(() => copyToClipboard(), 100);
         }
 
         // Generate resident configuration file
