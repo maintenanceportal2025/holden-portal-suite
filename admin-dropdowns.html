@@ -590,13 +590,13 @@
             loadAllDropdowns();
         });
 
-        // Load all dropdown data
+        // Load all dropdown data using JSONP
         async function loadAllDropdowns() {
             try {
                 console.log('📋 Loading all dropdown data...');
+                showToast('info', 'Loading...', 'Fetching dropdown data from service...');
                 
-                const response = await fetch(`${API_URL}?action=getAllDropdowns`);
-                const data = await response.json();
+                const data = await makeJSONPRequest('getAllDropdowns');
                 
                 if (data.success) {
                     allDropdownData = data.dropdowns;
@@ -604,14 +604,64 @@
                     
                     displayAllDropdowns();
                     updateStats();
+                    showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
                 } else {
                     throw new Error(data.error || 'Failed to load dropdown data');
                 }
                 
             } catch (error) {
                 console.error('❌ Error loading dropdown data:', error);
-                showToast('error', 'Load Failed', 'Failed to load dropdown data. Please check the service connection.');
+                showToast('error', 'Load Failed', `Failed to load dropdown data: ${error.message}`);
+                displayErrorState();
             }
+        }
+
+        // JSONP request helper
+        function makeJSONPRequest(action, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                
+                // Create callback function
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                    resolve(data);
+                };
+                
+                // Build URL with parameters
+                const paramStr = Object.keys(params)
+                    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+                    .join('&');
+                
+                const url = `${API_URL}?action=${action}&callback=${callbackName}${paramStr ? '&' + paramStr : ''}`;
+                
+                // Create script tag
+                const script = document.createElement('script');
+                script.src = url;
+                
+                script.onerror = function() {
+                    delete window[callbackName];
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                    reject(new Error('Network request failed'));
+                };
+                
+                // Timeout after 15 seconds
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        if (script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+                
+                document.head.appendChild(script);
+            });
         }
 
         // Display all dropdowns
@@ -722,13 +772,12 @@
             }
         });
 
-        // Add item
+        // Add item using JSONP
         async function addItem(type, value) {
             try {
                 showToast('warning', 'Processing...', `Adding "${value}" to ${type}...`);
                 
-                const response = await fetch(`${API_URL}?action=addDropdownItem&type=${encodeURIComponent(type)}&value=${encodeURIComponent(value)}`);
-                const data = await response.json();
+                const data = await makeJSONPRequest('addDropdownItem', { type, value });
                 
                 if (data.success) {
                     await loadAllDropdowns();
@@ -742,7 +791,7 @@
             }
         }
 
-        // Update item
+        // Update item using JSONP
         async function updateItem(type, oldValue, newValue) {
             try {
                 showToast('warning', 'Processing...', `Updating "${oldValue}" to "${newValue}"...`);
@@ -750,8 +799,11 @@
                 // Calculate row index for the item
                 const rowIndex = calculateRowIndex(type, oldValue);
                 
-                const response = await fetch(`${API_URL}?action=updateDropdownItem&rowIndex=${rowIndex}&type=${encodeURIComponent(type)}&value=${encodeURIComponent(newValue)}`);
-                const data = await response.json();
+                const data = await makeJSONPRequest('updateDropdownItem', { 
+                    rowIndex, 
+                    type, 
+                    value: newValue 
+                });
                 
                 if (data.success) {
                     await loadAllDropdowns();
@@ -765,7 +817,7 @@
             }
         }
 
-        // Delete item
+        // Delete item using JSONP
         async function deleteItem(type, value) {
             if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
                 return;
@@ -777,8 +829,7 @@
                 // Calculate row index for the item
                 const rowIndex = calculateRowIndex(type, value);
                 
-                const response = await fetch(`${API_URL}?action=deleteDropdownItem&rowIndex=${rowIndex}`);
-                const data = await response.json();
+                const data = await makeJSONPRequest('deleteDropdownItem', { rowIndex });
                 
                 if (data.success) {
                     await loadAllDropdowns();
