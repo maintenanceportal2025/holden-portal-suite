@@ -1096,6 +1096,70 @@ if (typeof module !== 'undefined' && module.exports) {
             }
         });
 
+        // FORENSIC ANALYSIS TOOL - GLOBAL SCOPE
+        window.forensicAnalysis = async function() {
+            console.log('🔬 === FORENSIC ANALYSIS STARTING ===');
+            
+            try {
+                // 1. Get current frontend data
+                console.log('📊 1. FRONTEND DATA ANALYSIS:');
+                console.log('   Raw allDropdownData:', allDropdownData);
+                
+                // 2. Get backend data directly
+                console.log('📊 2. BACKEND DATA ANALYSIS:');
+                const backendData = await makeJSONPRequest('getAllDropdowns');
+                console.log('   Backend response:', backendData);
+                
+                // 3. Test the backend's getAllDropdownItemsForAdmin function
+                console.log('📊 3. BACKEND ADMIN DATA:');
+                try {
+                    const adminData = await makeJSONPRequest('getAllDropdownItemsForAdmin');
+                    console.log('   Admin response:', adminData);
+                } catch (adminError) {
+                    console.log('   Admin function error:', adminError.message);
+                }
+                
+                // 4. Create our calculated sheet structure
+                console.log('📊 4. OUR CALCULATED SHEET STRUCTURE:');
+                const allItems = [];
+                const sortedTypes = Object.keys(allDropdownData).sort();
+                
+                sortedTypes.forEach(type => {
+                    const sortedValues = [...allDropdownData[type]].sort();
+                    sortedValues.forEach(value => {
+                        allItems.push({ type, value });
+                    });
+                });
+                
+                console.log('   Calculated sheet rows:');
+                console.log('   Row 1: [Header] Type | Value');
+                allItems.forEach((item, index) => {
+                    console.log(`   Row ${index + 2}: ${item.type} | ${item.value}`);
+                });
+                
+                // 5. Test a specific delete simulation
+                console.log('📊 5. DELETE SIMULATION TEST:');
+                const testType = 'Reported By';
+                const reportedByItems = allDropdownData[testType] || [];
+                if (reportedByItems.length > 0) {
+                    const testValue = reportedByItems.find(item => item.toUpperCase().includes('TEST')) || reportedByItems[0];
+                    const calculatedRow = calculateRowIndexFromData(testType, testValue);
+                    console.log(`   Test item: "${testValue}"`);
+                    console.log(`   Our calculated row: ${calculatedRow}`);
+                    console.log(`   Should be in backend row: ${calculatedRow}`);
+                }
+                
+                console.log('🔬 === FORENSIC ANALYSIS COMPLETE ===');
+                console.log('📋 NEXT: Check Google Sheet directly and compare with above row numbers');
+                
+                showToast('success', 'Forensic Analysis Complete', 'Check console for detailed breakdown');
+                
+            } catch (error) {
+                console.error('❌ Forensic analysis failed:', error);
+                showToast('error', 'Analysis Failed', error.message);
+            }
+        };
+
         console.log('🎛️ Enhanced Dropdown Manager - Ready!');
         console.log('📡 API URL:', API_URL);
         console.log('🔄 Using JSONP for API calls');
