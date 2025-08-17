@@ -848,14 +848,18 @@
             }
             
             try {
+                console.log(`🗑️ Attempting to delete: ${type} = ${value}`);
                 showToast('warning', 'Processing...', `Deleting "${value}" from ${type}...`);
                 
                 // Calculate row index for the item
                 const rowIndex = calculateRowIndex(type, value);
+                console.log(`📍 Calculated row index: ${rowIndex}`);
                 
                 const data = await makeJSONPRequest('deleteDropdownItem', { rowIndex });
+                console.log(`📥 Delete API response:`, data);
                 
                 if (data.success) {
+                    console.log(`✅ Delete successful, reloading data...`);
                     await loadAllDropdowns();
                     showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
                 } else {
@@ -869,6 +873,8 @@
 
         // Calculate row index for an item (mirrors backend sorting)
         function calculateRowIndex(targetType, targetValue) {
+            console.log(`🧮 Calculating row index for: ${targetType} = ${targetValue}`);
+            
             // Create flat array mirroring backend structure
             const allItems = [];
             
@@ -879,6 +885,8 @@
                 });
             });
             
+            console.log(`📊 Total items in calculation:`, allItems.length);
+            
             // Sort exactly like backend (Type alphabetical, then Value alphabetical)
             allItems.sort((a, b) => {
                 if (a.type !== b.type) {
@@ -887,12 +895,19 @@
                 return a.value.localeCompare(b.value);
             });
             
+            console.log(`📋 Sorted items:`, allItems.map(item => `${item.type}: ${item.value}`));
+            
             // Find target item and return row index (1-based, account for header)
             const index = allItems.findIndex(item => 
                 item.type === targetType && item.value === targetValue
             );
             
-            return index + 2; // +2 for 1-based indexing and header row
+            console.log(`🎯 Found target at index: ${index}`);
+            
+            const rowIndex = index + 2; // +2 for 1-based indexing and header row
+            console.log(`📍 Final row index: ${rowIndex}`);
+            
+            return rowIndex;
         }
 
         // Generate configuration (separate from copying)
