@@ -27,21 +27,25 @@
             overflow: hidden;
         }
 
-        .header {
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-            color: white;
+        .header-section {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
             padding: 30px;
             text-align: center;
         }
 
-        .header h1 {
+        .header-section h1 {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 10px;
+            color: #1e293b;
         }
 
-        .header p {
-            opacity: 0.9;
+        .header-section p {
+            color: #6b7280;
             font-size: 1.1rem;
         }
 
@@ -150,6 +154,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 12px;
             overflow: hidden;
+            transition: all 0.2s;
         }
 
         .section-header {
@@ -400,30 +405,12 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>🎛️ Dropdown Management Hub</h1>
-            <p>Centralized management for all system dropdowns with config generation</p>
-        </div>
+    <div class="header-section">
+        <h1>🎛️ Dropdown Management Hub</h1>
+        <p>Centralized management for all system dropdowns with config generation</p>
+    </div>
 
-        <div class="stats-bar">
-            <div class="stat">
-                <div class="stat-number" id="totalItems">--</div>
-                <div class="stat-label">Total Items</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="residentItems">--</div>
-                <div class="stat-label">Resident Data</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="maintenanceItems">--</div>
-                <div class="stat-label">Maintenance Data</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="lastUpdated">--</div>
-                <div class="stat-label">Last Updated</div>
-            </div>
-        </div>
+    <div class="container">
 
         <div class="main-content">
             <!-- Config Generation Section -->
@@ -675,7 +662,6 @@
                     console.log('✅ Dropdown data loaded:', allDropdownData);
                     
                     displayAllDropdowns();
-                    updateStats();
                     showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
                 } else {
                     throw new Error(data.error || 'Failed to load dropdown data');
@@ -728,31 +714,14 @@
                 <div class="item">
                     <span class="item-value">${item}</span>
                     <div class="item-actions">
-                        <button class="item-btn edit-btn" onclick="editItem('${type}', '${item}')">✏️ Edit</button>
-                        <button class="item-btn delete-btn" onclick="deleteItem('${type}', '${item}')">🗑️ Delete</button>
+                        <button class="item-btn edit-btn" onclick="editItem('${type}', '${item}')">Edit</button>
+                        <button class="item-btn delete-btn" onclick="deleteItem('${type}', '${item}')">Delete</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        // Update statistics
-        function updateStats() {
-            const residentItems = (allDropdownData['Unit Number'] || []).length + 
-                                  (allDropdownData['Reported By'] || []).length;
-            
-            const maintenanceItems = (allDropdownData['Status'] || []).length + 
-                                     (allDropdownData['Priority'] || []).length + 
-                                     (allDropdownData['Category'] || []).length + 
-                                     (allDropdownData['Sub-Category'] || []).length + 
-                                     (allDropdownData['Assigned To'] || []).length;
-            
-            const totalItems = residentItems + maintenanceItems;
-            
-            document.getElementById('totalItems').textContent = totalItems;
-            document.getElementById('residentItems').textContent = residentItems;
-            document.getElementById('maintenanceItems').textContent = maintenanceItems;
-            document.getElementById('lastUpdated').textContent = new Date().toLocaleTimeString();
-        }
+
 
         // Show add modal
         function showAddModal(type) {
