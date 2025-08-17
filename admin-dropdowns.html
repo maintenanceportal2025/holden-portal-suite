@@ -1143,10 +1143,26 @@ if (typeof module !== 'undefined' && module.exports) {
                 const reportedByItems = allDropdownData[testType] || [];
                 if (reportedByItems.length > 0) {
                     const testValue = reportedByItems.find(item => item.toUpperCase().includes('TEST')) || reportedByItems[0];
-                    const calculatedRow = calculateRowIndexFromData(testType, testValue);
+                    
+                    // Calculate row index inline since function may not be in scope
                     console.log(`   Test item: "${testValue}"`);
+                    
+                    // Find the item in our calculated structure
+                    const targetIndex = allItems.findIndex(item => 
+                        item.type === testType && item.value === testValue
+                    );
+                    const calculatedRow = targetIndex + 2; // +2 for header + 1-based indexing
+                    
+                    console.log(`   Found at array index: ${targetIndex}`);
                     console.log(`   Our calculated row: ${calculatedRow}`);
                     console.log(`   Should be in backend row: ${calculatedRow}`);
+                    
+                    // Show what's around that item for context
+                    console.log(`   Context around test item:`);
+                    for (let i = Math.max(0, targetIndex - 2); i <= Math.min(allItems.length - 1, targetIndex + 2); i++) {
+                        const marker = i === targetIndex ? '👉 ' : '   ';
+                        console.log(`   ${marker}Row ${i + 2}: ${allItems[i].type} | ${allItems[i].value}`);
+                    }
                 }
                 
                 console.log('🔬 === FORENSIC ANALYSIS COMPLETE ===');
