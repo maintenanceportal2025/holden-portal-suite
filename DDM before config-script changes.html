@@ -338,8 +338,8 @@ h4:contains("🏢 Unit Numbers") {
 div[style*="display: flex"][style*="justify-content: space-between"]:has(h4:contains("Unit Numbers")) {
     display: none !important;
 }
-        /* Hide the flex div above unitNumbersContainer */
-div[style*="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"] {
+       /* Remove the broad CSS rule and replace with this specific one */
+div[style*="margin-bottom: 30px;"] > div[style*="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;"] {
     display: none !important;
 }
         
