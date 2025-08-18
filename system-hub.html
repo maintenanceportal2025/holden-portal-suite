@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lake Illawong Maintenance System</title>
+    <title>Lake Illawong Maintenance System - System Hub</title>
     <meta name="description" content="Professional maintenance management system for Lake Illawong Retirement Village">
     <style>
         * {
@@ -922,16 +922,16 @@
                 maintenance: 'https://script.google.com/macros/s/AKfycbxtdMfxB5b1F5K401X0lJxnK2-DGkiG2zYZNukJvAHx0K1AqgPTMIdiunwS3etm0FOL/exec'
             },
             portals: {
-                residents: 'residents/residents-portal.html',
-                staff: 'staff/staff-portal.html', 
-                admin: 'admin/admin-portal.html',
-                sysadmin: 'sysadmin/sysadmin-dashboard.html'
+                residents: 'residents-portal.html',
+                staff: 'staff-portal.html', 
+                admin: 'admin-portal.html',
+                sysadmin: 'sysadmin-portal.html'
             }
         };
 
         // Initialize system
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('🏠 Lake Illawong Portal Hub - Initializing...');
+            console.log('🏠 Lake Illawong System Hub - Initializing...');
             loadSystemStats();
             checkSystemHealth();
         });
@@ -1050,10 +1050,10 @@
             };
             
             const portalUrls = {
-                residents: 'residents/residents-portal.html',
-                staff: 'staff/staff-portal.html',
-                admin: 'admin/admin-portal.html', 
-                sysadmin: 'sysadmin/sysadmin-dashboard.html'
+                residents: 'residents-portal.html',
+                staff: 'staff-portal.html',
+                admin: 'admin-portal.html', 
+                sysadmin: 'sysadmin-portal.html'
             };
             
             const message = `
@@ -1260,7 +1260,7 @@ Generated: ${new Date().toLocaleString()}
         });
 
         // Initialize portal hub
-        console.log('🎯 Portal Hub initialized successfully!');
+        console.log('🎯 System Hub initialized successfully!');
         console.log('🔗 Portal Navigation:');
         console.log('  • Residents: Ctrl/Cmd + 1');
         console.log('  • Staff: Ctrl/Cmd + 2'); 
