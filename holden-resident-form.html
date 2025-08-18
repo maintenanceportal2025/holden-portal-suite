@@ -6,6 +6,7 @@
     <title>Lake Illawong - Submit Maintenance Request</title>
     <!-- Add to head section of holden-resident-form.html  <script src="resident-config-test.js"></script> -->
 
+    
     <style>
         * {
             box-sizing: border-box;
@@ -402,10 +403,72 @@
                 box-shadow: 0 4px 12px rgba(8, 145, 178, 0.2);
             }
         }
+/* Loading Screen Styles */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+/* Progress Ring with Tool */
+.loading-animation {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 20px auto;
+}
+
+.loading-animation::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 60px;
+    height: 60px;
+    border: 4px solid #e5e7eb;
+    border-top: 4px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loading-animation::after {
+    content: '🔧';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    color: #6b7280;
+    margin-top: 15px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+}
+
+.content-hidden {
+    display: none;
+}
+        
     </style>
 </head>
 <body>
-    <div class="container">
+    <div id="loadingScreen" class="loading-container">
+        <div class="loading-animation"></div>
+        <div class="loading-text">Preparing your form...</div>
+    </div>
+
+    
+    <div class="container content-hidden" id="mainContent">
         <!-- UPDATED: Header section with logo and text side by side -->
         <div class="header-section">
             <div class="header-content">
@@ -519,9 +582,15 @@
             populateDropdown('unitNumber', data.unitNumbers);
             populateDropdown('reportedBy', data.reportedBy);
             console.log('Dropdowns loaded successfully');
+            // Show the form after dropdowns load
+document.getElementById('loadingScreen').style.display = 'none';
+document.getElementById('mainContent').classList.remove('content-hidden');
         } else {
-            console.log('Failed to load dropdowns, using defaults');
-        }
+    console.log('Failed to load dropdowns, using defaults');
+    // Show the form even if dropdowns fail
+    document.getElementById('loadingScreen').style.display = 'none';
+    document.getElementById('mainContent').classList.remove('content-hidden');
+}
     } catch (error) {
         console.error('Error loading dropdowns:', error);
     }
