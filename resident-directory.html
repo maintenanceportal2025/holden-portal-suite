@@ -23,6 +23,8 @@ RELATED FILES: residents-portal.html
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Residents Directory - Lake Illawong</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -136,13 +138,15 @@ RELATED FILES: residents-portal.html
         }
 
         .resident-card {
-            background: #f8fafc;
-            border: 2px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
 
         .resident-card:hover {
             transform: translateY(-2px);
@@ -252,6 +256,37 @@ RELATED FILES: residents-portal.html
             gap: 8px;
         }
 
+.view-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.view-btn {
+    padding: 10px 20px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.view-btn:hover {
+    border-color: #667eea;
+    color: #667eea;
+}
+
+.view-btn.active {
+    background: #667eea;
+    border-color: #667eea;
+    color: white;
+}
+
         .export-btn {
             padding: 10px 16px;
             border: none;
@@ -282,17 +317,23 @@ RELATED FILES: residents-portal.html
             color: #8b5cf6;
         }
 
+        .export-btn.pdf {
+            background: #fef2f2;
+            color: #dc2626;
+        }
+
         .export-btn:hover {
             transform: translateY(-1px);
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
+
         .contact-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #e2e8f0;
-        }
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #e2e8f0;
+}
 
         .action-btn {
             flex: 1;
@@ -363,6 +404,102 @@ RELATED FILES: residents-portal.html
             100% { transform: rotate(360deg); }
         }
 
+/* List View Styles */
+.results-list {
+    overflow-x: auto;
+}
+
+.directory-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.directory-table th {
+    background: #f8fafc;
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 700;
+    color: #1e293b;
+    border-bottom: 2px solid #e2e8f0;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.directory-table th:nth-child(1) { width: 90px; }    /* Unit */
+.directory-table th:nth-child(2) { width: 250px; }   /* Name */
+.directory-table th:nth-child(3) { width: 140px; }   /* Phone */
+.directory-table th:nth-child(4) { width: auto; }    /* Email - takes remaining space */
+.directory-table th:nth-child(5) { width: 90px; }    /* Actions */
+.directory-table td {
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+    color: #374151;
+
+}
+
+.directory-table tr:hover {
+    background: #f8fafc;
+}
+
+.directory-table tr:last-child td {
+    border-bottom: none;
+}
+
+.list-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.list-action-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    min-height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.list-action-btn.call {
+    background: #f0fdf4;
+    color: #059669;
+    border: 1px solid #bbf7d0;
+}
+
+.list-action-btn.call:hover {
+    background: #dcfce7;
+}
+
+.list-action-btn.email {
+    background: #f0f9ff;
+    color: #0284c7;
+    border: 1px solid #bae6fd;
+}
+
+.list-action-btn.email:hover {
+    background: #e0f2fe;
+}
+
+.list-action-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
@@ -409,6 +546,14 @@ RELATED FILES: residents-portal.html
             transform: translateX(-2px);
         }
 
+/* Desktop: Hide call buttons completely */
+        @media (min-width: 769px) {
+            .action-btn.call,
+            .list-action-btn.call {
+                display: none;
+            }
+        }
+
         /* Mobile Responsive */
         @media (max-width: 768px) {
             .container {
@@ -430,6 +575,9 @@ RELATED FILES: residents-portal.html
             .controls-row {
                 flex-direction: column;
                 gap: 15px;
+            }
+	     .view-buttons {
+                display: none;
             }
 
             .filter-buttons {
@@ -506,12 +654,16 @@ RELATED FILES: residents-portal.html
         <!-- Filter and Export Controls -->
         <section class="controls-section">
             <div class="controls-row">
-                <div class="filter-buttons">
-                    <button class="filter-btn active" data-stage="all">All Residents</button>
-                    <button class="filter-btn" data-stage="stage1">Stage 1</button>
-                    <button class="filter-btn" data-stage="stage2">Stage 2</button>
-                </div>
-                <div class="export-buttons">
+    <div class="filter-buttons">
+        <button class="filter-btn active" data-stage="all">All Residents</button>
+        <button class="filter-btn" data-stage="stage1">Stage 1</button>
+        <button class="filter-btn" data-stage="stage2">Stage 2</button>
+    </div>
+    <div class="view-buttons">
+        <button class="view-btn active" data-view="cards">📇 Cards</button>
+        <button class="view-btn" data-view="list">📋 List</button>
+    </div>
+    <div class="export-buttons">
                     <button class="export-btn print" onclick="printDirectory()">
                         🖨️ Print
                     </button>
@@ -519,7 +671,10 @@ RELATED FILES: residents-portal.html
                         📋 Copy
                     </button>
                     <button class="export-btn download" onclick="downloadCSV()">
-                        📥 Download
+                        📥 CSV
+                    </button>
+                    <button class="export-btn pdf" onclick="downloadPDF()">
+                        📄 PDF
                     </button>
                 </div>
             </div>
@@ -549,11 +704,28 @@ RELATED FILES: residents-portal.html
                 <p>Loading resident directory...</p>
             </div>
 
-            <div id="resultsGrid" class="results-grid" style="display: none;">
-                <!-- Results will be populated by JavaScript -->
-            </div>
+           <div id="resultsGrid" class="results-grid" style="display: none;">
+    <!-- Results will be populated by JavaScript -->
+</div>
 
-            <div id="emptyState" class="empty-state" style="display: none;">
+<div id="resultsList" class="results-list" style="display: none;">
+    <table class="directory-table">
+        <thead>
+            <tr>
+                <th>Unit</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Email</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="listTableBody">
+            <!-- List results will be populated by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<div id="emptyState" class="empty-state" style="display: none;">
                 <div class="empty-icon">👥</div>
                 <h3 class="empty-title">No residents found</h3>
                 <p class="empty-message">Try adjusting your search terms</p>
@@ -576,6 +748,7 @@ RELATED FILES: residents-portal.html
             loadResidents();
             setupSearch();
             setupFilters();
+            setupViewToggle();
         });
 
         // Load all residents data
@@ -590,6 +763,7 @@ RELATED FILES: residents-portal.html
                     filteredResidents = [...allResidents];
                     
                     console.log(`📞 Loaded ${allResidents.length} residents`);
+                    console.log('📋 Sample resident data:', allResidents[0]); // Debug sample
                     
                     displayResults();
                     updateResultsCount();
@@ -630,6 +804,38 @@ RELATED FILES: residents-portal.html
             });
         }
 
+// Setup view toggle buttons
+        function setupViewToggle() {
+            const viewButtons = document.querySelectorAll('.view-btn');
+            
+            viewButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Update active button
+                    viewButtons.forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Switch view
+                    const viewType = this.dataset.view;
+                    toggleView(viewType);
+                });
+            });
+        }
+        
+        // Toggle between card and list views
+        function toggleView(viewType) {
+            const cardsView = document.getElementById('resultsGrid');
+            const listView = document.getElementById('resultsList');
+            
+            if (viewType === 'list') {
+                cardsView.style.display = 'none';
+                listView.style.display = 'block';
+                displayListResults();
+            } else {
+                cardsView.style.display = 'grid';
+                listView.style.display = 'none';
+            }
+        }
+
         // Apply search and stage filters
         function applyFilters() {
             const searchInput = document.getElementById('searchInput');
@@ -648,12 +854,31 @@ RELATED FILES: residents-portal.html
             
             // Apply search filter
             if (searchTerm !== '') {
-                filtered = filtered.filter(resident => 
-                    resident.name.toLowerCase().includes(searchTerm) ||
-                    resident.unit.toLowerCase().includes(searchTerm) ||
-                    resident.email.toLowerCase().includes(searchTerm) ||
-                    resident.phone.toLowerCase().includes(searchTerm)
-                );
+                filtered = filtered.filter(resident => {
+                    const nameMatch = resident.name.toLowerCase().includes(searchTerm);
+                    const unitMatch = resident.unit.toLowerCase().includes(searchTerm);
+                    const emailMatch = resident.email.toLowerCase().includes(searchTerm);
+                    const phoneMatch = resident.phone.toLowerCase().includes(searchTerm);
+                    
+                    // Handle role tags with flexible spacing
+                    let roleMatch = false;
+                    if (resident.roleTags) {
+                        // Split tags, trim whitespace, and check each tag
+                        const tags = resident.roleTags.toLowerCase().split(',').map(tag => tag.trim());
+                        roleMatch = tags.some(tag => tag.includes(searchTerm));
+                    }
+                    
+                    // Debug logging for role tags
+                    if (searchTerm.includes('manage') || searchTerm.includes('social') || searchTerm.includes('director')) {
+                        console.log(`🔍 Debug search "${searchTerm}" for ${resident.name}:`, {
+                            roleTags: resident.roleTags,
+                            parsedTags: resident.roleTags ? resident.roleTags.split(',').map(tag => tag.trim()) : [],
+                            roleMatch: roleMatch
+                        });
+                    }
+                    
+                    return nameMatch || unitMatch || emailMatch || phoneMatch || roleMatch;
+                });
             }
             
             filteredResidents = filtered;
@@ -664,34 +889,47 @@ RELATED FILES: residents-portal.html
         // Display search results
         function displayResults() {
             const resultsGrid = document.getElementById('resultsGrid');
+            const resultsList = document.getElementById('resultsList');
             const emptyState = document.getElementById('emptyState');
+            const activeView = document.querySelector('.view-btn.active').dataset.view;
             
             if (filteredResidents.length === 0) {
                 resultsGrid.style.display = 'none';
+                resultsList.style.display = 'none';
                 emptyState.style.display = 'block';
                 return;
             }
             
-            resultsGrid.style.display = 'grid';
             emptyState.style.display = 'none';
             
+            // Update card view
             resultsGrid.innerHTML = filteredResidents.map(resident => createResidentCard(resident)).join('');
+            
+            // Update list view  
+            displayListResults();
+            
+            // Show correct view
+            if (activeView === 'list') {
+                resultsGrid.style.display = 'none';
+                resultsList.style.display = 'block';
+            } else {
+                resultsGrid.style.display = 'grid';
+                resultsList.style.display = 'none';
+            }
         }
-
         // Create resident card HTML
         function createResidentCard(resident) {
             const hasPhone = resident.phone && resident.phone.trim();
             const hasEmail = resident.email && resident.email.trim();
             const stage = resident.stage || 'Stage 1';
             const stageClass = stage.toLowerCase().includes('2') ? 'stage2' : 'stage1';
+            const roleTags = resident.roleTags || 'Resident';
+            const displayRoles = roleTags.split(',').map(role => role.trim()).join(', ');
             
             return `
                 <div class="resident-card">
                     <div class="resident-header">
-                        <h3 class="resident-name">
-                            ${escapeHtml(resident.name || 'Unknown')}
-                            <span class="stage-badge ${stageClass}">${escapeHtml(stage)}</span>
-                        </h3>
+                        <h3 class="resident-name">${escapeHtml(resident.name || 'Unknown')}</h3>
                         <span class="unit-badge">${escapeHtml(resident.unit || 'No Unit')}</span>
                     </div>
                     
@@ -714,6 +952,13 @@ RELATED FILES: residents-portal.html
                             <div class="detail-item">
                                 <span class="detail-icon">📧</span>
                                 <span class="detail-value">${escapeHtml(resident.email)}</span>
+                            </div>
+                        ` : ''}
+                        
+                        ${displayRoles !== 'Resident' ? `
+                            <div class="detail-item">
+                                <span class="detail-icon">👤</span>
+                                <span class="detail-value">${escapeHtml(displayRoles)}</span>
                             </div>
                         ` : ''}
                     </div>
@@ -906,6 +1151,67 @@ RELATED FILES: residents-portal.html
             document.body.removeChild(link);
         }
 
+function downloadPDF() {
+            const stageName = currentStageFilter === 'all' ? 'All Stages' : 
+                            currentStageFilter === 'stage1' ? 'Stage 1' : 'Stage 2';
+            
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Header
+            doc.setFontSize(16);
+            doc.setFont(undefined, 'bold');
+            doc.text('Lake Illawong Residents Directory', 20, 20);
+            
+            doc.setFontSize(12);
+            doc.setFont(undefined, 'normal');
+            doc.text(`${stageName} - Generated ${new Date().toLocaleDateString()}`, 20, 30);
+            
+            // Table headers
+            const headers = [['Unit', 'Name', 'Phone', 'Email']];
+            
+            // Table data
+            const data = filteredResidents.map(resident => [
+                resident.unit || '',
+                resident.name || '',
+                resident.phone || '',
+                resident.email || ''
+            ]);
+            
+            // Add table
+            doc.autoTable({
+                head: headers,
+                body: data,
+                startY: 40,
+                styles: {
+                    fontSize: 10,
+                    cellPadding: 4
+                },
+                headStyles: {
+                    fillColor: [59, 130, 246],
+                    textColor: 255,
+                    fontStyle: 'bold'
+                },
+                columnStyles: {
+                    0: { cellWidth: 25 },  // Unit
+                    1: { cellWidth: 55 },  // Name
+                    2: { cellWidth: 35 },  // Phone
+                    3: { cellWidth: 75 }   // Email
+                },
+                tableWidth: 'auto',
+                margin: { left: 15, right: 15 }
+            });
+            
+            // Footer
+            const pageCount = doc.internal.getNumberOfPages();
+            doc.setFontSize(8);
+            doc.text(`Total: ${filteredResidents.length} residents`, 20, doc.internal.pageSize.height - 10);
+            
+            // Save
+            const fileName = `Lake_Illawong_Directory_${stageName.replace(' ', '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+            doc.save(fileName);
+        }
+
         // Hide loading state
         function hideLoading() {
             document.getElementById('loadingState').style.display = 'none';
@@ -959,6 +1265,52 @@ RELATED FILES: residents-portal.html
             div.textContent = text;
             return div.innerHTML;
         }
+// Display results in list view
+        function displayListResults() {
+            const tableBody = document.getElementById('listTableBody');
+            
+            if (filteredResidents.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #64748b; padding: 40px;">No residents found</td></tr>';
+                return;
+            }
+            
+            tableBody.innerHTML = filteredResidents.map((resident, index) => createListRow(resident, index)).join('');
+        }
+
+        // Create list row HTML
+        function createListRow(resident, index) {
+            const hasPhone = resident.phone && resident.phone.trim();
+            const hasEmail = resident.email && resident.email.trim();
+            const roleTags = resident.roleTags || 'Resident';
+            const displayRoles = roleTags.split(',').map(role => role.trim()).join(', ');
+            
+            // Check if this unit was already shown in previous row
+            const showUnit = index === 0 || filteredResidents[index - 1].unit !== resident.unit;
+            
+            return `
+                <tr>
+                    <td><strong>${showUnit ? escapeHtml(resident.unit || 'No Unit') : ''}</strong></td>
+                    <td>${escapeHtml(resident.name || 'Unknown')}</td>
+                    <td>${escapeHtml(resident.phone || 'Not provided')}</td>
+                    <td>${escapeHtml(resident.email || 'Not provided')}</td>
+                    <td>
+                        <div class="list-actions">
+                            <a href="${hasPhone ? `tel:${resident.phone.replace(/[^\d+]/g, '')}` : '#'}" 
+                               class="list-action-btn call ${!hasPhone ? 'disabled' : ''}"
+                               ${!hasPhone ? 'onclick="return false;"' : ''}>
+                                📞
+                            </a>
+                            <a href="${hasEmail ? `mailto:${resident.email}` : '#'}" 
+                               class="list-action-btn email ${!hasEmail ? 'disabled' : ''}"
+                               ${!hasEmail ? 'onclick="return false;"' : ''}>
+                                📧
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        }
+
 
         // Performance monitoring
         window.addEventListener('load', function() {
