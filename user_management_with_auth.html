@@ -1,0 +1,1116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Lake Illawong Maintenance System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Login Screen Styles */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .login-subtitle {
+            color: #64748b;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .access-notice {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .access-notice h4 {
+            color: #92400e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .access-notice ul {
+            color: #92400e;
+            font-size: 13px;
+            margin-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .login-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .self-service-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 16px;
+            border: 1px solid #3b82f6;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .self-service-link:hover {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .error-message {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        /* Self-Service Portal Styles */
+        .self-service-container {
+            display: none;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .self-service-container.show {
+            display: block;
+        }
+
+        .self-service-card {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .self-service-header {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .self-service-header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .self-service-body {
+            padding: 30px;
+        }
+
+        .service-option {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-option:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+            transform: translateY(-2px);
+        }
+
+        .service-option h3 {
+            color: #1e293b;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .service-option p {
+            color: #64748b;
+            font-size: 14px;
+        }
+
+        /* Main Application Styles */
+        .app-container {
+            display: none;
+        }
+
+        .app-container.show {
+            display: block;
+        }
+
+        .header {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-avatar.Team {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .user-avatar.Committee {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .user-role {
+            color: #64748b;
+            font-size: 12px;
+        }
+
+        .header-btn {
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            margin-left: 10px;
+        }
+
+        .change-password-btn {
+            background: #10b981;
+            color: white;
+        }
+
+        .change-password-btn:hover {
+            background: #059669;
+        }
+
+        .logout-btn {
+            background: #ef4444;
+            color: white;
+        }
+
+        .logout-btn:hover {
+            background: #dc2626;
+        }
+
+        /* Access Denied Styles */
+        .access-denied {
+            display: none;
+            text-align: center;
+            background: white;
+            border-radius: 16px;
+            padding: 60px 40px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 50px auto;
+        }
+
+        .access-denied.show {
+            display: block;
+        }
+
+        .denied-icon {
+            width: 120px;
+            height: 120px;
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 30px;
+            color: white;
+            font-size: 48px;
+        }
+
+        .denied-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+
+        .denied-message {
+            color: #64748b;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(4px);
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #64748b;
+            cursor: pointer;
+            padding: 5px;
+            transition: color 0.2s;
+        }
+
+        .modal-close:hover {
+            color: #ef4444;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-actions {
+            padding: 20px 30px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            gap: 15px;
+            justify-content: flex-end;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn.primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn.primary:hover {
+            background: #2563eb;
+        }
+
+        .btn.secondary {
+            background: #f1f5f9;
+            color: #64748b;
+        }
+
+        .btn.secondary:hover {
+            background: #e2e8f0;
+        }
+
+        .security-notice {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .security-notice h4 {
+            color: #0369a1;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .security-notice ul {
+            color: #0369a1;
+            font-size: 13px;
+            margin-left: 20px;
+        }
+
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 2000;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #f3f4f6;
+            border-top: 2px solid #3b82f6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+            
+            .header-content {
+                padding: 0 15px;
+            }
+            
+            .user-info {
+                gap: 10px;
+            }
+            
+            .header-btn {
+                padding: 6px 12px;
+                font-size: 12px;
+                margin-left: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-container">
+        <div class="login-card">
+            <h1 class="login-title">
+                <span>👥</span>
+                User Management
+            </h1>
+            <p class="login-subtitle">Lake Illawong Maintenance System</p>
+            
+            <div class="access-notice">
+                <h4>🔐 Access Levels:</h4>
+                <ul>
+                    <li><strong>Director:</strong> Full user management access</li>
+                    <li><strong>Team/Committee:</strong> Self-service features only</li>
+                </ul>
+            </div>
+            
+            <div id="loginError" class="error-message"></div>
+            
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" id="username" class="form-input" required placeholder="Enter your username">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" id="password" class="form-input" required placeholder="Enter your password">
+                </div>
+                
+                <button type="submit" id="loginBtn" class="login-btn">
+                    Sign In
+                </button>
+            </form>
+            
+            <a href="#" class="self-service-link" onclick="showSelfService()">
+                🔧 Self-Service Portal
+            </a>
+        </div>
+    </div>
+
+    <!-- Self-Service Portal -->
+    <div id="selfServiceScreen" class="self-service-container">
+        <div class="self-service-card">
+            <div class="self-service-header">
+                <h1>🔧 Self-Service Portal</h1>
+                <p>Manage your account without administrator assistance</p>
+            </div>
+            <div class="self-service-body">
+                <div class="service-option" onclick="openSelfPasswordChange()">
+                    <h3>🔑 Change Your Password</h3>
+                    <p>Update your password securely with current password verification</p>
+                </div>
+                
+                <div class="service-option" onclick="openPasswordReset()">
+                    <h3>🆘 Request Password Reset</h3>
+                    <p>Forgot your password? Request a reset from the administrator</p>
+                </div>
+                
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn secondary" onclick="backToLogin()">← Back to Login</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Access Denied Screen -->
+    <div id="accessDenied" class="access-denied">
+        <div class="denied-icon">🚫</div>
+        <h1 class="denied-title">Limited Access</h1>
+        <p class="denied-message">
+            You have successfully logged in, but your role (<strong id="userRoleDisplay"></strong>) has limited access to User Management.<br><br>
+            <strong>Available to you:</strong><br>
+            • Change your own password<br>
+            • Request password reset assistance<br>
+            • View your account information<br><br>
+            Full User Management is restricted to Director-level users only.
+        </p>
+        <button class="back-btn" onclick="openSelfPasswordChange()">🔑 Change My Password</button>
+        <button class="back-btn" onclick="logout()" style="margin-left: 15px; background: #6b7280;">🏠 Return to Dashboard</button>
+    </div>
+
+    <!-- Main Application (Director Only) -->
+    <div id="appContainer" class="app-container">
+        <div class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span>👥</span>
+                    <span>User Management</span>
+                </div>
+                <div class="user-info">
+                    <div class="user-avatar" id="currentUserAvatar">D</div>
+                    <div class="user-details">
+                        <div class="user-name" id="currentUserName">Director User</div>
+                        <div class="user-role" id="currentUserRole">Director</div>
+                    </div>
+                    <button class="header-btn change-password-btn" onclick="openSelfPasswordChange()">
+                        🔑 Change Password
+                    </button>
+                    <button class="header-btn logout-btn" onclick="logout()">Sign Out</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="max-width: 1400px; margin: 0 auto; padding: 30px;">
+            <div style="background: white; border-radius: 16px; padding: 40px; text-align: center;">
+                <h1 style="font-size: 32px; color: #1e293b; margin-bottom: 20px;">🚀 Full User Management</h1>
+                <p style="color: #64748b; font-size: 18px; margin-bottom: 30px;">
+                    Complete user administration interface would be here<br>
+                    (Director-level access confirmed)
+                </p>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn primary" style="padding: 15px 30px; font-size: 16px;">
+                        👤 Manage Users
+                    </button>
+                    <button class="btn primary" style="padding: 15px 30px; font-size: 16px;">
+                        🛡️ Role Permissions
+                    </button>
+                    <button class="btn primary" style="padding: 15px 30px; font-size: 16px;">
+                        📊 User Analytics
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Change Password Modal (Self-Service) -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span>🔑</span>
+                    Change Your Password
+                </h3>
+                <button class="modal-close" onclick="closeChangePasswordModal()">&times;</button>
+            </div>
+            <form id="changePasswordForm">
+                <div class="modal-body">
+                    <div class="security-notice">
+                        <h4>🔒 Password Security Requirements:</h4>
+                        <ul>
+                            <li>Minimum 8 characters long</li>
+                            <li>Include uppercase and lowercase letters</li>
+                            <li>Include at least one number</li>
+                            <li>Consider using a passphrase</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="currentPassword">Current Password</label>
+                        <input type="password" id="currentPassword" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newPassword">New Password</label>
+                        <input type="password" id="newPassword" class="form-input" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="confirmPassword">Confirm New Password</label>
+                        <input type="password" id="confirmPassword" class="form-input" required>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn secondary" onclick="closeChangePasswordModal()">Cancel</button>
+                    <button type="submit" class="btn primary">Update Password</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Password Reset Request Modal -->
+    <div id="passwordResetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">
+                    <span>🆘</span>
+                    Request Password Reset
+                </h3>
+                <button class="modal-close" onclick="closePasswordResetModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                    <h4 style="color: #92400e; margin-bottom: 8px; font-size: 14px;">ℹ️ Reset Process:</h4>
+                    <ol style="color: #92400e; font-size: 13px; margin-left: 20px;">
+                        <li>Your request will be sent to the system administrator</li>
+                        <li>Administrator will verify your identity</li>
+                        <li>A temporary password will be generated</li>
+                        <li>You'll be contacted with the new password</li>
+                    </ol>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="resetUsername">Your Username</label>
+                    <input type="text" id="resetUsername" class="form-input" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="resetReason">Reason for Reset</label>
+                    <select id="resetReason" class="form-input" required>
+                        <option value="">Select a reason...</option>
+                        <option value="forgot">Forgot my password</option>
+                        <option value="locked">Account appears to be locked</option>
+                        <option value="security">Security concern</option>
+                        <option value="other">Other reason</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn secondary" onclick="closePasswordResetModal()">Cancel</button>
+                <button type="button" class="btn primary" onclick="submitPasswordReset()">Submit Request</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // Configuration
+        const API_URL = 'https://script.google.com/macros/s/AKfycbxtdMfxB5b1F5K401X0lJxnK2-DGkiG2zYZNukJvAHx0K1AqgPTMIdiunwS3etm0FOL/exec';
+        
+        // Global state
+        let currentUser = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('👥 User Management with Authentication - Loading...');
+            showLoginScreen();
+        });
+
+        // Screen Navigation
+        function showLoginScreen() {
+            document.getElementById('loginScreen').style.display = 'flex';
+            document.getElementById('selfServiceScreen').classList.remove('show');
+            document.getElementById('accessDenied').classList.remove('show');
+            document.getElementById('appContainer').classList.remove('show');
+        }
+
+        function showSelfService() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('selfServiceScreen').classList.add('show');
+            document.getElementById('accessDenied').classList.remove('show');
+            document.getElementById('appContainer').classList.remove('show');
+        }
+
+        function backToLogin() {
+            showLoginScreen();
+        }
+
+        function showAccessDenied(userRole) {
+            document.getElementById('userRoleDisplay').textContent = userRole;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('selfServiceScreen').classList.remove('show');
+            document.getElementById('accessDenied').classList.add('show');
+            document.getElementById('appContainer').classList.remove('show');
+        }
+
+        function showMainApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('selfServiceScreen').classList.remove('show');
+            document.getElementById('accessDenied').classList.remove('show');
+            document.getElementById('appContainer').classList.add('show');
+        }
+
+        // Authentication
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorDiv = document.getElementById('loginError');
+
+            // Reset error state
+            errorDiv.classList.remove('show');
+            
+            // Show loading state
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<span class="loading-spinner"></span>Signing in...';
+
+            try {
+                // Simulate authentication API call
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                // Mock authentication (replace with real API call)
+                const mockUsers = {
+                    'director': { role: 'Director', name: 'System Director', password: 'maint2025' },
+                    'team1': { role: 'Team', name: 'Team Lead', password: 'team2025' },
+                    'team2': { role: 'Team', name: 'Team Member', password: 'team2025' },
+                    'committee': { role: 'Committee', name: 'Committee Member', password: 'committee2025' }
+                };
+
+                const user = mockUsers[username];
+                
+                if (!user || user.password !== password) {
+                    throw new Error('Invalid username or password');
+                }
+
+                // Set current user
+                currentUser = {
+                    username: username,
+                    role: user.role,
+                    name: user.name
+                };
+
+                // Update UI with user info
+                updateUserDisplay();
+
+                // Route based on role
+                if (user.role === 'Director') {
+                    showMainApp();
+                    showToast('success', `Welcome back, ${user.name}!`);
+                } else {
+                    showAccessDenied(user.role);
+                    showToast('success', `Welcome, ${user.name}. Limited access mode.`);
+                }
+
+            } catch (error) {
+                console.error('Login error:', error);
+                errorDiv.textContent = error.message;
+                errorDiv.classList.add('show');
+                
+            } finally {
+                // Reset login button
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = 'Sign In';
+            }
+        });
+
+        function updateUserDisplay() {
+            if (!currentUser) return;
+
+            // Update header user info
+            document.getElementById('currentUserName').textContent = currentUser.name;
+            document.getElementById('currentUserRole').textContent = currentUser.role;
+            
+            // Update avatar styling
+            const avatar = document.getElementById('currentUserAvatar');
+            avatar.textContent = currentUser.name.charAt(0).toUpperCase();
+            avatar.className = `user-avatar ${currentUser.role}`;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to sign out?')) {
+                currentUser = null;
+                showLoginScreen();
+                document.getElementById('loginForm').reset();
+                showToast('success', 'Signed out successfully');
+            }
+        }
+
+        // Self-Service Password Change
+        function openSelfPasswordChange() {
+            document.getElementById('changePasswordForm').reset();
+            document.getElementById('changePasswordModal').classList.add('show');
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').classList.remove('show');
+        }
+
+        document.getElementById('changePasswordForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Validation
+            if (newPassword !== confirmPassword) {
+                showToast('error', 'New passwords do not match');
+                return;
+            }
+
+            if (newPassword.length < 8) {
+                showToast('error', 'Password must be at least 8 characters long');
+                return;
+            }
+
+            // Password strength check
+            if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(newPassword)) {
+                showToast('error', 'Password must include uppercase, lowercase, and number');
+                return;
+            }
+
+            try {
+                // Show loading in button
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                const originalText = submitBtn.textContent;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<span class="loading-spinner"></span>Updating...';
+
+                // Simulate API call for password change
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Mock password verification (in real implementation, verify current password)
+                if (currentUser && currentPassword !== getStoredPassword(currentUser.username)) {
+                    throw new Error('Current password is incorrect');
+                }
+
+                // Simulate successful password update
+                closeChangePasswordModal();
+                showToast('success', 'Password updated successfully! Please use your new password next time you sign in.');
+                
+                // Reset form
+                document.getElementById('changePasswordForm').reset();
+                
+            } catch (error) {
+                console.error('Error changing password:', error);
+                showToast('error', error.message || 'Failed to update password');
+            } finally {
+                // Reset button
+                const submitBtn = e.target.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Update Password';
+            }
+        });
+
+        // Password Reset Request
+        function openPasswordReset() {
+            document.getElementById('passwordResetModal').classList.add('show');
+        }
+
+        function closePasswordResetModal() {
+            document.getElementById('passwordResetModal').classList.remove('show');
+        }
+
+        async function submitPasswordReset() {
+            const username = document.getElementById('resetUsername').value;
+            const reason = document.getElementById('resetReason').value;
+
+            if (!username || !reason) {
+                showToast('error', 'Please fill in all fields');
+                return;
+            }
+
+            try {
+                // Simulate API call for password reset request
+                await new Promise(resolve => setTimeout(resolve, 1500));
+                
+                closePasswordResetModal();
+                showToast('success', `Password reset request submitted for ${username}. Administrator will contact you within 24 hours.`);
+                
+                // Reset form
+                document.getElementById('resetUsername').value = '';
+                document.getElementById('resetReason').value = '';
+                
+            } catch (error) {
+                console.error('Error submitting reset request:', error);
+                showToast('error', 'Failed to submit reset request');
+            }
+        }
+
+        // Helper Functions
+        function getStoredPassword(username) {
+            // Mock password storage (in real implementation, this would be securely handled)
+            const passwords = {
+                'director': 'maint2025',
+                'team1': 'team2025',
+                'team2': 'team2025',
+                'committee': 'committee2025'
+            };
+            return passwords[username];
+        }
+
+        // Toast Notifications
+        function showToast(type, message) {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : '⚠️';
+            
+            toast.innerHTML = `
+                <span style="font-size: 18px;">${icon}</span>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto remove after 5 seconds
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 5000);
+        }
+
+        // Modal Event Handlers
+        document.getElementById('changePasswordModal').addEventListener('click', function(e) {
+            if (e.target === this) closeChangePasswordModal();
+        });
+
+        document.getElementById('passwordResetModal').addEventListener('click', function(e) {
+            if (e.target === this) closePasswordResetModal();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeChangePasswordModal();
+                closePasswordResetModal();
+            }
+        });
+
+        console.log('🎯 User Management with Full Authentication - Ready!');
+        console.log('📋 Test credentials:');
+        console.log('  Director: director/maint2025 (Full access)');
+        console.log('  Team: team1/team2025 (Self-service only)');
+        console.log('  Committee: committee/committee2025 (Self-service only)');
+    </script>
+</body>
+</html>
