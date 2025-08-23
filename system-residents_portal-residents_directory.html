@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Residents Directory | Lake Illawong Maintenance System</title>
+    <!--
+    =====================================================================
+    LAKE ILLAWONG MAINTENANCE SYSTEM - RESIDENTS DIRECTORY
+    =====================================================================
+    PURPOSE: Public community directory with role-based filtering
+    PORTAL: Public/Community
+    VERSION: V1.0.0
+    LAST UPDATED: August 23, 2025
+    BACKEND API: Contact Manager Backend V1.0 (filtered)
+    DESIGN SYSTEM: Lake Illawong Unified v1.1
+    - Terminology: "Maintenance" standard
+    - Header: White rounded box style
+    - Colors: Primary gradient page background
+    - Layout: White content cards on gradient
+    AUTHENTICATION: None (Public access)
+    DEPENDENCIES: Contact Manager Backend (read-only)
+    RELATED FILES: system-contact_manager.html
+    HIERARCHICAL POSITION: system-residents_portal-residents_directory.html
+    =====================================================================
+    -->
+    <style>
+        /* Unified Design System v1.1 Variables */
+        :root {
+            --primary-blue: #3b82f6;
+            --success-green: #10b981;
+            --success-bg: #f0fdf4;
+            --warning-amber: #f59e0b;
+            --info-purple: #8b5cf6;
+            --info-bg: #faf5ff;
+            --text-primary: #1e293b;
+            --text-secondary: #374151;
+            --text-muted: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --border-primary: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* PRIMARY GRADIENT AS PAGE BACKGROUND */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* White Header Box */
+        .header {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        /* White Content Box */
+        .content {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-pills {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-pill {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-primary);
+            padding: 8px 16px;
+            border-radius: 25px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .filter-pill.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: transparent;
+        }
+
+        .filter-pill:hover:not(.active) {
+            background: var(--bg-tertiary);
+            border-color: var(--primary-blue);
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 12px 16px;
+            border: 2px solid var(--border-primary);
+            border-radius: 25px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .resident-card {
+            background: var(--bg-primary);
+            border: 1px solid var(--border-primary);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .resident-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            border-color: var(--primary-blue);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .unit-badge {
+            background: var(--primary-blue);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .resident-name {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+
+        .contact-info {
+            margin-bottom: 15px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .contact-icon {
+            font-size: 1rem;
+            width: 20px;
+            text-align: center;
+        }
+
+        .contact-item.clickable {
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .contact-item.clickable:hover {
+            color: var(--primary-blue);
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-primary);
+        }
+
+        .card-badges {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .role-badge {
+            background: var(--info-bg);
+            color: var(--info-purple);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-badge.director {
+            background: var(--warning-amber);
+            color: white;
+        }
+
+        .role-badge.zonerep {
+            background: var(--success-green);
+            color: white;
+        }
+
+        .stage-badge {
+            background: var(--success-bg);
+            color: var(--success-green);
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 600;
+        }
+
+        /* Status Messages */
+        .status-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .status-info {
+            background: var(--info-bg);
+            color: var(--info-purple);
+            border: 1px solid var(--info-purple);
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 10px;
+            }
+            
+            body {
+                padding: 10px;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .search-box {
+                min-width: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title">Residents Directory</h1>
+            <p class="header-subtitle">Lake Illawong Community</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Status Message -->
+            <div class="status-info">
+                📋 <strong>Community Directory:</strong> Browse resident contacts and community roles. 
+                Click on contact details to get in touch with your neighbors.
+            </div>
+
+            <!-- Filter Bar -->
+            <div class="filter-bar">
+                <div class="filter-pills">
+                    <button class="filter-pill active" onclick="filterByRole('all')">All Residents</button>
+                    <button class="filter-pill" onclick="filterByRole('director')">Directors</button>
+                    <button class="filter-pill" onclick="filterByRole('zonerep')">Zone Reps</button>
+                    <button class="filter-pill" onclick="filterByRole('committee')">Committee</button>
+                </div>
+                <input type="text" class="search-box" id="search-input" 
+                       placeholder="Search residents by name or unit..." 
+                       oninput="filterCards()">
+            </div>
+
+            <!-- Cards Grid -->
+            <div class="cards-grid" id="cards-container">
+                <!-- Sample Data - In real implementation, this would come from API -->
+                <div class="resident-card" data-name="john smith" data-unit="4a" data-roles="resident,director">
+                    <div class="card-header">
+                        <div class="unit-badge">4A</div>
+                    </div>
+                    <div class="resident-name">John Smith</div>
+                    <div class="contact-info">
+                        <div class="contact-item clickable" onclick="copyToClipboard('john.smith@email.com')">
+                            <span class="contact-icon">📧</span>
+                            <span>john.smith@email.com</span>
+                        </div>
+                        <div class="contact-item clickable" onclick="callNumber('0400123456')">
+                            <span class="contact-icon">📱</span>
+                            <span>0400 123 456</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🏠</span>
+                            <span>Zone 1</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-badges">
+                            <span class="stage-badge">Stage 1</span>
+                            <span class="role-badge">Resident</span>
+                            <span class="role-badge director">Director</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resident-card" data-name="mary johnson" data-unit="7b" data-roles="resident,zonerep">
+                    <div class="card-header">
+                        <div class="unit-badge">7B</div>
+                    </div>
+                    <div class="resident-name">Mary Johnson</div>
+                    <div class="contact-info">
+                        <div class="contact-item clickable" onclick="copyToClipboard('mary.j@email.com')">
+                            <span class="contact-icon">📧</span>
+                            <span>mary.j@email.com</span>
+                        </div>
+                        <div class="contact-item clickable" onclick="callNumber('0400789012')">
+                            <span class="contact-icon">📱</span>
+                            <span>0400 789 012</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🏠</span>
+                            <span>Zone 1</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-badges">
+                            <span class="stage-badge">Stage 1</span>
+                            <span class="role-badge">Resident</span>
+                            <span class="role-badge zonerep">Zone Rep</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resident-card" data-name="robert wilson" data-unit="12a" data-roles="resident">
+                    <div class="card-header">
+                        <div class="unit-badge">12A</div>
+                    </div>
+                    <div class="resident-name">Robert Wilson</div>
+                    <div class="contact-info">
+                        <div class="contact-item clickable" onclick="copyToClipboard('r.wilson@email.com')">
+                            <span class="contact-icon">📧</span>
+                            <span>r.wilson@email.com</span>
+                        </div>
+                        <div class="contact-item clickable" onclick="callNumber('0400345678')">
+                            <span class="contact-icon">📱</span>
+                            <span>0400 345 678</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🏠</span>
+                            <span>Zone 2</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-badges">
+                            <span class="stage-badge">Stage 2</span>
+                            <span class="role-badge">Resident</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="resident-card" data-name="margaret mclean" data-unit="1" data-roles="resident,committee">
+                    <div class="card-header">
+                        <div class="unit-badge">1</div>
+                    </div>
+                    <div class="resident-name">Margaret McLean</div>
+                    <div class="contact-info">
+                        <div class="contact-item clickable" onclick="copyToClipboard('margaret.w.mclean@gmail.com')">
+                            <span class="contact-icon">📧</span>
+                            <span>margaret.w.mclean@gmail.com</span>
+                        </div>
+                        <div class="contact-item clickable" onclick="callNumber('0406264472')">
+                            <span class="contact-icon">📱</span>
+                            <span>0406 264 472</span>
+                        </div>
+                        <div class="contact-item">
+                            <span class="contact-icon">🏠</span>
+                            <span>Zone 1</span>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <div class="card-badges">
+                            <span class="stage-badge">Stage 1</span>
+                            <span class="role-badge">Resident</span>
+                            <span class="role-badge">Committee</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- No Results Message -->
+            <div class="no-results" id="no-results" style="display: none;">
+                <h3>No residents found</h3>
+                <p>Try adjusting your search or filter criteria.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const CONTACT_MANAGER_API = 'https://script.google.com/macros/s/AKfycbyWMK2Jh0e6KHHhTd0K2slo6x9E2aXvkLVP1kMinYDrUzfZ2Lrkh_V1XDaoXhirnor4BA/exec';
+        
+        let currentFilter = 'all';
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // In real implementation, load data from API
+            // loadResidents();
+        });
+
+        // Filter by role
+        function filterByRole(role) {
+            currentFilter = role;
+            
+            // Update active pill
+            document.querySelectorAll('.filter-pill').forEach(pill => {
+                pill.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            filterCards();
+        }
+
+        // Filter cards based on search and role
+        function filterCards() {
+            const searchTerm = document.getElementById('search-input').value.toLowerCase();
+            const cards = document.querySelectorAll('.resident-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const name = card.dataset.name || '';
+                const unit = card.dataset.unit || '';
+                const roles = card.dataset.roles || '';
+                
+                const matchesSearch = searchTerm === '' || 
+                                    name.includes(searchTerm) || 
+                                    unit.includes(searchTerm);
+                
+                const matchesRole = currentFilter === 'all' || 
+                                  roles.includes(currentFilter);
+                
+                if (matchesSearch && matchesRole) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show/hide no results message
+            const noResults = document.getElementById('no-results');
+            if (visibleCount === 0) {
+                noResults.style.display = 'block';
+            } else {
+                noResults.style.display = 'none';
+            }
+        }
+
+        // Copy email to clipboard
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                showNotification(`Copied to clipboard: ${text}`, 'success');
+            }).catch(() => {
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                showNotification(`Copied to clipboard: ${text}`, 'success');
+            });
+        }
+
+        // Call number (mobile devices)
+        function callNumber(number) {
+            const cleanNumber = number.replace(/\s/g, '');
+            window.location.href = `tel:${cleanNumber}`;
+        }
+
+        // Show notification
+        function showNotification(message, type) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `status-message status-${type}`;
+            notification.textContent = message;
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.zIndex = '1000';
+            notification.style.maxWidth = '300px';
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                document.body.removeChild(notification);
+            }, 3000);
+        }
+
+        // Load residents from API (real implementation)
+        async function loadResidents() {
+            try {
+                const response = await fetch(`${CONTACT_MANAGER_API}?action=getPublicDirectory`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    renderResidents(data.contacts);
+                }
+            } catch (error) {
+                console.error('Error loading residents:', error);
+                showNotification('Failed to load residents directory', 'error');
+            }
+        }
+
+        // Render residents cards (real implementation)
+        function renderResidents(residents) {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+            
+            residents.forEach(resident => {
+                // Handle Unit Number correctly - don't add "Unit" if already present
+                const unitDisplay = resident.unitNumber.toLowerCase().includes('unit') ? 
+                                  resident.unitNumber : 
+                                  `Unit ${resident.unitNumber}`;
+                
+                const roles = resident.roleTags ? resident.roleTags.split(',').map(r => r.trim()) : [];
+                
+                const card = createResidentCard(resident, unitDisplay, roles);
+                container.appendChild(card);
+            });
+        }
+
+        // Create resident card element
+        function createResidentCard(resident, unitDisplay, roles) {
+            const card = document.createElement('div');
+            card.className = 'resident-card';
+            card.dataset.name = resident.residentName.toLowerCase();
+            card.dataset.unit = resident.unitNumber.toLowerCase();
+            card.dataset.roles = roles.join(',').toLowerCase();
+            
+            // Build role badges
+            const roleBadges = roles.map(role => {
+                const roleClass = role.toLowerCase().includes('director') ? 'director' : 
+                                role.toLowerCase().includes('zonerep') ? 'zonerep' : '';
+                return `<span class="role-badge ${roleClass}">${role}</span>`;
+            }).join('');
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="unit-badge">${unitDisplay}</div>
+                </div>
+                <div class="resident-name">${resident.residentName}</div>
+                <div class="contact-info">
+                    ${resident.email ? `
+                        <div class="contact-item clickable" onclick="copyToClipboard('${resident.email}')">
+                            <span class="contact-icon">📧</span>
+                            <span>${resident.email}</span>
+                        </div>
+                    ` : ''}
+                    ${resident.phone ? `
+                        <div class="contact-item clickable" onclick="callNumber('${resident.phone}')">
+                            <span class="contact-icon">📱</span>
+                            <span>${resident.phone}</span>
+                        </div>
+                    ` : ''}
+                    ${resident.zone ? `
+                        <div class="contact-item">
+                            <span class="contact-icon">🏠</span>
+                            <span>${resident.zone}</span>
+                        </div>
+                    ` : ''}
+                </div>
+                <div class="card-footer">
+                    <div class="card-badges">
+                        ${resident.stage ? `<span class="stage-badge">${resident.stage}</span>` : ''}
+                        ${roleBadges}
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+    </script>
+</body>
+</html>
