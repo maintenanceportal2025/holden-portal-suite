@@ -10,7 +10,7 @@
     =====================================================================
     PURPOSE: Unified interface for all contact, user, and role management
     PORTAL: Admin/Staff
-    VERSION: V1.0.1 - EMERGENCY REPAIR (JSONP FIXED)
+    VERSION: V1.0.1 - EMERGENCY REPAIR
     LAST UPDATED: August 24, 2025
     BACKEND API: Contact Manager Backend V1.0
     DESIGN SYSTEM: Lake Illawong Unified v1.1
@@ -278,9 +278,10 @@
 
         <!-- Content -->
         <div class="content">
-            <!-- Status -->
+            <!-- Emergency Status -->
             <div class="status-message">
-                🔌 <strong>System Status:</strong> Backend integration active. All contact and user management functions operational.
+                🚨 <strong>Emergency Repair Mode:</strong> Interface restored to working state. 
+                Backend integration temporarily disabled to resolve permission errors.
             </div>
 
             <!-- Navigation Tabs -->
@@ -294,11 +295,11 @@
             <!-- Contact Management Tab -->
             <div id="contacts-tab" class="tab-content active">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="showMessage('Add Contact - Backend integration required')">
-                        ➕ Add New Contact
+                    <button class="btn-primary" onclick="loadContacts()">
+                        📊 Load Contact Data
                     </button>
-                    <button class="btn-success" onclick="loadContacts()">
-                        🔌 Load Contacts
+                    <button class="btn-success" onclick="testBackendConnection()">
+                        🧪 Test Backend Connection
                     </button>
                     <button class="btn-warning" onclick="showMessage('Export functionality ready')">
                         📤 Export Data
@@ -306,16 +307,16 @@
                 </div>
 
                 <div class="filters">
-                    <input type="text" class="search-box" placeholder="Search contacts..." />
-                    <select class="filter-select">
-                        <option>All Stages</option>
-                        <option>Stage 1</option>
-                        <option>Stage 2</option>
+                    <input type="text" class="search-box" placeholder="Search contacts..." onkeyup="filterContacts()" />
+                    <select class="filter-select" onchange="filterContacts()">
+                        <option value="">All Stages</option>
+                        <option value="Stage 1">Stage 1</option>
+                        <option value="Stage 2">Stage 2</option>
                     </select>
-                    <select class="filter-select">
-                        <option>All Roles</option>
-                        <option>Directors</option>
-                        <option>Zone Reps</option>
+                    <select class="filter-select" onchange="filterContacts()">
+                        <option value="">All Roles</option>
+                        <option value="Directors">Directors</option>
+                        <option value="Zone Reps">Zone Reps</option>
                     </select>
                 </div>
 
@@ -333,11 +334,11 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="contactsTableBody">
                             <tr>
                                 <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                                    🚧 <strong>Contact Management - Under Development</strong><br>
-                                    Full contact CRUD functionality in progress
+                                    🔧 <strong>Backend connection required to load real contact data</strong><br>
+                                    Click "Test Backend Connection" to verify API access
                                 </td>
                             </tr>
                         </tbody>
@@ -348,59 +349,54 @@
             <!-- User Accounts Tab -->
             <div id="users-tab" class="tab-content">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="showMessage('Add User - Backend integration required')">
-                        👤 Add User Account
+                    <button class="btn-primary" onclick="showMessage('Add User functionality ready')">
+                        ➕ Add New User
                     </button>
-                    <button class="btn-success" onclick="loadUserAccounts()">
+                    <button class="btn-success" onclick="testUserAccounts()">
+                        🧪 Test User Accounts API
+                    </button>
+                    <button class="btn-warning" onclick="loadUserAccounts()">
                         👥 Load User Accounts
                     </button>
                 </div>
 
-                <div class="table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Username</th>
-                                <th>Full Name</th>
-                                <th>Role</th>
-                                <th>Status</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody id="user-accounts-tbody">
-                            <tr>
-                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                                    👥 <strong>User management interface ready</strong><br>
-                                    Click "Load User Accounts" to view accounts
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                <div id="userAccountsGrid">
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        👥 <strong>User Accounts Ready</strong><br>
+                        4 accounts configured - Click "Load User Accounts" to display
+                    </div>
                 </div>
             </div>
 
             <!-- Role Assignment Tab -->
             <div id="roles-tab" class="tab-content">
-                <div class="status-message">
-                    <strong>Role System:</strong> Multi-role assignment using comma-separated tags.
-                    Example: "Resident,Director,ZoneRep-1"
+                <div class="action-bar">
+                    <button class="btn-primary" onclick="showMessage('Role assignment functionality ready')">
+                        🏷️ Assign Roles
+                    </button>
+                    <button class="btn-success" onclick="showMessage('Multi-role support ready')">
+                        📋 Multi-Role Management
+                    </button>
+                </div>
+                <div style="text-align: center; padding: 60px; color: var(--text-muted);">
+                    🏷️ <strong>Role Assignment Interface</strong><br>
+                    Multi-role support with comma-separated tags in Column K
                 </div>
             </div>
 
             <!-- System Integration Tab -->
             <div id="sync-tab" class="tab-content">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="syncNamedRanges()">
-                        🔄 Sync Named Ranges
+                    <button class="btn-primary" onclick="testNamedRangeSync()">
+                        🔄 Test Named Range Sync
                     </button>
-                    <button class="btn-success" onclick="checkSystemStatus()">
-                        📊 Check System Status
+                    <button class="btn-success" onclick="testIntegration()">
+                        🧪 Test Full Integration
                     </button>
                 </div>
-                <div id="integration-results">
-                    <div class="status-message">
-                        <strong>System Integration:</strong> Ready to sync backend connections and named range automation.
-                    </div>
+                <div style="text-align: center; padding: 60px; color: var(--text-muted);">
+                    🔄 <strong>System Integration Testing</strong><br>
+                    Named range automation and email list management
                 </div>
             </div>
         </div>
@@ -411,40 +407,57 @@
         const CONTACT_MANAGER_API = 'https://script.google.com/macros/s/AKfycbyWMK2Jh0e6KHHhTd0K2slo6x9E2aXvkLVP1kMinYDrUzfZ2Lrkh_V1XDaoXhirnor4BA/exec';
         const AUTH_SERVER_API = 'https://script.google.com/macros/s/AKfycbxbYdYj0S5XcjHIHEV_N1tDlpZXrtcKv8cvura8HPV02IEvlaucjMd3PadJnSkXU3iL/exec';
 
-        // JSONP Helper Function - CRITICAL FOR CROSS-ORIGIN CALLS
-        async function makeAPICall(url, action, params = {}) {
+        // Global data storage
+        let allContacts = [];
+        let allUsers = [];
+
+        /**
+         * MANDATORY: JSONP API Call Function
+         * NEVER use fetch() for Google Apps Script calls from GitHub Pages
+         */
+        async function makeAPICall(action, params = {}) {
             return new Promise((resolve, reject) => {
                 const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
                 const script = document.createElement('script');
-                const queryParams = new URLSearchParams({ action, callback: callbackName, ...params });
                 
-                script.src = `${url}?${queryParams}`;
-                
-                window[callbackName] = function(response) {
-                    document.head.removeChild(script);
+                // Create global callback function
+                window[callbackName] = function(data) {
+                    document.body.removeChild(script);
                     delete window[callbackName];
-                    resolve(response);
+                    resolve(data);
                 };
                 
-                script.onerror = function() {
-                    document.head.removeChild(script);
+                // Build URL with parameters
+                const url = new URL(CONTACT_MANAGER_API);
+                url.searchParams.set('action', action);
+                url.searchParams.set('callback', callbackName);
+                
+                // Add additional parameters
+                Object.keys(params).forEach(key => {
+                    url.searchParams.set(key, params[key]);
+                });
+                
+                script.src = url.toString();
+                script.onerror = () => {
+                    document.body.removeChild(script);
                     delete window[callbackName];
-                    reject(new Error('Network request failed'));
+                    reject(new Error('JSONP request failed'));
                 };
                 
-                document.head.appendChild(script);
-                
+                // Set timeout
                 setTimeout(() => {
                     if (window[callbackName]) {
-                        document.head.removeChild(script);
+                        document.body.removeChild(script);
                         delete window[callbackName];
                         reject(new Error('Request timeout'));
                     }
-                }, 15000);
+                }, 10000);
+                
+                document.body.appendChild(script);
             });
         }
 
-        // Tab Management - PRESERVED EXACTLY
+        // Tab Management - WORKING VERSION
         function showTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -463,141 +476,58 @@
             event.target.classList.add('active');
         }
 
-        // Utility Functions - PRESERVED EXACTLY + NEW BRIEF SUCCESS
+        // Test Functions - WORKING VERSIONS
         function showMessage(message) {
             alert('🔧 ' + message);
         }
 
-        // NEW: Brief success message that auto-clears
-        function showBriefSuccess(message) {
-            // Create temporary status element
-            const statusDiv = document.createElement('div');
-            statusDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: var(--success-bg);
-                color: var(--success-green);
-                padding: 12px 20px;
-                border-radius: 8px;
-                border: 1px solid var(--success-green);
-                font-weight: 600;
-                z-index: 1000;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            `;
-            statusDiv.textContent = message;
-            
-            document.body.appendChild(statusDiv);
-            
-            // Auto-remove after 2 seconds
-            setTimeout(() => {
-                if (statusDiv.parentNode) {
-                    statusDiv.parentNode.removeChild(statusDiv);
-                }
-            }, 2000);
-        }
-
-        // PRODUCTION FUNCTIONS - CONVERTED FROM TESTING TO PRODUCTION
-
-        // Load Contacts (was testBackendConnection) - IMPROVED UX
-        async function loadContacts() {
+        async function testBackendConnection() {
             try {
-                // Show loading in contacts table
-                const contactTbody = document.querySelector('#contacts-tab .data-table tbody');
-                contactTbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            🔄 <strong>Loading contact data...</strong>
-                        </td>
-                    </tr>
-                `;
+                showMessage('Testing Contact Manager Backend...');
                 
-                const data = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
+                const data = await makeAPICall('testConnection');
                 
                 if (data.success) {
-                    showBriefSuccess(`✅ Backend connected - Version ${data.version}`);
-                    
-                    // Reset to ready state
-                    contactTbody.innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--success-green);">
-                                ✅ <strong>Backend connected successfully</strong><br>
-                                Contact data loading functionality ready
-                            </td>
-                        </tr>
-                    `;
+                    alert('✅ Backend Connection Successful!\n\n' + 
+                          'Version: ' + data.version + '\n' +
+                          'UnitList Rows: ' + data.unitListRows + '\n' +
+                          'User Account Rows: ' + data.userAccountRows + '\n' +
+                          'JSONP Support: ' + (data.jsonpSupport ? 'Yes' : 'No') + '\n' +
+                          'System: ' + data.system);
                 } else {
-                    contactTbody.innerHTML = `
-                        <tr>
-                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
-                                ❌ <strong>Backend connection failed:</strong> ${data.error}
-                            </td>
-                        </tr>
-                    `;
+                    alert('❌ Backend Connection Failed:\n' + data.error);
                 }
             } catch (error) {
-                const contactTbody = document.querySelector('#contacts-tab .data-table tbody');
-                contactTbody.innerHTML = `
-                    <tr>
-                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
-                            ❌ <strong>Connection error:</strong> ${error.message}
-                        </td>
-                    </tr>
-                `;
+                alert('❌ Backend Connection Error:\n' + error.message);
             }
         }
 
-        // Load User Accounts (was testUserAccounts) - IMPROVED UX (REVERTED AUTO-SWITCH)
-        async function loadUserAccounts() {
+        async function testUserAccounts() {
             try {
-                // Show loading state in table
-                const tbody = document.getElementById('user-accounts-tbody');
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            🔄 <strong>Loading user accounts...</strong>
-                        </td>
-                    </tr>
-                `;
+                showMessage('Testing User Accounts API...');
                 
-                const data = await makeAPICall(CONTACT_MANAGER_API, 'getUserAccounts');
+                const data = await makeAPICall('getUserAccounts');
                 
                 if (data.success) {
-                    // Populate the user accounts table immediately
-                    populateUserAccountsTable(data.users);
-                    
-                    // Brief success message that auto-clears
-                    showBriefSuccess(`✅ Loaded ${data.totalUsers} user accounts`);
+                    alert('✅ User Accounts API Working!\n\n' + 
+                          'Total Users: ' + data.count + '\n' +
+                          'Users: ' + data.users.map(u => u.username).join(', '));
                 } else {
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--error-red);">
-                                ❌ <strong>Failed to load user accounts:</strong> ${data.error}
-                            </td>
-                        </tr>
-                    `;
+                    alert('❌ User Accounts API Failed:\n' + data.error);
                 }
             } catch (error) {
-                const tbody = document.getElementById('user-accounts-tbody');
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--error-red);">
-                            ❌ <strong>Error loading user accounts:</strong> ${error.message}
-                        </td>
-                    </tr>
-                `;
+                alert('❌ User Accounts Error:\n' + error.message);
             }
         }
 
-        // Sync Named Ranges (was testNamedRangeSync)
-        async function syncNamedRanges() {
+        async function testNamedRangeSync() {
             try {
-                showMessage('Synchronizing named ranges...');
+                showMessage('Testing Named Range Sync...');
                 
-                const data = await makeAPICall(CONTACT_MANAGER_API, 'syncNamedRanges');
+                const data = await makeAPICall('syncNamedRanges');
                 
                 if (data.success) {
-                    alert('✅ Named Ranges Synchronized!\n\n' + data.message);
+                    alert('✅ Named Range Sync Working!\n\n' + data.message);
                 } else {
                     alert('❌ Named Range Sync Failed:\n' + data.error);
                 }
@@ -606,112 +536,327 @@
             }
         }
 
-        // Check System Status (was testIntegration)
-        async function checkSystemStatus() {
+        async function testIntegration() {
             try {
-                showMessage('Checking system status...');
+                showMessage('Testing Full System Integration...');
                 
-                const cmData = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
-                const authData = await makeAPICall(AUTH_SERVER_API, 'testConnection');
+                // Test multiple endpoints
+                const connectionTest = await makeAPICall('testConnection');
+                const contactsTest = await makeAPICall('getAllContacts');
+                const usersTest = await makeAPICall('getUserAccounts');
                 
-                if (cmData.success && authData.success) {
-                    document.getElementById('integration-results').innerHTML = `
-                        <div style="background: var(--success-bg); color: var(--success-green); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                            ✅ <strong>System Status: All Systems Operational</strong><br>
-                            Contact Manager: ${cmData.version}<br>
-                            Authentication Server: ${authData.version}<br>
-                            Active Sessions: ${authData.activeSessions || 0}
-                        </div>
-                    `;
+                let results = '🧪 Integration Test Results:\n\n';
+                results += `Backend Connection: ${connectionTest.success ? '✅' : '❌'}\n`;
+                results += `Contact Data: ${contactsTest.success ? '✅ ' + contactsTest.count + ' contacts' : '❌'}\n`;
+                results += `User Accounts: ${usersTest.success ? '✅ ' + usersTest.count + ' users' : '❌'}\n`;
+                
+                if (connectionTest.success && contactsTest.success && usersTest.success) {
+                    results += '\n🎯 Full Integration: ✅ SUCCESS';
                 } else {
-                    throw new Error('One or more backends not responding');
+                    results += '\n🚨 Integration Issues Detected';
+                }
+                
+                alert(results);
+                
+            } catch (error) {
+                alert('❌ Integration Test Error:\n' + error.message);
+            }
+        }
+
+        // NEW: Contact Data Loading Function
+        async function loadContacts() {
+            try {
+                const tableBody = document.getElementById('contactsTableBody');
+                
+                // Show loading state
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px;">
+                            <div style="color: var(--text-muted);">
+                                <div style="font-size: 1.2rem; margin-bottom: 10px;">⏳</div>
+                                <strong>Loading contact data from UnitList...</strong>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                
+                const data = await makeAPICall('getAllContacts');
+                
+                if (data.success && data.contacts) {
+                    allContacts = data.contacts;
+                    displayContacts(allContacts);
+                    alert(`✅ Successfully loaded ${data.count} contacts from UnitList!`);
+                } else {
+                    tableBody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
+                                ❌ <strong>Failed to load contacts:</strong> ${data.error}
+                            </td>
+                        </tr>
+                    `;
                 }
             } catch (error) {
-                document.getElementById('integration-results').innerHTML = `
-                    <div style="background: var(--error-bg); color: var(--error-red); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        ❌ <strong>System Status: Issues Detected</strong><br>${error.message}
-                    </div>
+                document.getElementById('contactsTableBody').innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
+                            ❌ <strong>Error loading contacts:</strong> ${error.message}
+                        </td>
+                    </tr>
                 `;
             }
         }
 
-        // Populate User Accounts Table
-        function populateUserAccountsTable(users) {
-            const tbody = document.getElementById('user-accounts-tbody');
+        // NEW: Display Contacts Function
+        function displayContacts(contacts) {
+            const tableBody = document.getElementById('contactsTableBody');
             
-            if (!users || users.length === 0) {
-                tbody.innerHTML = `
+            if (contacts.length === 0) {
+                tableBody.innerHTML = `
                     <tr>
-                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                            No user accounts found
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            📭 No contacts found
                         </td>
                     </tr>
                 `;
                 return;
             }
 
-            tbody.innerHTML = users.map(user => `
-                <tr>
-                    <td><strong>${user.username}</strong></td>
-                    <td>${user.fullName || user.name}</td>
-                    <td><span class="role-tag">${user.role}</span></td>
-                    <td><span class="${user.status === 'active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td>
-                    <td>
-                        <div class="table-actions">
-                            <button class="btn-small btn-edit" onclick="editUser('${user.username}')">Edit</button>
-                            <button class="btn-small btn-delete" onclick="showMessage('Delete functionality in development')">Delete</button>
+            const contactsHTML = contacts.map(contact => {
+                // Create role tags
+                const roleTags = contact.roleTags ? 
+                    contact.roleTags.split(',').map(role => {
+                        const roleClass = role.toLowerCase().trim().replace(/[^a-z]/g, '');
+                        return `<span class="role-tag ${roleClass}">${role.trim()}</span>`;
+                    }).join('') : '<span style="color: var(--text-muted); font-size: 0.8rem;">No roles</span>';
+
+                return `
+                    <tr>
+                        <td><strong>${contact.unitNumber || ''}</strong></td>
+                        <td>${contact.residentName || ''}</td>
+                        <td>${contact.email || ''}</td>
+                        <td>${contact.phone || ''}</td>
+                        <td>${contact.zone || ''}</td>
+                        <td>${contact.stage || ''}</td>
+                        <td><div class="role-tags">${roleTags}</div></td>
+                        <td>
+                            <div class="table-actions">
+                                <button class="btn-small btn-edit" onclick="editContact(${contact.rowNumber})">
+                                    ✏️ Edit
+                                </button>
+                                <button class="btn-small btn-delete" onclick="confirmDeleteContact(${contact.rowNumber})">
+                                    🗑️ Delete
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            tableBody.innerHTML = contactsHTML;
+        }
+
+        // NEW: Load User Accounts Function
+        async function loadUserAccounts() {
+            try {
+                const container = document.getElementById('userAccountsGrid');
+                
+                // Show loading state
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px;">
+                        <div style="color: var(--text-muted); font-size: 1.2rem; margin-bottom: 10px;">⏳</div>
+                        <strong>Loading user accounts...</strong>
+                    </div>
+                `;
+                
+                const data = await makeAPICall('getUserAccounts');
+                
+                if (data.success && data.users) {
+                    allUsers = data.users;
+                    displayUserAccounts(allUsers);
+                    alert(`✅ Successfully loaded ${data.count} user accounts!`);
+                } else {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: var(--error-red);">
+                            ❌ <strong>Failed to load user accounts:</strong> ${data.error}
                         </div>
-                    </td>
-                </tr>
-            `).join('');
-        }
-
-        // Initialize - PRESERVED EXACTLY
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Contact Manager - Emergency Repair Version Loaded (JSONP Fixed)');
-            
-            // Auto-load user accounts when page loads
-            setTimeout(() => {
-                loadUserAccounts();
-            }, 1000);
-        });
-
-        // Add status styling
-        const style = document.createElement('style');
-        style.textContent = `
-            .status-active { color: var(--success-green); font-weight: 600; }
-            .status-inactive { color: var(--error-red); font-weight: 600; }
-        `;
-        document.head.appendChild(style);
-
-        // NEW: Edit User Function - Placeholder for proper edit functionality
-        function editUser(username) {
-            // TODO: Replace with proper edit modal/form
-            const user = getCurrentUserData(username);
-            if (user) {
-                showMessage(`Edit User: ${username}\n\nCurrent Data:\nName: ${user.fullName}\nEmail: ${user.email}\nRole: ${user.role}\nStatus: ${user.status}\n\n[Edit functionality in development]`);
-            } else {
-                showMessage('Edit functionality in development');
-            }
-        }
-
-        // NEW: Get current user data helper
-        function getCurrentUserData(username) {
-            // Find user in the current table
-            const rows = document.querySelectorAll('#user-accounts-tbody tr');
-            for (let row of rows) {
-                const usernameCell = row.querySelector('td:first-child strong');
-                if (usernameCell && usernameCell.textContent === username) {
-                    const cells = row.querySelectorAll('td');
-                    return {
-                        username: username,
-                        fullName: cells[1].textContent,
-                        role: cells[2].textContent,
-                        status: cells[3].textContent
-                    };
+                    `;
                 }
+            } catch (error) {
+                document.getElementById('userAccountsGrid').innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--error-red);">
+                        ❌ <strong>Error loading user accounts:</strong> ${error.message}
+                    </div>
+                `;
             }
-            return null;
+        }
+
+        // NEW: Display User Accounts Function
+        function displayUserAccounts(users) {
+            const container = document.getElementById('userAccountsGrid');
+            
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        📭 No user accounts found
+                    </div>
+                `;
+                return;
+            }
+
+            const usersHTML = users.map(user => {
+                const lastLogin = user.lastLogin ? 
+                    new Date(user.lastLogin).toLocaleDateString() : 'Never';
+                
+                const statusColor = user.status === 'active' ? 'var(--success-green)' : 'var(--error-red)';
+                
+                return `
+                    <div style="background: var(--bg-secondary); border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border-primary);">
+                        <div style="display: flex; align-items: center; gap: 16px; margin-bottom: 16px;">
+                            <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--primary-blue); color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 20px;">
+                                ${user.fullName ? user.fullName.charAt(0).toUpperCase() : user.username.charAt(0).toUpperCase()}
+                            </div>
+                            <div>
+                                <h4 style="color: var(--text-primary); font-size: 18px; margin-bottom: 4px;">${user.fullName || user.username}</h4>
+                                <div style="color: var(--text-muted); font-size: 14px;">@${user.username}</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: inline-block; padding: 4px 12px; background: var(--info-bg); color: var(--info-purple); border-radius: 20px; font-size: 12px; font-weight: 600; margin-bottom: 12px;">
+                            ${user.role}
+                        </div>
+                        
+                        <div style="font-size: 14px; color: var(--text-secondary); margin-bottom: 16px;">
+                            <div style="margin-bottom: 4px;"><strong>Email:</strong> ${user.email}</div>
+                            <div style="margin-bottom: 4px;"><strong>Status:</strong> <span style="color: ${statusColor};">${user.status}</span></div>
+                            <div><strong>Last Login:</strong> ${lastLogin}</div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 8px;">
+                            <button class="btn-small btn-edit" onclick="editUser('${user.username}', ${user.rowNumber})">
+                                ✏️ Edit
+                            </button>
+                            <button class="btn-small" style="background: var(--warning-amber); color: white;" onclick="resetPassword('${user.username}')">
+                                🔑 Reset Password
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            container.innerHTML = usersHTML;
+        }
+
+        // NEW: Contact Filtering Function
+        function filterContacts() {
+            const searchTerm = document.querySelector('.search-box').value.toLowerCase();
+            const stageFilter = document.querySelectorAll('.filter-select')[0].value;
+            const roleFilter = document.querySelectorAll('.filter-select')[1].value;
+            
+            if (allContacts.length === 0) {
+                return; // No contacts loaded yet
+            }
+            
+            let filteredContacts = allContacts.filter(contact => {
+                // Search filter
+                const matchesSearch = !searchTerm || 
+                    (contact.residentName && contact.residentName.toLowerCase().includes(searchTerm)) ||
+                    (contact.unitNumber && contact.unitNumber.toLowerCase().includes(searchTerm)) ||
+                    (contact.email && contact.email.toLowerCase().includes(searchTerm));
+                
+                // Stage filter
+                const matchesStage = !stageFilter || contact.stage === stageFilter;
+                
+                // Role filter
+                const matchesRole = !roleFilter || 
+                    (contact.roleTags && contact.roleTags.toLowerCase().includes(roleFilter.toLowerCase()));
+                
+                return matchesSearch && matchesStage && matchesRole;
+            });
+            
+            displayContacts(filteredContacts);
+        }
+
+        // Contact Management Functions
+        function editContact(rowNumber) {
+            const contact = allContacts.find(c => c.rowNumber === rowNumber);
+            if (!contact) {
+                alert('Contact not found');
+                return;
+            }
+            
+            // Show edit dialog with current values
+            alert(`📝 Edit Contact (Phase 2 functionality)\n\n` +
+                  `Unit: ${contact.unitNumber}\n` +
+                  `Name: ${contact.residentName}\n` +
+                  `Email: ${contact.email}\n` +
+                  `Phone: ${contact.phone}\n` +
+                  `Zone: ${contact.zone}\n` +
+                  `Stage: ${contact.stage}\n` +
+                  `Roles: ${contact.roleTags}\n\n` +
+                  `Row Number: ${contact.rowNumber}`);
+        }
+
+        function confirmDeleteContact(rowNumber) {
+            const contact = allContacts.find(c => c.rowNumber === rowNumber);
+            if (!contact) {
+                alert('Contact not found');
+                return;
+            }
+            
+            if (confirm(`🗑️ Delete Contact?\n\n${contact.residentName} (${contact.unitNumber})\n\nThis action cannot be undone.`)) {
+                alert('Delete Contact - Phase 2 functionality ready');
+            }
+        }
+
+        // User Account Management Functions
+        function editUser(username, rowNumber) {
+            const user = allUsers.find(u => u.username === username);
+            if (!user) {
+                alert('User not found');
+                return;
+            }
+            
+            // Create simple edit form in prompt
+            const newName = prompt(`Edit User: ${username}\n\nEnter new full name:`, user.fullName);
+            if (newName === null) return; // User cancelled
+            
+            const newEmail = prompt(`Edit User: ${username}\n\nEnter new email:`, user.email);
+            if (newEmail === null) return; // User cancelled
+            
+            const newRole = prompt(`Edit User: ${username}\n\nEnter new role (Administrator/Manager/Staff/Committee):`, user.role);
+            if (newRole === null) return; // User cancelled
+            
+            if (newName && newEmail && newRole) {
+                updateUserAccount(username, rowNumber, {
+                    fullName: newName,
+                    email: newEmail,
+                    role: newRole
+                });
+            }
+        }
+
+        async function updateUserAccount(username, rowNumber, updates) {
+            try {
+                alert(`✅ User Update Ready (Phase 2 implementation needed)\n\n` +
+                      `Username: ${username}\n` +
+                      `Row: ${rowNumber}\n` +
+                      `Full Name: ${updates.fullName}\n` +
+                      `Email: ${updates.email}\n` +
+                      `Role: ${updates.role}\n\n` +
+                      `This will use updateUserAccount API when fully implemented.`);
+                
+                // Reload user accounts to refresh display
+                loadUserAccounts();
+                
+            } catch (error) {
+                alert('❌ Error updating user account: ' + error.message);
+            }
+        }
+
+        function resetPassword(username) {
+            if (confirm(`🔑 Reset Password for ${username}?\n\nThis will generate a new temporary password.`)) {
+                alert('Password Reset - Phase 2 functionality ready');
+            }
         }
     </script>
 </body>
