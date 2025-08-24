@@ -336,8 +336,8 @@
                         <tbody>
                             <tr>
                                 <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                                    📊 <strong>Contact management interface ready</strong><br>
-                                    Click "Load Contacts" to connect to backend
+                                    🚧 <strong>Contact Management - Under Development</strong><br>
+                                    Full contact CRUD functionality in progress
                                 </td>
                             </tr>
                         </tbody>
@@ -658,8 +658,8 @@
                     <td><span class="${user.status === 'active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td>
                     <td>
                         <div class="table-actions">
-                            <button class="btn-small btn-edit" onclick="showMessage('Edit User: ${user.username}')">Edit</button>
-                            <button class="btn-small btn-delete" onclick="showMessage('Delete User: ${user.username}')">Delete</button>
+                            <button class="btn-small btn-edit" onclick="editUser('${user.username}')">Edit</button>
+                            <button class="btn-small btn-delete" onclick="showMessage('Delete functionality in development')">Delete</button>
                         </div>
                     </td>
                 </tr>
@@ -683,6 +683,36 @@
             .status-inactive { color: var(--error-red); font-weight: 600; }
         `;
         document.head.appendChild(style);
+
+        // NEW: Edit User Function - Placeholder for proper edit functionality
+        function editUser(username) {
+            // TODO: Replace with proper edit modal/form
+            const user = getCurrentUserData(username);
+            if (user) {
+                showMessage(`Edit User: ${username}\n\nCurrent Data:\nName: ${user.fullName}\nEmail: ${user.email}\nRole: ${user.role}\nStatus: ${user.status}\n\n[Edit functionality in development]`);
+            } else {
+                showMessage('Edit functionality in development');
+            }
+        }
+
+        // NEW: Get current user data helper
+        function getCurrentUserData(username) {
+            // Find user in the current table
+            const rows = document.querySelectorAll('#user-accounts-tbody tr');
+            for (let row of rows) {
+                const usernameCell = row.querySelector('td:first-child strong');
+                if (usernameCell && usernameCell.textContent === username) {
+                    const cells = row.querySelectorAll('td');
+                    return {
+                        username: username,
+                        fullName: cells[1].textContent,
+                        role: cells[2].textContent,
+                        status: cells[3].textContent
+                    };
+                }
+            }
+            return null;
+        }
     </script>
 </body>
 </html>
