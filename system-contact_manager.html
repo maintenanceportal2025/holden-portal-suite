@@ -336,8 +336,8 @@
                         <tbody>
                             <tr>
                                 <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                                    🔧 <strong>Backend connection required to load real contact data</strong><br>
-                                    Click "Load Contacts" to verify API access
+                                    📊 <strong>Contact management interface ready</strong><br>
+                                    Click "Load Contacts" to connect to backend
                                 </td>
                             </tr>
                         </tbody>
@@ -370,8 +370,8 @@
                         <tbody id="user-accounts-tbody">
                             <tr>
                                 <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
-                                    🔧 <strong>Backend connection required to load user accounts</strong><br>
-                                    Click "Load User Accounts" to verify access
+                                    👥 <strong>User management interface ready</strong><br>
+                                    Click "Load User Accounts" to view accounts
                                 </td>
                             </tr>
                         </tbody>
@@ -547,10 +547,10 @@
             }
         }
 
-        // Load User Accounts (was testUserAccounts) - IMPROVED UX
+        // Load User Accounts (was testUserAccounts) - IMPROVED UX + AUTO-SWITCH TO TAB
         async function loadUserAccounts() {
             try {
-                // Show loading state in table instead of toast
+                // Show loading state in table
                 const tbody = document.getElementById('user-accounts-tbody');
                 tbody.innerHTML = `
                     <tr>
@@ -565,6 +565,9 @@
                 if (data.success) {
                     // Populate the user accounts table immediately
                     populateUserAccountsTable(data.users);
+                    
+                    // AUTO-SWITCH TO USER ACCOUNTS TAB for instant recognition
+                    showTab('users');
                     
                     // Brief success message that auto-clears
                     showBriefSuccess(`✅ Loaded ${data.totalUsers} user accounts`);
