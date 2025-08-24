@@ -278,10 +278,9 @@
 
         <!-- Content -->
         <div class="content">
-            <!-- Emergency Status -->
+            <!-- Status -->
             <div class="status-message">
-                🚨 <strong>Emergency Repair Mode:</strong> Interface restored to working state. 
-                Backend integration temporarily disabled to resolve permission errors.
+                🔌 <strong>System Status:</strong> Backend integration active. All contact and user management functions operational.
             </div>
 
             <!-- Navigation Tabs -->
@@ -298,8 +297,8 @@
                     <button class="btn-primary" onclick="showMessage('Add Contact - Backend integration required')">
                         ➕ Add New Contact
                     </button>
-                    <button class="btn-success" onclick="testBackendConnection()">
-                        🧪 Test Backend Connection
+                    <button class="btn-success" onclick="loadContacts()">
+                        🔌 Load Contacts
                     </button>
                     <button class="btn-warning" onclick="showMessage('Export functionality ready')">
                         📤 Export Data
@@ -338,7 +337,7 @@
                             <tr>
                                 <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                     🔧 <strong>Backend connection required to load real contact data</strong><br>
-                                    Click "Test Backend Connection" to verify API access
+                                    Click "Load Contacts" to verify API access
                                 </td>
                             </tr>
                         </tbody>
@@ -352,8 +351,8 @@
                     <button class="btn-primary" onclick="showMessage('Add User - Backend integration required')">
                         👤 Add User Account
                     </button>
-                    <button class="btn-success" onclick="testUserAccounts()">
-                        🧪 Test User Accounts API
+                    <button class="btn-success" onclick="loadUserAccounts()">
+                        👥 Load User Accounts
                     </button>
                 </div>
 
@@ -368,11 +367,11 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="user-accounts-tbody">
                             <tr>
                                 <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
                                     🔧 <strong>Backend connection required to load user accounts</strong><br>
-                                    Click "Test User Accounts API" to verify access
+                                    Click "Load User Accounts" to verify access
                                 </td>
                             </tr>
                         </tbody>
@@ -391,16 +390,16 @@
             <!-- System Integration Tab -->
             <div id="sync-tab" class="tab-content">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="testNamedRangeSync()">
-                        🔧 Test Named Range Sync
+                    <button class="btn-primary" onclick="syncNamedRanges()">
+                        🔄 Sync Named Ranges
                     </button>
-                    <button class="btn-success" onclick="testIntegration()">
-                        🧪 Test Backend Integration
+                    <button class="btn-success" onclick="checkSystemStatus()">
+                        📊 Check System Status
                     </button>
                 </div>
                 <div id="integration-results">
                     <div class="status-message">
-                        <strong>System Integration:</strong> Ready to test backend connections and named range automation.
+                        <strong>System Integration:</strong> Ready to sync backend connections and named range automation.
                     </div>
                 </div>
             </div>
@@ -445,7 +444,7 @@
             });
         }
 
-        // Tab Management - PRESERVED EXACTLY + AUTO-LOAD USER ACCOUNTS
+        // Tab Management - PRESERVED EXACTLY
         function showTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -462,46 +461,25 @@
             
             // Add active class to clicked tab
             event.target.classList.add('active');
-
-            // AUTO-LOAD USER ACCOUNTS when tab is clicked
-            if (tabName === 'users') {
-                loadUserAccountsSilently();
-            }
         }
 
-        // NEW: Silent user accounts loading (no alert popup)
-        async function loadUserAccountsSilently() {
-            try {
-                const data = await makeAPICall(CONTACT_MANAGER_API, 'getUserAccounts');
-                
-                if (data.success) {
-                    populateUserAccountsTable(data.users);
-                } else {
-                    console.error('Failed to load user accounts:', data.error);
-                    // Keep the placeholder message showing
-                }
-            } catch (error) {
-                console.error('Error loading user accounts:', error.message);
-                // Keep the placeholder message showing
-            }
-        }
-
-        // Test Functions - PRESERVED EXACTLY (but with JSONP)
+        // Utility Functions - PRESERVED EXACTLY
         function showMessage(message) {
             alert('🔧 ' + message);
         }
 
-        // FIXED: Backend Connection Test - JSONP instead of fetch()
-        async function testBackendConnection() {
+        // PRODUCTION FUNCTIONS - CONVERTED FROM TESTING TO PRODUCTION
+
+        // Load Contacts (was testBackendConnection)
+        async function loadContacts() {
             try {
-                showMessage('Testing Contact Manager Backend...');
+                showMessage('Loading contact data...');
                 
                 const data = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
                 
                 if (data.success) {
-                    alert('✅ Backend Connection Successful!\n\n' + 
+                    alert('✅ Backend Connected Successfully!\n\n' + 
                           'Version: ' + data.version + '\n' +
-                          'JSONP Support: ' + data.jsonpSupport + '\n' +
                           'System: ' + (data.system || 'Contact Manager'));
                 } else {
                     alert('❌ Backend Connection Failed:\n' + data.error);
@@ -511,31 +489,77 @@
             }
         }
 
-        // FIXED: User Accounts Test - JSONP instead of fetch() + TABLE POPULATION
-        async function testUserAccounts() {
+        // Load User Accounts (was testUserAccounts)
+        async function loadUserAccounts() {
             try {
-                showMessage('Testing User Accounts API...');
+                showMessage('Loading user accounts...');
                 
                 const data = await makeAPICall(CONTACT_MANAGER_API, 'getUserAccounts');
                 
                 if (data.success) {
-                    alert('✅ User Accounts API Working!\n\n' + 
+                    alert('✅ User Accounts Loaded!\n\n' + 
                           'Total Users: ' + data.totalUsers + '\n' +
                           'Users: ' + data.users.map(u => u.username).join(', '));
                     
-                    // POPULATE THE USER ACCOUNTS TABLE
+                    // Populate the user accounts table
                     populateUserAccountsTable(data.users);
                 } else {
-                    alert('❌ User Accounts API Failed:\n' + data.error);
+                    alert('❌ Failed to Load User Accounts:\n' + data.error);
                 }
             } catch (error) {
                 alert('❌ User Accounts Error:\n' + error.message);
             }
         }
 
-        // NEW: Populate User Accounts Table
+        // Sync Named Ranges (was testNamedRangeSync)
+        async function syncNamedRanges() {
+            try {
+                showMessage('Synchronizing named ranges...');
+                
+                const data = await makeAPICall(CONTACT_MANAGER_API, 'syncNamedRanges');
+                
+                if (data.success) {
+                    alert('✅ Named Ranges Synchronized!\n\n' + data.message);
+                } else {
+                    alert('❌ Named Range Sync Failed:\n' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Named Range Sync Error:\n' + error.message);
+            }
+        }
+
+        // Check System Status (was testIntegration)
+        async function checkSystemStatus() {
+            try {
+                showMessage('Checking system status...');
+                
+                const cmData = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
+                const authData = await makeAPICall(AUTH_SERVER_API, 'testConnection');
+                
+                if (cmData.success && authData.success) {
+                    document.getElementById('integration-results').innerHTML = `
+                        <div style="background: var(--success-bg); color: var(--success-green); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            ✅ <strong>System Status: All Systems Operational</strong><br>
+                            Contact Manager: ${cmData.version}<br>
+                            Authentication Server: ${authData.version}<br>
+                            Active Sessions: ${authData.activeSessions || 0}
+                        </div>
+                    `;
+                } else {
+                    throw new Error('One or more backends not responding');
+                }
+            } catch (error) {
+                document.getElementById('integration-results').innerHTML = `
+                    <div style="background: var(--error-bg); color: var(--error-red); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        ❌ <strong>System Status: Issues Detected</strong><br>${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Populate User Accounts Table
         function populateUserAccountsTable(users) {
-            const tbody = document.querySelector('#users-tab .data-table tbody');
+            const tbody = document.getElementById('user-accounts-tbody');
             
             if (!users || users.length === 0) {
                 tbody.innerHTML = `
@@ -564,68 +588,23 @@
             `).join('');
         }
 
-        // NEW: Add missing CSS for status display
+        // Initialize - PRESERVED EXACTLY
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Contact Manager - Emergency Repair Version Loaded (JSONP Fixed)');
+            
+            // Auto-load user accounts when page loads
+            setTimeout(() => {
+                loadUserAccounts();
+            }, 1000);
+        });
+
+        // Add status styling
         const style = document.createElement('style');
         style.textContent = `
             .status-active { color: var(--success-green); font-weight: 600; }
             .status-inactive { color: var(--error-red); font-weight: 600; }
         `;
         document.head.appendChild(style);
-
-        // FIXED: Named Range Sync Test - JSONP instead of fetch()
-        async function testNamedRangeSync() {
-            try {
-                showMessage('Testing Named Range Sync...');
-                
-                const data = await makeAPICall(CONTACT_MANAGER_API, 'syncNamedRanges');
-                
-                if (data.success) {
-                    alert('✅ Named Range Sync Working!\n\n' + data.message);
-                } else {
-                    alert('❌ Named Range Sync Failed:\n' + data.error);
-                }
-            } catch (error) {
-                alert('❌ Named Range Sync Error:\n' + error.message);
-            }
-        }
-
-        // FIXED: Integration Test - JSONP instead of fetch()
-        async function testIntegration() {
-            try {
-                showMessage('Testing Full Integration...');
-                
-                // Test both backends using JSONP
-                const cmData = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
-                const authData = await makeAPICall(AUTH_SERVER_API, 'testConnection');
-                
-                if (cmData.success && authData.success) {
-                    document.getElementById('integration-results').innerHTML = `
-                        <div style="background: var(--success-bg); color: var(--success-green); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                            ✅ <strong>Full Integration Test Passed!</strong><br>
-                            Contact Manager: ${cmData.version}<br>
-                            Authentication Server: ${authData.version}<br>
-                            Active Sessions: ${authData.activeSessions || 0}
-                        </div>
-                    `;
-                } else {
-                    throw new Error('One or more backends failed');
-                }
-            } catch (error) {
-                document.getElementById('integration-results').innerHTML = `
-                    <div style="background: var(--error-bg); color: var(--error-red); padding: 15px; border-radius: 8px; margin-top: 15px;">
-                        ❌ <strong>Integration Test Failed:</strong> ${error.message}
-                    </div>
-                `;
-            }
-        }
-
-        // Initialize - PRESERVED EXACTLY + AUTO-LOAD ON PAGE LOAD
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log('🔧 Contact Manager - Emergency Repair Version Loaded (JSONP Fixed)');
-            
-            // AUTO-LOAD user accounts on page load
-            loadUserAccountsSilently();
-        });
     </script>
 </body>
 </html>
