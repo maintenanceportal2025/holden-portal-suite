@@ -463,51 +463,129 @@
             event.target.classList.add('active');
         }
 
-        // Utility Functions - PRESERVED EXACTLY
+        // Utility Functions - PRESERVED EXACTLY + NEW BRIEF SUCCESS
         function showMessage(message) {
             alert('🔧 ' + message);
         }
 
+        // NEW: Brief success message that auto-clears
+        function showBriefSuccess(message) {
+            // Create temporary status element
+            const statusDiv = document.createElement('div');
+            statusDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--success-bg);
+                color: var(--success-green);
+                padding: 12px 20px;
+                border-radius: 8px;
+                border: 1px solid var(--success-green);
+                font-weight: 600;
+                z-index: 1000;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            `;
+            statusDiv.textContent = message;
+            
+            document.body.appendChild(statusDiv);
+            
+            // Auto-remove after 2 seconds
+            setTimeout(() => {
+                if (statusDiv.parentNode) {
+                    statusDiv.parentNode.removeChild(statusDiv);
+                }
+            }, 2000);
+        }
+
         // PRODUCTION FUNCTIONS - CONVERTED FROM TESTING TO PRODUCTION
 
-        // Load Contacts (was testBackendConnection)
+        // Load Contacts (was testBackendConnection) - IMPROVED UX
         async function loadContacts() {
             try {
-                showMessage('Loading contact data...');
+                // Show loading in contacts table
+                const contactTbody = document.querySelector('#contacts-tab .data-table tbody');
+                contactTbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            🔄 <strong>Loading contact data...</strong>
+                        </td>
+                    </tr>
+                `;
                 
                 const data = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
                 
                 if (data.success) {
-                    alert('✅ Backend Connected Successfully!\n\n' + 
-                          'Version: ' + data.version + '\n' +
-                          'System: ' + (data.system || 'Contact Manager'));
+                    showBriefSuccess(`✅ Backend connected - Version ${data.version}`);
+                    
+                    // Reset to ready state
+                    contactTbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--success-green);">
+                                ✅ <strong>Backend connected successfully</strong><br>
+                                Contact data loading functionality ready
+                            </td>
+                        </tr>
+                    `;
                 } else {
-                    alert('❌ Backend Connection Failed:\n' + data.error);
+                    contactTbody.innerHTML = `
+                        <tr>
+                            <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
+                                ❌ <strong>Backend connection failed:</strong> ${data.error}
+                            </td>
+                        </tr>
+                    `;
                 }
             } catch (error) {
-                alert('❌ Backend Connection Error:\n' + error.message);
+                const contactTbody = document.querySelector('#contacts-tab .data-table tbody');
+                contactTbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" style="text-align: center; padding: 40px; color: var(--error-red);">
+                            ❌ <strong>Connection error:</strong> ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
-        // Load User Accounts (was testUserAccounts)
+        // Load User Accounts (was testUserAccounts) - IMPROVED UX
         async function loadUserAccounts() {
             try {
-                showMessage('Loading user accounts...');
+                // Show loading state in table instead of toast
+                const tbody = document.getElementById('user-accounts-tbody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            🔄 <strong>Loading user accounts...</strong>
+                        </td>
+                    </tr>
+                `;
                 
                 const data = await makeAPICall(CONTACT_MANAGER_API, 'getUserAccounts');
                 
                 if (data.success) {
-                    alert('✅ User Accounts Loaded!\n\n' + 
-                          'Total Users: ' + data.totalUsers + '\n' +
-                          'Users: ' + data.users.map(u => u.username).join(', '));
-                    
-                    // Populate the user accounts table
+                    // Populate the user accounts table immediately
                     populateUserAccountsTable(data.users);
+                    
+                    // Brief success message that auto-clears
+                    showBriefSuccess(`✅ Loaded ${data.totalUsers} user accounts`);
                 } else {
-                    alert('❌ Failed to Load User Accounts:\n' + data.error);
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--error-red);">
+                                ❌ <strong>Failed to load user accounts:</strong> ${data.error}
+                            </td>
+                        </tr>
+                    `;
                 }
             } catch (error) {
-                alert('❌ User Accounts Error:\n' + error.message);
+                const tbody = document.getElementById('user-accounts-tbody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--error-red);">
+                            ❌ <strong>Error loading user accounts:</strong> ${error.message}
+                        </td>
+                    </tr>
+                `;
             }
         }
 
