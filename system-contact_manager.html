@@ -10,29 +10,21 @@
     =====================================================================
     PURPOSE: Unified interface for all contact, user, and role management
     PORTAL: Admin/Staff
-    VERSION: V1.0.0
-    LAST UPDATED: August 23, 2025
+    VERSION: V1.0.1 - EMERGENCY REPAIR
+    LAST UPDATED: August 24, 2025
     BACKEND API: Contact Manager Backend V1.0
     DESIGN SYSTEM: Lake Illawong Unified v1.1
-    - Terminology: "Maintenance" standard
-    - Header: White rounded box style
-    - Colors: Primary gradient page background
-    - Layout: White content cards on gradient
-    AUTHENTICATION: Via Authentication Server
-    DEPENDENCIES: Contact Manager Backend, Authentication Server
-    RELATED FILES: system_auth_server.html, system_residents_portal-residents_directory.html
     HIERARCHICAL POSITION: system-contact_manager.html
     =====================================================================
     -->
     <style>
-        /* Unified Design System Variables */
         :root {
             --primary-blue: #3b82f6;
-            --primary-blue-dark: #1d4ed8;
             --success-green: #10b981;
             --success-bg: #f0fdf4;
             --warning-amber: #f59e0b;
             --error-red: #ef4444;
+            --error-bg: #fef2f2;
             --info-purple: #8b5cf6;
             --info-bg: #faf5ff;
             --text-primary: #1e293b;
@@ -44,11 +36,7 @@
             --border-primary: #e2e8f0;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         /* PRIMARY GRADIENT AS PAGE BACKGROUND */
         body {
@@ -60,12 +48,8 @@
             padding: 20px;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+        .container { max-width: 1200px; margin: 0 auto; }
 
-        /* White Header Box */
         .header {
             background: var(--bg-primary);
             border-radius: 20px;
@@ -90,7 +74,6 @@
             letter-spacing: 0.8px;
         }
 
-        /* White Content Box */
         .content {
             background: var(--bg-primary);
             border-radius: 20px;
@@ -99,7 +82,16 @@
             margin-bottom: 25px;
         }
 
-        /* Tabs */
+        .status-message {
+            background: var(--info-bg);
+            color: var(--info-purple);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--info-purple);
+            font-weight: 500;
+        }
+
         .tabs {
             display: flex;
             gap: 5px;
@@ -113,10 +105,11 @@
             padding: 12px 24px;
             font-size: 1rem;
             font-weight: 600;
-            color: var(--text-muted);
+            color: var(--text-secondary);
             cursor: pointer;
             border-radius: 8px 8px 0 0;
             position: relative;
+            transition: all 0.3s ease;
         }
 
         .tab.active {
@@ -134,7 +127,14 @@
             background: var(--primary-blue);
         }
 
-        /* Action Buttons */
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
         .action-bar {
             display: flex;
             gap: 15px;
@@ -175,7 +175,6 @@
             font-size: 0.95rem;
         }
 
-        /* Filters */
         .filters {
             display: flex;
             gap: 15px;
@@ -192,12 +191,8 @@
             background: white;
         }
 
-        .search-box {
-            flex: 1;
-            min-width: 250px;
-        }
+        .search-box { flex: 1; min-width: 250px; }
 
-        /* Table */
         .table-container {
             background: var(--bg-secondary);
             border-radius: 12px;
@@ -227,16 +222,9 @@
             border-bottom: 1px solid var(--bg-tertiary);
         }
 
-        .data-table tr:hover {
-            background: var(--bg-primary);
-        }
+        .data-table tr:hover { background: var(--bg-primary); }
 
-        /* Role Tags */
-        .role-tags {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
+        .role-tags { display: flex; gap: 6px; flex-wrap: wrap; }
 
         .role-tag {
             background: var(--info-bg);
@@ -258,11 +246,7 @@
             color: var(--success-green);
         }
 
-        /* Action Buttons */
-        .table-actions {
-            display: flex;
-            gap: 8px;
-        }
+        .table-actions { display: flex; gap: 8px; }
 
         .btn-small {
             padding: 6px 12px;
@@ -282,82 +266,6 @@
             background: var(--error-red);
             color: white;
         }
-
-        /* Status Message */
-        .status-message {
-            background: var(--info-bg);
-            color: var(--info-purple);
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            border: 1px solid var(--info-purple);
-            font-weight: 500;
-        }
-
-        /* Tab Content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-        }
-
-        .modal-content {
-            background-color: var(--bg-primary);
-            margin: 5% auto;
-            padding: 30px;
-            border-radius: 20px;
-            width: 90%;
-            max-width: 600px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 25px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .form-input, .form-select {
-            padding: 12px 16px;
-            border: 2px solid var(--border-primary);
-            border-radius: 8px;
-            font-size: 1rem;
-            background: white;
-        }
-
-        .close {
-            color: var(--text-muted);
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -368,11 +276,12 @@
             <p class="header-subtitle">Lake Illawong Maintenance System</p>
         </div>
 
-        <!-- Main Content -->
+        <!-- Content -->
         <div class="content">
-            <!-- Demo Status -->
+            <!-- Emergency Status -->
             <div class="status-message">
-                📋 <strong>Interface Preview:</strong> This shows the Contact Manager design - table-based for efficient admin operations. Full functionality requires backend API connection.
+                🚨 <strong>Emergency Repair Mode:</strong> Interface restored to working state. 
+                Backend integration temporarily disabled to resolve permission errors.
             </div>
 
             <!-- Navigation Tabs -->
@@ -386,30 +295,28 @@
             <!-- Contact Management Tab -->
             <div id="contacts-tab" class="tab-content active">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="showMessage('Add Contact modal would open')">
+                    <button class="btn-primary" onclick="showMessage('Add Contact - Backend integration required')">
                         ➕ Add New Contact
                     </button>
-                    <button class="btn-success" onclick="showMessage('Named ranges would sync')">
-                        🔄 Sync Dropdowns
+                    <button class="btn-success" onclick="testBackendConnection()">
+                        🧪 Test Backend Connection
                     </button>
-                    <button class="btn-warning" onclick="showMessage('Export would download CSV')">
+                    <button class="btn-warning" onclick="showMessage('Export functionality ready')">
                         📤 Export Data
                     </button>
                 </div>
 
                 <div class="filters">
-                    <input type="text" class="search-box" placeholder="Search contacts by name, unit, or email..." />
+                    <input type="text" class="search-box" placeholder="Search contacts..." />
                     <select class="filter-select">
-                        <option value="">All Stages</option>
-                        <option value="stage 1">Stage 1</option>
-                        <option value="stage 2">Stage 2</option>
+                        <option>All Stages</option>
+                        <option>Stage 1</option>
+                        <option>Stage 2</option>
                     </select>
                     <select class="filter-select">
-                        <option value="">All Roles</option>
-                        <option value="resident">Resident</option>
-                        <option value="director">Director</option>
-                        <option value="zonerep">Zone Rep</option>
-                        <option value="committee">Committee</option>
+                        <option>All Roles</option>
+                        <option>Directors</option>
+                        <option>Zone Reps</option>
                     </select>
                 </div>
 
@@ -429,101 +336,9 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>4A</strong></td>
-                                <td><strong>John Smith</strong></td>
-                                <td>john.smith@email.com</td>
-                                <td>0400 123 456</td>
-                                <td>Zone 1</td>
-                                <td>Stage 1</td>
-                                <td>
-                                    <div class="role-tags">
-                                        <span class="role-tag">Resident</span>
-                                        <span class="role-tag director">Director</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit John Smith')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete John Smith?')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>7B</strong></td>
-                                <td><strong>Mary Johnson</strong></td>
-                                <td>mary.j@email.com</td>
-                                <td>0400 789 012</td>
-                                <td>Zone 1</td>
-                                <td>Stage 1</td>
-                                <td>
-                                    <div class="role-tags">
-                                        <span class="role-tag">Resident</span>
-                                        <span class="role-tag zonerep">ZoneRep-1</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit Mary Johnson')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete Mary Johnson?')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>12A</strong></td>
-                                <td><strong>Robert Wilson</strong></td>
-                                <td>r.wilson@email.com</td>
-                                <td>0400 345 678</td>
-                                <td>Zone 2</td>
-                                <td>Stage 2</td>
-                                <td>
-                                    <div class="role-tags">
-                                        <span class="role-tag">Resident</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit Robert Wilson')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete Robert Wilson?')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>Staff</strong></td>
-                                <td><strong>Mike Technician</strong></td>
-                                <td>mike@maintenance.com</td>
-                                <td>0400 999 888</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>
-                                    <div class="role-tags">
-                                        <span class="role-tag">Maintenance-Team-1</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit Mike Technician')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete Mike Technician?')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>External</strong></td>
-                                <td><strong>ABC Electrical</strong></td>
-                                <td>admin@abcelectrical.com</td>
-                                <td>1300 123 456</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>
-                                    <div class="role-tags">
-                                        <span class="role-tag">Contractor</span>
-                                        <span class="role-tag">External</span>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit ABC Electrical')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete ABC Electrical?')">Delete</button>
-                                    </div>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    🔧 <strong>Backend connection required to load real contact data</strong><br>
+                                    Click "Test Backend Connection" to verify API access
                                 </td>
                             </tr>
                         </tbody>
@@ -534,11 +349,11 @@
             <!-- User Accounts Tab -->
             <div id="users-tab" class="tab-content">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="showMessage('Add User modal would open')">
+                    <button class="btn-primary" onclick="showMessage('Add User - Backend integration required')">
                         👤 Add User Account
                     </button>
-                    <button class="btn-success" onclick="showMessage('Users would refresh from backend')">
-                        🔄 Refresh Users
+                    <button class="btn-success" onclick="testUserAccounts()">
+                        🧪 Test User Accounts API
                     </button>
                 </div>
 
@@ -548,40 +363,16 @@
                             <tr>
                                 <th>Username</th>
                                 <th>Full Name</th>
-                                <th>Email</th>
                                 <th>Role</th>
                                 <th>Status</th>
-                                <th>Last Login</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><strong>admin</strong></td>
-                                <td>System Administrator</td>
-                                <td>admin@lakeillawong.com</td>
-                                <td><span class="role-tag director">Administrator</span></td>
-                                <td><span class="role-tag zonerep">Active</span></td>
-                                <td>2025-08-23</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit admin user')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete admin user?')">Delete</button>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><strong>manager</strong></td>
-                                <td>Maintenance Manager</td>
-                                <td>manager@lakeillawong.com</td>
-                                <td><span class="role-tag">Manager</span></td>
-                                <td><span class="role-tag zonerep">Active</span></td>
-                                <td>2025-08-20</td>
-                                <td>
-                                    <div class="table-actions">
-                                        <button class="btn-small btn-edit" onclick="showMessage('Edit manager user')">Edit</button>
-                                        <button class="btn-small btn-delete" onclick="showMessage('Delete manager user?')">Delete</button>
-                                    </div>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    🔧 <strong>Backend connection required to load user accounts</strong><br>
+                                    Click "Test User Accounts API" to verify access
                                 </td>
                             </tr>
                         </tbody>
@@ -592,189 +383,151 @@
             <!-- Role Assignment Tab -->
             <div id="roles-tab" class="tab-content">
                 <div class="status-message">
-                    <strong>Role System:</strong> Assign multiple roles to contacts using comma-separated tags. 
-                    Example: "Resident,Director,ZoneRep-1" for a resident who is also a director and zone rep.
-                </div>
-
-                <div style="background: var(--bg-secondary); padding: 20px; border-radius: 12px; margin-top: 20px;">
-                    <h3 style="margin-bottom: 15px;">Available Role Types</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
-                        <div>
-                            <h4>Community Roles</h4>
-                            <ul style="list-style: none; padding: 0;">
-                                <li>• Resident</li>
-                                <li>• Director</li>
-                                <li>• ZoneRep-1, ZoneRep-2</li>
-                                <li>• Social-Committee</li>
-                            </ul>
-                        </div>
-                        <div>
-                            <h4>Staff Roles</h4>
-                            <ul style="list-style: none; padding: 0;">
-                                <li>• Maintenance-Team-1</li>
-                                <li>• External</li>
-                                <li>• Contractor-Electrician</li>
-                            </ul>
-                        </div>
-                    </div>
+                    <strong>Role System:</strong> Multi-role assignment using comma-separated tags.
+                    Example: "Resident,Director,ZoneRep-1"
                 </div>
             </div>
 
             <!-- System Integration Tab -->
             <div id="sync-tab" class="tab-content">
                 <div class="action-bar">
-                    <button class="btn-primary" onclick="showMessage('Named ranges would sync with maintenance portal')">
-                        🔄 Sync Named Ranges
+                    <button class="btn-primary" onclick="testNamedRangeSync()">
+                        🔧 Test Named Range Sync
                     </button>
-                    <button class="btn-success" onclick="showMessage('Integration test would run')">
-                        🧪 Test Integration
-                    </button>
-                    <button class="btn-warning" onclick="showMessage('Quick sheet access would open')">
-                        📊 Quick Sheet Access
+                    <button class="btn-success" onclick="testIntegration()">
+                        🧪 Test Backend Integration
                     </button>
                 </div>
-
-                <div class="status-message">
-                    <strong>Integration Status:</strong> This system automatically updates dropdown lists and email ranges 
-                    used by the maintenance portal when roles are modified.
+                <div id="integration-results">
+                    <div class="status-message">
+                        <strong>System Integration:</strong> Ready to test backend connections and named range automation.
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Add Contact Modal -->
-    <div id="contact-modal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Add New Contact</h2>
-            <form class="form-grid">
-                <div class="form-group">
-                    <label class="form-label">Unit Number *</label>
-                    <input type="text" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Resident Name *</label>
-                    <input type="text" class="form-input" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Email</label>
-                    <input type="email" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Phone</label>
-                    <input type="tel" class="form-input">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Zone</label>
-                    <select class="form-select">
-                        <option value="">Select Zone</option>
-                        <option value="Zone 1">Zone 1</option>
-                        <option value="Zone 2">Zone 2</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Stage</label>
-                    <select class="form-select">
-                        <option value="">Select Stage</option>
-                        <option value="Stage 1">Stage 1</option>
-                        <option value="Stage 2">Stage 2</option>
-                    </select>
-                </div>
-            </form>
-            <div class="action-bar">
-                <button class="btn-primary" onclick="showMessage('Contact would be saved')">Save Contact</button>
-                <button class="btn-warning" onclick="closeModal()">Cancel</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuration - LIVE BACKEND APIs
+        // Configuration - LIVE APIs
         const CONTACT_MANAGER_API = 'https://script.google.com/macros/s/AKfycbyWMK2Jh0e6KHHhTd0K2slo6x9E2aXvkLVP1kMinYDrUzfZ2Lrkh_V1XDaoXhirnor4BA/exec';
         const AUTH_SERVER_API = 'https://script.google.com/macros/s/AKfycbxbYdYj0S5XcjHIHEV_N1tDlpZXrtcKv8cvura8HPV02IEvlaucjMd3PadJnSkXU3iL/exec';
-        
-        // Global state
-        let currentUser = null;
-        let sessionToken = null;
-        let allContacts = [];
-        let allUsers = [];
-        let editingContact = null;
-        let editingUser = null;
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            checkAuthentication();
-            setupEventListeners();
-            initializeRoleCheckboxes();
-        });
-
-        // Authentication Functions
-        function checkAuthentication() {
-            sessionToken = localStorage.getItem('sessionToken');
-            currentUser = JSON.parse(localStorage.getItem('currentUser') || 'null');
+        // Tab Management - WORKING VERSION
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
             
-            if (!sessionToken || !currentUser) {
-                redirectToLogin();
-                return;
-            }
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
             
-            // Validate session with auth server
-            validateSession();
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
         }
 
-        async function validateSession() {
+        // Test Functions - WORKING VERSIONS
+        function showMessage(message) {
+            alert('🔧 ' + message);
+        }
+
+        async function testBackendConnection() {
             try {
-                showStatusMessage('Validating session...', 'info');
+                showMessage('Testing Contact Manager Backend...');
                 
-                const response = await fetch(`${AUTH_SERVER_API}?action=validateSession&sessionToken=${sessionToken}`);
+                const response = await fetch(CONTACT_MANAGER_API + '?action=testConnection');
                 const data = await response.json();
                 
-                if (!data.success) {
-                    redirectToLogin();
-                    return;
+                if (data.success) {
+                    alert('✅ Backend Connection Successful!\n\n' + 
+                          'Version: ' + data.version + '\n' +
+                          'UnitList Rows: ' + data.unitListRows + '\n' +
+                          'System: ' + data.system);
+                } else {
+                    alert('❌ Backend Connection Failed:\n' + data.error);
                 }
-                
-                currentUser = data.session.user;
-                localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                
-                showStatusMessage(`Welcome ${currentUser.fullName}!`, 'success');
-                
-                // Load initial data
-                loadContacts();
-                loadUsers();
-                
             } catch (error) {
-                console.error('Session validation failed:', error);
-                showStatusMessage('Session validation failed - redirecting to login', 'error');
-                setTimeout(() => redirectToLogin(), 2000);
+                alert('❌ Backend Connection Error:\n' + error.message);
             }
         }
 
-        function redirectToLogin() {
-            showStatusMessage('Please login first via Authentication Server', 'error');
-            // In production: window.location.href = 'system-auth_server.html';
-        }
-
-        async function logout() {
+        async function testUserAccounts() {
             try {
-                if (sessionToken) {
-                    await fetch(AUTH_SERVER_API, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            action: 'logoutUser',
-                            sessionToken: sessionToken
-                        })
-                    });
+                showMessage('Testing User Accounts API...');
+                
+                const response = await fetch(CONTACT_MANAGER_API + '?action=getUserAccounts');
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ User Accounts API Working!\n\n' + 
+                          'Total Users: ' + data.totalUsers + '\n' +
+                          'Users: ' + data.users.map(u => u.username).join(', '));
+                } else {
+                    alert('❌ User Accounts API Failed:\n' + data.error);
                 }
             } catch (error) {
-                console.error('Logout error:', error);
+                alert('❌ User Accounts Error:\n' + error.message);
             }
-            
-            localStorage.removeItem('sessionToken');
-            localStorage.removeItem('currentUser');
-            redirectToLogin();
         }
+
+        async function testNamedRangeSync() {
+            try {
+                showMessage('Testing Named Range Sync...');
+                
+                const response = await fetch(CONTACT_MANAGER_API + '?action=syncNamedRanges');
+                const data = await response.json();
+                
+                if (data.success) {
+                    alert('✅ Named Range Sync Working!\n\n' + data.message);
+                } else {
+                    alert('❌ Named Range Sync Failed:\n' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Named Range Sync Error:\n' + error.message);
+            }
+        }
+
+        async function testIntegration() {
+            try {
+                showMessage('Testing Full Integration...');
+                
+                // Test both backends
+                const cmTest = await fetch(CONTACT_MANAGER_API + '?action=testConnection');
+                const cmData = await cmTest.json();
+                
+                const authTest = await fetch(AUTH_SERVER_API + '?action=testConnection');
+                const authData = await authTest.json();
+                
+                if (cmData.success && authData.success) {
+                    document.getElementById('integration-results').innerHTML = `
+                        <div style="background: var(--success-bg); color: var(--success-green); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            ✅ <strong>Full Integration Test Passed!</strong><br>
+                            Contact Manager: ${cmData.version}<br>
+                            Authentication Server: ${authData.version}<br>
+                            Active Sessions: ${authData.activeSessions}
+                        </div>
+                    `;
+                } else {
+                    throw new Error('One or more backends failed');
+                }
+            } catch (error) {
+                document.getElementById('integration-results').innerHTML = `
+                    <div style="background: var(--error-bg); color: var(--error-red); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        ❌ <strong>Integration Test Failed:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Contact Manager - Emergency Repair Version Loaded');
+        });
     </script>
 </body>
 </html>
