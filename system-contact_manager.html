@@ -280,6 +280,611 @@
         <div class="content">
             <!-- Emergency Status -->
             <div class="status-message">
+                🚨 <strong>NEW-Emergency Repair Mode:</strong> Interface restored to working state. 
+                Backend integration temporarily disabled to resolve permission errors.
+            </div>
+
+            <!-- Navigation Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="showTab('contacts')">Contact Management</button>
+                <button class="tab" onclick="showTab('users')">User Accounts</button>
+                <button class="tab" onclick="showTab('roles')">Role Assignment</button>
+                <button class="tab" onclick="showTab('sync')">System Integration</button>
+            </div>
+
+            <!-- Contact Management Tab -->
+            <div id="contacts-tab" class="tab-content active">
+                <div class="action-bar">
+                    <button class="btn-primary" onclick="showMessage('Add Contact - Backend integration required')">
+                        ➕ Add New Contact
+                    </button>
+                    <button class="btn-success" onclick="testBackendConnection()">
+                        🧪 Test Backend Connection
+                    </button>
+                    <button class="btn-warning" onclick="showMessage('Export functionality ready')">
+                        📤 Export Data
+                    </button>
+                </div>
+
+                <div class="filters">
+                    <input type="text" class="search-box" placeholder="Search contacts..." />
+                    <select class="filter-select">
+                        <option>All Stages</option>
+                        <option>Stage 1</option>
+                        <option>Stage 2</option>
+                    </select>
+                    <select class="filter-select">
+                        <option>All Roles</option>
+                        <option>Directors</option>
+                        <option>Zone Reps</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Unit</th>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Zone</th>
+                                <th>Stage</th>
+                                <th>Roles</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="8" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    🔧 <strong>Backend connection required to load real contact data</strong><br>
+                                    Click "Test Backend Connection" to verify API access
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- User Accounts Tab -->
+            <div id="users-tab" class="tab-content">
+                <div class="action-bar">
+                    <button class="btn-primary" onclick="showMessage('Add User - Backend integration required')">
+                        👤 Add User Account
+                    </button>
+                    <button class="btn-success" onclick="testUserAccounts()">
+                        🧪 Test User Accounts API
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Full Name</th>
+                                <th>Role</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                                    🔧 <strong>Backend connection required to load user accounts</strong><br>
+                                    Click "Test User Accounts API" to verify access
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Role Assignment Tab -->
+            <div id="roles-tab" class="tab-content">
+                <div class="status-message">
+                    <strong>Role System:</strong> Multi-role assignment using comma-separated tags.
+                    Example: "Resident,Director,ZoneRep-1"
+                </div>
+            </div>
+
+            <!-- System Integration Tab -->
+            <div id="sync-tab" class="tab-content">
+                <div class="action-bar">
+                    <button class="btn-primary" onclick="testNamedRangeSync()">
+                        🔧 Test Named Range Sync
+                    </button>
+                    <button class="btn-success" onclick="testIntegration()">
+                        🧪 Test Backend Integration
+                    </button>
+                </div>
+                <div id="integration-results">
+                    <div class="status-message">
+                        <strong>System Integration:</strong> Ready to test backend connections and named range automation.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration - LIVE APIs
+        const CONTACT_MANAGER_API = 'https://script.google.com/macros/s/AKfycbyWMK2Jh0e6KHHhTd0K2slo6x9E2aXvkLVP1kMinYDrUzfZ2Lrkh_V1XDaoXhirnor4BA/exec';
+        const AUTH_SERVER_API = 'https://script.google.com/macros/s/AKfycbxbYdYj0S5XcjHIHEV_N1tDlpZXrtcKv8cvura8HPV02IEvlaucjMd3PadJnSkXU3iL/exec';
+
+        // JSONP Helper Function - CRITICAL FOR CROSS-ORIGIN CALLS
+        async function makeAPICall(url, action, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                const queryParams = new URLSearchParams({ action, callback: callbackName, ...params });
+                
+                script.src = `${url}?${queryParams}`;
+                
+                window[callbackName] = function(response) {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    resolve(response);
+                };
+                
+                script.onerror = function() {
+                    document.head.removeChild(script);
+                    delete window[callbackName];
+                    reject(new Error('Network request failed'));
+                };
+                
+                document.head.appendChild(script);
+                
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        document.head.removeChild(script);
+                        delete window[callbackName];
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+            });
+        }
+
+        // Tab Management - PRESERVED EXACTLY
+        function showTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        // Test Functions - PRESERVED EXACTLY (but with JSONP)
+        function showMessage(message) {
+            alert('🔧 ' + message);
+        }
+
+        // FIXED: Backend Connection Test - JSONP instead of fetch()
+        async function testBackendConnection() {
+            try {
+                showMessage('Testing Contact Manager Backend...');
+                
+                const data = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
+                
+                if (data.success) {
+                    alert('✅ Backend Connection Successful!\n\n' + 
+                          'Version: ' + data.version + '\n' +
+                          'JSONP Support: ' + data.jsonpSupport + '\n' +
+                          'System: ' + (data.system || 'Contact Manager'));
+                } else {
+                    alert('❌ Backend Connection Failed:\n' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Backend Connection Error:\n' + error.message);
+            }
+        }
+
+        // FIXED: User Accounts Test - JSONP instead of fetch() + TABLE POPULATION
+        async function testUserAccounts() {
+            try {
+                showMessage('Testing User Accounts API...');
+                
+                const data = await makeAPICall(CONTACT_MANAGER_API, 'getUserAccounts');
+                
+                if (data.success) {
+                    alert('✅ User Accounts API Working!\n\n' + 
+                          'Total Users: ' + data.totalUsers + '\n' +
+                          'Users: ' + data.users.map(u => u.username).join(', '));
+                    
+                    // POPULATE THE USER ACCOUNTS TABLE
+                    populateUserAccountsTable(data.users);
+                } else {
+                    alert('❌ User Accounts API Failed:\n' + data.error);
+                }
+            } catch (error) {
+                alert('❌ User Accounts Error:\n' + error.message);
+            }
+        }
+
+        // NEW: Populate User Accounts Table
+        function populateUserAccountsTable(users) {
+            const tbody = document.querySelector('#users-tab .data-table tbody');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No user accounts found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.fullName || user.name}</td>
+                    <td><span class="role-tag">${user.role}</span></td>
+                    <td><span class="${user.status === 'active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-small btn-edit" onclick="showMessage('Edit User: ${user.username}')">Edit</button>
+                            <button class="btn-small btn-delete" onclick="showMessage('Delete User: ${user.username}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // NEW: Add missing CSS for status display
+        const style = document.createElement('style');
+        style.textContent = `
+            .status-active { color: var(--success-green); font-weight: 600; }
+            .status-inactive { color: var(--error-red); font-weight: 600; }
+        `;
+        document.head.appendChild(style);
+
+        // FIXED: Named Range Sync Test - JSONP instead of fetch()
+        async function testNamedRangeSync() {
+            try {
+                showMessage('Testing Named Range Sync...');
+                
+                const data = await makeAPICall(CONTACT_MANAGER_API, 'syncNamedRanges');
+                
+                if (data.success) {
+                    alert('✅ Named Range Sync Working!\n\n' + data.message);
+                } else {
+                    alert('❌ Named Range Sync Failed:\n' + data.error);
+                }
+            } catch (error) {
+                alert('❌ Named Range Sync Error:\n' + error.message);
+            }
+        }
+
+        // FIXED: Integration Test - JSONP instead of fetch()
+        async function testIntegration() {
+            try {
+                showMessage('Testing Full Integration...');
+                
+                // Test both backends using JSONP
+                const cmData = await makeAPICall(CONTACT_MANAGER_API, 'testConnection');
+                const authData = await makeAPICall(AUTH_SERVER_API, 'testConnection');
+                
+                if (cmData.success && authData.success) {
+                    document.getElementById('integration-results').innerHTML = `
+                        <div style="background: var(--success-bg); color: var(--success-green); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                            ✅ <strong>Full Integration Test Passed!</strong><br>
+                            Contact Manager: ${cmData.version}<br>
+                            Authentication Server: ${authData.version}<br>
+                            Active Sessions: ${authData.activeSessions || 0}
+                        </div>
+                    `;
+                } else {
+                    throw new Error('One or more backends failed');
+                }
+            } catch (error) {
+                document.getElementById('integration-results').innerHTML = `
+                    <div style="background: var(--error-bg); color: var(--error-red); padding: 15px; border-radius: 8px; margin-top: 15px;">
+                        ❌ <strong>Integration Test Failed:</strong> ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Initialize - PRESERVED EXACTLY
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🔧 Contact Manager - Emergency Repair Version Loaded (JSONP Fixed)');
+        });
+    </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Manager | Lake Illawong Maintenance System</title>
+    <!--
+    =====================================================================
+    LAKE ILLAWONG MAINTENANCE SYSTEM - UNIFIED CONTACT MANAGER
+    =====================================================================
+    PURPOSE: Unified interface for all contact, user, and role management
+    PORTAL: Admin/Staff
+    VERSION: V1.0.1 - EMERGENCY REPAIR (JSONP FIXED)
+    LAST UPDATED: August 24, 2025
+    BACKEND API: Contact Manager Backend V1.0
+    DESIGN SYSTEM: Lake Illawong Unified v1.1
+    HIERARCHICAL POSITION: system-contact_manager.html
+    =====================================================================
+    -->
+    <style>
+        :root {
+            --primary-blue: #3b82f6;
+            --success-green: #10b981;
+            --success-bg: #f0fdf4;
+            --warning-amber: #f59e0b;
+            --error-red: #ef4444;
+            --error-bg: #fef2f2;
+            --info-purple: #8b5cf6;
+            --info-bg: #faf5ff;
+            --text-primary: #1e293b;
+            --text-secondary: #374151;
+            --text-muted: #64748b;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --border-primary: #e2e8f0;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        /* PRIMARY GRADIENT AS PAGE BACKGROUND */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        .header {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .header-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 1rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .content {
+            background: var(--bg-primary);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 25px;
+        }
+
+        .status-message {
+            background: var(--info-bg);
+            color: var(--info-purple);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 1px solid var(--info-purple);
+            font-weight: 500;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--bg-tertiary);
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 8px 8px 0 0;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .tab.active {
+            color: var(--primary-blue);
+            background: var(--bg-tertiary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary-blue);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        .action-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-success {
+            background: var(--success-green);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-warning {
+            background: var(--warning-amber);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .filters {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .search-box, .filter-select {
+            padding: 12px 16px;
+            border: 2px solid var(--border-primary);
+            border-radius: 8px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .search-box { flex: 1; min-width: 250px; }
+
+        .table-container {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-primary);
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            background: var(--bg-tertiary);
+            padding: 16px 12px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid var(--border-primary);
+        }
+
+        .data-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid var(--bg-tertiary);
+        }
+
+        .data-table tr:hover { background: var(--bg-primary); }
+
+        .role-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+        .role-tag {
+            background: var(--info-bg);
+            color: var(--info-purple);
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .role-tag.director {
+            background: #fffbeb;
+            color: var(--warning-amber);
+        }
+
+        .role-tag.zonerep {
+            background: var(--success-bg);
+            color: var(--success-green);
+        }
+
+        .table-actions { display: flex; gap: 8px; }
+
+        .btn-small {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-edit {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .btn-delete {
+            background: var(--error-red);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1 class="header-title">Unified Contact Manager</h1>
+            <p class="header-subtitle">Lake Illawong Maintenance System</p>
+        </div>
+
+        <!-- Content -->
+        <div class="content">
+            <!-- Emergency Status -->
+            <div class="status-message">
                 🚨 <strong>Emergency Repair Mode:</strong> Interface restored to working state. 
                 Backend integration temporarily disabled to resolve permission errors.
             </div>
@@ -489,7 +1094,7 @@
             }
         }
 
-        // FIXED: User Accounts Test - JSONP instead of fetch()
+        // FIXED: User Accounts Test - JSONP instead of fetch() + TABLE POPULATION
         async function testUserAccounts() {
             try {
                 showMessage('Testing User Accounts API...');
@@ -500,6 +1105,9 @@
                     alert('✅ User Accounts API Working!\n\n' + 
                           'Total Users: ' + data.totalUsers + '\n' +
                           'Users: ' + data.users.map(u => u.username).join(', '));
+                    
+                    // POPULATE THE USER ACCOUNTS TABLE
+                    populateUserAccountsTable(data.users);
                 } else {
                     alert('❌ User Accounts API Failed:\n' + data.error);
                 }
@@ -507,6 +1115,45 @@
                 alert('❌ User Accounts Error:\n' + error.message);
             }
         }
+
+        // NEW: Populate User Accounts Table
+        function populateUserAccountsTable(users) {
+            const tbody = document.querySelector('#users-tab .data-table tbody');
+            
+            if (!users || users.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                            No user accounts found
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td><strong>${user.username}</strong></td>
+                    <td>${user.fullName || user.name}</td>
+                    <td><span class="role-tag">${user.role}</span></td>
+                    <td><span class="${user.status === 'active' ? 'status-active' : 'status-inactive'}">${user.status}</span></td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn-small btn-edit" onclick="showMessage('Edit User: ${user.username}')">Edit</button>
+                            <button class="btn-small btn-delete" onclick="showMessage('Delete User: ${user.username}')">Delete</button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        // NEW: Add missing CSS for status display
+        const style = document.createElement('style');
+        style.textContent = `
+            .status-active { color: var(--success-green); font-weight: 600; }
+            .status-inactive { color: var(--error-red); font-weight: 600; }
+        `;
+        document.head.appendChild(style);
 
         // FIXED: Named Range Sync Test - JSONP instead of fetch()
         async function testNamedRangeSync() {
