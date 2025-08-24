@@ -547,7 +547,7 @@
             }
         }
 
-        // Load User Accounts (was testUserAccounts) - IMPROVED UX + AUTO-SWITCH TO TAB
+        // Load User Accounts (was testUserAccounts) - IMPROVED UX (REVERTED AUTO-SWITCH)
         async function loadUserAccounts() {
             try {
                 // Show loading state in table
@@ -565,9 +565,6 @@
                 if (data.success) {
                     // Populate the user accounts table immediately
                     populateUserAccountsTable(data.users);
-                    
-                    // AUTO-SWITCH TO USER ACCOUNTS TAB for instant recognition
-                    showTab('users');
                     
                     // Brief success message that auto-clears
                     showBriefSuccess(`✅ Loaded ${data.totalUsers} user accounts`);
