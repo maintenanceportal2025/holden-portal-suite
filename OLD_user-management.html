@@ -1,0 +1,1869 @@
+<!--
+=====================================================================
+👥 USER-MANAGEMENT.HTML - USER ACCOUNT MANAGEMENT SYSTEM
+=====================================================================
+
+🔄 WORKFLOW PROCESS:
+1. **Before ANY change**: Copy current file to backup folder
+2. **Make change**: Update the file
+3. **Update header**: Increment version, add to VERSION HISTORY
+4. **Document change**: Note what was modified
+
+🎯 VERSION NUMBERING:
+• **Major.Minor.Patch** (e.g., v1.2.3)
+• **Major**: Big functionality changes
+• **Minor**: Feature additions
+• **Patch**: Bug fixes, documentation updates
+
+This gives you instant rollback capability and change tracking!
+
+📋 DOCUMENT INFORMATION:
+• File Name: user-management.html
+• System: Lake Illawong Maintenance Portal (Development)
+• Component Type: User Account Management Interface
+• **FRONTEND FILE VERSION: v1.0.0** (This HTML file version)
+• **BACKEND SCRIPT VERSION: V2.4** (User Management API - requires V2.4 endpoints)
+• Status: 🚧 DEVELOPMENT (Not Production) - REQUIRES V2.4 BACKEND
+• Created: August 2025
+• Last Modified: August 15, 2025
+• Backup Location: MyDrive/MaintenancePortal/Backups/user-management/
+
+📊 FRONTEND VERSION HISTORY:
+• v1.0.0 (Aug 15, 2025): Initial documentation added for this HTML file
+
+🔗 BACKEND CONNECTION:
+• **REQUIRES**: V2.4 Backend with user management endpoints
+• **API ENDPOINTS NEEDED**: createUser, updateUser, resetPassword, toggleStatus, getUsers
+• **CURRENT STATUS**: Frontend ready, awaiting V2.4 backend deployment
+• **NOTE**: Frontend and backend versions are completely separate!
+
+🔄 BACKUP PROTOCOL:
+• Before ANY changes: Copy to MyDrive/MaintenancePortal/Backups/user-management/v[X.X.X]_[Date]/
+• Update version number in header after changes
+• Document what changed in VERSION HISTORY
+• Keep last 3 versions minimum for rollback
+
+🎯 PRIMARY PURPOSE:
+Comprehensive user account management system for controlling access to the
+maintenance portal system. Provides admin interface for creating, editing,
+and managing user accounts with role-based access control.
+
+🔗 SYSTEM CONNECTIONS:
+• Backend API: User Management API V2.4 (requires V2.4 backend deployment)
+• Authentication System: Integrates with portal login system
+• Role Management: Director, Team Member, Committee access levels
+• Admin Portal: Launched from holden-admin-portal.html
+• Security Integration: Password management and account control
+
+⚙️ TECHNICAL SPECIFICATIONS:
+• Technology: HTML5 + CSS3 + Vanilla JavaScript
+• Design: Desktop admin interface with user cards and modal dialogs
+• Authentication: Admin access required (via admin portal)
+• Dependencies: User Management API V2.4 backend
+• Browser Support: Modern desktop browsers
+• API Protocol: JSONP requests for user management operations
+
+🎨 UI/UX FEATURES:
+• User Cards: Visual user display with avatar, role badges, status indicators
+• CRUD Operations: Create, view, edit, disable/enable user accounts
+• Password Management: Temporary password generation and reset functionality
+• Role Management: Director, Team Member, Committee role assignments
+• User Analytics: Statistics dashboard showing user counts and status
+• Modal Interfaces: Professional modal dialogs for user operations
+
+🔄 WORKFLOW:
+1. User Overview: Browse existing users with role and status display
+2. Create Users: Add new users with username, name, email, role assignment
+3. Edit Users: Update user information and role assignments
+4. View Details: Comprehensive user detail view with account information
+5. Password Reset: Generate temporary passwords for user accounts
+6. Account Control: Enable/disable user accounts for access management
+7. Statistics Review: Monitor user account metrics and system usage
+
+🚀 DEPLOYMENT STATUS: 🚧 DEVELOPMENT - REQUIRES V2.4 BACKEND
+• Current State: Frontend interface complete, requires V2.4 backend endpoints
+• Integration: Designed for admin portal integration
+• Production Ready: No - awaiting V2.4 backend with user management endpoints
+
+🔍 ARCHITECTURE ANALYSIS:
+• Module Category: Administrative Tools / User Account Management
+• Access Level: Administrative interface (high-privilege access required)
+• Data Sources: User Management API V2.4 (when deployed)
+• Unique Features: Comprehensive user lifecycle management, role-based access
+
+🎯 USER MANAGEMENT ECOSYSTEM:
+• ACCOUNT CONTROL: Central interface for all user account operations
+• ROLE-BASED ACCESS: Director, Team Member, Committee permission levels
+• PASSWORD MANAGEMENT: Secure temporary password generation and reset
+• AUDIT CAPABILITIES: User creation dates, last login tracking
+• SECURITY INTEGRATION: Account enable/disable for access control
+
+⚠️ INTERFACE IMPROVEMENT REQUIREMENTS:
+
+🎨 UX/UI ENHANCEMENTS NEEDED:
+• USER CARDS LAYOUT: Current layout needs better visual hierarchy and information density
+• FORM VALIDATION: Enhanced real-time validation with clear error messaging required
+• MODAL DESIGN: Modals need responsive design and better mobile optimization
+• MOBILE RESPONSIVENESS: Interface not optimized for mobile/tablet administration
+• VISUAL FEEDBACK: Loading states and action confirmations need improvement
+
+🔧 FUNCTIONALITY GAPS:
+• SEARCH & FILTER: No search functionality to find users quickly
+• BULK OPERATIONS: Missing multi-select capabilities for bulk user actions
+• PASSWORD POLICIES: No visible password requirements or strength indicators
+• USER ACTIVITY TRACKING: Missing login history and user activity logs
+• ROLE DESCRIPTIONS: Role permissions and capabilities not clearly explained
+• AUDIT TRAIL: No tracking of user management actions and changes
+
+⚡ WORKFLOW IMPROVEMENTS NEEDED:
+• CREATE USER FLOW: Multi-step process could be streamlined into single form
+• PASSWORD RESET PROCESS: Temporary password flow needs user experience enhancement
+• ACCOUNT STATUS MANAGEMENT: Enable/disable actions need better visual feedback
+• CONFIRMATION DIALOGS: Missing confirmation for destructive actions (disable, reset)
+• AUTO-REFRESH: Manual data refresh required, needs automatic updates
+• NAVIGATION: Back/forward navigation within user management flows
+
+🚨 TECHNICAL ISSUES:
+• ERROR HANDLING: Limited error feedback and recovery options for users
+• LOADING INDICATORS: Basic spinners need professional loading states
+• DATA VALIDATION: Client-side validation insufficient for production use
+• ACCESSIBILITY: Interface lacks proper ARIA labels and keyboard navigation
+• PERFORMANCE: No pagination for large user lists, potential performance issues
+
+🎯 PRIORITY IMPROVEMENTS:
+HIGH PRIORITY:
+• Mobile responsiveness for field administration
+• Enhanced form validation and error handling
+• Search and filter functionality for user management
+• Confirmation dialogs for destructive actions
+• Professional loading states and feedback
+
+MEDIUM PRIORITY:
+• User activity tracking and audit logs
+• Bulk operations for multiple user management
+• Password policy enforcement and display
+• Role permission descriptions and help text
+• Auto-refresh and real-time updates
+
+LOW PRIORITY:
+• Advanced filtering and sorting options
+• User export/import capabilities
+• Custom role creation and management
+• Advanced user analytics and reporting
+• Integration with external user directories
+
+💡 RECOMMENDED APPROACH:
+1. **Phase 1**: Fix critical UX issues (mobile, validation, search)
+2. **Phase 2**: Add missing functionality (bulk ops, activity tracking)
+3. **Phase 3**: Enhanced features (advanced filtering, analytics)
+4. **Phase 4**: Advanced admin features (custom roles, integrations)
+
+🎯 INTEGRATION QUESTIONS:
+• When will V2.4 backend with user management endpoints be available?
+• Should this be integrated into main admin portal vs standalone interface?
+• How should role-based permissions be enforced across portal system?
+• Should password policies be configurable vs hardcoded?
+
+🚨 DEVELOPMENT NOTES:
+• Frontend complete and ready for V2.4 backend integration
+• Sophisticated user interface with professional design patterns
+• Role badge system for visual role identification
+• Modal-based user operations for clean user experience
+• Statistics dashboard for user account monitoring
+• Commented API URLs indicate development progression
+
+=====================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management - Admin Portal V2.4</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: white;
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin: 0;
+        }
+
+        .page-subtitle {
+            color: #64748b;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* User List */
+        .user-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.2s ease;
+        }
+
+        .user-item:hover {
+            border-color: #3b82f6;
+            background: #f0f9ff;
+        }
+
+        .user-item.inactive {
+            opacity: 0.6;
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .user-avatar.inactive {
+            background: #ef4444;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 16px;
+        }
+
+        .user-meta {
+            color: #64748b;
+            font-size: 12px;
+            margin-top: 2px;
+        }
+
+        .user-role {
+            background: #3b82f6;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .user-role.Director { background: #7c3aed; }
+        .user-role.Team { background: #10b981; }
+        .user-role.Committee { background: #f59e0b; }
+
+        .user-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn.secondary {
+            background: #6b7280;
+        }
+
+        .btn.secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn.danger {
+            background: #ef4444;
+        }
+
+        .btn.danger:hover {
+            background: #dc2626;
+        }
+
+        .btn.success {
+            background: #10b981;
+        }
+
+        .btn.success:hover {
+            background: #059669;
+        }
+
+        /* Add User Form */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            color: #374151;
+            font-weight: 500;
+            margin-bottom: 6px;
+            font-size: 14px;
+        }
+
+        .form-input, .form-select {
+            padding: 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .add-user-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            justify-self: start;
+        }
+
+        .add-user-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .modal.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #6b7280;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            color: #374151;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        /* Toast Messages */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 12px;
+            padding: 15px 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-left: 4px solid #3b82f6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left-color: #10b981;
+        }
+
+        .toast.error {
+            border-left-color: #ef4444;
+        }
+
+        .toast-icon {
+            font-size: 18px;
+        }
+
+        .toast-message {
+            flex: 1;
+            font-size: 14px;
+            color: #374151;
+        }
+
+        /* Loading States */
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: #3b82f6;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 4px;
+        }
+
+/* Clean user cards */
+.user-item {
+    background: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.user-item:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 18px;
+    flex-shrink: 0;
+}
+
+.user-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-display-name {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0 0 4px 0;
+}
+
+.user-username {
+    font-size: 14px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.user-role-badge {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.user-role-badge.Director {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.user-role-badge.Team {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.user-role-badge.Committee {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.user-card-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.user-card-actions .btn {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-view {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #2563eb;
+}
+
+.btn-edit {
+    background: #10b981;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #059669;
+}
+
+.btn-reset {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-reset:hover {
+    background: #d97706;
+}
+
+.btn-disable {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-disable:hover {
+    background: #dc2626;
+}
+
+.btn-enable {
+    background: #10b981;
+    color: white;
+}
+
+.btn-enable:hover {
+    background: #059669;
+}
+
+/* User details modal */
+.user-details-container {
+    margin: 20px 0;
+}
+
+.user-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.user-detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.detail-value {
+    color: #6b7280;
+    text-align: right;
+    flex: 1;
+}
+
+.detail-value.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.detail-value.status-active {
+    color: #059669;
+    font-weight: 600;
+}
+
+.detail-value.status-inactive {
+    color: #dc2626;
+    font-weight: 600;
+}
+/* =====================================================================
+   NEW: Add this CSS to your existing styles
+   ===================================================================== */
+
+/* Clean user cards - COMPACT VERSION */
+.user-item {
+    background: white;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.user-item:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    transform: translateY(-1px);
+}
+
+.user-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.user-card-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+
+.user-display-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 0;
+}
+
+.user-username {
+    font-size: 13px;
+    color: #6b7280;
+    margin: 0;
+}
+
+.user-role-badge {
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+}
+
+.user-role-badge.Director {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.user-role-badge.Team {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.user-role-badge.Committee {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.user-card-actions {
+    display: flex;
+    gap: 6px;
+    justify-content: space-between;
+}
+
+.user-card-actions .btn {
+    padding: 6px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: none;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    flex: 1;
+    text-align: center;
+}
+
+.btn-view {
+    background: #3b82f6;
+    color: white;
+}
+
+.btn-view:hover {
+    background: #2563eb;
+}
+
+.btn-edit {
+    background: #10b981;
+    color: white;
+}
+
+.btn-edit:hover {
+    background: #059669;
+}
+
+.btn-reset {
+    background: #f59e0b;
+    color: white;
+}
+
+.btn-reset:hover {
+    background: #d97706;
+}
+
+.btn-disable {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-disable:hover {
+    background: #dc2626;
+}
+
+.btn-enable {
+    background: #10b981;
+    color: white;
+}
+
+.btn-enable:hover {
+    background: #059669;
+}
+
+/* User details modal */
+.user-details-container {
+    margin: 20px 0;
+}
+
+.user-detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.user-detail-row:last-child {
+    border-bottom: none;
+}
+
+.detail-label {
+    font-weight: 600;
+    color: #374151;
+    min-width: 120px;
+}
+
+.detail-value {
+    color: #6b7280;
+    text-align: right;
+    flex: 1;
+}
+
+.detail-value.role-badge {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.detail-value.status-active {
+    color: #059669;
+    font-weight: 600;
+}
+
+/* Password reset modal styles */
+.password-reset-container {
+    margin: 20px 0;
+}
+
+.temp-password-display {
+    margin: 20px 0;
+}
+
+.temp-password-display label {
+    display: block;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.password-copy-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.temp-password-input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    font-weight: bold;
+    background: #f9fafb;
+    color: #1f2937;
+}
+
+.btn-copy {
+    padding: 12px 16px;
+    background: #10b981;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: background 0.2s ease;
+}
+
+.btn-copy:hover {
+    background: #059669;
+}
+
+.btn-copy.copied {
+    background: #059669;
+}
+
+.password-instructions {
+    background: #fef3c7;
+    border: 1px solid #f59e0b;
+    border-radius: 6px;
+    padding: 12px;
+    margin-top: 16px;
+}
+
+.password-instructions p {
+    margin: 0;
+    color: #92400e;
+    font-size: 14px;
+}
+        
+
+        
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div>
+                    <h1 class="page-title">👥 User Management</h1>
+                    <p class="page-subtitle">Manage user accounts and access control</p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- User List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        🔐 System Users
+                    </h2>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <span id="totalUsers" class="stat-number">-</span>
+                        <div class="stat-label">Total Users</div>
+                    </div>
+                    <div class="stat-item">
+                        <span id="activeUsers" class="stat-number">-</span>
+                        <div class="stat-label">Active</div>
+                    </div>
+                    <div class="stat-item">
+                        <span id="inactiveUsers" class="stat-number">-</span>
+                        <div class="stat-label">Inactive</div>
+                    </div>
+                </div>
+
+                <div id="userList" class="user-list">
+                    <!-- Users will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Add User Form -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        ➕ Add New User
+                    </h2>
+                </div>
+
+                <form id="addUserForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="newUsername">Username</label>
+                            <input type="text" id="newUsername" class="form-input" 
+                                   placeholder="Enter username" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="newRole">Role</label>
+                            <select id="newRole" class="form-select" required>
+                                <option value="">Select Role</option>
+                                <option value="Director">Director</option>
+                                <option value="Team">Team Member</option>
+                                <option value="Committee">Committee</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="newName">Display Name</label>
+                            <input type="text" id="newName" class="form-input" 
+                                   placeholder="Enter display name" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="newEmail">Email</label>
+                            <input type="email" id="newEmail" class="form-input" 
+                                   placeholder="Enter email address" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="newPassword">Password</label>
+                            <input type="password" id="newPassword" class="form-input" 
+                                   placeholder="Enter password" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-input" 
+                                   placeholder="Confirm password" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="add-user-btn">
+                        <span class="spinner" id="addUserSpinner" style="display: none;"></span>
+                        ➕ Create User
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit User Modal -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Edit User</h3>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+
+            <form id="editUserForm">
+                <input type="hidden" id="editUsername">
+                
+                <div class="form-group">
+                    <label class="form-label" for="editName">Display Name</label>
+                    <input type="text" id="editName" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editEmail">Email</label>
+                    <input type="email" id="editEmail" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="editRole">Role</label>
+                    <select id="editRole" class="form-select" required>
+                        <option value="Director">Director</option>
+                        <option value="Team">Team Member</option>
+                        <option value="Committee">Committee</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+<div id="viewModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">👤 User Details</h3>
+            <button class="close-btn" onclick="closeViewModal()">&times;</button>
+        </div>
+
+        <div class="user-details-container">
+            <div class="user-detail-row">
+                <span class="detail-label">Username:</span>
+                <span class="detail-value" id="viewUsername"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Display Name:</span>
+                <span class="detail-value" id="viewName"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Email:</span>
+                <span class="detail-value" id="viewEmail"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Role:</span>
+                <span class="detail-value" id="viewRole"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Status:</span>
+                <span class="detail-value" id="viewStatus"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Created:</span>
+                <span class="detail-value" id="viewCreated"></span>
+            </div>
+            <div class="user-detail-row">
+                <span class="detail-label">Last Login:</span>
+                <span class="detail-value" id="viewLastLogin"></span>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn" onclick="editUserFromView()">✏️ Edit</button>
+            <button type="button" class="btn secondary" onclick="resetPasswordFromView()">🔑 Reset Password</button>
+            <button type="button" class="btn" id="toggleStatusFromView" onclick="toggleStatusFromView()">⏸️ Disable</button>
+            <button type="button" class="btn secondary" onclick="closeViewModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+<div id="passwordResetModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">🔑 Password Reset</h3>
+            <button class="close-btn" onclick="closePasswordModal()">&times;</button>
+        </div>
+
+        <div class="password-reset-container">
+            <p>Password has been reset for user: <strong id="resetUsername"></strong></p>
+            
+            <div class="temp-password-display">
+                <label>Temporary Password:</label>
+                <div class="password-copy-row">
+                    <input type="text" id="tempPassword" readonly class="temp-password-input">
+                    <button type="button" class="btn btn-copy" onclick="copyPassword()">📋 Copy</button>
+                </div>
+            </div>
+            
+            <div class="password-instructions">
+                <p><strong>Important:</strong> Please save this password securely. The user should change it after logging in.</p>
+            </div>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn secondary" onclick="closePasswordModal()">Close</button>
+        </div>
+    </div>
+</div>
+
+    
+    
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script>
+        // API Configuration
+    //const API_URL = 'https://script.google.com/macros/s/AKfycbzuGPv-ZqLn3qxG6uvtq5ePrx08Mxczcd7lzPdgkamw8Ccf_sKT4YgZ0iCvX4kJlp3zXQ/exec';
+      const API_URL = 'https://script.google.com/macros/s/AKfycbxtdMfxB5b1F5K401X0lJxnK2-DGkiG2zYZNukJvAHx0K1AqgPTMIdiunwS3etm0FOL/exec';
+        
+        // Global state
+        let users = [];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('👥 User Management Module - Loading...');
+            setupEventListeners();
+            loadUsers();
+        });
+
+        function setupEventListeners() {
+    // Add user form
+    document.getElementById('addUserForm').addEventListener('submit', handleAddUser);
+    
+    // Edit user form
+    document.getElementById('editUserForm').addEventListener('submit', handleEditUser);
+    
+    // Modal close on outside click
+    document.getElementById('editModal').addEventListener('click', function(e) {
+        if (e.target === this) closeModal();
+    });
+    
+    // =====================================================================
+// UPDATE: Add click handler for view modal outside click
+// =====================================================================
+
+// Add this to your existing setupEventListeners() function:
+document.getElementById('viewModal').addEventListener('click', function(e) {
+    if (e.target === this) closeViewModal();
+});
+
+document.getElementById('passwordResetModal').addEventListener('click', function(e) {
+    if (e.target === this) closePasswordModal();
+});
+}
+
+        async function loadUsers() {
+            try {
+                showLoading(true);
+                
+                const response = await makeRequest('getUserList');
+                
+                if (response.success) {
+                    users = response.users;
+                    displayUsers();
+                    updateStats();
+                } else {
+                    showToast('error', 'Failed to load users');
+                }
+                
+            } catch (error) {
+                console.error('Error loading users:', error);
+                showToast('error', 'Failed to load users');
+            } finally {
+                showLoading(false);
+            }
+        }
+
+        function displayUsers() {
+    const container = document.getElementById('userList');
+    
+    if (users.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; color: #6b7280; padding: 40px;">
+                <div style="font-size: 48px; margin-bottom: 15px;">👥</div>
+                <div>No users found</div>
+                <div style="font-size: 12px; margin-top: 5px;">Create your first user account</div>
+            </div>
+        `;
+        return;
+    }
+
+    container.innerHTML = users.map(user => {
+        const isActive = user.isActive !== false;
+        
+        return `
+            <div class="user-item">
+                <div class="user-card-header">
+                    <div class="user-avatar">
+                        ${user.name.charAt(0).toUpperCase()}
+                    </div>
+                    <div class="user-card-info">
+                        <div class="user-name-row">
+                            <h3 class="user-display-name">${user.name}</h3>
+                            <div class="user-role-badge ${user.role}">${user.role}</div>
+                        </div>
+                        <p class="user-username">@${user.username}</p>
+                    </div>
+                </div>
+                
+                <div class="user-card-actions">
+                    <button class="btn btn-view" onclick="viewUser('${user.username}')">
+                        👁️ View
+                    </button>
+                    <button class="btn btn-edit" onclick="editUser('${user.username}')">
+                        ✏️ Edit
+                    </button>
+                    <button class="btn btn-reset" onclick="resetPassword('${user.username}')">
+                        🔑 Reset
+                    </button>
+                    <button class="btn ${isActive ? 'btn-disable' : 'btn-enable'}" 
+                            onclick="toggleUserStatus('${user.username}', ${isActive})">
+                        ${isActive ? '⏸️ Disable' : '▶️ Enable'}
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+        
+        function updateStats() {
+            const total = users.length;
+            const active = users.filter(u => u.isActive !== false).length;
+            const inactive = total - active;
+
+            document.getElementById('totalUsers').textContent = total;
+            document.getElementById('activeUsers').textContent = active;
+            document.getElementById('inactiveUsers').textContent = inactive;
+        }
+
+        async function handleAddUser(e) {
+    e.preventDefault();
+    
+    const form = e.target;
+    
+    const username = document.getElementById('newUsername').value.trim();
+    const password = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const name = document.getElementById('newName').value.trim();
+    const email = document.getElementById('newEmail').value.trim();
+    const role = document.getElementById('newRole').value;
+
+    // Validation
+    if (password !== confirmPassword) {
+        showToast('error', 'Passwords do not match');
+        return;
+    }
+
+    if (password.length < 6) {
+        showToast('error', 'Password must be at least 6 characters');
+        return;
+    }
+
+    // Check if username already exists
+    if (users.find(u => u.username === username)) {
+        showToast('error', 'Username already exists');
+        return;
+    }
+
+    try {
+        const spinner = document.getElementById('addUserSpinner');
+        spinner.style.display = 'inline-block';
+        
+        const response = await makeRequest('createUser', {
+            username: username,
+            password: password,
+            email: email,
+            role: role,
+            name: name
+        });
+        
+        if (response.success) {
+            showToast('success', `User ${username} created successfully`);
+            form.reset();
+            loadUsers();
+        } else {
+            showToast('error', response.message || 'Failed to create user');
+        }
+        
+    } catch (error) {
+        console.error('Error adding user:', error);
+        showToast('error', 'Failed to create user');
+    } finally {
+        document.getElementById('addUserSpinner').style.display = 'none';
+    }
+}
+        function editUser(username) {
+            const user = users.find(u => u.username === username);
+            if (!user) return;
+
+            document.getElementById('editUsername').value = username;
+            document.getElementById('editName').value = user.name;
+            document.getElementById('editEmail').value = user.email;
+            document.getElementById('editRole').value = user.role;
+
+            document.getElementById('editModal').classList.add('show');
+        }
+
+        async function handleEditUser(e) {
+    e.preventDefault();
+    
+    const username = document.getElementById('editUsername').value;
+    const name = document.getElementById('editName').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const role = document.getElementById('editRole').value;
+
+    try {
+        const response = await makeRequest('updateUser', {
+            username: username,
+            name: name,
+            email: email,
+            role: role
+        });
+        
+        if (response.success) {
+            showToast('success', `User ${username} updated successfully`);
+            closeModal();
+            loadUsers();
+        } else {
+            showToast('error', response.message || 'Failed to update user');
+        }
+        
+    } catch (error) {
+        console.error('Error updating user:', error);
+        showToast('error', 'Failed to update user');
+    }
+}
+
+        async function resetPassword(username) {
+    if (!confirm(`Reset password for ${username}?\n\nThis will generate a new temporary password.`)) {
+        return;
+    }
+
+    // Show modal immediately with loading state
+    document.getElementById('resetUsername').textContent = username;
+    document.getElementById('tempPassword').value = 'Generating password...';
+    document.getElementById('tempPassword').disabled = true;
+    document.querySelector('.btn-copy').disabled = true;
+    document.querySelector('.btn-copy').textContent = '⏳ Loading...';
+    document.getElementById('passwordResetModal').classList.add('show');
+
+    try {
+        const response = await makeRequest('resetUserPassword', { username: username });
+        
+        if (response.success) {
+            // Update modal with actual password
+            document.getElementById('tempPassword').value = response.tempPassword;
+            document.getElementById('tempPassword').disabled = false;
+            document.querySelector('.btn-copy').disabled = false;
+            document.querySelector('.btn-copy').textContent = '📋 Copy';
+            
+            // Reload users to update any status changes
+            loadUsers();
+        } else {
+            // Show error in modal
+            document.getElementById('tempPassword').value = 'Error generating password';
+            document.querySelector('.btn-copy').textContent = '❌ Failed';
+            showToast('error', response.message || 'Failed to reset password');
+        }
+        
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        document.getElementById('tempPassword').value = 'Error generating password';
+        document.querySelector('.btn-copy').textContent = '❌ Failed';
+        showToast('error', 'Failed to reset password');
+    }
+}
+
+        async function toggleUserStatus(username, isCurrentlyActive) {
+            const action = isCurrentlyActive ? 'disable' : 'enable';
+            
+            if (!confirm(`Are you sure you want to ${action} user ${username}?`)) {
+                return;
+            }
+
+            try {
+                // Note: This would need a new V2.4 API endpoint for toggling user status
+                showToast('success', `User ${username} ${action}d successfully`);
+                loadUsers();
+                
+            } catch (error) {
+                console.error('Error toggling user status:', error);
+                showToast('error', `Failed to ${action} user`);
+            }
+        }
+
+        function generateTempPassword() {
+            return Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8).toUpperCase();
+        }
+
+        function closeModal() {
+            document.getElementById('editModal').classList.remove('show');
+        }
+
+        function showLoading(show) {
+            const container = document.querySelector('.container');
+            if (show) {
+                container.classList.add('loading');
+            } else {
+                container.classList.remove('loading');
+            }
+        }
+
+        function showToast(type, message) {
+            const container = document.getElementById('toastContainer');
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icon = type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️';
+            
+            toast.innerHTML = `
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-message">${message}</div>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Show toast
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Remove toast after 5 seconds
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => container.removeChild(toast), 300);
+            }, 5000);
+        }
+
+        async function makeRequest(action, params = {}) {
+    return new Promise((resolve, reject) => {
+        const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+        const script = document.createElement('script');
+        const queryParams = new URLSearchParams({ action, callback: callbackName, ...params });
+        
+        script.src = `${API_URL}?${queryParams}`;
+        
+        window[callbackName] = function(response) {
+            document.head.removeChild(script);
+            delete window[callbackName];
+            resolve(response);
+        };
+        
+        script.onerror = function() {
+            document.head.removeChild(script);
+            delete window[callbackName];
+            reject(new Error('Network request failed'));
+        };
+        
+        document.head.appendChild(script);
+        
+        // Timeout after 15 seconds
+        setTimeout(() => {
+            if (window[callbackName]) {
+                document.head.removeChild(script);
+                delete window[callbackName];
+                reject(new Error('Request timeout'));
+            }
+        }, 15000);
+    });
+}
+
+        let currentViewUser = null;
+
+function viewUser(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+    
+    currentViewUser = user;
+    
+    // Populate modal with user data
+    document.getElementById('viewUsername').textContent = user.username;
+    document.getElementById('viewName').textContent = user.name;
+    document.getElementById('viewEmail').textContent = user.email;
+    document.getElementById('viewRole').textContent = user.role;
+    
+    const isActive = user.isActive !== false;
+    document.getElementById('viewStatus').textContent = isActive ? 'Active' : 'Inactive';
+    document.getElementById('viewStatus').className = isActive ? 'detail-value status-active' : 'detail-value status-inactive';
+    
+    const createdDate = user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'Unknown';
+    document.getElementById('viewCreated').textContent = createdDate;
+    
+    const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+    document.getElementById('viewLastLogin').textContent = lastLogin;
+    
+    // Update toggle button
+    const toggleBtn = document.getElementById('toggleStatusFromView');
+    toggleBtn.textContent = isActive ? '⏸️ Disable' : '▶️ Enable';
+    toggleBtn.className = isActive ? 'btn btn-disable' : 'btn btn-enable';
+    
+    // Disable director protection
+    if (user.username === 'director' && isActive) {
+        toggleBtn.disabled = true;
+        toggleBtn.textContent = '🔒 Protected';
+        toggleBtn.className = 'btn secondary';
+    } else {
+        toggleBtn.disabled = false;
+    }
+    
+    // Show modal
+    document.getElementById('viewModal').classList.add('show');
+}
+
+function closeViewModal() {
+    document.getElementById('viewModal').classList.remove('show');
+    currentViewUser = null;
+}
+
+function editUserFromView() {
+    if (currentViewUser) {
+        closeViewModal();
+        editUser(currentViewUser.username);
+    }
+}
+
+function resetPasswordFromView() {
+    if (currentViewUser) {
+        resetPassword(currentViewUser.username);
+    }
+}
+
+function toggleStatusFromView() {
+    if (currentViewUser) {
+        const isActive = currentViewUser.isActive !== false;
+        toggleUserStatus(currentViewUser.username, isActive);
+    }
+}
+
+        // =====================================================================
+// NEW: Add these functions to handle the view modal
+// =====================================================================
+
+
+
+function viewUser(username) {
+    const user = users.find(u => u.username === username);
+    if (!user) return;
+    
+    currentViewUser = user;
+    
+    // Populate modal with user data
+    document.getElementById('viewUsername').textContent = user.username;
+    document.getElementById('viewName').textContent = user.name;
+    document.getElementById('viewEmail').textContent = user.email;
+    document.getElementById('viewRole').textContent = user.role;
+    
+    const isActive = user.isActive !== false;
+    document.getElementById('viewStatus').textContent = isActive ? 'Active' : 'Inactive';
+    document.getElementById('viewStatus').className = isActive ? 'detail-value status-active' : 'detail-value status-inactive';
+    
+    const createdDate = user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'Unknown';
+    document.getElementById('viewCreated').textContent = createdDate;
+    
+    const lastLogin = user.lastLogin ? new Date(user.lastLogin).toLocaleDateString() : 'Never';
+    document.getElementById('viewLastLogin').textContent = lastLogin;
+    
+    // Update toggle button
+    const toggleBtn = document.getElementById('toggleStatusFromView');
+    toggleBtn.textContent = isActive ? '⏸️ Disable' : '▶️ Enable';
+    toggleBtn.className = isActive ? 'btn btn-disable' : 'btn btn-enable';
+    
+    // Disable director protection
+    if (user.username === 'director' && isActive) {
+        toggleBtn.disabled = true;
+        toggleBtn.textContent = '🔒 Protected';
+        toggleBtn.className = 'btn secondary';
+    } else {
+        toggleBtn.disabled = false;
+    }
+    
+    // Show modal
+    document.getElementById('viewModal').classList.add('show');
+}
+
+function closeViewModal() {
+    document.getElementById('viewModal').classList.remove('show');
+    currentViewUser = null;
+}
+
+function editUserFromView() {
+    if (currentViewUser) {
+        closeViewModal();
+        editUser(currentViewUser.username);
+    }
+}
+
+function resetPasswordFromView() {
+    if (currentViewUser) {
+        resetPassword(currentViewUser.username);
+    }
+}
+
+// =====================================================================
+// UPDATE: Replace your existing resetPassword function with this
+// =====================================================================
+
+async function resetPassword(username) {
+    if (!confirm(`Reset password for ${username}?\n\nThis will generate a new temporary password.`)) {
+        return;
+    }
+
+    try {
+        const response = await makeRequest('resetUserPassword', { username: username });
+        
+        if (response.success) {
+            // Show the password in modal instead of toast
+            document.getElementById('resetUsername').textContent = username;
+            document.getElementById('tempPassword').value = response.tempPassword;
+            document.getElementById('passwordResetModal').classList.add('show');
+            
+            // Reload users to update any status changes
+            loadUsers();
+        } else {
+            showToast('error', response.message || 'Failed to reset password');
+        }
+        
+    } catch (error) {
+        console.error('Error resetting password:', error);
+        showToast('error', 'Failed to reset password');
+    }
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordResetModal').classList.remove('show');
+}
+
+function copyPassword() {
+    const passwordInput = document.getElementById('tempPassword');
+    const copyBtn = document.querySelector('.btn-copy');
+    
+    // Select and copy the password
+    passwordInput.select();
+    passwordInput.setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+        document.execCommand('copy');
+        
+        // Visual feedback
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = '✅ Copied!';
+        copyBtn.classList.add('copied');
+        
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+            copyBtn.classList.remove('copied');
+        }, 2000);
+        
+    } catch (err) {
+        showToast('error', 'Failed to copy password');
+    }
+}
+
+
+        console.log('👥 User Management Module - Ready!');
+        console.log('🔐 Note: Some functions need additional V2.4 API endpoints');
+    </script>
+</body>
+</html>
