@@ -1,0 +1,1184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown Management Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header-section {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: #1e293b;
+        }
+
+        .header-section p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .stats-bar {
+            background: #eeeeee;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .main-content {
+            padding: 30px;
+        }
+
+        .config-section {
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .config-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+
+        .config-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .config-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .config-btn {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .config-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .config-btn:active {
+            transform: translateY(0);
+        }
+
+        .config-preview {
+            background: #1e293b;
+            color: #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 0.9rem;
+            max-height: 300px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            margin-bottom: 15px;
+        }
+
+        .sections-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .section {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.2s;
+        }
+
+        .section-header {
+            background: #eeeeee;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .section-title {
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .add-button {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-button:hover {
+            background: #059669;
+        }
+
+        .items-container {
+            padding: 20px;
+            min-height: 120px;
+        }
+
+        .item {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.2s;
+        }
+
+        .item:hover {
+            background: #f3f4f6;
+            border-color: #d1d5db;
+        }
+
+        .item-content {
+            flex: 1;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .item-btn {
+            background: none;
+            border: none;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+        }
+
+        .edit-btn {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .edit-btn:hover {
+            background: #fde68a;
+        }
+
+        .delete-btn {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .delete-btn:hover {
+            background: #fecaca;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6b7280;
+            padding: 40px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 16px 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            z-index: 1001;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+            min-width: 300px;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid #10b981;
+        }
+
+        .toast.error {
+            border-left: 4px solid #ef4444;
+        }
+
+        .toast.warning {
+            border-left: 4px solid #f59e0b;
+        }
+
+        .toast.info {
+            border-left: 4px solid #3b82f6;
+        }
+
+        @media (max-width: 768px) {
+            .sections-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-bar {
+                flex-wrap: wrap;
+                gap: 15px;
+            }
+            
+            .config-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header-section">
+        <h1>🎛️ Dropdown Management Hub</h1>
+        <p>Centralized management for all system dropdowns with config generation</p>
+    </div>
+
+    <div class="container">
+
+        <div class="main-content">
+            <!-- Config Generation Section -->
+            <div class="config-section">
+                <div class="config-header">
+                    <div class="config-title">
+                        ⚙️ Configuration Files Generator
+                    </div>
+                    <div class="config-buttons">
+                        <button class="config-btn" onclick="generateConfig('resident')">
+                            📄 Generate Resident Config
+                        </button>
+                        <button class="config-btn" onclick="generateConfig('maintenance')">
+                            🔧 Generate Maintenance Config
+                        </button>
+                    </div>
+                </div>
+                <div id="configPreview" class="config-preview">
+                    // Generated configuration will appear here
+                    // Click the buttons above to generate config files
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 15px;">
+                    <div style="display: flex; gap: 12px;">
+                        <button id="copyBtn" class="config-btn" onclick="copyToClipboard()" style="background: #059669; display: none;">
+                            📋 Copy to Clipboard
+                        </button>
+                        <button class="config-btn" onclick="clearPreview()" style="background: #6b7280;">
+                            🗑️ Clear Preview
+                        </button>
+                        <button class="config-btn" onclick="forensicAnalysis()" style="background: #ef4444; color: white;">
+                            🔬 Run Forensic Analysis
+                        </button>
+                    </div>
+                    <div id="configInfo" style="font-size: 0.85rem; color: #6b7280; display: none;">
+                        <!-- Config info will appear here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Data Management Sections -->
+            <div class="sections-grid">
+                <!-- Resident Data Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            🏠 Resident Data
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <!-- Unit Numbers -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">🏘️ Unit Numbers</h4>
+                                <button class="add-button" onclick="showAddModal('Unit Number')">+ Add Unit</button>
+                            </div>
+                            <div class="items-container" id="unitNumbersContainer">
+                                <div class="loading">Loading unit numbers...</div>
+                            </div>
+                        </div>
+
+                        <!-- Reported By Names -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">👤 Reported By Names</h4>
+                                <button class="add-button" onclick="showAddModal('Reported By')">+ Add Name</button>
+                            </div>
+                            <div class="items-container" id="reportedByContainer">
+                                <div class="loading">Loading reported by names...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Maintenance Data Section -->
+                <div class="section">
+                    <div class="section-header">
+                        <div class="section-title">
+                            🔧 Maintenance Data
+                        </div>
+                    </div>
+                    <div style="padding: 20px;">
+                        <!-- Status Options -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">📊 Status Options</h4>
+                                <button class="add-button" onclick="showAddModal('Status')">+ Add Status</button>
+                            </div>
+                            <div class="items-container" id="statusContainer">
+                                <div class="loading">Loading status options...</div>
+                            </div>
+                        </div>
+
+                        <!-- Priority Levels -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">⚡ Priority Levels</h4>
+                                <button class="add-button" onclick="showAddModal('Priority')">+ Add Priority</button>
+                            </div>
+                            <div class="items-container" id="priorityContainer">
+                                <div class="loading">Loading priority levels...</div>
+                            </div>
+                        </div>
+
+                        <!-- Categories -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">📂 Categories</h4>
+                                <button class="add-button" onclick="showAddModal('Category')">+ Add Category</button>
+                            </div>
+                            <div class="items-container" id="categoryContainer">
+                                <div class="loading">Loading categories...</div>
+                            </div>
+                        </div>
+
+                        <!-- Sub-Categories -->
+                        <div style="margin-bottom: 25px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">📋 Sub-Categories</h4>
+                                <button class="add-button" onclick="showAddModal('Sub-Category')">+ Add Sub-Category</button>
+                            </div>
+                            <div class="items-container" id="subCategoryContainer">
+                                <div class="loading">Loading sub-categories...</div>
+                            </div>
+                        </div>
+
+                        <!-- Assigned To -->
+                        <div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h4 style="color: #374151; font-weight: 600;">👷 Assigned To</h4>
+                                <button class="add-button" onclick="showAddModal('Assigned To')">+ Add Assignee</button>
+                            </div>
+                            <div class="items-container" id="assignedToContainer">
+                                <div class="loading">Loading assignees...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modalTitle">Add Item</div>
+            <form id="itemForm">
+                <div class="form-group">
+                    <label class="form-label" for="itemType">Type:</label>
+                    <input type="text" id="itemType" class="form-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="itemValue">Value:</label>
+                    <input type="text" id="itemValue" class="form-input" placeholder="Enter value..." required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="modal-btn btn-cancel" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="modal-btn btn-primary" id="submitBtn">Add Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const API_URL = 'https://script.google.com/macros/s/AKfycbysMz0Hd-m3dzhs3eXsCaoXeGzHI_2Gxc1PWmLlCTFFz4WIbpOTWzLd1ndHuvWvxXYhKQ/exec';
+        
+        // Global state
+        let allDropdownData = {};
+        let currentEditItem = null;
+        let currentConfigContent = '';
+        let currentConfigType = '';
+
+        // Type to container mapping
+        const typeContainers = {
+            'Unit Number': 'unitNumbersContainer',
+            'Reported By': 'reportedByContainer',
+            'Status': 'statusContainer',
+            'Priority': 'priorityContainer',
+            'Category': 'categoryContainer',
+            'Sub-Category': 'subCategoryContainer',
+            'Assigned To': 'assignedToContainer'
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🎛️ Dynamic Dropdown Manager Initialized');
+            loadAllDropdowns();
+        });
+
+        // JSONP request helper
+        function makeJSONPRequest(action, params = {}) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                
+                // Create callback function
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                    resolve(data);
+                };
+                
+                // Build URL with parameters
+                const paramStr = Object.keys(params)
+                    .map(key => `${key}=${encodeURIComponent(params[key])}`)
+                    .join('&');
+                
+                const url = `${API_URL}?action=${action}&callback=${callbackName}${paramStr ? '&' + paramStr : ''}`;
+                
+                console.log('📡 Making JSONP request:', url);
+                
+                // Create script tag
+                const script = document.createElement('script');
+                script.src = url;
+                
+                script.onerror = function() {
+                    delete window[callbackName];
+                    if (script.parentNode) {
+                        script.parentNode.removeChild(script);
+                    }
+                    reject(new Error('Network request failed'));
+                };
+                
+                // Timeout after 15 seconds
+                setTimeout(() => {
+                    if (window[callbackName]) {
+                        delete window[callbackName];
+                        if (script.parentNode) {
+                            script.parentNode.removeChild(script);
+                        }
+                        reject(new Error('Request timeout'));
+                    }
+                }, 15000);
+                
+                document.head.appendChild(script);
+            });
+        }
+
+        // Load all dropdown data using JSONP
+        async function loadAllDropdowns() {
+            try {
+                console.log('📋 Loading all dropdown data...');
+                showToast('info', 'Loading...', 'Fetching dropdown data from service...');
+                
+                const data = await makeJSONPRequest('getAllDropdowns');
+                
+                console.log('📥 Raw API response:', data);
+                
+                if (data.success) {
+                    allDropdownData = data.dropdowns;
+                    console.log('✅ Dropdown data loaded:', allDropdownData);
+                    
+                    displayAllDropdowns();
+                    showToast('success', 'Data Loaded', 'All dropdown data loaded successfully');
+                } else {
+                    throw new Error(data.error || 'Failed to load dropdown data');
+                }
+                
+            } catch (error) {
+                console.error('❌ Error loading dropdown data:', error);
+                showToast('error', 'Load Failed', `Failed to load dropdown data: ${error.message}`);
+                displayErrorState();
+            }
+        }
+
+        // Display error state
+        function displayErrorState() {
+            Object.values(typeContainers).forEach(containerId => {
+                const container = document.getElementById(containerId);
+                if (container) {
+                    container.innerHTML = '<div class="loading" style="color: #ef4444;">❌ Failed to load data</div>';
+                }
+            });
+        }
+
+        // Display all dropdowns
+        function displayAllDropdowns() {
+            console.log('🎨 Displaying all dropdown data...');
+            
+            // Resident data
+            displayDropdownItems('Unit Number', allDropdownData['Unit Number'] || []);
+            displayDropdownItems('Reported By', allDropdownData['Reported By'] || []);
+            
+            // Maintenance data
+            displayDropdownItems('Status', allDropdownData['Status'] || []);
+            displayDropdownItems('Priority', allDropdownData['Priority'] || []);
+            displayDropdownItems('Category', allDropdownData['Category'] || []);
+            displayDropdownItems('Sub-Category', allDropdownData['Sub-Category'] || []);
+            displayDropdownItems('Assigned To', allDropdownData['Assigned To'] || []);
+        }
+
+        // Display dropdown items for a specific type
+        function displayDropdownItems(type, items) {
+            const container = document.getElementById(typeContainers[type]);
+            if (!container) return;
+
+            if (items.length === 0) {
+                container.innerHTML = '<div class="loading">No items found</div>';
+                return;
+            }
+
+            container.innerHTML = items.map(item => `
+                <div class="item" style="display: flex; justify-content: space-between; align-items: center; padding: 12px 15px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #e2e8f0; transition: all 0.3s ease; margin-bottom: 8px;">
+                    <div class="item-content" style="flex: 1; font-weight: 500; color: #374151;">${item}</div>
+                    <div class="item-actions" style="display: flex; gap: 8px; opacity: 0; transition: opacity 0.3s ease;">
+                        <button class="action-btn edit-btn" onclick="editItem('${type}', '${item}')" style="padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 500; background: #fbbf24; color: white;">Edit</button>
+                        <button class="action-btn delete-btn" onclick="deleteItem('${type}', '${item}')" style="padding: 6px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 0.8rem; font-weight: 500; background: #ef4444; color: white;">Delete</button>
+                    </div>
+                </div>
+            `).join('');
+
+            // Add JavaScript hover events since CSS isn't working
+            const itemElements = container.querySelectorAll('.item');
+            itemElements.forEach(itemEl => {
+                const actions = itemEl.querySelector('.item-actions');
+                
+                itemEl.addEventListener('mouseenter', () => {
+                    actions.style.opacity = '1';
+                    itemEl.style.background = '#f3f4f6';
+                    itemEl.style.borderLeftColor = '#d1d5db';
+                    itemEl.style.transform = 'translateX(2px)';
+                });
+                
+                itemEl.addEventListener('mouseleave', () => {
+                    actions.style.opacity = '0';
+                    itemEl.style.background = '#f8fafc';
+                    itemEl.style.borderLeftColor = '#e2e8f0';
+                    itemEl.style.transform = 'translateX(0)';
+                });
+            });
+        }
+
+
+
+        // Show add modal
+        function showAddModal(type) {
+            currentEditItem = null;
+            document.getElementById('modalTitle').textContent = `Add ${type}`;
+            document.getElementById('itemType').value = type;
+            document.getElementById('itemValue').value = '';
+            document.getElementById('submitBtn').textContent = 'Add Item';
+            document.getElementById('modal').classList.add('show');
+            document.getElementById('itemValue').focus();
+        }
+
+        // Edit item
+        function editItem(type, value) {
+            currentEditItem = { type, value };
+            document.getElementById('modalTitle').textContent = `Edit ${type}`;
+            document.getElementById('itemType').value = type;
+            document.getElementById('itemValue').value = value;
+            document.getElementById('submitBtn').textContent = 'Update Item';
+            document.getElementById('modal').classList.add('show');
+            document.getElementById('itemValue').focus();
+        }
+
+        // Close modal
+        function closeModal() {
+            document.getElementById('modal').classList.remove('show');
+            currentEditItem = null;
+        }
+
+        // Handle form submission
+        document.getElementById('itemForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const type = document.getElementById('itemType').value;
+            const value = document.getElementById('itemValue').value.trim();
+            
+            if (!value) {
+                showToast('error', 'Validation Error', 'Please enter a value');
+                return;
+            }
+            
+            try {
+                if (currentEditItem) {
+                    await updateItem(type, currentEditItem.value, value);
+                } else {
+                    await addItem(type, value);
+                }
+                closeModal();
+            } catch (error) {
+                console.error('❌ Form submission error:', error);
+            }
+        });
+
+        // Add item using JSONP
+        async function addItem(type, value) {
+            try {
+                showToast('warning', 'Processing...', `Adding "${value}" to ${type}...`);
+                
+                const data = await makeJSONPRequest('addDropdownItem', { type, value });
+                
+                if (data.success) {
+                    await loadAllDropdowns();
+                    showToast('success', 'Item Added', `Successfully added "${value}" to ${type}`);
+                } else {
+                    throw new Error(data.error || 'Failed to add item');
+                }
+            } catch (error) {
+                console.error('❌ Error adding item:', error);
+                showToast('error', 'Add Failed', `Failed to add "${value}": ${error.message}`);
+            }
+        }
+
+        // Update item using JSONP
+        async function updateItem(type, oldValue, newValue) {
+            try {
+                showToast('warning', 'Processing...', `Updating "${oldValue}" to "${newValue}"...`);
+                
+                // Calculate row index for the item
+                const rowIndex = calculateRowIndex(type, oldValue);
+                
+                const data = await makeJSONPRequest('updateDropdownItem', { 
+                    rowIndex, 
+                    type, 
+                    value: newValue 
+                });
+                
+                if (data.success) {
+                    await loadAllDropdowns();
+                    showToast('success', 'Item Updated', `Successfully updated "${oldValue}" to "${newValue}"`);
+                } else {
+                    throw new Error(data.error || 'Failed to update item');
+                }
+            } catch (error) {
+                console.error('❌ Error updating item:', error);
+                showToast('error', 'Update Failed', `Failed to update "${oldValue}": ${error.message}`);
+            }
+        }
+
+        // Delete item using JSONP
+        async function deleteItem(type, value) {
+            if (!confirm(`Are you sure you want to delete "${value}" from ${type}?`)) {
+                return;
+            }
+            
+            try {
+                console.log(`🗑️ Attempting to delete: ${type} = ${value}`);
+                showToast('warning', 'Processing...', `Deleting "${value}" from ${type}...`);
+                
+                // Calculate row index for the item
+                const rowIndex = calculateRowIndex(type, value);
+                console.log(`📍 Calculated row index: ${rowIndex}`);
+                
+                const data = await makeJSONPRequest('deleteDropdownItem', { rowIndex });
+                console.log(`📥 Delete API response:`, data);
+                
+                if (data.success) {
+                    console.log(`✅ Delete successful, reloading data...`);
+                    await loadAllDropdowns();
+                    showToast('success', 'Item Deleted', `Successfully deleted "${value}" from ${type}`);
+                } else {
+                    throw new Error(data.error || 'Failed to delete item');
+                }
+            } catch (error) {
+                console.error('❌ Error deleting item:', error);
+                showToast('error', 'Delete Failed', `Failed to delete "${value}": ${error.message}`);
+            }
+        }
+
+        // Calculate row index for an item (mirrors backend sorting) - REVERTED TO ORIGINAL
+        function calculateRowIndex(targetType, targetValue) {
+            console.log(`🧮 Calculating row index for: ${targetType} = ${targetValue}`);
+            
+            // Create flat array mirroring backend structure
+            const allItems = [];
+            
+            // Add all items from allDropdownData
+            Object.keys(allDropdownData).forEach(type => {
+                allDropdownData[type].forEach(value => {
+                    allItems.push({ type, value });
+                });
+            });
+            
+            console.log(`📊 Total items in calculation:`, allItems.length);
+            
+            // Sort exactly like backend (Type alphabetical, then Value alphabetical)
+            allItems.sort((a, b) => {
+                if (a.type !== b.type) {
+                    return a.type.localeCompare(b.type);
+                }
+                return a.value.localeCompare(b.value);
+            });
+            
+            console.log(`📋 Sorted items:`, allItems.map(item => `${item.type}: ${item.value}`));
+            
+            // Find target item and return row index (1-based, account for header)
+            const index = allItems.findIndex(item => 
+                item.type === targetType && item.value === targetValue
+            );
+            
+            console.log(`🎯 Found target at index: ${index}`);
+            
+            const rowIndex = index + 2; // +2 for 1-based indexing and header row
+            console.log(`📍 Final row index: ${rowIndex}`);
+            
+            return rowIndex;
+        }
+
+        // Generate configuration (separate from copying)
+        function generateConfig(configType) {
+            try {
+                console.log(`🔄 Generating ${configType} config...`);
+                
+                let configContent = '';
+                
+                if (configType === 'resident') {
+                    configContent = generateResidentConfig();
+                } else if (configType === 'maintenance') {
+                    configContent = generateMaintenanceConfig();
+                } else {
+                    throw new Error('Invalid config type');
+                }
+                
+                // Store current config
+                currentConfigContent = configContent;
+                currentConfigType = configType;
+                
+                // Update preview
+                document.getElementById('configPreview').textContent = configContent;
+                
+                // Show copy button and info
+                document.getElementById('copyBtn').style.display = 'block';
+                const infoElement = document.getElementById('configInfo');
+                infoElement.style.display = 'block';
+                infoElement.textContent = `${configType.charAt(0).toUpperCase() + configType.slice(1)} config generated (${configContent.split('\n').length} lines)`;
+                
+                showToast('success', 'Config Generated', `${configType} configuration ready! Click "Copy to Clipboard" below.`);
+                
+            } catch (error) {
+                console.error('❌ Error generating config:', error);
+                showToast('error', 'Config Failed', `Failed to generate ${configType} config: ${error.message}`);
+            }
+        }
+
+        // Copy current config to clipboard
+        async function copyToClipboard() {
+            try {
+                if (!currentConfigContent) {
+                    showToast('warning', 'No Config', 'Please generate a config first');
+                    return;
+                }
+                
+                await navigator.clipboard.writeText(currentConfigContent);
+                
+                showToast('success', 'Copied!', `${currentConfigType} config copied to clipboard successfully! 📋✨`);
+                
+                // Briefly change button text
+                const copyBtn = document.getElementById('copyBtn');
+                const originalText = copyBtn.innerHTML;
+                copyBtn.innerHTML = '✅ Copied!';
+                copyBtn.style.background = '#10b981';
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalText;
+                    copyBtn.style.background = '#059669';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('❌ Error copying to clipboard:', error);
+                
+                if (error.name === 'NotAllowedError') {
+                    showToast('warning', 'Manual Copy Required', 'Clipboard access denied. Please select and copy the code manually from the preview above.');
+                } else {
+                    showToast('error', 'Copy Failed', `Failed to copy: ${error.message}`);
+                }
+            }
+        }
+
+        // Clear preview window
+        function clearPreview() {
+            document.getElementById('configPreview').textContent = `// Generated configuration will appear here
+// Click the buttons above to generate config files`;
+            
+            document.getElementById('copyBtn').style.display = 'none';
+            document.getElementById('configInfo').style.display = 'none';
+            
+            currentConfigContent = '';
+            currentConfigType = '';
+            
+            showToast('info', 'Preview Cleared', 'Preview window has been reset');
+        }
+
+        // Generate and copy configuration to clipboard (legacy function - keeping for backward compatibility)
+        async function generateAndCopyConfig(configType) {
+            generateConfig(configType);
+            // Small delay to ensure generation completes
+            setTimeout(() => copyToClipboard(), 100);
+        }
+
+        // Generate resident configuration file
+        function generateResidentConfig() {
+            const unitNumbers = allDropdownData['Unit Number'] || [];
+            const reportedBy = allDropdownData['Reported By'] || [];
+            
+            return `// Generated Resident Configuration - ${new Date().toISOString()}
+// Copy this content to resident-config.js in your project
+
+const RESIDENT_CONFIG = {
+    unitNumbers: ${JSON.stringify(unitNumbers, null, 4)},
+    reportedByNames: ${JSON.stringify(reportedBy, null, 4)}
+};
+
+// Export for use in resident submission forms
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = RESIDENT_CONFIG;
+}`;
+        }
+
+        // Generate maintenance configuration file
+        function generateMaintenanceConfig() {
+            const statuses = allDropdownData['Status'] || [];
+            const priorities = allDropdownData['Priority'] || [];
+            const categories = allDropdownData['Category'] || [];
+            const subCategories = allDropdownData['Sub-Category'] || [];
+            const assignedTo = allDropdownData['Assigned To'] || [];
+            
+            return `// Generated Maintenance Configuration - ${new Date().toISOString()}
+// Copy this content to maintenance-config.js in your project
+
+const MAINTENANCE_CONFIG = {
+    statuses: ${JSON.stringify(statuses, null, 4)},
+    priorities: ${JSON.stringify(priorities, null, 4)},
+    categories: ${JSON.stringify(categories, null, 4)},
+    subCategories: ${JSON.stringify(subCategories, null, 4)},
+    assignedTo: ${JSON.stringify(assignedTo, null, 4)}
+};
+
+// Export for use in maintenance portals
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = MAINTENANCE_CONFIG;
+}`;
+        }
+
+        // Toast notification system
+        function showToast(type, title, message, duration = 5000) {
+            // Remove existing toasts
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => toast.remove());
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            
+            const icons = {
+                success: '✅',
+                error: '❌',
+                warning: '⚠️',
+                info: 'ℹ️'
+            };
+            
+            toast.innerHTML = `
+                <div style="font-weight: 600;">${icons[type]} ${title}</div>
+                <div style="font-size: 0.9rem; opacity: 0.9; margin-top: 4px;">${message}</div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Show with animation
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Auto-remove after duration
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('modal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Handle escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // FORENSIC ANALYSIS TOOL - GLOBAL SCOPE
+        window.forensicAnalysis = async function() {
+            console.log('🔬 === FORENSIC ANALYSIS STARTING ===');
+            
+            try {
+                // 1. Get current frontend data
+                console.log('📊 1. FRONTEND DATA ANALYSIS:');
+                console.log('   Raw allDropdownData:', allDropdownData);
+                
+                // 2. Get backend data directly
+                console.log('📊 2. BACKEND DATA ANALYSIS:');
+                const backendData = await makeJSONPRequest('getAllDropdowns');
+                console.log('   Backend response:', backendData);
+                
+                // 3. Test the backend's getAllDropdownItemsForAdmin function
+                console.log('📊 3. BACKEND ADMIN DATA:');
+                try {
+                    const adminData = await makeJSONPRequest('getAllDropdownItemsForAdmin');
+                    console.log('   Admin response:', adminData);
+                } catch (adminError) {
+                    console.log('   Admin function error:', adminError.message);
+                }
+                
+                // 4. Create our calculated sheet structure
+                console.log('📊 4. OUR CALCULATED SHEET STRUCTURE:');
+                const allItems = [];
+                const sortedTypes = Object.keys(allDropdownData).sort();
+                
+                sortedTypes.forEach(type => {
+                    const sortedValues = [...allDropdownData[type]].sort();
+                    sortedValues.forEach(value => {
+                        allItems.push({ type, value });
+                    });
+                });
+                
+                console.log('   Calculated sheet rows:');
+                console.log('   Row 1: [Header] Type | Value');
+                allItems.forEach((item, index) => {
+                    console.log(`   Row ${index + 2}: ${item.type} | ${item.value}`);
+                });
+                
+                // 5. Test a specific delete simulation
+                console.log('📊 5. DELETE SIMULATION TEST:');
+                const testType = 'Reported By';
+                const reportedByItems = allDropdownData[testType] || [];
+                if (reportedByItems.length > 0) {
+                    const testValue = reportedByItems.find(item => item.toUpperCase().includes('TEST')) || reportedByItems[0];
+                    
+                    // Calculate row index inline since function may not be in scope
+                    console.log(`   Test item: "${testValue}"`);
+                    
+                    // Find the item in our calculated structure
+                    const targetIndex = allItems.findIndex(item => 
+                        item.type === testType && item.value === testValue
+                    );
+                    const calculatedRow = targetIndex + 2; // +2 for header + 1-based indexing
+                    
+                    console.log(`   Found at array index: ${targetIndex}`);
+                    console.log(`   Our calculated row: ${calculatedRow}`);
+                    console.log(`   Should be in backend row: ${calculatedRow}`);
+                    
+                    // Show what's around that item for context
+                    console.log(`   Context around test item:`);
+                    for (let i = Math.max(0, targetIndex - 2); i <= Math.min(allItems.length - 1, targetIndex + 2); i++) {
+                        const marker = i === targetIndex ? '👉 ' : '   ';
+                        console.log(`   ${marker}Row ${i + 2}: ${allItems[i].type} | ${allItems[i].value}`);
+                    }
+                }
+                
+                console.log('🔬 === FORENSIC ANALYSIS COMPLETE ===');
+                console.log('📋 NEXT: Check Google Sheet directly and compare with above row numbers');
+                
+                showToast('success', 'Forensic Analysis Complete', 'Check console for detailed breakdown');
+                
+            } catch (error) {
+                console.error('❌ Forensic analysis failed:', error);
+                showToast('error', 'Analysis Failed', error.message);
+            }
+        };
+
+        console.log('🎛️ Enhanced Dropdown Manager - Ready!');
+        console.log('📡 API URL:', API_URL);
+        console.log('🔄 Using JSONP for API calls');
+    </script>
+</body>
+</html>
